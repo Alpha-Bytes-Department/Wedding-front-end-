@@ -6,7 +6,7 @@
   --font-secondary: "Open Sans", sans-serif;
   --color-primary: #d4af37;
   --color-text-black: #333333;
-  --color-black: #676767;
+  --color-black-web: #676767;
   --color-bg: #faf7eb;
 }
 
@@ -23,7 +23,7 @@
 }
 
 .text-black-web {
-  color: var(--color-black);
+  color: var(--color-black-web);
 }
 
 .text-text {

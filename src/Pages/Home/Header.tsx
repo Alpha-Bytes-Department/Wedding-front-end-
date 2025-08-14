@@ -1,68 +1,60 @@
 import { Link } from "react-router-dom";
 
 const Header = () => {
-  const scrollToPricing = () => {
-    const pricingElement = document.getElementById('pricing');
-    if (pricingElement) {
-      pricingElement.scrollIntoView({ 
-        behavior: 'smooth',
-        block: 'start'
-      });
-    }
-  };
+  // const scrollToPricing = () => {
+  //   const pricingElement = document.getElementById('pricing');
+  //   if (pricingElement) {
+  //     pricingElement.scrollIntoView({ 
+  //       behavior: 'smooth',
+  //       block: 'start'
+  //     });
+  //   }
+  // };
 
   return (
     <div
-      className="min-h-[100vh] bg-no-repeat bg-center bg-cover sm:px-16 px-5 py-5 sm:py-13 font-inter text-white relative"
+      className="h-[100vh] bg-no-repeat bg-center bg-cover sm:px-16 px-5 py-5 sm:py-13 font-inter text-white relative"
       style={{
-        backgroundImage: "url('/Mountain.png')",
+        backgroundImage: "url('/background.jpg')",
       }}
     >
-      {/* Overlay for background opacity */}
-      <div className="absolute inset-0 bg-black opacity-70 pointer-events-none"></div>
-      <nav className="flex sm:justify-between gap-5 sm:gap-8 relative z-10">
-        <img
-          className="sm:h-14 h-10 w-10 sm:w-14"
-          src="/image.png"
-          alt="Logo"
-        />
-        <div className="flex sm:gap-9 gap-8 items-center">
-          <Link to="https://optimalperformancesystem.com/">Home</Link>
-          <Link to="/chat">Coach</Link>
-          <button 
-            className="btn bg-cCard text-black"
-            onClick={scrollToPricing}
-          >
-            Start Subscription
-          </button>
-        </div>
-      </nav>
-
-      <div className="flex items-center justify-center flex-col text-center pt-60 relative z-10">
-        <h1 className="sm:text-6xl text-5xl font-normal font-league-gothic mt-10">
-          Optimal Performance Coach
+      <div className="flex flex-col items-center justify-center h-full">
+        <h1 className=" font-primary font-medium text-6xl text-center text-black">
+          Design Your Dream Ceremony, <br /> Together.
         </h1>
-        <p
-          className="text-xl font-normal mt-4 pt-5 pb-8"
-          style={{ fontFamily: "montserrat" }}
-        >
-          Experience the one-of-a-kind AI mental performance and wellness coach
-          at your fingertips.
+        <p className="text-xl text-center text-black font-secondary font-normal py-13">
+          Welcome to a modern platform where couples and officiants <br /> unite to
+          create unforgettable wedding ceremonies. Plan, <br /> approve, and perfect
+          every detail with ease and joy.
         </p>
-        <div className=" flex items-center flex-col sm:flex-row gap-4">
-          <button 
-            className="btn text-black bg-cCard font-bold py-3 px-5"
-            onClick={scrollToPricing}
-          >
-            Start Subscription
+        <div className="flex space-x-4">
+          <button className="bg-primary text-white py-2 px-4 rounded-xl text-lg font-semibold font-secondary">
+            Start Planning
           </button>
-          <Link
-            to={"/chat"}
-            className="btn rounded-lg bg-transparent text-white border-cCard py-3 px-5"
-          >
-            Chat with OP Coach Now
+          <Link to={'/signup'} className="bg-transparent border border-primary text-primary py-2 px-4 rounded-xl text-lg font-semibold font-secondary">
+           Create Free Account
           </Link>
         </div>
+      </div>
+
+
+
+      <div
+        className="absolute left-0 bottom-0 w-full overflow-hidden pointer-events-none"
+        style={{ height: "150px" }}
+      >
+        <svg
+          viewBox="0 0 100 20"
+          width="100%"
+          height="100%"
+          preserveAspectRatio="none"
+          style={{ display: "block" }}
+        >
+          <path
+            d="M0,20 Q50,0 100,20 L100,20 L0,20 Z"
+            fill="rgba(255,255,255,1)"
+          />
+        </svg>
       </div>
     </div>
   );

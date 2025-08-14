@@ -1,9 +1,12 @@
 import { Outlet } from "react-router-dom"
+import Nav from "../Component/Shared/Nav"
 
 const Layout = () => {
   return (
     <div>
-        <Outlet/>
+      
+        <Nav />
+        <Outlet />
     </div>
   )
 }

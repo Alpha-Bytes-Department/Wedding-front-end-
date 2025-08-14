@@ -1,21 +1,13 @@
-import CTA from "./CTA"
-import Faq from "./Faq"
-import Feature from "./Feature"
-import Footer from "./Footer"
 import Header from "./Header"
-import Pricing from "./Pricing"
-import Testimonial from "./Testimonial"
+import Slider from "./Slider"
+
 
 const Home = () => {
   return (
-    <div className="bg-black">      
-        <Header />
-        <Feature />
-        <Pricing />
-        <Testimonial />
-        <Faq/>
-        <CTA />
-        <Footer />
+    <div className=" ">      
+        <Header/>
+        <Slider/>
+        
     </div>
   )
 }
