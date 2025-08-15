@@ -3,10 +3,8 @@ import { Autoplay, Pagination } from "swiper/modules";
 import { useRef } from "react";
 import type { SwiperRef } from "swiper/react";
 
-// Import Swiper styles - these are the correct imports
-import "swiper/css";
-import "swiper/css/pagination";
-import "swiper/css/autoplay";
+// Import Swiper styles - using bundle CSS
+import "swiper/swiper-bundle.css";
 
 const Slider = () => {
   const swiperRef = useRef<SwiperRef>(null);
@@ -44,8 +42,6 @@ const Slider = () => {
 
       <div className="flex items-center justify-center" id="slidercontainer">
         <div className="w-full max-w-7xl mx-auto px-4 lg:px-8 ">
-         
-
           <Swiper
             ref={swiperRef}
             modules={[Autoplay, Pagination]}

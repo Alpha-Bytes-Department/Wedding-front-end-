@@ -1,4 +1,5 @@
 import Header from "./Header"
+import Officiant from "./Officiant"
 import Slider from "./Slider"
 
 
@@ -7,6 +8,7 @@ const Home = () => {
     <div className=" ">      
         <Header/>
         <Slider/>
+        <Officiant/>
         
     </div>
   )
