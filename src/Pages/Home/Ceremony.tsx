@@ -22,10 +22,7 @@ const Ceremony = () => {
             className="w-[480px] h-[603px] object-cover -top-5 left-5 absolute z-50"
           />
         </div>
-        {/* Second Layer, frames under the first layer */}
-        {/* Second Layer, image above first layer, frames below */}
-        {/* Frame divs: z-20 (below first layer z-30), image: z-60 (above first layer z-50) */}
-        {/* Frame divs */}
+       
         <div className="absolute top-80 left-44 w-[480px] h-[603px] pointer-events-none">
           <div className="w-[350px] border-2 top-0 left-0 border-black h-[435px] absolute z-20"></div>
           <div className="w-[350px] border-2 -top-10 left-10 border-amber-500 h-[435px] absolute z-20"></div>
@@ -105,30 +102,38 @@ const Ceremony = () => {
               </p>
             </div>
           </div>
+          {buttons()}
         </div>
-        <div className="flex items-center md:flex-row flex-col mx-auto gap-4">
-          <button className="bg-primary text-white py-2 px-4 rounded-xl text-lg font-semibold font-secondary">
-            Start Planning
-          </button>
-          {!user ? (
-            <Link
-              to={"/signup"}
-              className="bg-transparent border border-black text-black-web  py-2 px-4 rounded-xl text-lg font-semibold font-secondary"
-            >
-              Create Free Account
-            </Link>
-          ) : (
-            <Link
-              to={"/officiants"}
-              className="bg-transparent border border-black text-black-web  py-2 px-4 rounded-xl text-lg font-semibold font-secondary"
-            >
-              Contact Officiants
-            </Link>
-          )}
-        </div>
+        
       </div>
     </div>
   );
 };
 
-export default Ceremony;
+const buttons=()=>{
+  const user=false
+  return (
+    <div className="flex items-center md:flex-row flex-col  gap-4">
+      <button className="bg-primary text-white py-2 px-4 rounded-xl text-lg font-semibold font-secondary">
+        Start Planning
+      </button>
+      {!user ? (
+        <Link
+          to={"/signup"}
+          className="bg-transparent border border-black text-black-web  py-2 px-4 rounded-xl text-lg font-semibold font-secondary"
+        >
+          Create Free Account
+        </Link>
+      ) : (
+        <Link
+          to={"/officiants"}
+          className="bg-transparent border border-black text-black-web  py-2 px-4 rounded-xl text-lg font-semibold font-secondary"
+        >
+          Contact Officiants
+        </Link>
+      )}
+    </div>
+  );
+}
+
+export  { buttons , Ceremony};

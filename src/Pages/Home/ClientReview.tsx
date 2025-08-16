@@ -1,0 +1,168 @@
+import { useRef, useState, useEffect } from "react";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Navigation, Pagination, Mousewheel, Autoplay } from "swiper/modules";
+import "swiper/css";
+import "swiper/css/navigation";
+import "swiper/css/pagination";
+import "swiper/css/mousewheel";
+import { BsFillStarFill } from "react-icons/bs";
+import { FaArrowDown, FaArrowUp } from "react-icons/fa6";
+
+const ClientReview = () => {
+  const [screenSize, setScreenSize] = useState<"sm" | "md" | "lg" | "xl">("lg");
+
+  useEffect(() => {
+    const handleResize = () => {
+      const width = window.innerWidth;
+      if (width < 640) setScreenSize("sm");
+      else if (width < 768) setScreenSize("md");
+      else if (width < 1024) setScreenSize("lg");
+      else setScreenSize("xl");
+    };
+
+    handleResize(); // Set initial size
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  const getSwiperConfig = () => {
+    switch (screenSize) {
+      case "sm":
+        return { slidesPerView: 1, spaceBetween: 40, iconSize: 14 };
+      case "md":
+        return { slidesPerView: 1, spaceBetween: 60, iconSize: 16 };
+      case "lg":
+        return { slidesPerView: 1.5, spaceBetween: 80, iconSize: 18 };
+      case "xl":
+      default:
+        return { slidesPerView: 2, spaceBetween: 120, iconSize: 20 };
+    }
+  };
+  const reviews = [
+    {
+      name: "Alice Smith",
+      review: "Amazing service! Our wedding was perfect thanks to the team.",
+      rating: 5,
+    },
+    {
+      name: "John Doe",
+      review:
+        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed dapibus placerat velit. Donec in porttitor elit. Suspendisse accumsan iaculis tincidunt.",
+      rating: 4,
+      avatar: "/avatar2.png",
+    },
+    {
+      name: "Emily Johnson",
+      review: "They made our special day unforgettable. Thank you!",
+      rating: 5,
+    },
+  ];
+
+  // Refs for navigation buttons
+  const upBtnRef = useRef<HTMLButtonElement>(null);
+  const downBtnRef = useRef<HTMLButtonElement>(null);
+
+  return (
+    <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 sm:gap-6 md:gap-8 lg:gap-10 justify-around items-center px-4 sm:px-6 md:px-8 lg:px-0">
+      <div className="bg-gradient-to-b from-[#fcf8ec] to-[#fdedb8] my-4 sm:my-6 md:my-8 lg:my-10 xl:my-20 ml-0 sm:ml-2 md:ml-4 lg:ml-8 xl:ml-20 py-6 sm:py-8 md:py-12 lg:py-16 xl:py-40 flex justify-center">
+        <div className="bg-white rounded-sm w-full max-w-xs sm:max-w-sm md:max-w-md p-4 sm:p-6 md:p-8 lg:p-10 xl:p-14 shadow-xl">
+          <img
+            src="/flower.png"
+            alt="Flower"
+            className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16"
+          />
+          <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-[55px] font-primary font-bold text-start leading-tight">
+            Client <span className="text-primary">Review</span> to our service
+          </h1>
+          <p className="text-sm sm:text-base md:text-lg xl:text-xl text-start font-normal font-secondary text-black-web mt-2 sm:mt-3 md:mt-4">
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Quasi
+            eveniet rerum nostrum ex dolore similique repudiandae vitae
+            blanditiis quidem corrupti.
+          </p>
+        </div>
+      </div>
+      <div className="relative px-4 sm:px-6 md:px-8 lg:px-0">
+        <Swiper
+          direction="vertical"
+          slidesPerView={getSwiperConfig().slidesPerView}
+          spaceBetween={getSwiperConfig().spaceBetween}
+          loop={reviews.length > 1}
+          mousewheel={true}
+          autoplay={{
+            delay: 2500,
+            disableOnInteraction: false,
+          }}
+          navigation={{
+            prevEl: upBtnRef.current,
+            nextEl: downBtnRef.current,
+          }}
+          onInit={(swiper) => {
+            // @ts-ignore
+            swiper.params.navigation.prevEl = upBtnRef.current;
+            // @ts-ignore
+            swiper.params.navigation.nextEl = downBtnRef.current;
+            swiper.navigation.init();
+            swiper.navigation.update();
+          }}
+          modules={[Pagination, Mousewheel, Autoplay, Navigation]}
+          className="h-[300px] sm:h-[500px] md:h-[550px] lg:h-[600px]"
+        >
+          {reviews.map((item, idx) => (
+            <SwiperSlide key={idx}>
+              <div className="flex flex-col items-start bg-white py-3 sm:py-4 md:py-5 px-2 sm:px-3 gap-2 sm:gap-3 md:gap-4 w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-sm shadow-xl mx-auto xl:ml-40">
+                <p className="text-base sm:text-lg font-secondary mb-1 sm:mb-2">
+                  "{item.name}"
+                </p>
+                <div className="flex gap-1">
+                  {Array.from({ length: item.rating }).map((_, i) => (
+                    <BsFillStarFill
+                      key={i}
+                      className="text-yellow-600 text-sm sm:text-base"
+                    />
+                  ))}
+                </div>
+                <div className="border-t w-full border-[#BEBEBE]" />
+                <span className="font-normal text-text text-xs sm:text-sm leading-relaxed">
+                  {item.review}
+                </span>
+              </div>
+            </SwiperSlide>
+          ))}
+        </Swiper>
+        {/* Up/Down Buttons */}
+        <div className="absolute right-1 sm:right-2 -bottom-6 sm:-bottom-8 md:-bottom-10 -left-16 sm:-left-20 md:-left-32 w-8 sm:w-10 md:w-13 flex flex-col gap-1 sm:gap-2 z-10">
+          <button
+            ref={upBtnRef}
+            className="bg-[#D4AF37] w-8 h-8 sm:w-10 sm:h-10 md:w-13 md:h-13 rounded-full shadow p-1 sm:p-2 hover:bg-primary transition flex justify-center items-center"
+            aria-label="Previous"
+          >
+            <FaArrowUp size={getSwiperConfig().iconSize} />
+          </button>
+          <button
+            ref={downBtnRef}
+            className="bg-[#D4AF37] w-8 h-8 sm:w-10 sm:h-10 md:w-13 md:h-13 mt-4 sm:mt-6 md:mt-10 rounded-full shadow p-1 sm:p-2 hover:bg-primary transition flex justify-center items-center"
+            aria-label="Next"
+          >
+            <FaArrowDown size={getSwiperConfig().iconSize} />
+          </button>
+        </div>
+        <div className="absolute w-full top-[70%] sm:top-[75%] md:top-[80%] lg:top-[82%] hidden lg:block">
+          <img
+            src="/bride2.jpg"
+            className="w-32 sm:w-40 md:w-48 lg:w-60 absolute bottom-[150px] sm:bottom-[180px] md:bottom-[220px] lg:bottom-[248px] -left-4 sm:-left-6 md:-left-8 lg:-left-10 shadow-xl"
+            alt=""
+          />
+          <img
+            src="/bridedress.jpg"
+            className="w-32 sm:w-40 md:w-48 lg:w-60 absolute -bottom-32 sm:-bottom-40 md:-bottom-48 lg:-bottom-56 -left-4 sm:-left-6 md:-left-8 lg:-left-10 shadow-xl"
+            alt=""
+          />
+          <div className="w-48 sm:w-56 md:w-64 lg:w-72 border-2 sm:border-3 left-24 sm:left-32 md:left-36 lg:left-40 -top-16 sm:-top-20 md:-top-24 lg:-top-28 border-[#fac38dad] absolute -z-10 h-32 sm:h-40 md:h-48 lg:h-60"></div>
+          <div className="w-48 sm:w-56 md:w-64 lg:w-72 border-2 sm:border-3 left-24 sm:left-32 md:left-36 lg:left-40 bottom-48 sm:bottom-60 md:bottom-72 lg:bottom-80 border-[#fac38dad] absolute -z-10 h-32 sm:h-40 md:h-48 lg:h-60"></div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default ClientReview;
