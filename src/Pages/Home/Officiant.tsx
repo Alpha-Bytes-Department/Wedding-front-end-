@@ -82,7 +82,7 @@ const Officiant = () => {
             </p>
 
             <div className="mt-auto text-primary flex items-center justify-center gap-2 font-secondary font-bold text-[16px] underline">
-              Book Now{" "}
+              VIEW MORE{" "}
               <FaArrowRight
                 size={18}
                 className="group-hover:translate-x-3 transition-transform duration-300"
