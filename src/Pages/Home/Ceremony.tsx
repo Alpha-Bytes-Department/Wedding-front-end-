@@ -3,7 +3,7 @@ import { HiOutlineDownload } from "react-icons/hi";
 import { Link } from "react-router-dom";
 
 const Ceremony = () => {
-  const user = false;
+
 
   return (
     <div className="xl:px-30 bgp bg-[#f6efd7] md:py-30 py-16 px-5 md:px-10 grid grid-cols-1 lg:grid-cols-2 gap-10 justify-around">

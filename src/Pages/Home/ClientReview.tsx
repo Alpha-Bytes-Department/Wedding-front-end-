@@ -1,10 +1,7 @@
 import { useRef, useState, useEffect } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination, Mousewheel, Autoplay } from "swiper/modules";
-import "swiper/css";
-import "swiper/css/navigation";
-import "swiper/css/pagination";
-import "swiper/css/mousewheel";
+import "swiper/swiper-bundle.css";
 import { BsFillStarFill } from "react-icons/bs";
 import { FaArrowDown, FaArrowUp } from "react-icons/fa6";
 

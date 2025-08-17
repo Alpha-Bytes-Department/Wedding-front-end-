@@ -1,5 +1,6 @@
 import { Ceremony,buttons } from "./Ceremony"
 import ClientReview from "./ClientReview"
+import ContactForm from "./ContactForm"
 import Header from "./Header"
 import Officiant from "./Officiant"
 import Slider from "./Slider"
@@ -23,9 +24,10 @@ const Home = () => {
             of with ease.
           </p> {buttons()}
         </div>
-        <img src="/shake.jpg" alt="" className="md:w-1/3 rounded-lg" />
+        <img src="/shake.jpg" alt="" className="md:w-1/3 rounded-md" />
 
       </div>
+      <ContactForm />
     </div>
   );
 }
