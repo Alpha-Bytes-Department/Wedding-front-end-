@@ -60,7 +60,7 @@ const Officiant = () => {
           </p>
         </div>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-14 mt-8 mb-10 lg:mb-20 justify-between">
+      <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-4 gap-14 mt-8 mb-10 lg:mb-20 justify-between">
         {officiants.map((officiant) => (
           <div
             key={officiant.id}
@@ -91,6 +91,7 @@ const Officiant = () => {
           </div>
         ))}
       </div>
+     
     </div>
   );
 }

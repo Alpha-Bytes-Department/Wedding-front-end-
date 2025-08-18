@@ -1,5 +1,11 @@
 import { Link, NavLink } from "react-router-dom";
 import { useState } from "react";
+import { FaUserAlt } from "react-icons/fa";
+import { BsBellFill } from "react-icons/bs";
+
+interface User {
+  profileImage?: string;
+}
 
 const Nav = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -8,12 +14,13 @@ const Nav = () => {
     setIsMenuOpen(!isMenuOpen);
   };
 
+  const user: User | null = {profileImage:"hwlohsoadhf"}; // Changed from false to null with proper typing
+
   return (
-    <div className="bg-transparent flex justify-between items-center pt-5 md:pt-13 px-4 md:px-20 absolute top-0 left-0 right-0 z-50">
-      <Link to="/" className="flex items-center gap-3 flex-col">
+    <div className="bg-transparent flex justify-between items-center pt-3 sm:pt-4 md:pt-5 lg:pt-8 xl:pt-13 px-3 sm:px-4 md:px-6 lg:px-12 xl:px-20 absolute top-0 left-0 right-0 z-50">
+      <Link to="/" className="flex items-center gap-2 sm:gap-3 flex-col">
         <svg
-          width="54"
-          height="46"
+          className="w-10 h-8 sm:w-12 sm:h-10 md:w-14 md:h-12 lg:w-16 lg:h-14 xl:w-[54px] xl:h-[46px]"
           viewBox="0 0 54 46"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
@@ -24,8 +31,7 @@ const Nav = () => {
           />
         </svg>
         <svg
-          width="110"
-          height="33"
+          className="w-20 h-6 sm:w-24 sm:h-7 md:w-28 md:h-8 lg:w-32 lg:h-9 xl:w-[110px] xl:h-[33px]"
           viewBox="0 0 110 33"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
@@ -118,83 +124,127 @@ const Nav = () => {
       </Link>
 
       {/* Desktop Navigation */}
-      <nav className="hidden md:flex items-center gap-8">
+      <nav className="hidden lg:flex items-center gap-6 xl:gap-8">
         <NavLink
           to="/"
           className={({ isActive }) =>
             isActive
-              ? "text-black font-secondary font-bold text-lg"
-              : "text-black hover:text-[#D4AF37] transition-colors duration-300 font-secondary font-normal"
+              ? "text-black font-secondary font-bold text-base lg:text-lg"
+              : "text-black hover:text-[#D4AF37] transition-colors duration-300 font-secondary font-normal text-base lg:text-lg"
           }
         >
           Home
         </NavLink>
         <NavLink
-          to="/about"
+          to="/feature"
           className={({ isActive }) =>
             isActive
-              ? "text-black font-secondary font-bold text-lg"
-              : "text-black hover:text-[#D4AF37] transition-colors duration-300 font-secondary font-normal"
+              ? "text-black font-secondary font-bold text-base lg:text-lg"
+              : "text-black hover:text-[#D4AF37] transition-colors duration-300 font-secondary font-normal text-base lg:text-lg"
           }
         >
-          About
+          Feature
         </NavLink>
         <NavLink
-          to="/services"
+          to="/officiant"
           className={({ isActive }) =>
             isActive
-              ? "text-black font-secondary font-bold text-lg"
-              : "text-black hover:text-[#D4AF37] transition-colors duration-300 font-secondary font-normal"
+              ? "text-black font-secondary font-bold text-base lg:text-lg"
+              : "text-black hover:text-[#D4AF37] transition-colors duration-300 font-secondary font-normal text-base lg:text-lg"
           }
         >
-          Services
+          Officiant
         </NavLink>
         <NavLink
           to="/contact"
           className={({ isActive }) =>
             isActive
-              ? "text-black font-secondary font-bold text-lg"
-              : "text-black hover:text-[#D4AF37] transition-colors duration-300 font-secondary font-normal"
+              ? "text-black font-secondary font-bold text-base lg:text-lg"
+              : "text-black hover:text-[#D4AF37] transition-colors duration-300 font-secondary font-normal text-base lg:text-lg"
           }
         >
-          Contact
+          Ceremony
+        </NavLink>
+        <NavLink
+          to="/contact"
+          className={({ isActive }) =>
+            isActive
+              ? "text-black font-secondary font-bold text-base lg:text-lg"
+              : "text-black hover:text-[#D4AF37] transition-colors duration-300 font-secondary font-normal text-base lg:text-lg"
+          }
+        >
+          Testimonials
         </NavLink>
       </nav>
 
-      {/* Desktop Auth Buttons */}
-      <div className="hidden md:flex items-center gap-5">
-        <Link to="/login">
-          <div className="rounded-xl px-5 py-2 border border-[#D4AF37] hover:bg-[#D4AF37] hover:text-[#000000] text-[#D4AF37] transition-all duration-300 font-secondary font-medium">
-            Sign in
-          </div>
-        </Link>
-        <Link
-          to="/signup"
-          className="rounded-xl px-5 py-2 border hover:text-[#D4AF37] border-[#D4AF37] hover:bg-transparent  text-[#000000] bg-[#D4AF37] transition-all duration-300 font-secondary font-medium"
-        >
-          Join
-        </Link>
-      </div>
+      {/* Desktop User Menu */}
+      {!user ? (
+        <div className="hidden lg:flex items-center gap-3 xl:gap-5">
+          <Link to="/login">
+            <div className="rounded-xl px-3 py-2 xl:px-5 xl:py-2 border border-[#D4AF37] hover:bg-[#D4AF37] hover:text-[#000000] text-[#D4AF37] transition-all duration-300 font-secondary font-medium text-sm lg:text-base">
+              Sign in
+            </div>
+          </Link>
+          <Link
+            to="/signup"
+            className="rounded-xl px-3 py-2 xl:px-5 xl:py-2 border hover:text-[#D4AF37] border-[#D4AF37] hover:bg-transparent  text-[#000000] bg-[#D4AF37] transition-all duration-300 font-secondary font-medium text-sm lg:text-base"
+          >
+            Join
+          </Link>
+        </div>
+      ) : (
+        <div className="hidden lg:flex items-center">
+          {(user as User).profileImage ? (
+            <div className="flex gap-3 lg:gap-4 items-center relative">
+              <div className="relative">
+                <BsBellFill size={20} className="lg:w-6 lg:h-6" />
+                <span className="absolute -top-2 -right-2 bg-[#D4AF37] text-white text-xs rounded-full px-1.5 py-0.5 flex items-center justify-center min-w-[18px] h-[18px]">
+                  3
+                </span>
+              </div>
+              <div className="rounded-full p-2 lg:p-3 border-2 border-[#D4AF37]">
+                <img
+                  src={(user as User).profileImage}
+                  alt="Profile"
+                  className="w-8 h-8 lg:w-10 lg:h-10 rounded-full"
+                />
+              </div>
+            </div>
+          ) : (
+            <div className="flex gap-3 lg:gap-4 items-center relative">
+              <div className="relative">
+                <BsBellFill size={20} className="lg:w-6 lg:h-6" />
+                <span className="absolute -top-2 -right-2 bg-[#D4AF37] text-white text-xs rounded-full px-1.5 py-0.5 flex items-center justify-center min-w-[18px] h-[18px]">
+                  3
+                </span>
+              </div>
+              <div className="rounded-full p-2 lg:p-3 border-2 border-[#D4AF37]">
+                <FaUserAlt size={20} className="lg:w-7 lg:h-7" />
+              </div>
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Mobile Hamburger Button */}
       <button
-        className="md:hidden flex flex-col justify-center items-center w-8 h-8 space-y-1 z-30"
+        className="lg:hidden flex flex-col justify-center items-center w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 space-y-1 z-30"
         onClick={toggleMenu}
         aria-label="Toggle menu"
       >
         <span
-          className={`w-6 h-0.5 bg-black transition-all duration-300 ${
-            isMenuOpen ? "rotate-45 translate-y-2" : ""
+          className={`w-4 sm:w-5 md:w-6 h-0.5 bg-black transition-all duration-300 ${
+            isMenuOpen ? "rotate-45 translate-y-1.5 sm:translate-y-2" : ""
           }`}
         ></span>
         <span
-          className={`w-6 h-0.5 bg-black transition-all duration-300 ${
+          className={`w-4 sm:w-5 md:w-6 h-0.5 bg-black transition-all duration-300 ${
             isMenuOpen ? "opacity-0" : ""
           }`}
         ></span>
         <span
-          className={`w-6 h-0.5 bg-black transition-all duration-300 ${
-            isMenuOpen ? "-rotate-45 -translate-y-2" : ""
+          className={`w-4 sm:w-5 md:w-6 h-0.5 bg-black transition-all duration-300 ${
+            isMenuOpen ? "-rotate-45 -translate-y-1.5 sm:-translate-y-2" : ""
           }`}
         ></span>
       </button>
@@ -202,78 +252,123 @@ const Nav = () => {
       {/* Mobile Menu Overlay */}
       {isMenuOpen && (
         <div
-          className="md:hidden fixed inset-0 bg-black bg-opacity-50 z-20"
+          className="lg:hidden fixed inset-0 bg-black bg-opacity-50 z-20"
           onClick={toggleMenu}
         ></div>
       )}
 
       {/* Mobile Menu */}
       <div
-        className={`md:hidden fixed top-0 right-0 h-full w-80 bg-[#faf7eb] shadow-lg transform transition-transform duration-300 z-30 ${
+        className={`lg:hidden fixed top-0 right-0 h-full w-72 sm:w-80 md:w-96 bg-[#faf7eb] shadow-lg transform transition-transform duration-300 z-30 ${
           isMenuOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >
-        <div className="flex flex-col p-6 pt-20 space-y-6">
+        <div className="flex flex-col p-4 sm:p-6 pt-16 sm:pt-20 space-y-4 sm:space-y-6">
           <NavLink
             to="/"
             className={({ isActive }) =>
               isActive
-                ? "text-black font-secondary font-bold text-xl py-3 border-b border-[#D4AF37]"
-                : "text-black hover:text-[#D4AF37] transition-colors duration-300 font-secondary font-normal text-xl py-3 border-b border-gray-200"
+                ? "text-black font-secondary font-bold text-lg sm:text-xl py-2 sm:py-3 border-b border-[#D4AF37]"
+                : "text-black hover:text-[#D4AF37] transition-colors duration-300 font-secondary font-normal text-lg sm:text-xl py-2 sm:py-3 border-b border-gray-200"
             }
             onClick={toggleMenu}
           >
             Home
           </NavLink>
           <NavLink
-            to="/about"
+            to="/feature"
             className={({ isActive }) =>
               isActive
-                ? "text-black font-secondary font-bold text-xl py-3 border-b border-[#D4AF37]"
-                : "text-black hover:text-[#D4AF37] transition-colors duration-300 font-secondary font-normal text-xl py-3 border-b border-gray-200"
+                ? "text-black font-secondary font-bold text-lg sm:text-xl py-2 sm:py-3 border-b border-[#D4AF37]"
+                : "text-black hover:text-[#D4AF37] transition-colors duration-300 font-secondary font-normal text-lg sm:text-xl py-2 sm:py-3 border-b border-gray-200"
             }
             onClick={toggleMenu}
           >
-            About
+            Feature
+          </NavLink>
+          <NavLink
+            to="/officiant"
+            className={({ isActive }) =>
+              isActive
+                ? "text-black font-secondary font-bold text-lg sm:text-xl py-2 sm:py-3 border-b border-[#D4AF37]"
+                : "text-black hover:text-[#D4AF37] transition-colors duration-300 font-secondary font-normal text-lg sm:text-xl py-2 sm:py-3 border-b border-gray-200"
+            }
+            onClick={toggleMenu}
+          >
+            Officiants
           </NavLink>
           <NavLink
             to="/services"
             className={({ isActive }) =>
               isActive
-                ? "text-black font-secondary font-bold text-xl py-3 border-b border-[#D4AF37]"
-                : "text-black hover:text-[#D4AF37] transition-colors duration-300 font-secondary font-normal text-xl py-3 border-b border-gray-200"
+                ? "text-black font-secondary font-bold text-lg sm:text-xl py-2 sm:py-3 border-b border-[#D4AF37]"
+                : "text-black hover:text-[#D4AF37] transition-colors duration-300 font-secondary font-normal text-lg sm:text-xl py-2 sm:py-3 border-b border-gray-200"
             }
             onClick={toggleMenu}
           >
-            Services
+            Ceremony
           </NavLink>
           <NavLink
             to="/contact"
             className={({ isActive }) =>
               isActive
-                ? "text-black font-secondary font-bold text-xl py-3 border-b border-[#D4AF37]"
-                : "text-black hover:text-[#D4AF37] transition-colors duration-300 font-secondary font-normal text-xl py-3 border-b border-gray-200"
+                ? "text-black font-secondary font-bold text-lg sm:text-xl py-2 sm:py-3 border-b border-[#D4AF37]"
+                : "text-black hover:text-[#D4AF37] transition-colors duration-300 font-secondary font-normal text-lg sm:text-xl py-2 sm:py-3 border-b border-gray-200"
             }
             onClick={toggleMenu}
           >
-            Contact
+            Testimonials
           </NavLink>
 
           {/* Mobile Auth Buttons */}
-          <div className="flex flex-col gap-4 mt-8">
-            <Link to="/login" onClick={toggleMenu}>
-              <div className="w-full text-center rounded-xl px-5 py-3 border border-[#D4AF37] hover:bg-[#D4AF37] hover:text-[#000000] text-[#D4AF37] transition-all duration-300 font-secondary font-medium">
-                Sign in
-              </div>
-            </Link>
-            <Link
-              to="/signup"
-              className="w-full text-center rounded-xl px-5 py-3 border hover:text-[#D4AF37] border-[#D4AF37] hover:bg-transparent  text-[#000000] bg-[#D4AF37] transition-all duration-300 font-secondary font-medium"
-              onClick={toggleMenu}
-            >
-              Join
-            </Link>
-          </div>
+          {!user ? (
+            <div className="flex flex-col gap-3 sm:gap-4 mt-6 sm:mt-8">
+              <Link to="/login" onClick={toggleMenu}>
+                <div className="w-full text-center rounded-xl px-4 sm:px-5 py-2.5 sm:py-3 border border-[#D4AF37] hover:bg-[#D4AF37] hover:text-[#000000] text-[#D4AF37] transition-all duration-300 font-secondary font-medium text-sm sm:text-base">
+                  Sign in
+                </div>
+              </Link>
+              <Link
+                to="/signup"
+                className="w-full text-center rounded-xl px-4 sm:px-5 py-2.5 sm:py-3 border hover:text-[#D4AF37] border-[#D4AF37] hover:bg-transparent  text-[#000000] bg-[#D4AF37] transition-all duration-300 font-secondary font-medium text-sm sm:text-base"
+                onClick={toggleMenu}
+              >
+                Join
+              </Link>
+            </div>
+          ) : (
+            <div className="mt-6 sm:mt-8 flex items-center justify-center">
+              {(user as User).profileImage ? (
+                <div className="flex gap-3 lg:gap-4 items-center relative">
+                  <div className="relative">
+                    <BsBellFill size={20} className="lg:w-6 lg:h-6" />
+                    <span className="absolute -top-2 -right-2 bg-[#D4AF37] text-white text-xs rounded-full px-1.5 py-0.5 flex items-center justify-center min-w-[18px] h-[18px]">
+                      3
+                    </span>
+                  </div>
+                  <div className="rounded-full p-2 lg:p-3 border-2 border-[#D4AF37]">
+                    <img
+                      src={(user as User).profileImage}
+                      alt="Profile"
+                      className="w-8 h-8 lg:w-10 lg:h-10 rounded-full"
+                    />
+                  </div>
+                </div>
+              ) : (
+                <div className="flex gap-3 sm:gap-4 items-center">
+                  <div className="relative">
+                    <BsBellFill size={20} className="sm:w-6 sm:h-6" />
+                    <span className="absolute -top-2 -right-2 bg-[#D4AF37] text-white text-xs rounded-full px-1.5 py-0.5 flex items-center justify-center min-w-[18px] h-[18px]">
+                      3
+                    </span>
+                  </div>
+                  <div className="rounded-full p-2.5 sm:p-3 border-2 border-[#D4AF37]">
+                    <FaUserAlt size={22} className="sm:w-7 sm:h-7" />
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </div>
     </div>

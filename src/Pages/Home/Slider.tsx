@@ -3,7 +3,6 @@ import { Autoplay, Pagination } from "swiper/modules";
 import { useRef } from "react";
 import type { SwiperRef } from "swiper/react";
 
-// Import Swiper styles - using bundle CSS
 import "swiper/swiper-bundle.css";
 
 const Slider = () => {
@@ -27,15 +26,10 @@ const Slider = () => {
     },
   ];
 
-  // Control functions for autoplay
-  //   const startAutoplay = () => swiperRef.current?.swiper.autoplay.start();
-  //   const stopAutoplay = () => swiperRef.current?.swiper.autoplay.stop();
-  //   const pauseAutoplay = () => swiperRef.current?.swiper.autoplay.pause();
-  //   const resumeAutoplay = () => swiperRef.current?.swiper.autoplay.resume();
 
   return (
     <div className="min-h-screen bg-white py-16">
-      <h1 className="text-3xl font-bold md:text-[55px] font-primary text-center mb-16">
+      <h1 className="text-2xl sm:text-3xl font-bold md:text-[55px] px-5  font-primary text-center mb-16">
         What We Serve To Plan Your <br />
         <span className="text-primary">Best Wedding</span>
       </h1>
@@ -43,6 +37,7 @@ const Slider = () => {
       <div className="flex items-center justify-center" id="slidercontainer">
         <div className="w-full max-w-7xl mx-auto px-4 lg:px-8 ">
           <Swiper
+            
             ref={swiperRef}
             modules={[Autoplay, Pagination]}
             spaceBetween={50}

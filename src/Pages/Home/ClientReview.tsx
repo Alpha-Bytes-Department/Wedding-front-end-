@@ -29,7 +29,7 @@ const ClientReview = () => {
       case "md":
         return { slidesPerView: 1, spaceBetween: 60, iconSize: 16 };
       case "lg":
-        return { slidesPerView: 1.5, spaceBetween: 80, iconSize: 18 };
+        return { slidesPerView: 1, spaceBetween: 80, iconSize: 18 };
       case "xl":
       default:
         return { slidesPerView: 2, spaceBetween: 120, iconSize: 20 };
@@ -76,9 +76,9 @@ const ClientReview = () => {
             eveniet rerum nostrum ex dolore similique repudiandae vitae
             blanditiis quidem corrupti.
           </p>
-        </div>
+        </div>  
       </div>
-      <div className="relative px-4 sm:px-6 md:px-8 lg:px-0">
+      <div className="relative max-w-xl mx-auto px-4 sm:px-6 md:px-8 lg:px-0">
         <Swiper
           direction="vertical"
           slidesPerView={getSwiperConfig().slidesPerView}
@@ -102,7 +102,7 @@ const ClientReview = () => {
             swiper.navigation.update();
           }}
           modules={[Pagination, Mousewheel, Autoplay, Navigation]}
-          className="h-[300px] sm:h-[500px] md:h-[550px] lg:h-[600px]"
+          className="h-[300px] sm:h-[500px]  lg:h-[600px]"
         >
           {reviews.map((item, idx) => (
             <SwiperSlide key={idx}>
@@ -127,7 +127,7 @@ const ClientReview = () => {
           ))}
         </Swiper>
         {/* Up/Down Buttons */}
-        <div className="absolute right-1 sm:right-2 -bottom-6 sm:-bottom-8 md:-bottom-10 -left-16 sm:-left-20 md:-left-32 w-8 sm:w-10 md:w-13 flex flex-col gap-1 sm:gap-2 z-10">
+        <div className="absolute sm:right-2 bottom-6 sm:-bottom-8 md:bottom-10 left-0 xl:pl-6 2xl:-left-80 sm:-left-20 md:-left-32 w-8 sm:w-10 md:w-13 flex flex-col gap-1 sm:gap-2 z-10">
           <button
             ref={upBtnRef}
             className="bg-[#D4AF37] w-8 h-8 sm:w-10 sm:h-10 md:w-13 md:h-13 rounded-full shadow p-1 sm:p-2 hover:bg-primary transition flex justify-center items-center"
@@ -143,19 +143,19 @@ const ClientReview = () => {
             <FaArrowDown size={getSwiperConfig().iconSize} />
           </button>
         </div>
-        <div className="absolute w-full top-[70%] sm:top-[75%] md:top-[80%] lg:top-[82%] hidden lg:block">
+        <div className="absolute w-full top-[70%] sm:top-[75%] md:top-[80%] 2xl:-left-48 lg:top-[82%] hidden lg:block ">
           <img
             src="/bride2.jpg"
-            className="w-32 sm:w-40 md:w-48 lg:w-60 absolute bottom-[150px] sm:bottom-[180px] md:bottom-[220px] lg:bottom-[248px] -left-4 sm:-left-6 md:-left-8 lg:-left-10 shadow-xl"
+            className="w-32 sm:w-40 md:w-48 lg:w-52 xl:w-60 absolute bottom-[150px] sm:bottom-[180px] md:bottom-[220px] lg:bottom-[180px] xl:bottom-[248px] -left-4 sm:-left-6 md:-left-8 lg:-left-4 xl:-left-10 shadow-xl"
             alt=""
           />
           <img
             src="/bridedress.jpg"
-            className="w-32 sm:w-40 md:w-48 lg:w-60 absolute -bottom-32 sm:-bottom-40 md:-bottom-48 lg:-bottom-56 -left-4 sm:-left-6 md:-left-8 lg:-left-10 shadow-xl"
+            className="w-32 sm:w-40 md:w-48 lg:w-52 xl:w-60 absolute -bottom-32 sm:-bottom-40 md:-bottom-48 lg:-bottom-36 xl:-bottom-56 -left-4 sm:-left-6 md:-left-8 lg:-left-4 xl:-left-10 shadow-xl"
             alt=""
           />
-          <div className="w-48 sm:w-56 md:w-64 lg:w-72 border-2 sm:border-3 left-24 sm:left-32 md:left-36 lg:left-40 -top-16 sm:-top-20 md:-top-24 lg:-top-28 border-[#fac38dad] absolute -z-10 h-32 sm:h-40 md:h-48 lg:h-60"></div>
-          <div className="w-48 sm:w-56 md:w-64 lg:w-72 border-2 sm:border-3 left-24 sm:left-32 md:left-36 lg:left-40 bottom-48 sm:bottom-60 md:bottom-72 lg:bottom-80 border-[#fac38dad] absolute -z-10 h-32 sm:h-40 md:h-48 lg:h-60"></div>
+          <div className="w-48 sm:w-56 md:w-64 lg:w-60 xl:w-72 border-2 sm:border-3 left-24 sm:left-32 md:left-36 lg:left-28 xl:left-40 -top-16 sm:-top-20 md:-top-24 lg:-top-16 xl:-top-28 border-[#fac38dad] absolute -z-10 h-32 sm:h-40 md:h-48 lg:h-44 xl:h-60"></div>
+          <div className="w-48 sm:w-56 md:w-64 lg:w-60 xl:w-72 border-2 sm:border-3 left-24 sm:left-32 md:left-36 lg:left-28 xl:left-40 bottom-48 sm:bottom-60 md:bottom-72 lg:bottom-56 xl:bottom-80 border-[#fac38dad] absolute -z-10 h-32 sm:h-40 md:h-48 lg:h-44 xl:h-60"></div>
         </div>
       </div>
     </div>

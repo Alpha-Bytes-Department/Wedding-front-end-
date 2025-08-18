@@ -9,7 +9,7 @@ const Ceremony = () => {
     <div className="xl:px-30 bgp bg-[#f6efd7] md:py-30 py-16 px-5 md:px-10 grid grid-cols-1 lg:grid-cols-2 gap-10 justify-around">
         <div></div>
       <div
-        className="absolute lg:left-10 2xl:left-54 xl:left-40 min-h-[603px] items-center justify-center lg:flex hidden"
+        className="absolute lg:left-10 2xl:left-54 xl:left-20 min-h-[603px] items-center justify-center lg:flex hidden"
         id="image-container"
       >
         {/* First Layer */}

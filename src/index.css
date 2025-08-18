@@ -94,3 +94,42 @@
   background-color: var(--color-primary);
   opacity: 0.8;
 }
+
+/* Testimonial Carousel Styles */
+.testimonial-swiper {
+  padding: 0 60px;
+  overflow: visible;
+}
+
+.testimonial-swiper .swiper-slide {
+  transition: transform 0.3s ease;
+}
+
+.testimonial-swiper .swiper-slide:hover {
+  transform: translateY(-5px);
+}
+
+/* Speech bubble tail border styles */
+.border-l-7 {
+  border-left-width: 7px;
+}
+
+.border-r-7 {
+  border-right-width: 7px;
+}
+
+.border-t-7 {
+  border-top-width: 7px;
+}
+
+@media (max-width: 768px) {
+  .testimonial-swiper {
+    padding: 0 50px;
+  }
+}
+
+@media (max-width: 640px) {
+  .testimonial-swiper {
+    padding: 0 40px;
+  }
+}
