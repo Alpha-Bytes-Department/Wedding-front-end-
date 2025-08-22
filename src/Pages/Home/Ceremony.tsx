@@ -114,9 +114,9 @@ const buttons=()=>{
   const user=false
   return (
     <div className="flex items-center md:flex-row flex-col  gap-4">
-      <button className="bg-primary text-white py-2 px-4 rounded-xl text-lg font-semibold font-secondary">
+      <Link to={"/dashboard"} className="bg-primary text-white py-2 px-4 rounded-xl text-lg font-semibold font-secondary">
         Start Planning
-      </button>
+      </Link>
       {!user ? (
         <Link
           to={"/signup"}
@@ -126,7 +126,7 @@ const buttons=()=>{
         </Link>
       ) : (
         <Link
-          to={"/officiants"}
+          to={"/officiant"}
           className="bg-transparent border border-black text-black-web  py-2 px-4 rounded-xl text-lg font-semibold font-secondary"
         >
           Contact Officiants

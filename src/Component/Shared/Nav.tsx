@@ -17,7 +17,7 @@ const Nav = () => {
   const user: User | null = {profileImage:"hwlohsoadhf"}; // Changed from false to null with proper typing
 
   return (
-    <div className="bg-transparent flex justify-between items-center pt-3 sm:pt-4 md:pt-5 lg:pt-8 xl:pt-13 px-3 sm:px-4 md:px-6 lg:px-12 xl:px-20 absolute top-0 left-0 right-0 z-50">
+    <div className="bg-transparent flex justify-between items-center pt-3 sm:pt-4 md:pt-5   px-3 sm:px-4 md:px-6 lg:px-12 xl:px-20 absolute top-0 left-0 right-0 z-50">
       <Link to="/" className="flex items-center gap-2 sm:gap-3 flex-col">
         <svg
           className="w-10 h-8 sm:w-12 sm:h-10 md:w-14 md:h-12 lg:w-16 lg:h-14 xl:w-[54px] xl:h-[46px]"

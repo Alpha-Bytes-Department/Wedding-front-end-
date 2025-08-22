@@ -1,15 +1,7 @@
-import { Link } from "react-router-dom";
+import { buttons } from "./Ceremony";
 
 const Header = () => {
-  // const scrollToPricing = () => {
-  //   const pricingElement = document.getElementById('pricing');
-  //   if (pricingElement) {
-  //     pricingElement.scrollIntoView({ 
-  //       behavior: 'smooth',
-  //       block: 'start'
-  //     });
-  //   }
-  // };
+  
 
   return (
     <div
@@ -28,21 +20,11 @@ const Header = () => {
           wedding ceremonies. Plan, <br className="md:block hidden" /> approve,
           and perfect every detail with ease and joy.
         </p>
-        <div className="flex space-x-4 md:flex-row flex-col gap-4 items-center">
-          <button className="bg-primary text-white py-2 px-4 rounded-xl text-lg font-semibold font-secondary">
-            Start Planning
-          </button>
-          <Link
-            to={"/signup"}
-            className="bg-transparent border border-primary text-primary py-2 px-4 rounded-xl text-lg font-semibold font-secondary"
-          >
-            Create Free Account
-          </Link>
-        </div>
+        {buttons()}
       </div>
 
       <div
-        className="absolute left-0 bottom-0 w-full overflow-hidden pointer-events-none"
+        className="absolute left-0 -bottom-[1px] w-full overflow-hidden pointer-events-none"
         style={{ height: "150px" }}
       >
         <svg

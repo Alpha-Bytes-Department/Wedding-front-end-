@@ -7,6 +7,8 @@ import Layout from "../Layout/Layout";
 import Feature from "../Pages/Feature/Feature";
 import Officiant from "../Pages/Officiant/Officiant_Home/Officiant";
 import OfficiantDetail from "../Pages/Officiant/Officiant_Details/OfficiantDetail";
+import DashBoardOutline from "../DashBoardLayout/DashBoardOutline";
+import DashHome from "../Pages/DashBoard/Home/DashHome";
 
 const Router = createBrowserRouter(
   [
@@ -45,6 +47,20 @@ const Router = createBrowserRouter(
       path: "/signup",
       element: <Signup />,
     },
+    {
+      path: "/dashboard",
+      element: <DashBoardOutline />,
+      children:[
+        {
+          path: "/dashboard",
+          element: <DashHome />,
+        }
+      ]
+    },
+    {
+      path: "*",
+      element: <Error />,
+    }
     
 
   ],
