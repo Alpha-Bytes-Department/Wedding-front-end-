@@ -166,7 +166,7 @@ const DashNav = () => {
       {/* Sidebar */}
       <div
         className={`
-        fixed top-0 left-0 h-full bg-white border-r border-gray-200 z-50 transition-all duration-300 ease-in-out
+        fixed top-0 left-0 h-full bg-gray-50 border-r border-gray-200 z-50 transition-all duration-300 ease-in-out
         ${
           isMobileMenuOpen
             ? "translate-x-0"

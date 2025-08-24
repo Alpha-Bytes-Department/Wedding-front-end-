@@ -49,7 +49,7 @@ const  DashHome = () => {
               Notifications
             </h2>
           </div>
-          <div className="space-y-3 py-0 lg:py-4 p-2 max-h-60 overflow-y-auto">
+          <div className="space-y-3  lg:py-4 p-2 max-h-60 py-5 overflow-y-auto">
             <div className="flex items-center space-x-3 p-3  rounded-2xl border border-primary">
               <span className="bg-[#D4AF371A]  text-primary border border-primary px-2 py-1 rounded-2xl text-xs font-secondary font-semibold">
                 Note

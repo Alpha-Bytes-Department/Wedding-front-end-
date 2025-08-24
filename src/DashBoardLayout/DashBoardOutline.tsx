@@ -18,7 +18,7 @@ const DashBoardOutline = () => {
 
   return (
     <SidebarContext.Provider value={{ isCollapsed, setIsCollapsed }}>
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen ">
         <DashNav />
         {/* Main Content Area */}
         <div

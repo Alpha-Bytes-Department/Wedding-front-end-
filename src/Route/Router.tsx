@@ -8,7 +8,10 @@ import Feature from "../Pages/Feature/Feature";
 import Officiant from "../Pages/Officiant/Officiant_Home/Officiant";
 import OfficiantDetail from "../Pages/Officiant/Officiant_Details/OfficiantDetail";
 import DashBoardOutline from "../DashBoardLayout/DashBoardOutline";
+import Ceremony from "../Pages/DashBoard/Ceremony/Ceremony";
 import DashHome from "../Pages/DashBoard/Home/DashHome";
+import Note from "../Pages/DashBoard/Notes/Note";
+import Discussions from "../Pages/DashBoard/Discussion/Discussions";
 
 const Router = createBrowserRouter([
   {
@@ -55,9 +58,14 @@ const Router = createBrowserRouter([
         element: <DashHome />,
       },
       {
-        path: "/dashboard/ceremony",
-        element: <DashHome />,
+        path: "/dashboard/notes",
+        element: <Note />,
       },
+      {
+        path: "/dashboard/discussions",
+        element: <Discussions />,
+      },
+
     ],
   },
   {
