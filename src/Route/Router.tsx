@@ -10,60 +10,59 @@ import OfficiantDetail from "../Pages/Officiant/Officiant_Details/OfficiantDetai
 import DashBoardOutline from "../DashBoardLayout/DashBoardOutline";
 import DashHome from "../Pages/DashBoard/Home/DashHome";
 
-const Router = createBrowserRouter(
-  [
-    {
-      path: "/",
-      element: <Layout />,
-      errorElement: <Error />,
-      children: [
-        {
-          path: "/",
-          element: <Home />,
-        },
-        {
-          path: "/feature",
-          element: <Feature />,
-        },
-        {
-          path: "/feature",
-          element: <Feature />,
-        },
-        {
-          path: "/officiant",
-          element: <Officiant />,
-        },
-        {
-          path: "/officiant/:officiantId",
-          element: <OfficiantDetail />,
-        },
-      ],
-    },
-    {
-      path: "/login",
-      element: <Login />,
-    },
-    {
-      path: "/signup",
-      element: <Signup />,
-    },
-    {
-      path: "/dashboard",
-      element: <DashBoardOutline />,
-      children:[
-        {
-          path: "/dashboard",
-          element: <DashHome />,
-        }
-      ]
-    },
-    {
-      path: "*",
-      element: <Error />,
-    }
-    
-
-  ],
-  
-);
+const Router = createBrowserRouter([
+  {
+    path: "/",
+    element: <Layout />,
+    errorElement: <Error />,
+    children: [
+      {
+        path: "/",
+        element: <Home />,
+      },
+      {
+        path: "/feature",
+        element: <Feature />,
+      },
+      {
+        path: "/feature",
+        element: <Feature />,
+      },
+      {
+        path: "/officiant",
+        element: <Officiant />,
+      },
+      {
+        path: "/officiant/:officiantId",
+        element: <OfficiantDetail />,
+      },
+    ],
+  },
+  {
+    path: "/login",
+    element: <Login />,
+  },
+  {
+    path: "/signup",
+    element: <Signup />,
+  },
+  {
+    path: "/dashboard",
+    element: <DashBoardOutline />,
+    children: [
+      {
+        path: "/dashboard",
+        element: <DashHome />,
+      },
+      {
+        path: "/dashboard/ceremony",
+        element: <DashHome />,
+      },
+    ],
+  },
+  {
+    path: "*",
+    element: <Error />,
+  },
+]);
 export default Router;
