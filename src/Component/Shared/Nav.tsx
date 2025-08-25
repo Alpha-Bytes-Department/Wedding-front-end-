@@ -1,5 +1,5 @@
-import { Link, NavLink } from "react-router-dom";
-import { useState } from "react";
+import { Link, NavLink, useNavigate, useLocation } from "react-router-dom";
+import { useState, useEffect } from "react";
 import { FaUserAlt } from "react-icons/fa";
 import { BsBellFill } from "react-icons/bs";
 
@@ -9,12 +9,47 @@ interface User {
 
 const Nav = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
 
-  const user: User | null = {profileImage:"hwlohsoadhf"}; // Changed from false to null with proper typing
+  const scrollToClientReview = () => {
+    // Check if we're already on the home page
+    if (location.pathname === "/") {
+      // If on home page, just scroll to the element
+      const element = document.getElementById("client-review");
+      if (element) {
+        element.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+        });
+      }
+    } else {
+      // If on a different page, navigate to home with hash
+      navigate("/#client-review");
+    }
+  };
+
+  // Handle scrolling when navigating to home with hash
+  useEffect(() => {
+    if (location.hash === "#client-review") {
+      // Small delay to ensure the component is rendered
+      setTimeout(() => {
+        const element = document.getElementById("client-review");
+        if (element) {
+          element.scrollIntoView({
+            behavior: "smooth",
+            block: "start",
+          });
+        }
+      }, 100);
+    }
+  }, [location]);
+
+  const user: User | null = { profileImage: "hwlohsoadhf" }; // Changed from false to null with proper typing
 
   return (
     <div className="bg-transparent flex justify-between items-center pt-3 sm:pt-4 md:pt-5   px-3 sm:px-4 md:px-6 lg:px-12 xl:px-20 absolute top-0 left-0 right-0 z-50">
@@ -156,7 +191,7 @@ const Nav = () => {
           Officiant
         </NavLink>
         <NavLink
-          to="/"
+          to="/dashboard/ceremony"
           className={({ isActive }) =>
             isActive
               ? "text-black font-secondary font-bold text-base lg:text-lg"
@@ -165,16 +200,12 @@ const Nav = () => {
         >
           Ceremony
         </NavLink>
-        <NavLink
-          to="/"
-          className={({ isActive }) =>
-            isActive
-              ? "text-black font-secondary font-bold text-base lg:text-lg"
-              : "text-black hover:text-[#D4AF37] transition-colors duration-300 font-secondary font-normal text-base lg:text-lg"
-          }
+        <button
+          onClick={scrollToClientReview}
+          className="text-black hover:text-[#D4AF37] transition-colors duration-300 font-secondary font-normal text-base lg:text-lg cursor-pointer"
         >
           Testimonials
-        </NavLink>
+        </button>
       </nav>
 
       {/* Desktop User Menu */}
@@ -298,7 +329,7 @@ const Nav = () => {
             Officiants
           </NavLink>
           <NavLink
-            to="/services"
+            to="/dashboard/ceremony"
             className={({ isActive }) =>
               isActive
                 ? "text-black font-secondary font-bold text-lg sm:text-xl py-2 sm:py-3 border-b border-[#D4AF37]"
@@ -308,17 +339,15 @@ const Nav = () => {
           >
             Ceremony
           </NavLink>
-          <NavLink
-            to="/contact"
-            className={({ isActive }) =>
-              isActive
-                ? "text-black font-secondary font-bold text-lg sm:text-xl py-2 sm:py-3 border-b border-[#D4AF37]"
-                : "text-black hover:text-[#D4AF37] transition-colors duration-300 font-secondary font-normal text-lg sm:text-xl py-2 sm:py-3 border-b border-gray-200"
-            }
-            onClick={toggleMenu}
+          <button
+            onClick={() => {
+              scrollToClientReview();
+              toggleMenu();
+            }}
+            className="text-black hover:text-[#D4AF37] transition-colors duration-300 font-secondary font-normal text-lg sm:text-xl py-2 sm:py-3 border-b border-gray-200 text-left"
           >
             Testimonials
-          </NavLink>
+          </button>
 
           {/* Mobile Auth Buttons */}
           {!user ? (

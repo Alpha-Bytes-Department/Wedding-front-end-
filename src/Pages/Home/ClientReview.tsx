@@ -60,7 +60,10 @@ const ClientReview = () => {
   const downBtnRef = useRef<HTMLButtonElement>(null);
 
   return (
-    <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 sm:gap-6 md:gap-8 lg:gap-10 justify-around items-center px-4 sm:px-6 md:px-8 lg:px-0">
+    <div
+      id="client-review"
+      className="grid grid-cols-1 xl:grid-cols-2 gap-4 sm:gap-6 md:gap-8 lg:gap-10 justify-around items-center px-4 sm:px-6 md:px-8 lg:px-0"
+    >
       <div className="bg-gradient-to-b from-[#fcf8ec] to-[#fdedb8] my-4 sm:my-6 md:my-8 lg:my-10 xl:my-20 ml-0 sm:ml-2 md:ml-4 lg:ml-8 xl:ml-20 py-6 sm:py-8 md:py-12 lg:py-16 xl:py-40 flex justify-center">
         <div className="bg-white rounded-sm w-full max-w-xs sm:max-w-sm md:max-w-md p-4 sm:p-6 md:p-8 lg:p-10 xl:p-14 shadow-xl">
           <img
@@ -76,7 +79,7 @@ const ClientReview = () => {
             eveniet rerum nostrum ex dolore similique repudiandae vitae
             blanditiis quidem corrupti.
           </p>
-        </div>  
+        </div>
       </div>
       <div className="relative max-w-xl mx-auto px-4 sm:px-6 md:px-8 lg:px-0">
         <Swiper
