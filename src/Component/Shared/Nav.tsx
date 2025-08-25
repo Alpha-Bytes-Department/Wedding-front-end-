@@ -156,7 +156,7 @@ const Nav = () => {
           Officiant
         </NavLink>
         <NavLink
-          to="/contact"
+          to="/"
           className={({ isActive }) =>
             isActive
               ? "text-black font-secondary font-bold text-base lg:text-lg"
@@ -166,7 +166,7 @@ const Nav = () => {
           Ceremony
         </NavLink>
         <NavLink
-          to="/contact"
+          to="/"
           className={({ isActive }) =>
             isActive
               ? "text-black font-secondary font-bold text-base lg:text-lg"

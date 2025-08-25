@@ -17,23 +17,21 @@ const DashBoardOutline = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);
 
   return (
-    <SidebarContext.Provider value={{ isCollapsed, setIsCollapsed }}>
-      <div className="min-h-screen ">
-        <DashNav />
-        {/* Main Content Area */}
-        <div
-          className={`
-          transition-all duration-300 ease-in-out
-          ${isCollapsed ? "lg:ml-16" : "lg:ml-64"}
-          lg:pt-16
-        `}
-        >
-          <main className="p-4 lg:p-6">
-            <Outlet />
-          </main>
-        </div>
+    <div className="min-h-screen ">
+      <DashNav isCollapsed={isCollapsed} setIsCollapsed={setIsCollapsed} />
+      {/* Main Content Area */}
+      <div
+        className={`
+        transition-all duration-300 ease-in-out
+        ${isCollapsed ? "lg:ml-16" : "lg:ml-64"}
+        lg:pt-16
+      `}
+      >
+        <main className="p-4 lg:p-6">
+          <Outlet />
+        </main>
       </div>
-    </SidebarContext.Provider>
+    </div>
   );
 };
 

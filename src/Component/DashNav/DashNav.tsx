@@ -13,8 +13,13 @@ import { PiChats, PiClipboardTextBold } from "react-icons/pi";
 import { RiExpandLeftRightLine } from "react-icons/ri";
 import { NavLink, useLocation } from "react-router-dom";
 
-const DashNav = () => {
-  const [isCollapsed, setIsCollapsed] = useState(false);
+const DashNav = ({
+  isCollapsed,
+  setIsCollapsed,
+}: {
+  isCollapsed: boolean;
+  setIsCollapsed: (collapsed: boolean) => void;
+}) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const location = useLocation();
 

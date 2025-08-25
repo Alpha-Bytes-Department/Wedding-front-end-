@@ -12,6 +12,7 @@ import Ceremony from "../Pages/DashBoard/Ceremony/Ceremony";
 import DashHome from "../Pages/DashBoard/Home/DashHome";
 import Note from "../Pages/DashBoard/Notes/Note";
 import Discussions from "../Pages/DashBoard/Discussion/Discussions";
+import Schedule from "../Pages/DashBoard/Schedule/Schedule";
 
 const Router = createBrowserRouter([
   {
@@ -64,6 +65,14 @@ const Router = createBrowserRouter([
       {
         path: "/dashboard/discussions",
         element: <Discussions />,
+      },
+      {
+        path: "/dashboard/ceremony",
+        element: <Ceremony />,
+      },
+      {
+        path: "/dashboard/schedule",
+        element: <Schedule />,
       },
 
     ],
