@@ -106,7 +106,7 @@ const Schedule = () => {
                 ))}
               </select>
             </div>
-            <div className="flex gap-4">
+            <div className="flex gap-4 flex-col md:flex-row">
               <div className="flex-1">
                 <label className="block font-medium mb-1">Date</label>
                 <input

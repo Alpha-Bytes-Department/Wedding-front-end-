@@ -1,90 +1,264 @@
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import type { CeremonyFormData, CeremonyData } from "./types";
+import TabNavigation from "./components/TabNavigation";
+import StepIndicator from "./components/StepIndicator";
+import TypeStep from "./components/TypeStep";
+import VowsStep from "./components/VowsStep";
+import RitualsStep from "./components/RitualsStep";
+import ScheduleStep from "./components/ScheduleStep";
+import ReviewStep from "./components/ReviewStep";
+import NavigationButtons from "./components/NavigationButtons";
+import DraftTab from "./components/DraftTab";
+import MyCeremonyTab from "./components/MyCeremonyTab";
+
 const Ceremony = () => {
-    const notes = [
-        {
-            title: "Garden Vows-Sunset",
-            from: "Dr. Steve",
-            date: "Aug 12,2024",
-            content:
-                "Dear couple, as you prepare for your wedding ceremony, remember that this day is a celebration of your unique journey together. The vows you exchange will be a reflection of your love, commitment, and shared dreams. Take a moment to cherish the presence of your loved ones and the promises you make to each other. May your ceremony be filled with joy, meaning, and memories that last a lifetime.",
-        },
-        {
-            title: "Beachside Bliss",
-            from: "Officiant Jane",
-            date: "Aug 10,2024",
-            content:
-                "As you stand on the sandy shores, ready to exchange your vows, remember that this moment is a testament to your love and commitment. The ocean's waves symbolize the ebb and flow of life, reminding you to navigate challenges together with grace and resilience. May your ceremony be a reflection of your unique bond, filled with laughter, tears of joy, and the unwavering support of those who cherish you.",
-        },
-        {
-            title: "Mountain Retreat",
-            from: "Officiant Mark",
-            date: "Aug 15,2024",
-            content:
-                "As you stand amidst the majestic mountains, ready to exchange your vows, remember that this moment is a testament to your love and commitment. The mountains symbolize the strength and stability of your relationship, reminding you to navigate challenges together with grace and resilience. May your ceremony be a reflection of your unique bond, filled with laughter, tears of joy, and the unwavering support of those who cherish you.",
-        }
-    ];
+  const [activeTab, setActiveTab] = useState<"new" | "draft" | "my">("new");
+  const [currentStep, setCurrentStep] = useState(1);
+  const [openDropdowns, setOpenDropdowns] = useState<{
+    [key: string]: boolean;
+  }>({});
+
+  // Mock data for demonstrations
+  const [ceremonies, setCeremonies] = useState<CeremonyData[]>([
+    {
+      id: "1",
+      title: "Garden Vows-Sunset",
+      type: "Classic",
+      description: "A beautiful sunset ceremony in the garden",
+      vowsType: "Custom Vows",
+      language: "English",
+      rituals: "Unity candle",
+      musicCue: "A Thousand Years - Piano",
+      notes: "Notes about the ceremony",
+      date: "2024-08-12",
+      time: "18:00",
+      location: "Garden Venue",
+      rehearsal: "2024-08-11",
+      status: "completed",
+      createdAt: "Aug 12, 2024",
+      updatedAt: "Aug 12, 2024",
+    },
+  ]);
+
+  const [drafts, setDrafts] = useState<CeremonyData[]>([
+    {
+      id: "2",
+      title: "Beach Wedding",
+      type: "Modern",
+      description: "Incomplete beach ceremony",
+      vowsType: "Prepared Script",
+      language: "English",
+      rituals: "Sand ceremony",
+      musicCue: "",
+      notes: "",
+      date: "",
+      time: "",
+      location: "Beach Resort",
+      rehearsal: "",
+      status: "draft",
+      createdAt: "Aug 20, 2024",
+      updatedAt: "Aug 22, 2024",
+    },
+  ]);
+
+  const {
+    register,
+    handleSubmit,
+    watch,
+    setValue,
+    formState: { errors },
+  } = useForm<CeremonyFormData>({
+    defaultValues: {
+      title: "",
+      type: "Classic",
+      description: "",
+      vowsType: "Custom Vows",
+      language: "English",
+      rituals: "Unity candle",
+      musicCue: "",
+      notes: "",
+      date: "",
+      time: "",
+      location: "",
+      rehearsal: "",
+    },
+  });
+
+  const toggleDropdown = (key: string) => {
+    setOpenDropdowns((prev) => ({
+      ...prev,
+      [key]: !prev[key],
+    }));
+  };
+
+  const handleDropdownSelect = (name: string, value: string) => {
+    setValue(name as keyof CeremonyFormData, value);
+    setOpenDropdowns((prev) => ({ ...prev, [name]: false }));
+  };
+
+  const handleNextStep = () => {
+    if (currentStep < 5) {
+      setCurrentStep(currentStep + 1);
+    }
+  };
+
+  const handlePrevStep = () => {
+    if (currentStep > 1) {
+      setCurrentStep(currentStep - 1);
+    }
+  };
+
+  const onSubmit = (data: CeremonyFormData) => {
+    const newCeremony: CeremonyData = {
+      ...data,
+      id: Date.now().toString(),
+      status: "completed",
+      createdAt: new Date().toLocaleDateString(),
+      updatedAt: new Date().toLocaleDateString(),
+    };
+    console.log("Finalized Ceremony Data:", newCeremony);
+    setCeremonies([...ceremonies, newCeremony]);
+    setActiveTab("my");
+    // Reset form
+    setCurrentStep(1);
+  };
+
+  const saveDraft = (data: CeremonyFormData) => {
+    const draftCeremony: CeremonyData = {
+      ...data,
+      id: Date.now().toString(),
+      status: "draft",
+      createdAt: new Date().toLocaleDateString(),
+      updatedAt: new Date().toLocaleDateString(),
+    };
+    setDrafts([...drafts, draftCeremony]);
+    setActiveTab("draft");
+  };
+
+  const deleteDraft = (id: string) => {
+    setDrafts(drafts.filter((draft) => draft.id !== id));
+  };
+
+  const continueDraft = (draft: CeremonyData) => {
+    // Populate form with draft data
+    Object.keys(draft).forEach((key) => {
+      if (
+        key !== "id" &&
+        key !== "status" &&
+        key !== "createdAt" &&
+        key !== "updatedAt"
+      ) {
+        setValue(
+          key as keyof CeremonyFormData,
+          draft[key as keyof CeremonyFormData]
+        );
+      }
+    });
+    setActiveTab("new");
+    setCurrentStep(1);
+  };
+
+  const deleteCeremony = (id: string) => {
+    setCeremonies(ceremonies.filter((ceremony) => ceremony.id !== id));
+  };
+
+  const steps = [
+    { number: 1, title: "Type", active: currentStep >= 1 },
+    { number: 2, title: "Vows", active: currentStep >= 2 },
+    { number: 3, title: "Rituals", active: currentStep >= 3 },
+    { number: 4, title: "Schedule", active: currentStep >= 4 },
+    { number: 5, title: "Review", active: currentStep >= 5 },
+  ];
+
   return (
-    <div className="  ">
-      <h1 className="text-3xl md:text-4xl pb-5 lg:py-7 lg:text-start pl-8 text-center font-primary font-bold text-gray-900 ">
-        Your Notes
-      </h1>
+    <div className=" bg-white  lg:p-8">
+      <div className="">
+        {/* Tab Navigation */}
+        <TabNavigation activeTab={activeTab} onTabChange={setActiveTab} />
 
-      <div className="space-y-8">
-        {notes.map((note, idx) => (
-          <div
-            key={idx}
-            className="bg-white rounded-2xl border border-primary p-4 md:p-6 shadow-xl w-full flex flex-col"
-          >
-            <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-2">
-              <div className="flex flex-wrap gap-x-8 gap-y-2">
-                <span className="text-primary font-primary font-medium text-base md:text-lg">
-                  Title :{" "}
-                  <span className="font-medium text-black">{note.title}</span>
-                </span>
-                <span className="text-primary font-primary font-medium text-base md:text-lg">
-                  From :{" "}
-                  <span className="font-medium text-black">{note.from}</span>
-                </span>
-              </div>
-              <span className="text-xs text-primary font-secondary mt-2 md:mt-0">
-                {note.date}
-              </span>
-            </div>
-            <div className="text-gray-700 text-sm md:text-base mb-4">
-              {note.content}
-            </div>
-            <hr className="border-t border-primary mb-4" />
-            <div className="flex justify-end gap-4">
-              <button className="px-6 py-2 border border-primary text-primary rounded-full font-medium hover:bg-primary hover:text-white transition-colors">
-                Delete
-              </button>
-              <button className="px-6 py-2 border border-primary text-primary rounded-full font-medium hover:bg-primary hover:text-white transition-colors">
-                View
-              </button>
-            </div>
+        {/* Tab Content */}
+        {activeTab === "new" && (
+          <div className="bg-white rounded-2xl shadow-lg border border-primary p-3 sm:p-6 lg:p-8">
+            <h1 className="text-3xl font-primary font-bold text-gray-900 mb-8">
+              Ceremony Builder
+            </h1>
+
+            <StepIndicator steps={steps} />
+
+            <form onSubmit={handleSubmit(onSubmit)}>
+              {/* Step 1: Type */}
+              {currentStep === 1 && (
+                <TypeStep
+                  register={register}
+                  errors={errors}
+                  watch={watch}
+                  openDropdowns={openDropdowns}
+                  onToggleDropdown={toggleDropdown}
+                  onSelectDropdown={handleDropdownSelect}
+                />
+              )}
+
+              {/* Step 2: Vows */}
+              {currentStep === 2 && (
+                <VowsStep
+                  watch={watch}
+                  openDropdowns={openDropdowns}
+                  onToggleDropdown={toggleDropdown}
+                  onSelectDropdown={handleDropdownSelect}
+                />
+              )}
+
+              {/* Step 3: Rituals */}
+              {currentStep === 3 && (
+                <RitualsStep
+                  register={register}
+                  watch={watch}
+                  openDropdowns={openDropdowns}
+                  onToggleDropdown={toggleDropdown}
+                  onSelectDropdown={handleDropdownSelect}
+                />
+              )}
+
+              {/* Step 4: Schedule */}
+              {currentStep === 4 && (
+                <ScheduleStep register={register} errors={errors} />
+              )}
+
+              {/* Step 5: Review */}
+              {currentStep === 5 && <ReviewStep watch={watch} />}
+
+              {/* Navigation Buttons */}
+              <NavigationButtons
+                currentStep={currentStep}
+                maxStep={5}
+                onPrevStep={handlePrevStep}
+                onNextStep={handleNextStep}
+                onSaveDraft={handleSubmit(saveDraft)}
+                onSubmit={handleSubmit(onSubmit)}
+              />
+            </form>
           </div>
-        ))}
-      </div>
+        )}
 
-      <div className="flex justify-end mt-12 gap-4 max-w-4xl ">
-        <button className="bg-primary text-white px-6 py-3 rounded-full font-medium flex items-center gap-2 hover:bg-primary/90 transition-colors">
-          Start A New Ceremony
-          <svg
-            className="w-4 h-4"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M9 5l7 7-7 7"
-            />
-          </svg>
-        </button>
-        <button className="bg-white border border-primary text-primary px-6 py-3 rounded-full font-medium hover:bg-primary hover:text-white transition-colors">
-          Continue Editing
-        </button>
+        {/* Draft Tab */}
+        {activeTab === "draft" && (
+          <DraftTab
+            drafts={drafts}
+            onContinueDraft={continueDraft}
+            onDeleteDraft={deleteDraft}
+            onCreateNew={() => setActiveTab("new")}
+          />
+        )}
+
+        {/* My Ceremony Tab */}
+        {activeTab === "my" && (
+          <MyCeremonyTab
+            ceremonies={ceremonies}
+            onDeleteCeremony={deleteCeremony}
+            onCreateNew={() => setActiveTab("new")}
+          />
+        )}
       </div>
     </div>
   );

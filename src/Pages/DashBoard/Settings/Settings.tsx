@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { HiPencil } from "react-icons/hi";
 
@@ -98,7 +98,7 @@ const Settings = () => {
                   {...profileForm.register("partner1Name")}
                   type="text"
                   disabled={!isEditingProfile}
-                  className={`w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent ${
+                  className={`w-full px-4 py-3 border border-primary rounded-lg focus:outline-none    ${
                     !isEditingProfile ? "bg-gray-50 cursor-not-allowed" : ""
                   }`}
                 />
@@ -111,7 +111,7 @@ const Settings = () => {
                   {...profileForm.register("partner2Name")}
                   type="text"
                   disabled={!isEditingProfile}
-                  className={`w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent ${
+                  className={`w-full px-4 py-3 border border-primary rounded-lg focus:outline-none    ${
                     !isEditingProfile ? "bg-gray-50 cursor-not-allowed" : ""
                   }`}
                 />
@@ -124,7 +124,7 @@ const Settings = () => {
                   {...profileForm.register("contact")}
                   type="tel"
                   disabled={!isEditingProfile}
-                  className={`w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent ${
+                  className={`w-full px-4 py-3 border border-primary rounded-lg focus:outline-none    ${
                     !isEditingProfile ? "bg-gray-50 cursor-not-allowed" : ""
                   }`}
                 />
@@ -137,7 +137,7 @@ const Settings = () => {
                   {...profileForm.register("location")}
                   type="text"
                   disabled={!isEditingProfile}
-                  className={`w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent ${
+                  className={`w-full px-4 py-3 border border-primary rounded-lg focus:outline-none    ${
                     !isEditingProfile ? "bg-gray-50 cursor-not-allowed" : ""
                   }`}
                 />
@@ -152,7 +152,7 @@ const Settings = () => {
                 type="date"
                 disabled={!isEditingProfile}
                 placeholder="DD / MM / YYYY"
-                className={`w-full lg:w-1/2 px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent ${
+                className={`w-full lg:w-1/2 px-4 py-3 border border-primary rounded-lg focus:outline-none    ${
                   !isEditingProfile ? "bg-gray-50 cursor-not-allowed" : ""
                 }`}
               />
@@ -196,9 +196,9 @@ const Settings = () => {
                         bookingUpdates: e.target.checked,
                       })
                     }
-                    className="sr-only peer"
+                    className="sr-only peer "
                   />
-                  <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary/25 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                  <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none   rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
                 </label>
               </div>
 
@@ -216,7 +216,7 @@ const Settings = () => {
                     }
                     className="sr-only peer"
                   />
-                  <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary/25 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                  <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none   rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
                 </label>
               </div>
             </div>
@@ -236,7 +236,7 @@ const Settings = () => {
                     }
                     className="sr-only peer"
                   />
-                  <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary/25 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                  <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none   rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
                 </label>
               </div>
 
@@ -254,7 +254,7 @@ const Settings = () => {
                     }
                     className="sr-only peer"
                   />
-                  <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary/25 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                  <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none   rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
                 </label>
               </div>
             </div>
@@ -281,7 +281,7 @@ const Settings = () => {
                 <input
                   {...securityForm.register("newPassword")}
                   type="password"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                  className="w-full px-4 py-3 border border-primary rounded-lg focus:outline-none   "
                 />
               </div>
               <div>
@@ -291,7 +291,7 @@ const Settings = () => {
                 <input
                   {...securityForm.register("confirmPassword")}
                   type="password"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                  className="w-full px-4 py-3 border border-primary rounded-lg focus:outline-none   "
                 />
               </div>
             </div>
@@ -339,7 +339,7 @@ const Settings = () => {
                     }
                     className="sr-only peer"
                   />
-                  <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary/25 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                  <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none   rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
                 </label>
               </div>
 
@@ -361,7 +361,7 @@ const Settings = () => {
                     }
                     className="sr-only peer"
                   />
-                  <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary/25 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                  <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none   rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
                 </label>
               </div>
             </div>
