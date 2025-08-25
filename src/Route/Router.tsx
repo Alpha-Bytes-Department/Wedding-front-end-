@@ -13,6 +13,7 @@ import DashHome from "../Pages/DashBoard/Home/DashHome";
 import Note from "../Pages/DashBoard/Notes/Note";
 import Discussions from "../Pages/DashBoard/Discussion/Discussions";
 import Schedule from "../Pages/DashBoard/Schedule/Schedule";
+import Settings from "../Pages/DashBoard/Settings/Settings";
 
 const Router = createBrowserRouter([
   {
@@ -73,6 +74,10 @@ const Router = createBrowserRouter([
       {
         path: "/dashboard/schedule",
         element: <Schedule />,
+      },
+      {
+        path: "/dashboard/settings",
+        element: <Settings />,
       },
 
     ],
