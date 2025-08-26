@@ -199,8 +199,8 @@ const Discussions = () => {
             )}
           </div>
           {/* Chat Input */}
-          <div className="bg-white border-t border-gray-200 px-6 py-4 flex items-center gap-3">
-            <button className="flex items-center gap-2 px-4 py-2 rounded-full border border-primary text-primary bg-primary/10 hover:bg-primary/20 font-medium">
+          <div className="bg-white border-t border-gray-200 px-2 lg:px-6 py-4 flex justify-center items-center gap-1 sm:gap-3">
+            <button className="flex items-center md:gap-2 px-2 md:px-4 py-2 rounded-full border border-primary text-primary bg-primary/10 hover:bg-primary/20 font-medium">
               <IoAttachOutline size={24} />
               Attach
             </button>
