@@ -4,6 +4,7 @@ import { useRef } from "react";
 import type { SwiperRef } from "swiper/react";
 
 import "swiper/swiper-bundle.css";
+import { Link } from "react-router-dom";
 
 const Slider = () => {
   const swiperRef = useRef<SwiperRef>(null);
@@ -80,7 +81,7 @@ const Slider = () => {
                         {text.description}
                       </p>
 
-                      <button className="bg-primary group hover:bg-primary/90 text-white px-8 py-3 rounded-full font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg flex items-center gap-2">
+                      <Link to="/dashboard" className="bg-primary group hover:bg-primary/90 text-white px-8 py-3 rounded-full font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg flex items-center gap-2">
                         Book for consult
                         <svg
                           className="w-4 h-4 group-hover:translate-x-4 transition-transform duration-300"
@@ -95,7 +96,7 @@ const Slider = () => {
                             d="M9 5l7 7-7 7"
                           />
                         </svg>
-                      </button>
+                      </Link>
                     </div>
                   </div>
 

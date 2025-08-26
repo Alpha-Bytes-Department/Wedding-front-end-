@@ -1,4 +1,5 @@
 import { FaArrowRight } from 'react-icons/fa6';
+import { Link } from 'react-router-dom';
 
 const Officiant = () => {
 
@@ -81,13 +82,13 @@ const Officiant = () => {
               {officiant.description}
             </p>
 
-            <div className="mt-auto text-primary flex items-center justify-center gap-2 font-secondary font-bold text-[16px] underline">
+            <Link to={`/officiant/${officiant.id}`} className="mt-auto text-primary flex items-center justify-center gap-2 font-secondary font-bold text-[16px] underline">
               VIEW MORE{" "}
               <FaArrowRight
                 size={18}
                 className="group-hover:translate-x-3 transition-transform duration-300"
               />
-            </div>
+            </Link>
           </div>
         ))}
       </div>
