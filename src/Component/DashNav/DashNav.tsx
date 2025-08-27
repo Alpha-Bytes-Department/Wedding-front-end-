@@ -70,6 +70,7 @@ const DashNav = ({
     setIsMobileMenuOpen(!isMobileMenuOpen);
   };
   const user = false;
+  const admin=false;
   return (
     <>
       {/* Mobile Menu Overlay */}
