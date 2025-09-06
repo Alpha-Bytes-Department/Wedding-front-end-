@@ -14,6 +14,8 @@ import Note from "../Pages/DashBoard/Notes/Note";
 import Discussions from "../Pages/DashBoard/Discussion/Discussions";
 import Schedule from "../Pages/DashBoard/Schedule/Schedule";
 import Settings from "../Pages/DashBoard/Settings/Settings";
+import Bookings from "../Pages/DashBoard/Bookings/Bookings";
+import CeremonyReview from "../Pages/DashBoard/CeremonyReview/CeremonyReview";
 
 const Router = createBrowserRouter([
   {
@@ -58,6 +60,14 @@ const Router = createBrowserRouter([
       {
         path: "/dashboard",
         element: <DashHome />,
+      },
+      {
+        path: "/dashboard/bookings",
+        element: <Bookings />,
+      },
+      {
+        path: "/dashboard/review",
+        element: <CeremonyReview />,
       },
       {
         path: "/dashboard/notes",

@@ -11,7 +11,7 @@ import { LiaStickyNoteSolid } from "react-icons/lia";
 import { MdOutlineSpaceDashboard } from "react-icons/md";
 import { PiChats, PiClipboardTextBold } from "react-icons/pi";
 import { RiExpandLeftRightLine } from "react-icons/ri";
-import { NavLink, useLocation } from "react-router-dom";
+import { href, NavLink, useLocation } from "react-router-dom";
 
 const DashNav = ({
   isCollapsed,
@@ -23,6 +23,16 @@ const DashNav = ({
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const location = useLocation();
 
+
+
+   const isAdmin = true; 
+
+
+
+
+
+
+
   const navigationItems = [
     {
       name: "Dashboard",
@@ -30,6 +40,18 @@ const DashNav = ({
       icon: MdOutlineSpaceDashboard,
       current: location.pathname === "/dashboard",
     },
+    //Add Booking route:
+    // Conditionally add "Bookings" route based on isAdmin
+    ...(isAdmin
+      ? [
+          {
+            name: "Bookings",
+            href: "/dashboard/bookings",
+            icon: PiClipboardTextBold,
+            current: location.pathname.includes("/dashboard/bookings"),
+          },
+        ]
+      : []),
     {
       name: "Ceremony Builder",
       href: "/dashboard/ceremony",
@@ -53,6 +75,12 @@ const DashNav = ({
       href: "/dashboard/notes",
       icon: LiaStickyNoteSolid,
       current: location.pathname.includes("/dashboard/notes"),
+    },
+    {
+      name: "Ceremony Review",
+      href: "/dashboard/review",
+      icon: LiaStickyNoteSolid,
+      current: location.pathname.includes("/dashboard/review"), 
     },
     {
       name: "Settings",
