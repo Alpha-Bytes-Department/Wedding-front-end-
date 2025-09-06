@@ -43,7 +43,7 @@ const  DashHome = () => {
           </div>
         </div>
         {/* Notifications */}
-        <div div className="bg-white w-full lg:w-2/7 shadow-xl rounded-2xl flex flex-col items-center justify-center border border-primary p-6 ">
+        <div  className="bg-white w-full lg:w-2/7 shadow-xl rounded-2xl flex flex-col items-center justify-center border border-primary p-6 ">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-2xl lg:text-4xl font-primary  font-semibold text-gray-900">
               Notifications
