@@ -1,16 +1,27 @@
-import { FaFacebook, FaInstagram,  FaYoutube } from "react-icons/fa";
+import { FaFacebook, FaInstagram, FaYoutube } from "react-icons/fa";
 import { FaLinkedinIn, FaXTwitter } from "react-icons/fa6";
 import { Link } from "react-router-dom";
+import { useAxios } from "../Providers/AxiosProvider";
+import { GlassSwal } from "../../utils/glassSwal";
 
 const Footer = () => {
-
-const onSubmit=(e: React.FormEvent<HTMLFormElement>)=>{
-  e.preventDefault();
-  const form = e.currentTarget;
-  const formData = new FormData(form);
-  const email = formData.get("email");
-  console.log(email);
-}
+  const axios = useAxios();
+  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const form = e.currentTarget;
+    const formData = new FormData(form);
+    const email = formData.get("email");
+    console.log(email);
+    const res = await axios.post("/marketing/subscribe", { email });
+    if (res.status === 200 || res.status === 201) {
+      console.log("Subscription successful:", res.data);
+      GlassSwal.success(
+        "Successfully subscribed! Thank you for joining us.",
+        "You'll receive updates about our latest features and offers."
+      );
+      form.reset();
+    }
+  };
 
   return (
     <div className=" bg-gradient-to-t from-[#d4af3763] to-[#fffffe] py-5 lg:px-30 px-5 md:px-10">
@@ -32,13 +43,25 @@ const onSubmit=(e: React.FormEvent<HTMLFormElement>)=>{
               placeholder="Your Email Here"
               className="border border-primary rounded-2xl text-xl font-secondary px-5 py-2 bg-[#D4AF3733]"
             />
-            <button className=" border border-primary rounded-2xl text-xl font-secondary px-5 py-2 bg-transparent" type="submit">
+            <button
+              className=" border border-primary rounded-2xl text-xl font-secondary px-5 py-2 bg-transparent"
+              type="submit"
+            >
               Join
             </button>
           </form>
           <p className=" text-xs text-primary">
             By subscribing, you agree to our{" "}
-            <span className="underline">Privacy Policy.</span>
+            <span
+              onClick={() =>
+                (
+                  document.getElementById("my_modal_3") as HTMLDialogElement
+                )?.showModal()
+              }
+              className="underline cursor-pointer"
+            >
+              Privacy Policy.
+            </span>
           </p>
         </div>
       </div>
@@ -236,8 +259,145 @@ const onSubmit=(e: React.FormEvent<HTMLFormElement>)=>{
           <FaYoutube size={24} />
         </div>
       </div>
+      {/*=================== Privacy policy modal ===========================  */}
+      <dialog id="my_modal_3" className="modal ">
+        <div className="modal-box max-w-4xl">
+          <form method="dialog">
+            {/* if there is a button in form, it will close the modal */}
+            <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
+              ✕
+            </button>
+          </form>
+          <h3 className="font-thin text-lg italic text-center mb-4">
+            Privacy Policy for{" "}
+            <span className="font-bold text-primary not-italic">
+              ERIE WEDDING OFFICIANTS
+            </span>
+          </h3>
+          <hr className="opacity-10 my-5" />
+          <div className="text-gray-700 max-h-[60vh] overflow-y-auto pr-2 space-y-4 text-sm leading-relaxed">
+            <p>
+              <strong>Last Updated:</strong> September 12, 2025
+            </p>
+
+            <p>
+              At <strong>Your Company</strong>, we value your trust and are
+              committed to protecting your privacy. This Privacy Policy explains
+              how we collect, use, and safeguard your information when you
+              interact with our website, services, and communications.
+            </p>
+
+            <h3 className="font-semibold text-lg text-primary">
+              1. Information We Collect
+            </h3>
+            <ul className="list-disc list-inside space-y-2">
+              <li>
+                <strong>Personal Information:</strong> such as your name, email
+                address, and contact details when you subscribe or sign up.
+              </li>
+              <li>
+                <strong>Usage Data:</strong> information on how you use our
+                site, including pages visited, time spent, and browser/device
+                information.
+              </li>
+              <li>
+                <strong>Cookies & Tracking:</strong> small files stored on your
+                device to improve your browsing experience.
+              </li>
+            </ul>
+
+            <h3 className="font-semibold text-lg text-primary">
+              2. How We Use Your Information
+            </h3>
+            <ul className="list-disc list-inside space-y-2">
+              <li>To send you updates, newsletters, and promotional offers.</li>
+              <li>To personalize your experience and improve our services.</li>
+              <li>
+                To respond to your inquiries and provide customer support.
+              </li>
+              <li>To comply with legal and regulatory requirements.</li>
+            </ul>
+
+            <h3 className="font-semibold text-lg text-primary">
+              3. Data Sharing & Disclosure
+            </h3>
+            <p>
+              We do <strong>not</strong> sell or rent your personal information.
+              We may share your data only with:
+            </p>
+            <ul className="list-disc list-inside space-y-2">
+              <li>
+                <strong>Service Providers:</strong> trusted third parties who
+                assist in operating our website or sending communications.
+              </li>
+              <li>
+                <strong>Legal Obligations:</strong> when required by law or to
+                protect our legal rights.
+              </li>
+            </ul>
+
+            <h3 className="font-semibold text-lg text-primary">
+              4. Data Security
+            </h3>
+            <p>
+              We implement industry-standard measures to protect your personal
+              information. However, no online system can guarantee 100%
+              security.
+            </p>
+
+            <h3 className="font-semibold text-lg text-primary">
+              5. Your Rights
+            </h3>
+            <ul className="list-disc list-inside space-y-2">
+              <li>Access and request a copy of your data.</li>
+              <li>
+                Request corrections to inaccurate or incomplete information.
+              </li>
+              <li>Opt out of promotional emails at any time.</li>
+              <li>
+                Request deletion of your data, subject to legal obligations.
+              </li>
+            </ul>
+
+            <h3 className="font-semibold text-lg text-primary">6. Cookies</h3>
+            <p>
+              We use cookies to analyze traffic, personalize content, and
+              improve user experience. You can manage cookies through your
+              browser settings.
+            </p>
+
+            <h3 className="font-semibold text-lg text-primary">
+              7. Third-Party Links
+            </h3>
+            <p>
+              Our website may contain links to third-party sites. We are not
+              responsible for the privacy practices of external websites.
+            </p>
+
+            <h3 className="font-semibold text-lg text-primary">
+              8. Updates to This Policy
+            </h3>
+            <p>
+              We may update this Privacy Policy from time to time. Changes will
+              be posted on this page with an updated date.
+            </p>
+
+            <h3 className="font-semibold text-lg text-primary">
+              9. Contact Us
+            </h3>
+            <p>
+              If you have any questions about this Privacy Policy, you can
+              contact us at:
+              <br />
+              📧 support@example.com
+              <br />
+              📍 Company Address, City, Country
+            </p>
+          </div>
+        </div>
+      </dialog>
     </div>
   );
-}
+};
 
-export default Footer
+export default Footer;

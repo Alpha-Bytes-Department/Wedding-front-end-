@@ -2,7 +2,10 @@ import { createRoot } from "react-dom/client";
 import "./index.css";
 import Router from "./Route/Router.tsx";
 import { RouterProvider } from "react-router";
+import { AxiosProvider } from "./Component/Providers/AxiosProvider.tsx";
 
 createRoot(document.getElementById("root")!).render(
-  <RouterProvider router={Router} />
+  <AxiosProvider>
+    <RouterProvider router={Router} />
+  </AxiosProvider>
 );

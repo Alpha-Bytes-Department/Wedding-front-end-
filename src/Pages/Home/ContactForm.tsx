@@ -2,6 +2,8 @@ import { useForm } from "react-hook-form";
 import { SlLocationPin } from "react-icons/sl";
 import { TbMail } from "react-icons/tb";
 import { PiPhoneCallFill } from "react-icons/pi";
+import emailjs from "@emailjs/browser";
+import GlassSwal from "../../utils/glassSwal";
 
 type FormData = {
   firstName: string;
@@ -19,11 +21,33 @@ const ContactForm = () => {
     formState: { errors, isSubmitting },
   } = useForm<FormData>();
 
-  const onSubmit = (data: FormData) => {
-    // Handle form submission (e.g., send to API)
-    console.log(data);
+const onSubmit = async (data: FormData) => {
+  try {
+    const result = await emailjs.send(
+      import.meta.env.VITE_EMAIL_JS_SERVICE_ID,
+      import.meta.env.VITE_EMAIL_JS_TEMPLATE_ID,
+      {
+        firstName: data.firstName,
+        lastName: data.lastName,
+        email: data.email,
+        phone: data.phone,
+        message: data.message,
+        to_name: "Wedding Manager", 
+      },
+      import.meta.env.VITE_EMAIL_JS_PUBLIC_KEY 
+    );
+
+    if (result.status === 200 || result.status === 201) {
+      GlassSwal.success(
+        "Message Sent Successfully!",
+        "Thank you for reaching out. We'll get back to you shortly."
+      );
+    }
     reset();
-  };
+  } catch (error) {
+    console.error("❌ EmailJS Error:", error);
+  }
+};
 
   return (
     <div>
