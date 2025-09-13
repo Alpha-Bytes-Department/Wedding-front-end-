@@ -1,11 +1,14 @@
 import { FaFacebook, FaInstagram, FaYoutube } from "react-icons/fa";
 import { FaLinkedinIn, FaXTwitter } from "react-icons/fa6";
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAxios } from "../Providers/AxiosProvider";
 import { GlassSwal } from "../../utils/glassSwal";
+import { useEffect, useState } from "react";
 
 const Footer = () => {
   const axios = useAxios();
+  const navigate = useNavigate();
+  const location = useLocation();
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const form = e.currentTarget;
@@ -22,6 +25,41 @@ const Footer = () => {
       form.reset();
     }
   };
+   const scrollToReview = (section:string) => {
+      // Check if we're already on the home page
+      if (location.pathname === "/") {
+        // If on home page, just scroll to the element
+        const element = document.getElementById(section);
+        if (element) {
+          element.scrollIntoView({
+            behavior: "smooth",
+            block: "start",
+          });
+        }
+      } else {
+        // If on a different page, navigate to home with hash
+        navigate("/#" + section);
+      }
+    };
+  
+    // Handle scrolling when navigating to home with hash
+    useEffect(() => {
+      if (location.hash === "#client-review") {
+        // Small delay to ensure the component is rendered
+        setTimeout(() => {
+          const element = document.getElementById("client-review");
+          if (element) {
+            element.scrollIntoView({
+              behavior: "smooth",
+              block: "start",
+            });
+          }
+        }, 100);
+      }
+    }, [location]);
+
+    const [glow,setGlow]=useState<boolean>(false);
+    const [glowSubscribe,setGlowSubscribe]=useState<boolean>(false);
 
   return (
     <div className="text-black bg-gradient-to-t from-[#d4af3763] to-[#fffffe] py-5 lg:px-30 px-5 md:px-10">
@@ -34,7 +72,13 @@ const Footer = () => {
             Stay informed about our latest features and offers.
           </p>
         </div>
-        <div>
+        <div
+          className={` border rounded-2xl  text-center border-transparent transition-all duration-300 ${
+            glowSubscribe
+              ? "border-orange-800 shadow-[0_0_20px_rgba(255,140,0,0.6)] p-2 animate-pulse"
+              : ""
+          }`}
+        >
           <form action="" onSubmit={onSubmit} className="flex gap-4 pb-3">
             <input
               type="email"
@@ -180,33 +224,53 @@ const Footer = () => {
             Helpful Links
           </h1>
           <ul>
-            <li className=" text-[16px] text-text font-secondary py-3">
+            <li
+              onClick={() => scrollToReview("client-review")}
+              className=" text-[16px] text-text cursor-pointer font-secondary py-3"
+            >
               Testimonial
             </li>
-            <li className=" text-[16px] text-text font-secondary py-3">
+            <li
+              onClick={() => scrollToReview("contact")}
+              className=" text-[16px] cursor-pointer text-text font-secondary py-3"
+            >
               Contact Support
             </li>
             <li className=" text-[16px] text-text font-secondary py-3">
-              Ceremony
+              <Link to="dashboard/ceremony">Ceremony</Link>
             </li>
           </ul>
         </div>
-        <div>
+        <div className="cursor-pointer">
           <h1 className=" text-start font-secondary font-semibold text-lg pb-3">
             Legal Info
           </h1>
           <ul>
-            <li className=" text-[16px] text-text font-secondary py-3">
+            <li
+              onClick={() =>
+                (
+                  document.getElementById("my_modal_3") as HTMLDialogElement
+                )?.showModal()
+              }
+              className=" text-[16px] text-text font-secondary py-3"
+            >
               Privacy Policy
             </li>
-            <li className=" text-[16px] text-text font-secondary py-3">
+            <li
+              onClick={() =>
+                (
+                  document.getElementById("my_modal_3") as HTMLDialogElement
+                )?.showModal()
+              }
+              className=" text-[16px] text-text font-secondary py-3"
+            >
               Terms of Use
             </li>
-            <li className=" text-[16px] text-text font-secondary py-3">
+            <li
+              onClick={() => scrollToReview("contact")}
+              className=" text-[16px] text-text font-secondary py-3"
+            >
               Support Center
-            </li>
-            <li className=" text-[16px] text-text font-secondary py-3">
-              Feedback
             </li>
           </ul>
         </div>
@@ -215,17 +279,18 @@ const Footer = () => {
             Stay Connected
           </h1>
           <ul>
-            <li className=" text-[16px] text-text font-secondary py-3">
+            <li
+              onClick={() => setGlow(true)}
+              className=" text-[16px] text-text font-secondary cursor-pointer py-3"
+            >
               Social Media
             </li>
-            <li className=" text-[16px] text-text font-secondary py-3">
+            <li onClick={() => setGlowSubscribe(true)} className=" text-[16px] text-text cursor-pointer font-secondary py-3">
               Newsletter
             </li>
+
             <li className=" text-[16px] text-text font-secondary py-3">
-              Events
-            </li>
-            <li className=" text-[16px] text-text font-secondary py-3">
-              Officiant
+              <Link to="/officiant">Officiant</Link>
             </li>
           </ul>
         </div>
@@ -235,12 +300,12 @@ const Footer = () => {
           </h1>
           <ul>
             <li className=" text-[16px] text-text font-secondary py-3">
-              Email Us
+              <a href="mailto:contact@moralizer.com">Email Us</a>
             </li>
             <li className=" text-[16px] text-text font-secondary py-3">
-              Call Us
+              <a href="tel:+1234678910899">Call Us</a>
             </li>
-            <li className=" text-[16px] text-text font-secondary py-3">
+            <li onClick={() => scrollToReview("contact")} className=" text-[16px] cursor-pointer text-text font-secondary py-3">
               Help Center
             </li>
           </ul>
@@ -251,7 +316,13 @@ const Footer = () => {
         <h1 className="text-center md:text-start py-8 text-[16px] font-secondary">
           © 2025 ERIE WEDDING OFFICIANTS. All rights reserved.
         </h1>
-        <div className=" flex gap-4">
+        <div
+          className={`flex gap-4 p-3 rounded-xl hover:border-yellow-300 border border-transparent transition-all duration-300 ${
+            glow
+              ? "border-orange-800 shadow-[0_0_20px_rgba(255,140,0,0.6)] animate-pulse"
+              : ""
+          }`}
+        >
           <FaFacebook size={24} />
           <FaInstagram size={24} />
           <FaXTwitter size={24} />
@@ -269,7 +340,7 @@ const Footer = () => {
             </button>
           </form>
           <h3 className="font-thin text-lg italic text-center mb-4">
-            Privacy Policy for{" "}
+            Privacy Policy and terms and condition for <br />
             <span className="font-bold text-primary not-italic">
               ERIE WEDDING OFFICIANTS
             </span>

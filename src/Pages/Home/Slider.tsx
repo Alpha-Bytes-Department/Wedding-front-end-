@@ -56,7 +56,7 @@ const Slider = () => {
           >
             {texts.map((text, index) => (
               <SwiperSlide key={index}>
-                <div className="flex flex-col lg:flex-row items-center justify-between min-h-[600px] gap-12">
+                <div className="flex flex-col lg:flex-row items-center lg:px-8 justify-between min-h-[600px] gap-12">
                   {/* Left side - Content */}
                   <div className="flex-1 max-w-lg">
                     <div className="bg-white rounded-3xl shadow-2xl p-8 lg:p-12 relative">

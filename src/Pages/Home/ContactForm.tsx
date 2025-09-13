@@ -50,7 +50,7 @@ const onSubmit = async (data: FormData) => {
 };
 
   return (
-    <div>
+    <div id="contact" className="">
       <div className=" grid-cols-2 relative h-40 lg:h-[370px] grid my-5">
         <div className="bg-[url('/couple.png')] bg-cover bg-center"></div>
         <div className=""></div>
