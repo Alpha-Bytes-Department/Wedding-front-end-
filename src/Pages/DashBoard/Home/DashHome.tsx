@@ -26,7 +26,7 @@ const  DashHome = () => {
               Dashboard Home
             </h1>
             <p className="text-black-web font-secondary text-lg lg:text-xl">
-              Welcome Back! Lisa & Asif.
+              Welcome Back! Lisa & Asif. from
             </p>
           </div>
           <div className="mt-6 flex flex-col lg:flex-row gap-4 mx-auto ">
