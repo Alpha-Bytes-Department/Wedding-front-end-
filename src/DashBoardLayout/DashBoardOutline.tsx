@@ -17,7 +17,7 @@ const DashBoardOutline = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);
 
   return (
-    <div className="min-h-screen ">
+    <div className="min-h-screen text-black bg-white">
       <DashNav isCollapsed={isCollapsed} setIsCollapsed={setIsCollapsed} />
       {/* Main Content Area */}
       <div

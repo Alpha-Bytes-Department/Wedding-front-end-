@@ -4,23 +4,86 @@ import { Navigation, Pagination, Mousewheel, Autoplay } from "swiper/modules";
 import "swiper/swiper-bundle.css";
 import { BsFillStarFill } from "react-icons/bs";
 import { FaArrowDown, FaArrowUp } from "react-icons/fa6";
+import { useAxios } from "../../Component/Providers/AxiosProvider";
+import { FaRegUserCircle } from "react-icons/fa";
 
 const ClientReview = () => {
   const [screenSize, setScreenSize] = useState<"sm" | "md" | "lg" | "xl">("lg");
+const axios = useAxios();
+type PublicReview = {
+  _id?: string;
+  userName?: string;
+  userImageUrl?: string | null;
+  rating?: number;
+  ratingDescription?: string;
+};
 
+const [publicReviews, setPublicReviews] = useState<PublicReview[]>([]);
+
+
+const handleResize = () => {
+  const width = window.innerWidth;
+  if (width < 640) setScreenSize("sm");
+  else if (width < 768) setScreenSize("md");
+  else if (width < 1024) setScreenSize("lg");
+  else setScreenSize("xl");
+};
   useEffect(() => {
-    const handleResize = () => {
-      const width = window.innerWidth;
-      if (width < 640) setScreenSize("sm");
-      else if (width < 768) setScreenSize("md");
-      else if (width < 1024) setScreenSize("lg");
-      else setScreenSize("xl");
-    };
+   const getPublicReviews = async () => {
+  try {
+    const response = await axios.get("/reviews/public");
+    console.log("Public Reviews:", response.data.reviews);
 
+    const visibleReviews: PublicReview[] = response.data.reviews.map((review: any) => ({
+      _id: review._id,
+      userName: review.userName,
+      userImageUrl: review.userImageUrl,
+      rating: review.rating,
+      ratingDescription: review.ratingDescription,
+    }));
+
+    setPublicReviews(visibleReviews);
+  } catch (error) {
+    console.error("Error fetching public reviews:", error);
+
+    // fallback dummy data (no images)
+    const dummyReviews: PublicReview[] = [
+      {
+        _id: "1",
+        userName: "Alice Johnson",
+        userImageUrl: null,
+        rating: 5,
+        ratingDescription: "Absolutely wonderful experience! Highly recommended.",
+      },
+      {
+        _id: "2",
+        userName: "Michael Smith",
+        userImageUrl: null,
+        rating: 4,
+        ratingDescription: "Very professional and kind, made everything smooth.",
+      },
+      {
+        _id: "3",
+        userName: "Sophia Williams",
+        userImageUrl: null,
+        rating: 5,
+        ratingDescription: "Exceeded expectations — everything was perfect.",
+      },
+    ];
+
+    setPublicReviews(dummyReviews);
+  }
+};
+
+    getPublicReviews();
     handleResize(); // Set initial size
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
-  }, []);
+  }, [axios]);
+
+
+  
+
 
   const getSwiperConfig = () => {
     switch (screenSize) {
@@ -35,26 +98,6 @@ const ClientReview = () => {
         return { slidesPerView: 2, spaceBetween: 120, iconSize: 20 };
     }
   };
-  const reviews = [
-    {
-      name: "Alice Smith",
-      review: "Amazing service! Our wedding was perfect thanks to the team.",
-      rating: 5,
-    },
-    {
-      name: "John Doe",
-      review:
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed dapibus placerat velit. Donec in porttitor elit. Suspendisse accumsan iaculis tincidunt.",
-      rating: 4,
-      avatar: "/avatar2.png",
-    },
-    {
-      name: "Emily Johnson",
-      review: "They made our special day unforgettable. Thank you!",
-      rating: 5,
-    },
-  ];
-
   // Refs for navigation buttons
   const upBtnRef = useRef<HTMLButtonElement>(null);
   const downBtnRef = useRef<HTMLButtonElement>(null);
@@ -71,7 +114,7 @@ const ClientReview = () => {
             alt="Flower"
             className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16"
           />
-          <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-[55px] font-primary font-bold text-start leading-tight">
+          <h1 className=" text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-[55px] font-primary font-bold text-start leading-tight">
             Client <span className="text-primary">Review</span> to our service
           </h1>
           <p className="text-sm sm:text-base md:text-lg xl:text-xl text-start font-normal font-secondary text-black-web mt-2 sm:mt-3 md:mt-4">
@@ -86,7 +129,7 @@ const ClientReview = () => {
           direction="vertical"
           slidesPerView={getSwiperConfig().slidesPerView}
           spaceBetween={getSwiperConfig().spaceBetween}
-          loop={reviews.length > 1}
+          loop={publicReviews.length > 1}
           mousewheel={true}
           autoplay={{
             delay: 2500,
@@ -97,9 +140,9 @@ const ClientReview = () => {
             nextEl: downBtnRef.current,
           }}
           onInit={(swiper) => {
-            // @ts-ignore
+            // @ts-expect-error - Swiper typing issue
             swiper.params.navigation.prevEl = upBtnRef.current;
-            // @ts-ignore
+            // @ts-expect-error - Swiper typing issue
             swiper.params.navigation.nextEl = downBtnRef.current;
             swiper.navigation.init();
             swiper.navigation.update();
@@ -107,27 +150,39 @@ const ClientReview = () => {
           modules={[Pagination, Mousewheel, Autoplay, Navigation]}
           className="h-[300px] sm:h-[500px]  lg:h-[600px]"
         >
-          {reviews.map((item, idx) => (
-            <SwiperSlide key={idx}>
-              <div className="flex flex-col items-start bg-white py-3 sm:py-4 md:py-5 px-2 sm:px-3 gap-2 sm:gap-3 md:gap-4 w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-sm shadow-xl mx-auto xl:ml-40">
-                <p className="text-base sm:text-lg font-secondary mb-1 sm:mb-2">
-                  "{item.name}"
-                </p>
-                <div className="flex gap-1">
-                  {Array.from({ length: item.rating }).map((_, i) => (
-                    <BsFillStarFill
-                      key={i}
-                      className="text-yellow-600 text-sm sm:text-base"
-                    />
-                  ))}
-                </div>
-                <div className="border-t w-full border-[#BEBEBE]" />
-                <span className="font-normal text-text text-xs sm:text-sm leading-relaxed">
-                  {item.review}
-                </span>
-              </div>
-            </SwiperSlide>
-          ))}
+         {publicReviews?.map((item) => (
+  <SwiperSlide key={item._id}>
+    <div className="flex flex-col items-start bg-white py-3 sm:py-4 md:py-5 px-2 sm:px-3 gap-2 sm:gap-3 md:gap-4 w-full max-w-xs sm:max-w-sm md:max-w-lg lg:max-w-sm lg:px-5 shadow-xl mx-auto xl:ml-40">
+      <div className="flex justify-between items-center w-full">
+        <div>
+          <p className="text-base sm:text-lg font-secondary mb-1 sm:mb-2">
+            "{item.userName}"
+          </p>
+          <div className="flex gap-1">
+            {Array.from({ length: item.rating || 0 }).map((_, i) => (
+              <BsFillStarFill
+                key={i}
+                className="text-yellow-600 text-sm sm:text-base"
+              />
+            ))}
+          </div>
+        </div>
+        <div className=" size-12 border-2 rounded-full border-primary flex justify-center items-center ">
+          {item?.userImageUrl ? (
+            <img src={item.userImageUrl} className="size-12" alt={item.userName} />
+          ) : (
+            <FaRegUserCircle  className="size-10 text-primary" />
+          )}
+        </div>
+      </div>
+      <div className="border-t w-full border-[#BEBEBE]" />
+      <span className="font-normal text-text text-xs sm:text-sm leading-relaxed">
+        {item.ratingDescription}
+      </span>
+    </div>
+  </SwiperSlide>
+))}
+
         </Swiper>
         {/* Up/Down Buttons */}
         <div className="absolute sm:right-2 bottom-6 sm:-bottom-8 md:bottom-10 left-0 xl:pl-6 2xl:-left-80 sm:-left-20 md:-left-32 w-8 sm:w-10 md:w-13 flex flex-col gap-1 sm:gap-2 z-10">

@@ -6,6 +6,6 @@ import { AxiosProvider } from "./Component/Providers/AxiosProvider.tsx";
 
 createRoot(document.getElementById("root")!).render(
   <AxiosProvider>
-    <RouterProvider router={Router} />
+    <RouterProvider  router={Router} />
   </AxiosProvider>
 );

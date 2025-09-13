@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 
 const Error: React.FC = () => {
   return (
-    <div className="bg-[url('/background.jpg')] min-h-screen bg-cover bg-center flex items-center justify-center">
+    <div className="bg-[url('/background.jpg')] min-h-screen text-black bg-cover bg-center flex items-center justify-center">
       <div className="text-center font-secondary">
         <h1 className="text-4xl font-secondary font-bold mb-4 text-red-700">
           Error

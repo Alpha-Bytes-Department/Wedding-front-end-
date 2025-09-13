@@ -20,8 +20,8 @@ import CeremonyReview from "../Pages/DashBoard/CeremonyReview/CeremonyReview";
 const Router = createBrowserRouter([
   {
     path: "/",
-    element: <Layout />,
-    errorElement: <Error />,
+    element: <Layout  />,
+    errorElement: <Error  />,
     children: [
       {
         path: "/",

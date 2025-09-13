@@ -8,7 +8,7 @@ const Feature = () => {
 
 
   return (
-    <div className="pt-24 md:pt-30">
+    <div className="pt-24 md:pt-30 text-black">
       <h1 className="text-2xl sm:text-3xl font-bold md:text-[55px] px-5 pt-5 md:pt-20 font-primary text-center mb-16">
         What We Serve To Plan Your <br />
         <span className="text-primary">Best Wedding</span>

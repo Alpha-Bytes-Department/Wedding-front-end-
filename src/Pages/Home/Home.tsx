@@ -26,7 +26,7 @@ const Home = () => {
     }
   }, [location]);
   return (
-    <div className=" ">
+    <div className="text-black ">
       <Header />
       <Slider />
       <Officiant />

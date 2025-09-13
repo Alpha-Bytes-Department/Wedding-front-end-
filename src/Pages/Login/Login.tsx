@@ -25,7 +25,7 @@ const Login = () => {
     };
 
     return (
-      <div className="grid lg:grid-cols-3  min-h-screen md:px-0 px-5 ">
+      <div className="grid lg:grid-cols-3 text-black  min-h-screen md:px-0 px-5 ">
         <div className="bg-primary lg:flex items-center justify-center w-full  hidden">
           <Link to="/">
             <svg

@@ -24,7 +24,7 @@ const Footer = () => {
   };
 
   return (
-    <div className=" bg-gradient-to-t from-[#d4af3763] to-[#fffffe] py-5 lg:px-30 px-5 md:px-10">
+    <div className="text-black bg-gradient-to-t from-[#d4af3763] to-[#fffffe] py-5 lg:px-30 px-5 md:px-10">
       <div className="pb-20  pt-5 xl:px-14 flex flex-col md:flex-row gap-5 md:justify-between">
         <div>
           <h1 className=" text-text font-primary font-semibold text-start text-xl">
