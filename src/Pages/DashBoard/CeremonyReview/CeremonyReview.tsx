@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import type { CeremonyFormData, CeremonyData } from "./types";
+import type { CeremonyFormData, CeremonyData } from "../Ceremony/types";
 import StepIndicator from "../Ceremony/components/StepIndicator";
 import TypeStep from "../Ceremony/components/TypeStep";
 import VowsStep from "../Ceremony/components/VowsStep";
@@ -9,7 +9,6 @@ import ScheduleStep from "../Ceremony/components/ScheduleStep";
 import ReviewStep from "../Ceremony/components/ReviewStep";
 import NavigationButtons from "../Ceremony/components/NavigationButtons";
 import { FaLink } from "react-icons/fa6";
-
 
 const CeremonyReview = () => {
   const [currentStep, setCurrentStep] = useState(1);
@@ -117,7 +116,6 @@ const CeremonyReview = () => {
     };
     console.log("Finalized Ceremony Data:", newCeremony);
     setCeremonies([...ceremonies, newCeremony]);
-    setActiveTab("my");
     // Reset form
     setCurrentStep(1);
   };
@@ -131,9 +129,7 @@ const CeremonyReview = () => {
       updatedAt: new Date().toLocaleDateString(),
     };
     setDrafts([...drafts, draftCeremony]);
-    setActiveTab("draft");
   };
-
 
   const steps = [
     { number: 1, title: "Type", active: currentStep >= 1 },
@@ -147,99 +143,103 @@ const CeremonyReview = () => {
     <div className=" bg-white  lg:p-8">
       <div className="">
         {/* Tab Navigation */}
-    
+
         {/* Tab Content */}
         <div className="bg-white rounded-2xl shadow-lg border border-primary p-3 sm:p-6 lg:p-8">
-            <h1 className="text-3xl font-primary font-bold text-gray-900 mb-8">
-              Ceremony  Review
-            </h1>
+          <h1 className="text-3xl font-primary font-bold text-gray-900 mb-8">
+            Ceremony Review
+          </h1>
 
-            <StepIndicator steps={steps} />
+          <StepIndicator steps={steps} />
 
-            <form onSubmit={handleSubmit(onSubmit)}>
-              {/* Step 1: Type */}
-              {currentStep === 1 && (
-                <TypeStep
-                  register={register}
-                  errors={errors}
-                  watch={watch}
-                  openDropdowns={openDropdowns}
-                  onToggleDropdown={toggleDropdown}
-                  onSelectDropdown={handleDropdownSelect}
-                />
-              )}
-
-              {/* Step 2: Vows */}
-              {currentStep === 2 && (
-                <VowsStep
-                  watch={watch}
-                  openDropdowns={openDropdowns}
-                  onToggleDropdown={toggleDropdown}
-                  onSelectDropdown={handleDropdownSelect}
-                />
-              )}
-
-              {/* Step 3: Rituals */}
-              {currentStep === 3 && (
-                <RitualsStep
-                  register={register}
-                  watch={watch}
-                  openDropdowns={openDropdowns}
-                  onToggleDropdown={toggleDropdown}
-                  onSelectDropdown={handleDropdownSelect}
-                />
-              )}
-
-              {/* Step 4: Schedule */}
-              {currentStep === 4 && (
-                <ScheduleStep register={register} errors={errors} />
-              )}
-
-              {/* Step 5: Review */}
-              {currentStep === 5 && <ReviewStep watch={watch} />}
-
-              {/* Navigation Buttons */}
-              <NavigationButtons
-                currentStep={currentStep}
-                maxStep={5}
-                onPrevStep={handlePrevStep}
-                onNextStep={handleNextStep}
-                onSaveDraft={handleSubmit(saveDraft)}
-                onSubmit={handleSubmit(onSubmit)}
+          <form onSubmit={handleSubmit(onSubmit)}>
+            {/* Step 1: Type */}
+            {currentStep === 1 && (
+              <TypeStep
+                register={register}
+                errors={errors}
+                watch={watch}
+                openDropdowns={openDropdowns}
+                onToggleDropdown={toggleDropdown}
+                onSelectDropdown={handleDropdownSelect}
               />
-            </form>
-          </div>
-          {/*Upload file*/}
-          <div className="border-2 border-primary border-dashed rounded-xl w-50 mt-14">
-            <label
-  htmlFor="File"
-  className="flex flex-col items-center rounded  p-4 text-gray-900 shadow-sm sm:p-6 cursor-pointer">
-  
-<FaLink className="text-primary text-4xl" />
-  <span className="mt-4 font-medium text-[#676767]"> Add Notes </span>
+            )}
 
+            {/* Step 2: Vows */}
+            {currentStep === 2 && (
+              <VowsStep
+                watch={watch}
+                openDropdowns={openDropdowns}
+                onToggleDropdown={toggleDropdown}
+                onSelectDropdown={handleDropdownSelect}
+              />
+            )}
 
-  <input multiple type="file" id="File" className="sr-only" />
-</label>
-          </div>
-          {/*Notes*/}
-           <div className="space-y-8 mt-8">
-        <div className="bg-white rounded-2xl border border-primary p-4 md:p-6 shadow-xl w-full flex flex-col">
+            {/* Step 3: Rituals */}
+            {currentStep === 3 && (
+              <RitualsStep
+                register={register}
+                watch={watch}
+                openDropdowns={openDropdowns}
+                onToggleDropdown={toggleDropdown}
+                onSelectDropdown={handleDropdownSelect}
+              />
+            )}
+
+            {/* Step 4: Schedule */}
+            {currentStep === 4 && (
+              <ScheduleStep register={register} errors={errors} />
+            )}
+
+            {/* Step 5: Review */}
+            {currentStep === 5 && <ReviewStep watch={watch} />}
+
+            {/* Navigation Buttons */}
+            <NavigationButtons
+              currentStep={currentStep}
+              maxStep={5}
+              onPrevStep={handlePrevStep}
+              onNextStep={handleNextStep}
+              onSaveDraft={handleSubmit(saveDraft)}
+              onSubmit={handleSubmit(onSubmit)}
+            />
+          </form>
+        </div>
+        {/*Upload file*/}
+        <div className="border-2 border-primary border-dashed rounded-xl w-50 mt-14">
+          <label
+            htmlFor="File"
+            className="flex flex-col items-center rounded  p-4 text-gray-900 shadow-sm sm:p-6 cursor-pointer"
+          >
+            <FaLink className="text-primary text-4xl" />
+            <span className="mt-4 font-medium text-[#676767]"> Add Notes </span>
+
+            <input multiple type="file" id="File" className="sr-only" />
+          </label>
+        </div>
+        {/*Notes*/}
+        <div className="space-y-8 mt-8">
+          <div className="bg-white rounded-2xl border border-primary p-4 md:p-6 shadow-xl w-full flex flex-col">
             <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-2">
-             
               <div className="flex flex-wrap gap-x-8 gap-y-2">
                 <span className="text-primary font-primary font-medium text-base md:text-lg">
                   Title :{" "}
-                  <span className=" text-black font-bold">Garden Vows-Sunset</span>
+                  <span className=" text-black font-bold">
+                    Garden Vows-Sunset
+                  </span>
                 </span>
               </div>
               <span className="text-xs text-primary font-secondary mt-2 md:mt-0">
                 12-20-25
               </span>
             </div>
-              <hr className="border-t border-primary mb-4" />
+            <hr className="border-t border-primary mb-4" />
             <div className="text-gray-700 text-sm md:text-base mb-4">
-             <input type="text" placeholder="Type Here " className="mb-20 w-full border-none" />
+              <input
+                type="text"
+                placeholder="Type Here "
+                className="mb-20 w-full border-none"
+              />
             </div>
             <hr className="border-t border-primary mb-4" />
             <div className="flex justify-end gap-4">
@@ -247,11 +247,11 @@ const CeremonyReview = () => {
                 Save
               </button>
               <button className="px-6 py-2 border border-primary text-white bg-primary rounded-full font-medium hover:bg-primary hover:text-white transition-colors">
-                Send 
+                Send
               </button>
             </div>
           </div>
-      </div>
+        </div>
       </div>
     </div>
   );
