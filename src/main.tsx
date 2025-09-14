@@ -3,9 +3,12 @@ import "./index.css";
 import Router from "./Route/Router.tsx";
 import { RouterProvider } from "react-router";
 import { AxiosProvider } from "./Component/Providers/AxiosProvider.tsx";
+import { AuthProvider } from "./Component/Providers/AuthProvider.tsx";
 
 createRoot(document.getElementById("root")!).render(
   <AxiosProvider>
-    <RouterProvider  router={Router} />
+    <AuthProvider>
+      <RouterProvider router={Router} />
+    </AuthProvider>
   </AxiosProvider>
 );

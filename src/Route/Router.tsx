@@ -16,6 +16,8 @@ import Schedule from "../Pages/DashBoard/Schedule/Schedule";
 import Settings from "../Pages/DashBoard/Settings/Settings";
 import Bookings from "../Pages/DashBoard/Bookings/Bookings";
 import CeremonyReview from "../Pages/DashBoard/CeremonyReview/CeremonyReview";
+import ResetPassword from "../Pages/Verify_Forget/ResetPassword";
+import VerifyUser from "../Pages/Verify_Forget/verifyUser";
 
 const Router = createBrowserRouter([
   {
@@ -44,6 +46,14 @@ const Router = createBrowserRouter([
         element: <OfficiantDetail />,
       },
     ],
+  },
+  {
+    path: "/reset-password/:token",
+    element: <ResetPassword />,
+  },
+  {
+    path: "/verify/:token",
+    element: <VerifyUser />,
   },
   {
     path: "/login",

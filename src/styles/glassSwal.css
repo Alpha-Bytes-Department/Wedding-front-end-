@@ -111,9 +111,10 @@
 /* Icon styling */
 .glassmorphic-swal-icon {
   border: none !important;
-  margin: 1.5rem 0 !important;
+  margin: 1.5rem auto !important;
   width: 80px !important;
   height: 80px !important;
+  display: block !important;
 }
 
 /* Success icon */
@@ -134,6 +135,39 @@
 .glassmorphic-swal-icon.swal2-error {
   border-color: #ef4444 !important;
   color: #ef4444 !important;
+  border-width: 4px !important;
+  border-style: solid !important;
+  position: relative !important;
+}
+
+.glassmorphic-swal-icon.swal2-error .swal2-x-mark {
+  position: absolute !important;
+  display: block !important;
+  left: 50% !important;
+  top: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.glassmorphic-swal-icon.swal2-error .swal2-x-mark-line-left,
+.glassmorphic-swal-icon.swal2-error .swal2-x-mark-line-right {
+  background-color: #ef4444 !important;
+  height: 5px !important;
+  width: 47px !important;
+  border-radius: 2px !important;
+  position: absolute !important;
+  left: 50% !important;
+  top: 50% !important;
+  transform: translate(-50%, -50%) !important;
+}
+
+.glassmorphic-swal-icon.swal2-error .swal2-x-mark-line-left {
+  transform: translate(-50%, -50%) rotate(45deg) !important;
+}
+
+.glassmorphic-swal-icon.swal2-error .swal2-x-mark-line-right {
+  transform: translate(-50%, -50%) rotate(-45deg) !important;
 }
 
 /* Warning icon */
@@ -205,7 +239,8 @@
   .glassmorphic-swal-icon {
     width: 70px !important;
     height: 70px !important;
-    margin: 1rem 0 !important;
+    margin: 1rem auto !important;
+    display: block !important;
   }
 }
 

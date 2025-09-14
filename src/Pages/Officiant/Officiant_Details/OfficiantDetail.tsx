@@ -19,7 +19,40 @@ const OfficiantDetail = () => {
   const axios = useAxios();
   const [officiantDetails, setOfficiantDetails] = useState<any>(null);
   const [imageError, setImageError] = useState<boolean>(false);
+  const [testimonials, setTestimonials] = useState<any[]>([]);
 
+    // ======================Dummy data for testimonials if API fails=====================
+    const dummyTestimonials = [
+      {
+        id: "64b2f0c1f5a2b12345678911",
+        name: "Emily Carter",
+        role: "verified",
+        review:
+          "The officiant was amazing! The ceremony felt personal, heartfelt, and beautifully done.",
+        rating: 5,
+        avatar: "https://randomuser.me/api/portraits/women/45.jpg",
+      },
+      {
+        id: "64b2f0c1f5a2b12345678912",
+        name: "Michael Johnson",
+        role: "verified",
+        review:
+          "Very professional and kind. Everything was smooth and organized, highly recommend.",
+        rating: 4,
+        avatar: "https://randomuser.me/api/portraits/men/32.jpg",
+      },
+      {
+        id: "64b2f0c1f5a2b12345678913",
+        name: "Sophia Martinez",
+        role: "verified",
+        review:
+          "Absolutely wonderful officiant. The ceremony was tailored perfectly to us!",
+        rating: 5,
+        avatar: "https://randomuser.me/api/portraits/women/68.jpg",
+      },
+    ];
+
+    // ======================Fetching officiant details====================
   const fetchOfficiantDetails = async () => {
     try {
       const response = await axios.get(`/users/officiants/${officiantId}`);
@@ -29,15 +62,40 @@ const OfficiantDetail = () => {
       setImageError(false);
     } catch (error) {
       console.error("Error fetching officiant details:", error);
+        // Fallback to dummy data if API call fails
+    }
+  };
+
+    // ======================Fetching testimonial details====================
+  const fetchTestimonial = async () => {
+    try {
+      const response = await axios.get(`/reviews/public/${officiantId}`);
+      console.log("Testimonial Details:", response.data.reviews);
+      const transferItems = response.data.reviews.map((review: any) => ({
+        id: review._id,
+        name: review.userName,
+        role: "verified",
+        review: review.ratingDescription,
+        rating: review.rating,
+        avatar: review.userImageUrl,
+      }));
+      setTestimonials(transferItems);
+    } catch (error) {
+      console.error("Error fetching testimonial details:", error);
+      // Fallback to dummy data if API call fails
+      setTestimonials(dummyTestimonials); 
+      
     }
   };
   const navigate = useNavigate();
+    // ======================Handle first render====================
   useEffect(() => {
     fetchOfficiantDetails();
+    fetchTestimonial();
   }, [officiantId]);
 
   const [screenSize, setScreenSize] = useState<"sm" | "md" | "lg" | "xl">("lg");
-
+    // ======================Handle screen resize====================
   useEffect(() => {
     const handleResize = () => {
       const width = window.innerWidth;
@@ -67,76 +125,12 @@ const OfficiantDetail = () => {
   const prevBtnRef = useRef<HTMLButtonElement>(null);
   const nextBtnRef = useRef<HTMLButtonElement>(null);
 
-
-interface BookingPackage {
-  id: string;
-  name: string;
-  price: number;
-  features: string[];
-}
-
-  const testimonials = [
-    {
-      id: 1,
-      name: "Ariana H.",
-      role: "Verified",
-      review:
-        "It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English.",
-      rating: 5,
-      avatar:
-        "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=150&h=150&fit=crop&crop=face",
-    },
-    {
-      id: 2,
-      name: "Michael R.",
-      role: "Verified",
-      review:
-        "John made our wedding ceremony absolutely perfect! His professionalism and attention to detail were outstanding. He took the time to understand our vision and delivered exactly what we wanted.",
-      rating: 5,
-      avatar:
-        "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face",
-    },
-    {
-      id: 3,
-      name: "Sarah M.",
-      role: "Verified",
-      review:
-        "Amazing experience from start to finish! The ceremony was beautiful and everything went smoothly. Highly recommend John for anyone looking for a professional officiant.",
-      rating: 5,
-      avatar:
-        "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face",
-    },
-    {
-      id: 4,
-      name: "David L.",
-      role: "Verified",
-      review:
-        "Professional, friendly, and made our special day even more memorable. The personalized vows assistance was incredibly helpful. Thank you for making our wedding perfect!",
-      rating: 5,
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face",
-    },
-    {
-      id: 5,
-      name: "Emma K.",
-      role: "Verified",
-      review:
-        "We couldn't have asked for a better officiant. John was so accommodating and helped make our ceremony exactly what we dreamed of. Absolutely wonderful service!",
-      rating: 5,
-      avatar:
-        "https://images.unsplash.com/photo-1489424731084-a5d8b219a5bb?w=150&h=150&fit=crop&crop=face",
-    },
-    {
-      id: 6,
-      name: "James T.",
-      role: "Verified",
-      review:
-        "Exceptional service and truly professional. The ceremony coordination was flawless and John made sure everything went according to plan. Highly recommended!",
-      rating: 5,
-      avatar:
-        "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&h=150&fit=crop&crop=face",
-    },
-  ];
+  interface BookingPackage {
+    id: string;
+    name: string;
+    price: number;
+    features: string[];
+  }
 
   const handleImageError = () => {
     setImageError(true);
@@ -234,39 +228,37 @@ interface BookingPackage {
       </h1>
       <div className="flex justify-center">
         <div className="flex flex-col lg:flex-row gap-5 py-5 lg:py-10">
-        
-
-        {officiantDetails.bookingPackage.map((pkg: BookingPackage) => (
+          {officiantDetails.bookingPackage.map((pkg: BookingPackage) => (
             <div
-                key={pkg.id}
-                className="border-2 border-primary rounded-2xl max-w-sm w-full p-5"
+              key={pkg.id}
+              className="border-2 border-primary rounded-2xl max-w-sm w-full p-5"
             >
-                <h2 className="lg:text-2xl text-base md:text-lg font-primary font-medium">
-                    {pkg.name}
-                </h2>
-                <p className="text-black text-xl font-bold py-2.5">
-                    ${pkg.price}
-                    <span className="text-xs text-gray-500">Starting price</span>
-                </p>
-                <hr className="border border-primary" />
-                <ul className="list-disc list-inside py-2">
-                    <li className="flex gap-2 items-center pb-2">
-                        <CiClock2 size={30} className="text-primary" />{" "}
-                        <span className="text-text font-secondary text:sm md:text-lg">
-                            Contact for event or ceremony
-                        </span>
-                    </li>
-                    {pkg.features.map((feat: string, idx: number) => (
-                        <li key={idx} className="flex gap-2 items-center pb-2">
-                            <PiCheckLight size={30} className="text-primary" />{" "}
-                            <span className="text-text font-secondary text:sm md:text-lg">
-                                {feat}
-                            </span>
-                        </li>
-                    ))}
-                </ul>
+              <h2 className="lg:text-2xl text-base md:text-lg font-primary font-medium">
+                {pkg.name}
+              </h2>
+              <p className="text-black text-xl font-bold py-2.5">
+                ${pkg.price}
+                <span className="text-xs text-gray-500">Starting price</span>
+              </p>
+              <hr className="border border-primary" />
+              <ul className="list-disc list-inside py-2">
+                <li className="flex gap-2 items-center pb-2">
+                  <CiClock2 size={30} className="text-primary" />{" "}
+                  <span className="text-text font-secondary text:sm md:text-lg">
+                    Contact for event or ceremony
+                  </span>
+                </li>
+                {pkg.features.map((feat: string, idx: number) => (
+                  <li key={idx} className="flex gap-2 items-center pb-2">
+                    <PiCheckLight size={30} className="text-primary" />{" "}
+                    <span className="text-text font-secondary text:sm md:text-lg">
+                      {feat}
+                    </span>
+                  </li>
+                ))}
+              </ul>
             </div>
-        ))}
+          ))}
         </div>
       </div>
       <div className="flex gap-2 items-center pb-6">
@@ -301,7 +293,16 @@ interface BookingPackage {
       </h1>
 
       {/* testimonial carousel */}
-      <div className="relative py-10">
+
+    <div className="relative py-10">
+      {testimonials.length === 0 ? (
+        <div className="text-center py-16">
+        <p className="text-gray-500 text-lg font-secondary">
+          No reviews found for {officiantDetails.name || "this officiant"}
+        </p>
+        </div>
+      ) : (
+        <>
         <Swiper
           slidesPerView={getSwiperConfig().slidesPerView}
           spaceBetween={getSwiperConfig().spaceBetween}
@@ -327,64 +328,70 @@ interface BookingPackage {
         >
           {testimonials.map((testimonial) => (
             <SwiperSlide key={testimonial.id}>
-              <div className="flex flex-col items-start max-w-sm mx-auto">
-                <div className="relative bg-white border-2 border-primary rounded-2xl p-6 mb-6 shadow-lg">
-                  <p className="text-gray-700 font-secondary text-sm leading-relaxed mb-4 text-center">
-                    "{testimonial.review}"
-                  </p>
+            <div className="flex flex-col items-start max-w-sm mx-auto">
+              <div className="relative bg-white border-2 border-primary rounded-2xl p-6 mb-6 shadow-lg">
+                <p className="text-gray-700 font-secondary text-sm leading-relaxed mb-4 text-center">
+                "{testimonial.review}"
+                </p>
 
-                  <div className="flex justify-end gap-1">
-                    {Array.from({ length: 5 }).map((_, i) => (
-                      <BsFillStarFill
-                        key={i}
-                        className={
-                          i < testimonial.rating
-                            ? "text-yellow-500 text-lg"
-                            : "text-yellow-500 text-lg opacity-50"
-                        }
-                      />
-                    ))}
-                  </div>
-                </div>
-
-                <div className="flex gap-3 items-start">
-                  <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-primary shadow-md mb-3">
-                    <img
-                      src={testimonial.avatar}
-                      alt={testimonial.name}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                  <div>
-                    <h4 className="font-primary font-bold text-gray-800 text-lg">
-                      {testimonial.name}
-                    </h4>
-                    <p className="italic text-sm font-primary">
-                      {testimonial.role}
-                    </p>
-                  </div>
+                <div className="flex justify-end gap-1">
+                {Array.from({ length: 5 }).map((_, i) => (
+                  <BsFillStarFill
+                    key={i}
+                    className={
+                    i < testimonial.rating
+                      ? "text-yellow-500 text-lg"
+                      : "text-yellow-500 text-lg opacity-50"
+                    }
+                  />
+                ))}
                 </div>
               </div>
+
+              <div className="flex gap-3 items-start">
+                <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-primary shadow-md mb-3">
+                <img
+                  src={testimonial.avatar}
+                  alt={testimonial.name}
+                  className="w-full h-full object-cover"
+                />
+                </div>
+                <div>
+                <h4 className="font-primary font-bold text-gray-800 text-lg">
+                  {testimonial.name}
+                </h4>
+                <p className="italic text-sm font-primary">
+                  {testimonial.role}
+                </p>
+                </div>
+              </div>
+            </div>
             </SwiperSlide>
           ))}
         </Swiper>
 
-        {/* Navigation Buttons */}
-        <button
-          ref={prevBtnRef}
-          className="absolute left-1/3 lg:left-4 lg:top-1/2 transform -translate-y-1/2 z-10 bg-[#F6EED5] hover:bg-yellow-600 w-12 h-12 rounded-full shadow-lg transition-all duration-300 flex justify-center items-center hover:scale-105"
-          aria-label="Previous"
-        >
-          <AiOutlineDoubleLeft size={20} className="text-black" />
-        </button>
-        <button
-          ref={nextBtnRef}
-          className="absolute right-1/3 lg:right-4 lg:top-1/2 transform -translate-y-1/2 z-10 bg-[#F6EED5] hover:bg-yellow-600 w-12 h-12 rounded-full shadow-lg transition-all duration-300 flex justify-center items-center hover:scale-105"
-          aria-label="Next"
-        >
-          <AiOutlineDoubleRight size={20} className="text-black" />
-        </button>
-      </div>
+        {/* Navigation Buttons - only show if more than 3 testimonials */}
+        {testimonials.length > 3 && (
+          <>
+          <button
+            ref={prevBtnRef}
+            className="absolute left-1/3 lg:left-4 lg:top-1/2 transform -translate-y-1/2 z-10 bg-[#F6EED5] hover:bg-yellow-600 w-12 h-12 rounded-full shadow-lg transition-all duration-300 flex justify-center items-center hover:scale-105"
+            aria-label="Previous"
+          >
+            <AiOutlineDoubleLeft size={20} className="text-black" />
+          </button>
+          <button
+            ref={nextBtnRef}
+            className="absolute right-1/3 lg:right-4 lg:top-1/2 transform -translate-y-1/2 z-10 bg-[#F6EED5] hover:bg-yellow-600 w-12 h-12 rounded-full shadow-lg transition-all duration-300 flex justify-center items-center hover:scale-105"
+            aria-label="Next"
+          >
+            <AiOutlineDoubleRight size={20} className="text-black" />
+          </button>
+          </>
+        )}
+        </>
+      )}
+    </div>
     </div>
   );
 };

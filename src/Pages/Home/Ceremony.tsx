@@ -114,11 +114,15 @@ const buttons=()=>{
   const user=false
   return (
     <div className="flex items-center md:flex-row flex-col  gap-4">
-      <Link to={"/dashboard"} className="bg-primary text-white py-2 px-4 rounded-xl text-lg font-semibold font-secondary">
+      <Link
+        to={"/dashboard"}
+        className="bg-primary text-white py-2 px-4 rounded-xl text-lg font-semibold font-secondary"
+      >
         Start Planning
       </Link>
       {!user ? (
         <Link
+          
           to={"/signup"}
           className="bg-transparent border border-black text-black-web  py-2 px-4 rounded-xl text-lg font-semibold font-secondary"
         >

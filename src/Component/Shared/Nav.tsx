@@ -49,7 +49,8 @@ const Nav = () => {
     }
   }, [location]);
 
-  const user: User | null = { profileImage: "hwlohsoadhf" }; // Changed from false to null with proper typing
+  const user: User | null = null; // Changed from false to null with proper typing
+
 
   return (
     <div className="bg-transparent flex justify-between items-center pt-3 sm:pt-4 md:pt-5   px-3 sm:px-4 md:px-6 lg:px-12 xl:px-20 absolute top-0 left-0 right-0 z-50">
@@ -211,13 +212,14 @@ const Nav = () => {
       {/* Desktop User Menu */}
       {!user ? (
         <div className="hidden lg:flex items-center gap-3 xl:gap-5">
-          <Link to="/login">
+          <Link to="/login" state={{ from: location }}>
             <div className="rounded-xl px-3 py-2 xl:px-5 xl:py-2 border border-[#D4AF37] hover:bg-[#D4AF37] hover:text-[#000000] text-[#D4AF37] transition-all duration-300 font-secondary font-medium text-sm lg:text-base">
               Sign in
             </div>
           </Link>
           <Link
             to="/signup"
+            state={{ from: location }}
             className="rounded-xl px-3 py-2 xl:px-5 xl:py-2 border hover:text-[#D4AF37] border-[#D4AF37] hover:bg-transparent  text-[#000000] bg-[#D4AF37] transition-all duration-300 font-secondary font-medium text-sm lg:text-base"
           >
             Join
@@ -352,7 +354,7 @@ const Nav = () => {
           {/* Mobile Auth Buttons */}
           {!user ? (
             <div className="flex flex-col gap-3 sm:gap-4 mt-6 sm:mt-8">
-              <Link to="/login" onClick={toggleMenu}>
+              <Link to="/login" state={{ from: location }} onClick={toggleMenu}>
                 <div className="w-full text-center rounded-xl px-4 sm:px-5 py-2.5 sm:py-3 border border-[#D4AF37] hover:bg-[#D4AF37] hover:text-[#000000] text-[#D4AF37] transition-all duration-300 font-secondary font-medium text-sm sm:text-base">
                   Sign in
                 </div>

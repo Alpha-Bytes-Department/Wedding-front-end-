@@ -1,29 +1,62 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import SocialLogin from "../Login/SocialLogin";
+import { useAxios } from "../../Component/Providers/AxiosProvider";
+import { GlassSwal } from "../../utils/glassSwal";
 
 type Inputs = {
-    email: string;
-    password: string;
-    partner1Name: string;
-    partner2Name: string;
+  email: string;
+  password: string;
+  partner_1: string;
+  partner_2: string;
 };
 
 const Signup = () => {
+  const [loading, setLoading] = useState<boolean>(false);
+  const axios = useAxios();
+  const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const { register, handleSubmit } = useForm<Inputs>();
 
-  const onSubmit = (data: Inputs) => {
+  const onSubmit = async (data: Inputs) => {
     // Safe console log
-    console.log("Login Data:", {
+    console.log("Signup Data:", {
       email: data.email,
       password: data.password,
-      partner1Name: data.partner1Name,
-      partner2Name: data.partner2Name,
+      partner_1: data.partner_1,
+      partner_2: data.partner_2,
     });
-  };
+    setLoading(true);
 
+    try {
+      const response = await axios.post("/users/register", data);
+      console.log("Signup Response:", response);
+
+      if (response?.status === 201 || response?.status === 200) {
+        await GlassSwal.success(
+          "Registration Successful!",
+          response?.data?.msg ||
+            "Registration successful! Please check your email to verify."
+        );
+        navigate("/login");
+      } else {
+        await GlassSwal.error(
+          "Signup Failed",
+          response?.data?.msg ?? "Failed to create account. Please try again."
+        );
+      }
+    } catch (error: any) {
+      console.error("Signup Error:", error);
+      const errorMessage =
+        error.response?.data?.msg ||
+        error.response?.data?.message ||
+        "An error occurred during registration. Please try again.";
+      await GlassSwal.error("Registration Failed", errorMessage);
+    } finally {
+      setLoading(false);
+    }
+  };
   return (
     <div className="grid lg:grid-cols-3 text-black min-h-screen md:px-0 px-5 ">
       <div className="bg-primary lg:flex items-center justify-center w-full  hidden">
@@ -42,7 +75,6 @@ const Signup = () => {
             <path
               d="M204.35 42.562C205.287 43.5731 206.145 44.6576 207.005 45.7537C207.234 46.04 207.463 46.3264 207.699 46.6214C209.163 48.4607 210.569 50.3454 211.951 52.2646C214.689 49.7364 217.958 46.7155 219.553 43.0727C222.275 43.3236 224.37 44.0121 226.819 45.3707C227.15 45.5517 227.48 45.7328 227.82 45.9194C230.876 47.6521 233.483 49.7522 236.098 52.2646C236.493 52.6326 236.887 53.0005 237.294 53.3797C240.061 56.0695 242.163 59.0108 244.147 62.4778C244.418 62.9445 244.69 63.4112 244.969 63.8921C250.572 74.1266 252.394 86.5874 250.155 98.3836C247.333 111.796 239.977 122.145 229.893 129.502C220.705 135.476 209.011 137.656 198.677 134.672C190.717 131.955 182.441 127.124 177.521 119.161C177.813 118.631 177.813 118.631 178.111 118.09C182.154 110.504 185.309 101.581 185.569 92.6068C185.581 92.2865 185.592 91.9663 185.604 91.6363C185.992 79.6515 183.274 69.451 178.415 58.9032C178.115 58.2234 177.816 57.5431 177.521 56.8605C183.776 49.0522 192.096 43.5615 201.248 41.6046C202.739 41.5321 203.11 41.6569 204.35 42.562Z"
               fill="#D4AF37"
-          
             />
             <path
               d="M159.187 48.6898C161.248 48.9457 162.318 49.8556 163.882 51.3708C164.498 51.9593 164.498 51.9593 165.126 52.5597C165.527 52.9678 165.928 53.3759 166.342 53.7964C166.771 54.2151 167.199 54.6337 167.641 55.0651C168.577 56.3497 168.577 56.3497 168.567 57.6523C168.126 58.9152 167.626 59.9189 166.957 61.0414C160.706 72.6004 159.254 87.2593 161.854 100.41C163.219 106.009 164.866 111.204 167.52 116.189C167.977 117.08 167.977 117.08 168.577 118.65C167.482 123.417 161.753 126.96 158.293 129.374C148.824 135.582 137.441 137.389 126.772 134.497C119.337 132.001 113.343 127.895 107.764 121.714C107.453 121.396 107.142 121.078 106.821 120.751C99.6909 113.223 96.0936 101.265 95.6161 90.3845C95.5591 79.4782 98.2407 70.8172 102.846 61.4563C103.288 61.4563 103.731 61.4563 104.187 61.4563C104.945 62.3618 105.64 63.2714 106.339 64.2331C111.796 71.3388 119.509 75.2091 127.754 75.8486C136.002 76.0774 144.189 72.7687 150.271 66.3484C154.787 61.3344 157.492 55.6427 159.187 48.6898Z"
@@ -221,13 +253,13 @@ const Signup = () => {
               type="text"
               placeholder="Partner 1 Name"
               className="border-b focus:outline-none border-b-[#c4c4c4]  px-4 py-2"
-              {...register("partner1Name", { required: true })}
+              {...register("partner_1", { required: true })}
             />
             <input
               type="text"
               placeholder="Partner 2 Name"
               className="border-b focus:outline-none border-b-[#c4c4c4]  px-4 py-2"
-              {...register("partner2Name", { required: true })}
+              {...register("partner_2", { required: true })}
             />
             <input
               type="email"
@@ -296,9 +328,17 @@ const Signup = () => {
             </div>
             <button
               type="submit"
-              className="bg-primary font-secondary font-bold mx-auto text-white rounded-xl px-5 mt-8 md:mt-18 py-2"
+              disabled={loading}
+              className="bg-primary font-secondary font-bold mx-auto text-white rounded-xl px-5 mt-8 md:mt-18 py-2 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
             >
-              Create Account
+              {loading ? (
+                <>
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                  Creating Account...
+                </>
+              ) : (
+                "Create Account"
+              )}
             </button>
           </form>
 
