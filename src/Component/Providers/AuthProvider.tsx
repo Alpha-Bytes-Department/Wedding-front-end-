@@ -5,6 +5,14 @@ import React, {
   useEffect,
   type ReactNode,
 } from "react";
+import {
+  signInWithPopup,
+  signOut,
+  type UserCredential,
+} from "firebase/auth";
+import { auth, googleProvider, facebookProvider } from "./../Firebase/firebase.config";
+import axios from "axios";
+
 interface User {
   _id: string;
   bookingMoney: number;
@@ -23,6 +31,7 @@ interface User {
   weddingDate: string;
   __v: number;
 }
+
 interface AuthResponse {
   user: User;
   accessToken: string;
@@ -33,6 +42,8 @@ interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
   login: (userData: AuthResponse) => void;
+  loginWithGoogle: () => Promise<void>;
+  loginWithFacebook: () => Promise<void>;
   logout: () => void;
 }
 
@@ -52,17 +63,49 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     localStorage.setItem("user", JSON.stringify(userData.user));
     localStorage.setItem("accessToken", userData.accessToken);
     localStorage.setItem("refreshToken", userData.refreshToken);
+    window.location.href = "/"; // Redirect to home page after login
   };
+
+  const loginWithProvider = async (provider: any) => {
+    try {
+      const result: UserCredential = await signInWithPopup(auth, provider);
+      console.log("Firebase user:", result.user);
+      const token = await result.user.getIdToken(); // Firebase ID token
+      const email = result.user.email;
+      const partner_1 = " "; // Get partner_1 from your app's state or user input
+      const partner_2 = result.user.displayName; // Get partner_2 from your app's state or user input
+      const profilePicture = result.user.photoURL;
+
+      // send token/email to your backend to register/login & get your own tokens
+      const response = await axios.post("http://localhost:5000/api/users/social-login", {
+        email,
+        firebaseToken: token,
+        partner_1,
+        partner_2,
+        profilePicture,
+      });
+      console.log("Backend response:", response.data);
+      login(response.data); // backend should respond with AuthResponse
+    } catch (error) {
+      console.error("Social login error:", error);
+    }
+  };
+
+  const loginWithGoogle = () => loginWithProvider(googleProvider);
+  const loginWithFacebook = () => loginWithProvider(facebookProvider);
 
   const logout = () => {
     setUser(null);
     localStorage.removeItem("user");
     localStorage.removeItem("accessToken");
     localStorage.removeItem("refreshToken");
+    signOut(auth);
+    window.location.href = "/login";
   };
 
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
+    console.log("Stored user from localStorage:", storedUser);
     if (storedUser) {
       setUser(JSON.parse(storedUser));
     }
@@ -72,6 +115,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     user,
     isAuthenticated,
     login,
+    loginWithGoogle,
+    loginWithFacebook,
     logout,
   };
 

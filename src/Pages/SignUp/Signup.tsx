@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import SocialLogin from "../Login/SocialLogin";
-import { useAxios } from "../../Component/Providers/AxiosProvider";
+import { useAxios } from "../../Component/Providers/useAxios";
 import { GlassSwal } from "../../utils/glassSwal";
 
 type Inputs = {

@@ -2,7 +2,7 @@
 import { FaArrowRight, FaUserTie } from "react-icons/fa6";
 import ContactForm from "../../Home/ContactForm";
 import { useNavigate } from "react-router-dom";
-import { useAxios } from "../../../Component/Providers/AxiosProvider";
+import { useAxios } from "../../../Component/Providers/useAxios";
 import { useCallback, useEffect, useState } from "react";
 
 const Officiant = () => {

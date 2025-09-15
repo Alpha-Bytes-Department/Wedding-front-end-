@@ -10,7 +10,7 @@ import { PiCheckLight } from "react-icons/pi";
 import { BsFillStarFill } from "react-icons/bs";
 import { AiOutlineDoubleLeft, AiOutlineDoubleRight } from "react-icons/ai";
 import { useNavigate, useParams } from "react-router-dom";
-import { useAxios } from "../../../Component/Providers/AxiosProvider";
+import { useAxios } from "../../../Component/Providers/useAxios";
 import { FaUserTie } from "react-icons/fa6";
 
 const OfficiantDetail = () => {

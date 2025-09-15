@@ -1,7 +1,7 @@
 import { FaFacebook, FaInstagram, FaYoutube } from "react-icons/fa";
 import { FaLinkedinIn, FaXTwitter } from "react-icons/fa6";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { useAxios } from "../Providers/AxiosProvider";
+import { useAxios } from "../Providers/useAxios";
 import { GlassSwal } from "../../utils/glassSwal";
 import { useEffect, useState } from "react";
 

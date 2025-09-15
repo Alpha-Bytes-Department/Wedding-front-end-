@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { FaCheckCircle } from "react-icons/fa";
-import { useAxios } from "../../Component/Providers/AxiosProvider";
+import { useAxios } from "../../Component/Providers/useAxios";
 import { GlassSwal } from "../../utils/glassSwal";
 
 export default function VerifyPage() {
@@ -29,7 +29,7 @@ export default function VerifyPage() {
             "Email Verified!",
             response?.data?.message ?? "Your email has been successfully verified."
           );
-          navigate("/");
+          navigate("/login");
         } else {
           await GlassSwal.error(
             "Verification Failed",

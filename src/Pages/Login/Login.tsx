@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import SocialLogin from "./SocialLogin";
-import { useAxios } from "../../Component/Providers/AxiosProvider";
+import { useAxios } from "../../Component/Providers/useAxios";
 import { useAuth } from "../../Component/Providers/AuthProvider";
 import GlassSwal from "../../utils/glassSwal";
 import { IoMdCheckmarkCircleOutline } from "react-icons/io";

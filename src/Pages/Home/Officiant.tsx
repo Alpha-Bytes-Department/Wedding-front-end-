@@ -1,5 +1,5 @@
 import { FaArrowRight, FaUserTie } from 'react-icons/fa6';
-import { useAxios } from '../../Component/Providers/AxiosProvider';
+import { useAxios } from '../../Component/Providers/useAxios';
 import { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 

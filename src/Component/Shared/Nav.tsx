@@ -1,20 +1,49 @@
 import { Link, NavLink, useNavigate, useLocation } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { FaUserAlt } from "react-icons/fa";
 import { BsBellFill } from "react-icons/bs";
+import { MdOutlineNotifications, MdOutlineNotificationsActive } from "react-icons/md";
+import { GoRead } from "react-icons/go";
+import { useAuth } from "../Providers/AuthProvider";
+import { useAxios } from "../Providers/useAxios";
 
-interface User {
-  profileImage?: string;
-}
+// Define notification type
+type Notification = {
+  _id: string;
+  userId: string;
+  message: string;
+  type: string;
+  isRead: boolean;
+  createdAt: string;
+};
+
+
 
 const Nav = () => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
+  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const {user}=useAuth()
+  const axios=useAxios()
   const navigate = useNavigate();
   const location = useLocation();
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
+  
+  const markAsRead = useCallback(async (notificationId: string) => {
+    try {
+      await axios.patch(`/notifications/toggle-read/${notificationId}`);
+      // Update local state to reflect the change
+      setNotifications(prev => 
+        prev.map(note => 
+          note._id === notificationId ? {...note, isRead: true} : note
+        )
+      );
+    } catch (error) {
+      console.error("Error marking notification as read:", error);
+    }
+  }, [axios]);
 
   const scrollToClientReview = () => {
     // Check if we're already on the home page
@@ -33,8 +62,19 @@ const Nav = () => {
     }
   };
 
+  const getNotifications = useCallback(async () => {
+    try {
+      const response = await axios.get('/notifications/my');
+      setNotifications(response.data.notifications);
+      console.log("Notifications:", response.data);
+    } catch (error) {
+      console.error("Error fetching notifications:", error);
+    }
+  }, [axios]);
+
   // Handle scrolling when navigating to home with hash
   useEffect(() => {
+    if (user) getNotifications();
     if (location.hash === "#client-review") {
       // Small delay to ensure the component is rendered
       setTimeout(() => {
@@ -47,11 +87,9 @@ const Nav = () => {
         }
       }, 100);
     }
-  }, [location]);
+  }, [location, user]);
 
-  const user: User | null = null; // Changed from false to null with proper typing
-
-
+  console.log("User in Nav:", user);
   return (
     <div className="bg-transparent flex justify-between items-center pt-3 sm:pt-4 md:pt-5   px-3 sm:px-4 md:px-6 lg:px-12 xl:px-20 absolute top-0 left-0 right-0 z-50">
       <Link to="/" className="flex items-center gap-2 sm:gap-3 flex-col">
@@ -227,29 +265,39 @@ const Nav = () => {
         </div>
       ) : (
         <div className="hidden lg:flex items-center">
-          {(user as User).profileImage ? (
+          {user?.profileImage ? (
             <div className="flex gap-3 lg:gap-4 items-center relative">
               <div className="relative">
-                <BsBellFill size={20} className="lg:w-6 lg:h-6" />
-                <span className="absolute -top-2 -right-2 bg-[#D4AF37] text-white text-xs rounded-full px-1.5 py-0.5 flex items-center justify-center min-w-[18px] h-[18px]">
-                  3
-                </span>
+                <BsBellFill  onClick={() => {
+                  const modal = document.getElementById('my_modal_3') as HTMLDialogElement | null;
+                  if (modal) modal.showModal();
+                }} size={20} className="lg:w-6 lg:h-6" />
+                {notifications.length > 0 && (
+                  <span className="absolute -top-2 -right-2 bg-[#D4AF37] text-white text-xs rounded-full px-1.5 py-0.5 flex items-center justify-center min-w-[18px] h-[18px]">
+                    {notifications.filter(n => !n.isRead).length}
+                  </span>
+                )}
               </div>
               <div className="rounded-full p-2 lg:p-3 border-2 border-[#D4AF37]">
                 <img
-                  src={(user as User).profileImage}
+                  src={user.profileImage}
                   alt="Profile"
                   className="w-8 h-8 lg:w-10 lg:h-10 rounded-full"
-                />
+                /> test
               </div>
             </div>
           ) : (
             <div className="flex gap-3 lg:gap-4 items-center relative">
               <div className="relative">
-                <BsBellFill size={20} className="lg:w-6 lg:h-6" />
-                <span className="absolute -top-2 -right-2 bg-[#D4AF37] text-white text-xs rounded-full px-1.5 py-0.5 flex items-center justify-center min-w-[18px] h-[18px]">
-                  3
-                </span>
+                <BsBellFill onClick={() => {
+                  const modal = document.getElementById('my_modal_3') as HTMLDialogElement | null;
+                  if (modal) modal.showModal();
+                }} size={20} className="lg:w-6 lg:h-6 cursor-pointer" />
+                {notifications.length > 0 && (
+                  <span className="absolute -top-2 -right-2 bg-[#D4AF37] text-white text-xs rounded-full px-1.5 py-0.5 flex items-center justify-center min-w-[18px] h-[18px]">
+                    {notifications.filter(n => !n.isRead).length}
+                  </span>
+                )}
               </div>
               <div className="rounded-full p-2 lg:p-3 border-2 border-[#D4AF37]">
                 <FaUserAlt size={20} className="lg:w-7 lg:h-7" />
@@ -369,17 +417,22 @@ const Nav = () => {
             </div>
           ) : (
             <div className="mt-6 sm:mt-8 flex items-center justify-center">
-              {(user as User).profileImage ? (
+              {user?.profileImage ? (
                 <div className="flex gap-3 lg:gap-4 items-center relative">
                   <div className="relative">
-                    <BsBellFill size={20} className="lg:w-6 lg:h-6" />
-                    <span className="absolute -top-2 -right-2 bg-[#D4AF37] text-white text-xs rounded-full px-1.5 py-0.5 flex items-center justify-center min-w-[18px] h-[18px]">
-                      3
-                    </span>
+                    <BsBellFill onClick={() => {
+                      const modal = document.getElementById('my_modal_3') as HTMLDialogElement | null;
+                      if (modal) modal.showModal();
+                    }} size={20} className="lg:w-6 lg:h-6 cursor-pointer" />
+                    {notifications.length > 0 && (
+                      <span className="absolute -top-2 -right-2 bg-[#D4AF37] text-white text-xs rounded-full px-1.5 py-0.5 flex items-center justify-center min-w-[18px] h-[18px]">
+                        {notifications.filter(n => !n.isRead).length}
+                      </span>
+                    )}
                   </div>
                   <div className="rounded-full p-2 lg:p-3 border-2 border-[#D4AF37]">
                     <img
-                      src={(user as User).profileImage}
+                      src={user.profileImage}
                       alt="Profile"
                       className="w-8 h-8 lg:w-10 lg:h-10 rounded-full"
                     />
@@ -388,10 +441,15 @@ const Nav = () => {
               ) : (
                 <div className="flex gap-3 sm:gap-4 items-center">
                   <div className="relative">
-                    <BsBellFill size={20} className="sm:w-6 sm:h-6" />
-                    <span className="absolute -top-2 -right-2 bg-[#D4AF37] text-white text-xs rounded-full px-1.5 py-0.5 flex items-center justify-center min-w-[18px] h-[18px]">
-                      3
-                    </span>
+                    <BsBellFill onClick={() => {
+                      const modal = document.getElementById('my_modal_3') as HTMLDialogElement | null;
+                      if (modal) modal.showModal();
+                    }} size={20} className="sm:w-6 sm:h-6 cursor-pointer" />
+                    {notifications.length > 0 && (
+                      <span className="absolute -top-2 -right-2 bg-[#D4AF37] text-white text-xs rounded-full px-1.5 py-0.5 flex items-center justify-center min-w-[18px] h-[18px]">
+                        {notifications.filter(n => !n.isRead).length}
+                      </span>
+                    )}
                   </div>
                   <div className="rounded-full p-2.5 sm:p-3 border-2 border-[#D4AF37]">
                     <FaUserAlt size={22} className="sm:w-7 sm:h-7" />
@@ -402,6 +460,63 @@ const Nav = () => {
           )}
         </div>
       </div>
+      <dialog id="my_modal_3" className="modal">
+        <div className="modal-box max-w-md bg-white h-96">
+          <form method="dialog">
+            <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+          </form>
+          <h3 className="font-bold text-lg text-center mb-4">Notifications</h3>
+          
+          {notifications.length === 0 ? (
+            <div className="text-center py-6">
+              <p className="text-gray-500">No notifications yet</p>
+            </div>
+          ) : (
+            <div className="space-y-3 max-h-[400px] overflow-y-auto pr-2">
+              {notifications.map((item) => (
+                <div 
+                  key={item._id} 
+                  className={`flex justify-between items-start p-3 rounded-lg ${
+                    item.isRead ? 'bg-gray-50' : 'bg-yellow-50'
+                  }`}
+                >
+                  <div className="flex gap-3 items-start">
+                    <div className={`p-2 rounded-full ${item.isRead ? 'bg-gray-200' : 'bg-yellow-200'}`}>
+                      {item.isRead ? (
+                        <MdOutlineNotifications className="text-gray-700 w-5 h-5" />
+                      ) : (
+                        <MdOutlineNotificationsActive className="text-yellow-700 w-5 h-5" />
+                      )}
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium">{item.message}</p>
+                      <p className="text-xs text-gray-500 mt-1 font-medium">
+                        {new Date(item.createdAt).toLocaleString('en-US', {
+                          month: 'short',
+                          day: 'numeric',
+                          hour: 'numeric',
+                          minute: 'numeric',
+                          hour12: true
+                        })}
+                      </p>
+                    </div>
+                  </div>
+                  
+                  {!item.isRead && (
+                    <button 
+                      onClick={() => markAsRead(item._id)}
+                      className="p-1.5 hover:bg-gray-100 cursor-pointer rounded-full"
+                      title="Mark as read"
+                    >
+                      <GoRead className="w-5 h-5 text-gray-600" />
+                    </button>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </dialog>
     </div>
   );
 };

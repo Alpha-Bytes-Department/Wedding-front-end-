@@ -4,7 +4,7 @@ import { Navigation, Pagination, Mousewheel, Autoplay } from "swiper/modules";
 import "swiper/swiper-bundle.css";
 import { BsFillStarFill } from "react-icons/bs";
 import { FaArrowDown, FaArrowUp } from "react-icons/fa6";
-import { useAxios } from "../../Component/Providers/AxiosProvider";
+import { useAxios } from "../../Component/Providers/useAxios";
 import { FaRegUserCircle } from "react-icons/fa";
 
 const ClientReview = () => {

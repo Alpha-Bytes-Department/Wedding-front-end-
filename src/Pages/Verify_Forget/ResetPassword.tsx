@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate, useParams } from "react-router-dom";
 import { FaEye, FaEyeSlash, FaLock } from "react-icons/fa";
-import { useAxios } from "../../Component/Providers/AxiosProvider";
+import { useAxios } from "../../Component/Providers/useAxios";
 import { GlassSwal } from "../../utils/glassSwal";
 
 interface ResetPasswordFormData {
