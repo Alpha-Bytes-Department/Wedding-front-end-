@@ -18,6 +18,7 @@ import Bookings from "../Pages/DashBoard/Bookings/Bookings";
 import CeremonyReview from "../Pages/DashBoard/CeremonyReview/CeremonyReview";
 import ResetPassword from "../Pages/Verify_Forget/ResetPassword";
 import VerifyUser from "../Pages/Verify_Forget/verifyUser";
+import { PrivateRoute } from "../Component/PrivateRoute/PrivateRoute";
 
 const Router = createBrowserRouter([
   {
@@ -65,7 +66,7 @@ const Router = createBrowserRouter([
   },
   {
     path: "/dashboard",
-    element: <DashBoardOutline />,
+    element: <PrivateRoute><DashBoardOutline /></PrivateRoute>,
     children: [
       {
         path: "/dashboard",

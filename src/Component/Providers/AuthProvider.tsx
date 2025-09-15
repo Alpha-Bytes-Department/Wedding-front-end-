@@ -12,6 +12,7 @@ import {
 } from "firebase/auth";
 import { auth, googleProvider, facebookProvider } from "./../Firebase/firebase.config";
 import axios from "axios";
+import { useLocation, useNavigate } from "react-router-dom";
 
 interface User {
   _id: string;
@@ -40,6 +41,7 @@ interface AuthResponse {
 
 interface AuthContextType {
   user: User | null;
+  loading: boolean;
   isAuthenticated: boolean;
   login: (userData: AuthResponse) => void;
   loginWithGoogle: () => Promise<void>;
@@ -54,6 +56,8 @@ interface AuthProviderProps {
 }
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
+  const [loading, setLoading] = useState(false);
+  
   const [user, setUser] = useState<User | null>(null);
 
   const isAuthenticated = !!user;
@@ -95,25 +99,29 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const loginWithFacebook = () => loginWithProvider(facebookProvider);
 
   const logout = () => {
+    
     setUser(null);
     localStorage.removeItem("user");
     localStorage.removeItem("accessToken");
     localStorage.removeItem("refreshToken");
     signOut(auth);
-    window.location.href = "/login";
+     
   };
 
   useEffect(() => {
+    setLoading(true);
     const storedUser = localStorage.getItem("user");
-    console.log("Stored user from localStorage:", storedUser);
+ 
     if (storedUser) {
       setUser(JSON.parse(storedUser));
     }
+    setLoading(false);
   }, []);
 
   const value: AuthContextType = {
     user,
     isAuthenticated,
+    loading,
     login,
     loginWithGoogle,
     loginWithFacebook,

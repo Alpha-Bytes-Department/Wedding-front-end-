@@ -6,6 +6,7 @@ import axios, {
 } from "axios";
 // Import the context from separate file
 import { AxiosContext } from "./AxiosContext";
+import { useLocation, useNavigate } from "react-router-dom";
 
 interface AxiosProviderProps {
   children: ReactNode;
@@ -105,6 +106,7 @@ export const AxiosProvider: React.FC<AxiosProviderProps> = ({
       return response;
     },
     async (error) => {
+     
       // Check for cancellation or timeout (common in background tabs)
       if (axios.isCancel(error)) {
         console.log('Request canceled:', error.message);
@@ -133,6 +135,7 @@ export const AxiosProvider: React.FC<AxiosProviderProps> = ({
             localStorage.removeItem("user");
             localStorage.removeItem("accessToken");
             localStorage.removeItem("refreshToken");
+            window.location.href = "/login";
             return Promise.reject(error);
           }
           
@@ -147,6 +150,7 @@ export const AxiosProvider: React.FC<AxiosProviderProps> = ({
             localStorage.removeItem("user");
             localStorage.removeItem("accessToken");
             localStorage.removeItem("refreshToken");
+            window.location.href = "/login";
             return Promise.reject(error);
           }
           
@@ -192,6 +196,7 @@ export const AxiosProvider: React.FC<AxiosProviderProps> = ({
             localStorage.removeItem("user");
             localStorage.removeItem("accessToken");
             localStorage.removeItem("refreshToken");
+            window.location.href = "/login";
             return Promise.reject(error);
           }
         }
