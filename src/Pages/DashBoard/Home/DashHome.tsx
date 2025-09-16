@@ -6,6 +6,7 @@ import { Link } from "react-router-dom";
 import { usePDF } from "react-to-pdf";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
+import GlassSwal from "../../../utils/glassSwal";
 
 type Notification = {
   _id: string;

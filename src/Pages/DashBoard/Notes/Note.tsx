@@ -1,35 +1,113 @@
+import { Link } from "react-router-dom";
+import { useAxios } from "../../../Component/Providers/useAxios";
+import { useEffect, useState } from "react";
+import { useAuth } from "../../../Component/Providers/AuthProvider";
+import { useForm } from "react-hook-form";
+import { GlassSwal } from "../../../utils/glassSwal";
+
 const Note = () => {
-  const notes = [
-    {
-      title: "Garden Vows-Sunset",
-      from: "Dr. Steve",
-      date: "Aug 12,2024",
-      content:
-        "Dear couple, as you prepare for your wedding ceremony, remember that this day is a celebration of your unique journey together. The vows you exchange will be a reflection of your love, commitment, and shared dreams. Take a moment to cherish the presence of your loved ones and the promises you make to each other. May your ceremony be filled with joy, meaning, and memories that last a lifetime.",
-    },
-    {
-      title: "Beachside Bliss",
-      from: "Officiant Jane",
-      date: "Aug 10,2024",
-      content:
-        "As you stand on the sandy shores, ready to exchange your vows, remember that this moment is a testament to your love and commitment. The ocean's waves symbolize the ebb and flow of life, reminding you to navigate challenges together with grace and resilience. May your ceremony be a reflection of your unique bond, filled with laughter, tears of joy, and the unwavering support of those who cherish you.",
-    },
-    {
-      title: "Mountain Retreat",
-      from: "Officiant Mark",
-      date: "Aug 15,2024",
-      content:
-        "As you stand amidst the majestic mountains, ready to exchange your vows, remember that this moment is a testament to your love and commitment. The mountains symbolize the strength and stability of your relationship, reminding you to navigate challenges together with grace and resilience. May your ceremony be a reflection of your unique bond, filled with laughter, tears of joy, and the unwavering support of those who cherish you.",
-    },
-  ];
+ 
+  interface note{
+    title:string;
+    from:string;
+    date:string;
+    content:string;
+  }
+  type Ceremony = {
+    _id: string;
+    name: string;
+    title: string;
+    date: string;
+    officiant: string;
+    complete: string;
+    status: string;
+  };
+   interface NoteFormData {
+     category: string;
+     content: string;
+   }
+  const axios=useAxios()
+  const [events,setEvents]=useState([])
+  const [notes,setNotes]=useState<note[]>([])
+  const {user}=useAuth()
+  const { register, handleSubmit, formState: { errors },reset } = useForm();
+
+  //  ============ gathering all events ================
+  const getEvents=async()=>{
+    try {
+      const { data } = await axios.get(
+        `/events/by-role/${user?._id}/${user?.role}`
+      );
+      setEvents(data.events.filter((event: Ceremony) => event.status === 'approved' || event.status === 'completed'))
+      console.log(data);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  // ============= get all note data ==============
+  const getNotes=async()=>{
+    try {
+      const { data } = await axios.get(
+        `/notes/forUser/${user?._id}`
+      );
+      const formattedNotes = data.map((note: any) => ({
+        title: note.title,
+        from: note.from_userName,
+        date: new Date(note.createdAt).toLocaleDateString(),
+        content: note.message,
+      }));
+      setNotes(formattedNotes);
+      console.log(data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    getEvents();
+    getNotes();
+  }, []);
+  
+
+  // ============= form handling ==============
+ 
+
+  const onSubmit = (data: NoteFormData) => {
+    // Find the selected event object by its _id
+    const selectedEvent: Ceremony | undefined = events.find((event: Ceremony) => event._id === data.category);
+    const noteData = {
+      title: selectedEvent ? selectedEvent.title : "Untitled",
+      message: data.content,
+      from_userName: user?.name ?? user?.email,
+      from_userId: user?._id,
+      to_userId: selectedEvent?.officiantId ,
+      related_to: selectedEvent?._id,
+    };
+    console.log(noteData);
+    try {
+      const response = axios.post('/notes/create', noteData);
+      console.log(response);
+      (document.getElementById("my_modal_4") as HTMLDialogElement).close();
+      getNotes();
+      reset();
+      GlassSwal.success("Success", "Note created successfully");
+    } catch (error) {
+      GlassSwal.error("Error", "Failed to create note");
+    }
+    };
+    
+    
+  
+
   return (
-    <div className="  ">
+    <div className=" min-h-screen  ">
       <h1 className="text-3xl md:text-4xl pb-5 lg:py-7 lg:text-start pl-8 text-center font-primary font-bold text-gray-900 ">
         Your Notes
       </h1>
 
       <div className="space-y-8">
-        {notes.map((note, idx) => (
+        {notes.length>0?notes.map((note, idx) => (
           <div
             key={idx}
             className="bg-white rounded-2xl border border-primary p-4 md:p-6 shadow-xl w-full flex flex-col"
@@ -62,11 +140,14 @@ const Note = () => {
               </button>
             </div>
           </div>
-        ))}
+        )):<p className="text-center text-gray-500">No notes available.</p>}
       </div>
 
-      <div className="flex justify-end mt-12 gap-4 max-w-4xl ">
-        <button className="bg-primary text-white px-6 py-3 rounded-full font-medium flex items-center gap-2 hover:bg-primary/90 transition-colors">
+      <div className="flex sticky bottom-7 justify-end mt-12 gap-4 max-w-4xl ">
+        <Link
+          to={"/dashboard/ceremony"}
+          className="bg-primary text-white px-6 py-3 rounded-full font-medium flex items-center gap-2 hover:bg-primary/90 transition-colors"
+        >
           Start A New Ceremony
           <svg
             className="w-4 h-4"
@@ -81,11 +162,72 @@ const Note = () => {
               d="M9 5l7 7-7 7"
             />
           </svg>
-        </button>
-        <button className="bg-white border border-primary text-primary px-6 py-3 rounded-full font-medium hover:bg-primary hover:text-white transition-colors">
-          Continue Editing
+        </Link>
+        <button
+          onClick={() => (document.getElementById("my_modal_4") as HTMLDialogElement).showModal()}
+          className="bg-white border border-primary text-[#D4AF37] cursor-pointer px-6 py-3 rounded-full font-medium hover:bg-primary hover:text-white transition-colors"
+        >
+          Create a note
         </button>
       </div>
+      <dialog id="my_modal_4" className="modal">
+        <div className="modal-box">
+          <form method="dialog">
+            {/* if there is a button in form, it will close the modal */}
+            <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
+              ✕
+            </button>
+          </form>
+          <h3 className="font-bold text-center text-lg">Create a note</h3>
+            <div>
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 mt-4">
+              <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Category
+              </label>
+              <select
+                {...register("category", { required: "Category is required" })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+              >
+                <option value="">Select a category</option>
+                {events.map((event) => (
+                  <option key={event._id} value={event._id}>
+                    {event.title}
+                  </option>
+                ))}
+              </select>
+              {errors.category && (
+                <p className="text-red-500 text-sm mt-1">{errors.category.message as string}</p>
+              )}
+              </div>
+              
+              <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Note Content
+              </label>
+              <textarea
+                {...register("content", { required: "Content is required" })}
+                rows={4}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                placeholder="Enter your note content..."
+              />
+              {errors.content && (
+                <p className="text-red-500 text-sm mt-1">{errors.content.message as string}</p>
+              )}
+              </div>
+              
+              <button
+              type="submit"
+              className="w-full bg-primary text-white py-2 px-4 rounded-md hover:bg-primary/90 transition-colors"
+              >
+              Create Note
+              </button>
+            </form>
+            </div>
+
+       
+        </div>
+      </dialog>
     </div>
   );
 };
