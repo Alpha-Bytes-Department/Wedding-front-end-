@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { FaUserAlt } from "react-icons/fa";
 import {
   HiOutlineCog,
@@ -8,10 +8,26 @@ import {
 } from "react-icons/hi";
 import { IoCalendarNumberOutline } from "react-icons/io5";
 import { LiaStickyNoteSolid } from "react-icons/lia";
-import { MdOutlineSpaceDashboard } from "react-icons/md";
+import {
+  MdOutlineNotifications,
+  MdOutlineNotificationsActive,
+  MdOutlineSpaceDashboard,
+} from "react-icons/md";
 import { PiChats, PiClipboardTextBold } from "react-icons/pi";
 import { RiExpandLeftRightLine } from "react-icons/ri";
 import { NavLink, useLocation } from "react-router-dom";
+import { useAuth } from "../Providers/AuthProvider";
+import { useAxios } from "../Providers/useAxios";
+import { GoRead } from "react-icons/go";
+
+type Notification = {
+  _id: string;
+  userId: string;
+  message: string;
+  type: string;
+  isRead: boolean;
+  createdAt: string;
+};
 
 const DashNav = ({
   isCollapsed,
@@ -22,16 +38,40 @@ const DashNav = ({
 }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const location = useLocation();
+  const [notifications, setNotifications] = useState<Notification[]>([]);
 
+  const axios = useAxios();
+  const getNotifications = async () => {
+    try {
+      const response = await axios.get("/notifications/my");
+      setNotifications(response.data.notifications);
+      // console.log("Notifications:", response.data);
+    } catch (error) {
+      console.error("Error fetching notifications:", error);
+    }
+  };
+  useEffect(() => {
+    getNotifications();
+  }, []);
 
+  const { user, logout } = useAuth();
 
-   const isAdmin = true; 
-
-
-
-
-
-
+  const markAsRead = useCallback(
+    async (notificationId: string) => {
+      try {
+        await axios.patch(`/notifications/toggle-read/${notificationId}`);
+        // Update local state to reflect the change
+        setNotifications((prev) =>
+          prev.map((note) =>
+            note._id === notificationId ? { ...note, isRead: true } : note
+          )
+        );
+      } catch (error) {
+        console.error("Error marking notification as read:", error);
+      }
+    },
+    [axios]
+  );
 
   const navigationItems = [
     {
@@ -42,7 +82,7 @@ const DashNav = ({
     },
     //Add Booking route:
     // Conditionally add "Bookings" route based on isAdmin
-    ...(isAdmin
+    ...(user?.role === "officiant"
       ? [
           {
             name: "Bookings",
@@ -51,13 +91,15 @@ const DashNav = ({
             current: location.pathname.includes("/dashboard/bookings"),
           },
         ]
-      : []),
-    {
-      name: "Ceremony Builder",
-      href: "/dashboard/ceremony",
-      icon: PiClipboardTextBold,
-      current: location.pathname.includes("/dashboard/ceremony"),
-    },
+      : [
+          {
+            name: "Ceremony Builder",
+            href: "/dashboard/ceremony",
+            icon: PiClipboardTextBold,
+            current: location.pathname.includes("/dashboard/ceremony"),
+          },
+        ]),
+
     {
       name: "Schedule",
       href: "/dashboard/schedule",
@@ -76,12 +118,16 @@ const DashNav = ({
       icon: LiaStickyNoteSolid,
       current: location.pathname.includes("/dashboard/notes"),
     },
-    {
-      name: "Ceremony Review",
-      href: "/dashboard/review",
-      icon: LiaStickyNoteSolid,
-      current: location.pathname.includes("/dashboard/review"), 
-    },
+    ...(user?.role === "officiant"
+      ? [
+          {
+            name: "Ceremony Review",
+            href: "/dashboard/review",
+            icon: LiaStickyNoteSolid,
+            current: location.pathname.includes("/dashboard/review"),
+          },
+        ]
+      : []),
     {
       name: "Settings",
       href: "/dashboard/settings",
@@ -89,6 +135,7 @@ const DashNav = ({
       current: location.pathname.includes("/dashboard/settings"),
     },
   ];
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   const toggleSidebar = () => {
     setIsCollapsed(!isCollapsed);
@@ -97,7 +144,12 @@ const DashNav = ({
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
   };
-  const user = false;
+  // const user = false;
+
+  const handleLogout = () => {
+    console.log("Logging out...");
+    logout();
+  };
   // const admin=false;
   return (
     <>
@@ -131,56 +183,47 @@ const DashNav = ({
 
         <div className="flex items-center space-x-3">
           <button className="p-2 rounded-md text-gray-600 hover:text-gray-900 hover:bg-gray-100 relative">
-            <HiOutlineBell className="h-6 w-6" />
-            <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center">
-              2
-            </span>
-          </button>
-          <div className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center border-2 border-primary">
-            {/* ==================use profile picture of user ================== */}
-            {user ? (
-              <img
-                src={`user.profilePicture`}
-                alt="User Avatar"
-                className="w-full h-full object-cover rounded-full"
-              />
-            ) : (
-              <FaUserAlt size={20} />
+            <HiOutlineBell
+              onClick={() => {
+                const modal = document.getElementById(
+                  "my_modal_3"
+                ) as HTMLDialogElement | null;
+                if (modal) modal.showModal();
+              }}
+              className="h-6 w-6"
+            />
+            {notifications.length > 0 && (
+              <span className="absolute -top-2 -right-2 bg-[#D4AF37] text-white text-xs rounded-full px-1.5 py-0.5 flex items-center justify-center min-w-[18px] h-[18px]">
+                {notifications.filter((n) => !n.isRead).length}
+              </span>
             )}
-          </div>
-        </div>
-      </div>
-
-      {/* Desktop Header */}
-      <div
-        className="hidden lg:flex bg-white border-b border-gray-200 px-6 py-3.5 items-center justify-end fixed top-0 right-0 left-0 z-30"
-        style={{ marginLeft: isCollapsed ? "4rem" : "16rem" }}
-      >
-        <div className="flex items-center space-x-4">
-          <button className="p-2 rounded-md text-gray-600 hover:text-gray-900 hover:bg-gray-100 relative">
-            <HiOutlineBell className="h-6 w-6" />
-            <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-              2
-            </span>
           </button>
-
-          <div className="flex items-center space-x-3">
-            <div className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center border-2 border-primary">
-              {/* ==================use profile picture of user ================== */}
-              {user ? (
-                <img
-                  src={`user.profilePicture`}
-                  alt="User Avatar"
-                  className="w-full h-full object-cover rounded-full"
-                />
-              ) : (
-                <FaUserAlt size={20} />
-              )}
-            </div>
-            <div className="flex items-center space-x-1">
-              <span className="text-sm font-medium text-gray-900">Steve</span>
+          <div className="relative">
+            {/* Clickable area */}
+            <div
+              onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+              className="flex gap-4 items-center cursor-pointer hover:bg-gray-50 p-2 rounded-lg transition-colors"
+            >
+              {/* User Avatar */}
+              <div className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center border-2 border-primary">
+                {user ? (
+                  <img
+                    src={user.profilePicture}
+                    alt="User Avatar"
+                    className="w-full h-full object-cover rounded-full"
+                  />
+                ) : (
+                  <FaUserAlt size={20} />
+                )}
+              </div>
+              <div className="text-sm font-medium text-gray-900 hidden sm:block">
+                Steve
+              </div>
+              {/* Arrow icon */}
               <svg
-                className="h-4 w-4 text-gray-400"
+                className={`w-4 h-4 transition-transform duration-200 ${
+                  isDropdownOpen ? "rotate-180" : ""
+                }`}
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -193,6 +236,101 @@ const DashNav = ({
                 />
               </svg>
             </div>
+
+            {/* Dropdown content */}
+            {isDropdownOpen && (
+              <div className="absolute top-full right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-50 min-w-32">
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleLogout();
+                    setIsDropdownOpen(false);
+                  }}
+                  className="w-full px-4 py-2 text-sm text-left hover:bg-gray-50 rounded-lg transition-colors"
+                >
+                  Log Out
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Desktop Header */}
+      <div
+        className="hidden lg:flex bg-white border-b border-gray-200 px-6 py-3.5 items-center justify-end fixed top-0 right-0 left-0 z-30"
+        style={{ marginLeft: isCollapsed ? "4rem" : "16rem" }}
+      >
+        <div className="flex items-center space-x-4">
+          <button className="p-2 rounded-md text-gray-600 hover:text-gray-900 hover:bg-gray-100 relative">
+            <HiOutlineBell
+              onClick={() => {
+                const modal = document.getElementById(
+                  "my_modal_3"
+                ) as HTMLDialogElement | null;
+                if (modal) modal.showModal();
+              }}
+              className="h-6 w-6"
+            />
+            {notifications.length > 0 && (
+              <span className="absolute -top-2 -right-2 bg-[#D4AF37] text-white text-xs rounded-full px-1.5 py-0.5 flex items-center justify-center min-w-[18px] h-[18px]">
+                {notifications.filter((n) => !n.isRead).length}
+              </span>
+            )}
+          </button>
+
+          <div className="relative">
+            {/* Clickable area */}
+            <div
+              onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+              className="flex gap-4 items-center cursor-pointer  rounded-lg transition-colors"
+            >
+              {/* User Avatar */}
+              <div className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center border-2 border-primary">
+                {user ? (
+                  <img
+                    src={user.profilePicture}
+                    alt="User Avatar"
+                    className="w-full h-full object-cover rounded-full"
+                  />
+                ) : (
+                  <FaUserAlt size={20} />
+                )}
+              </div>
+              <div className="text-sm font-medium text-gray-900">Steve</div>
+              {/* Arrow icon */}
+              <svg
+                className={`w-4 h-4 transition-transform duration-200 ${
+                  isDropdownOpen ? "rotate-180" : ""
+                }`}
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M19 9l-7 7-7-7"
+                />
+              </svg>
+            </div>
+
+            {/* Dropdown content */}
+            {isDropdownOpen && (
+              <div className="absolute top-full right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-50 min-w-32">
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleLogout();
+                    setIsDropdownOpen(false);
+                  }}
+                  className="w-full px-4 py-2 text-sm text-left hover:bg-gray-50 rounded-lg transition-colors"
+                >
+                  Log Out
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -316,6 +454,69 @@ const DashNav = ({
           })}
         </nav>
       </div>
+      <dialog id="my_modal_3" className="modal">
+        <div className="modal-box max-w-md bg-white h-96">
+          <form method="dialog">
+            <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
+              ✕
+            </button>
+          </form>
+          <h3 className="font-bold text-lg text-center mb-4">Notifications</h3>
+
+          {notifications.length === 0 ? (
+            <div className="text-center py-6">
+              <p className="text-gray-500">No notifications yet</p>
+            </div>
+          ) : (
+            <div className="space-y-3 max-h-[400px] overflow-y-auto pr-2">
+              {notifications.map((item) => (
+                <div
+                  key={item._id}
+                  className={`flex justify-between items-start p-3 rounded-lg ${
+                    item.isRead ? "bg-gray-50" : "bg-yellow-50"
+                  }`}
+                >
+                  <div className="flex gap-3 items-start">
+                    <div
+                      className={`p-2 rounded-full ${
+                        item.isRead ? "bg-gray-200" : "bg-yellow-200"
+                      }`}
+                    >
+                      {item.isRead ? (
+                        <MdOutlineNotifications className="text-gray-700 w-5 h-5" />
+                      ) : (
+                        <MdOutlineNotificationsActive className="text-yellow-700 w-5 h-5" />
+                      )}
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium">{item.message}</p>
+                      <p className="text-xs text-gray-500 mt-1 font-medium">
+                        {new Date(item.createdAt).toLocaleString("en-US", {
+                          month: "short",
+                          day: "numeric",
+                          hour: "numeric",
+                          minute: "numeric",
+                          hour12: true,
+                        })}
+                      </p>
+                    </div>
+                  </div>
+
+                  {!item.isRead && (
+                    <button
+                      onClick={() => markAsRead(item._id)}
+                      className="p-1.5 hover:bg-gray-100 cursor-pointer rounded-full"
+                      title="Mark as read"
+                    >
+                      <GoRead className="w-5 h-5 text-gray-600" />
+                    </button>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </dialog>
     </>
   );
 };

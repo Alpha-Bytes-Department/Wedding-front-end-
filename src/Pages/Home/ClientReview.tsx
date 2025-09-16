@@ -32,7 +32,7 @@ const handleResize = () => {
    const getPublicReviews = async () => {
   try {
     const response = await axios.get("/reviews/public");
-    console.log("Public Reviews:", response.data.reviews);
+    // console.log("Public Reviews:", response.data.reviews);
 
     const visibleReviews: PublicReview[] = response.data.reviews.map((review: any) => ({
       _id: review._id,

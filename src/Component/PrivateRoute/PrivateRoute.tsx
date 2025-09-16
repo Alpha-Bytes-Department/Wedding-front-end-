@@ -13,8 +13,7 @@ export const PrivateRoute = ({ children }: { children: ReactNode }) => {
           <div className="min-h-screen flex items-center justify-center bg-white">
             <div className=' border-8  p-10 rounded-full size-60 flex items-center justify-center border-[#d4af3728]'>
                 <InfinitySpin
-                  visible={true}
-                  
+                  visible={true}                  
                   color="#D4AF37"
                   ariaLabel="infinity-spin-loading"
                 />

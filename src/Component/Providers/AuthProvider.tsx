@@ -56,7 +56,7 @@ interface AuthProviderProps {
 }
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   
   const [user, setUser] = useState<User | null>(null);
 
@@ -105,7 +105,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     localStorage.removeItem("accessToken");
     localStorage.removeItem("refreshToken");
     signOut(auth);
-     
+    window.location.href = "/login"; // Redirect to login page after logout
   };
 
   useEffect(() => {
