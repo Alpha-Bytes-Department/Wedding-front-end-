@@ -12,7 +12,6 @@ import {
 } from "firebase/auth";
 import { auth, googleProvider, facebookProvider } from "./../Firebase/firebase.config";
 import axios from "axios";
-import { useLocation, useNavigate } from "react-router-dom";
 
 interface User {
   _id: string;

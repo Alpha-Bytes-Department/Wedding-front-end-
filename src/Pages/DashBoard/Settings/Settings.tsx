@@ -234,16 +234,22 @@ const Settings = () => {
       if (result.isConfirmed) {
         console.log("Account deletion confirmed");
         //  delete account API here
-        const response = await axios
-          .delete("/users/delete-account")
-          .then((res) => {
-            console.log("Account deletion response:", res.data);
-            GlassSwal.success(
-              "Account Deleted",
-              "Your account has been successfully deleted."
-            );
-            navigate("/login");
-          });
+        const response = await axios.delete("/users/delete-account");
+        
+        if (response.status === 200) {
+          console.log("Account deletion response:", response.data);
+          GlassSwal.success(
+            "Account Deleted",
+            "Your account has been successfully deleted."
+          );
+          navigate("/login");
+        }
+        else{
+          GlassSwal.error(
+            "Account Deletion Failed",
+            "Failed to delete your account. Please try again."
+          );
+        }
       }
     });
   };
