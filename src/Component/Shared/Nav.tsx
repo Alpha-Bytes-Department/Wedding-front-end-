@@ -89,7 +89,7 @@ const Nav = () => {
     }
   }, [location, user]);
 
-  // console.log("User in Nav:", user);
+  console.log("User in Nav:", user);
   return (
     <div className="bg-transparent flex justify-between items-center pt-3 sm:pt-4 md:pt-5   px-3 sm:px-4 md:px-6 lg:px-12 xl:px-20 absolute top-0 left-0 right-0 z-50">
       <Link to="/" className="flex items-center gap-2 sm:gap-3 flex-col">
@@ -265,37 +265,49 @@ const Nav = () => {
         </div>
       ) : (
         <div className="hidden lg:flex items-center">
-          {user?.profileImage ? (
+          {user?.profilePicture ? (
             <div className="flex gap-3 lg:gap-4 items-center relative">
               <div className="relative">
-                <BsBellFill  onClick={() => {
-                  const modal = document.getElementById('my_modal_3') as HTMLDialogElement | null;
-                  if (modal) modal.showModal();
-                }} size={20} className="lg:w-6 lg:h-6" />
+                <BsBellFill
+                  onClick={() => {
+                    const modal = document.getElementById(
+                      "my_modal_3"
+                    ) as HTMLDialogElement | null;
+                    if (modal) modal.showModal();
+                  }}
+                  size={20}
+                  className="lg:w-6 cursor-pointer lg:h-6"
+                />
                 {notifications.length > 0 && (
                   <span className="absolute -top-2 -right-2 bg-[#D4AF37] text-white text-xs rounded-full px-1.5 py-0.5 flex items-center justify-center min-w-[18px] h-[18px]">
-                    {notifications.filter(n => !n.isRead).length}
+                    {notifications.filter((n) => !n.isRead).length}
                   </span>
                 )}
               </div>
-              <div className="rounded-full p-2 lg:p-3 border-2 border-[#D4AF37]">
+              <div className="rounded-full p-1 border-2 border-[#D4AF37]">
                 <img
-                  src={user.profileImage}
+                  src={user.profilePicture}
                   alt="Profile"
-                  className="w-8 h-8 lg:w-10 lg:h-10 rounded-full"
-                /> test
+                  className="w-8 h-8 lg:size-12 rounded-full"
+                />
               </div>
             </div>
           ) : (
             <div className="flex gap-3 lg:gap-4 items-center relative">
               <div className="relative">
-                <BsBellFill onClick={() => {
-                  const modal = document.getElementById('my_modal_3') as HTMLDialogElement | null;
-                  if (modal) modal.showModal();
-                }} size={20} className="lg:w-6 lg:h-6 cursor-pointer" />
+                <BsBellFill
+                  onClick={() => {
+                    const modal = document.getElementById(
+                      "my_modal_3"
+                    ) as HTMLDialogElement | null;
+                    if (modal) modal.showModal();
+                  }}
+                  size={20}
+                  className="lg:w-6 lg:h-6 cursor-pointer"
+                />
                 {notifications.length > 0 && (
                   <span className="absolute -top-2 -right-2 bg-[#D4AF37] text-white text-xs rounded-full px-1.5 py-0.5 flex items-center justify-center min-w-[18px] h-[18px]">
-                    {notifications.filter(n => !n.isRead).length}
+                    {notifications.filter((n) => !n.isRead).length}
                   </span>
                 )}
               </div>
@@ -420,13 +432,19 @@ const Nav = () => {
               {user?.profileImage ? (
                 <div className="flex gap-3 lg:gap-4 items-center relative">
                   <div className="relative">
-                    <BsBellFill onClick={() => {
-                      const modal = document.getElementById('my_modal_3') as HTMLDialogElement | null;
-                      if (modal) modal.showModal();
-                    }} size={20} className="lg:w-6 lg:h-6 cursor-pointer" />
+                    <BsBellFill
+                      onClick={() => {
+                        const modal = document.getElementById(
+                          "my_modal_3"
+                        ) as HTMLDialogElement | null;
+                        if (modal) modal.showModal();
+                      }}
+                      size={20}
+                      className="lg:w-6 lg:h-6 cursor-pointer"
+                    />
                     {notifications.length > 0 && (
                       <span className="absolute -top-2 -right-2 bg-[#D4AF37] text-white text-xs rounded-full px-1.5 py-0.5 flex items-center justify-center min-w-[18px] h-[18px]">
-                        {notifications.filter(n => !n.isRead).length}
+                        {notifications.filter((n) => !n.isRead).length}
                       </span>
                     )}
                   </div>
@@ -441,13 +459,19 @@ const Nav = () => {
               ) : (
                 <div className="flex gap-3 sm:gap-4 items-center">
                   <div className="relative">
-                    <BsBellFill onClick={() => {
-                      const modal = document.getElementById('my_modal_3') as HTMLDialogElement | null;
-                      if (modal) modal.showModal();
-                    }} size={20} className="sm:w-6 sm:h-6 cursor-pointer" />
+                    <BsBellFill
+                      onClick={() => {
+                        const modal = document.getElementById(
+                          "my_modal_3"
+                        ) as HTMLDialogElement | null;
+                        if (modal) modal.showModal();
+                      }}
+                      size={20}
+                      className="sm:w-6 sm:h-6 cursor-pointer"
+                    />
                     {notifications.length > 0 && (
                       <span className="absolute -top-2 -right-2 bg-[#D4AF37] text-white text-xs rounded-full px-1.5 py-0.5 flex items-center justify-center min-w-[18px] h-[18px]">
-                        {notifications.filter(n => !n.isRead).length}
+                        {notifications.filter((n) => !n.isRead).length}
                       </span>
                     )}
                   </div>
@@ -463,10 +487,12 @@ const Nav = () => {
       <dialog id="my_modal_3" className="modal">
         <div className="modal-box max-w-md bg-white h-96">
           <form method="dialog">
-            <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+            <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
+              ✕
+            </button>
           </form>
           <h3 className="font-bold text-lg text-center mb-4">Notifications</h3>
-          
+
           {notifications.length === 0 ? (
             <div className="text-center py-6">
               <p className="text-gray-500">No notifications yet</p>
@@ -474,14 +500,18 @@ const Nav = () => {
           ) : (
             <div className="space-y-3 max-h-[400px] overflow-y-auto pr-2">
               {notifications.map((item) => (
-                <div 
-                  key={item._id} 
+                <div
+                  key={item._id}
                   className={`flex justify-between items-start p-3 rounded-lg ${
-                    item.isRead ? 'bg-gray-50' : 'bg-yellow-50'
+                    item.isRead ? "bg-gray-50" : "bg-yellow-50"
                   }`}
                 >
                   <div className="flex gap-3 items-start">
-                    <div className={`p-2 rounded-full ${item.isRead ? 'bg-gray-200' : 'bg-yellow-200'}`}>
+                    <div
+                      className={`p-2 rounded-full ${
+                        item.isRead ? "bg-gray-200" : "bg-yellow-200"
+                      }`}
+                    >
                       {item.isRead ? (
                         <MdOutlineNotifications className="text-gray-700 w-5 h-5" />
                       ) : (
@@ -491,19 +521,19 @@ const Nav = () => {
                     <div>
                       <p className="text-sm font-medium">{item.message}</p>
                       <p className="text-xs text-gray-500 mt-1 font-medium">
-                        {new Date(item.createdAt).toLocaleString('en-US', {
-                          month: 'short',
-                          day: 'numeric',
-                          hour: 'numeric',
-                          minute: 'numeric',
-                          hour12: true
+                        {new Date(item.createdAt).toLocaleString("en-US", {
+                          month: "short",
+                          day: "numeric",
+                          hour: "numeric",
+                          minute: "numeric",
+                          hour12: true,
                         })}
                       </p>
                     </div>
                   </div>
-                  
+
                   {!item.isRead && (
-                    <button 
+                    <button
                       onClick={() => markAsRead(item._id)}
                       className="p-1.5 hover:bg-gray-100 cursor-pointer rounded-full"
                       title="Mark as read"

@@ -8,6 +8,7 @@ import { GlassSwal } from "../../../utils/glassSwal";
 const Note = () => {
  
   interface note{
+    id:string;
     title:string;
     from:string;
     date:string;
@@ -52,6 +53,7 @@ const Note = () => {
         `/notes/forUser/${user?._id}`
       );
       const formattedNotes = data.map((note: any) => ({
+        id: note._id,
         title: note.title,
         from: note.from_userName,
         date: new Date(note.createdAt).toLocaleDateString(),
@@ -96,9 +98,30 @@ const Note = () => {
       GlassSwal.error("Error", "Failed to create note");
     }
     };
-    
-    
-  
+
+  // ============= handle delete note ==============
+  const handleDelete = async (note: note) => {
+    try {
+      const result = await GlassSwal.confirm(
+        "Are you sure?",
+        "You won't be able to revert this!"
+      );
+      if (result.isConfirmed) {
+        try {
+          console.log("Deleting note with ID:", note.id);
+          const response = await axios.delete(`/notes/delete/${note.id}`);
+          console.log(response);
+          await getNotes();
+          GlassSwal.success("Success", "Note deleted successfully");
+        } catch (error) {
+          console.error(error);
+          GlassSwal.error("Error", "Failed to delete note");
+        }
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   return (
     <div className=" min-h-screen  ">
@@ -132,12 +155,10 @@ const Note = () => {
             </div>
             <hr className="border-t border-primary mb-4" />
             <div className="flex justify-end gap-4">
-              <button className="px-6 py-2 border border-primary text-primary rounded-full font-medium hover:bg-primary hover:text-white transition-colors">
+              <button onClick={() => handleDelete(note)} className="px-6 py-2 border border-primary text-[#d3a646] rounded-full font-medium hover:bg-primary hover:text-white transition-colors">
                 Delete
               </button>
-              <button className="px-6 py-2 border border-primary text-primary rounded-full font-medium hover:bg-primary hover:text-white transition-colors">
-                View
-              </button>
+             
             </div>
           </div>
         )):<p className="text-center text-gray-500">No notes available.</p>}

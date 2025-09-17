@@ -41,6 +41,7 @@ interface AuthResponse {
 
 interface AuthContextType {
   user: User | null;
+  setUser: React.Dispatch<React.SetStateAction<User | null>>;
   loading: boolean;
   isAuthenticated: boolean;
   login: (userData: AuthResponse) => void;
@@ -120,6 +121,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const value: AuthContextType = {
     user,
+    setUser,
     isAuthenticated,
     loading,
     login,

@@ -15,7 +15,7 @@ import {
 } from "react-icons/md";
 import { PiChats, PiClipboardTextBold } from "react-icons/pi";
 import { RiExpandLeftRightLine } from "react-icons/ri";
-import { NavLink, useLocation } from "react-router-dom";
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../Providers/AuthProvider";
 import { useAxios } from "../Providers/useAxios";
 import { GoRead } from "react-icons/go";
@@ -38,6 +38,7 @@ const DashNav = ({
 }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
   const [notifications, setNotifications] = useState<Notification[]>([]);
 
   const axios = useAxios();
@@ -170,7 +171,7 @@ const DashNav = ({
           >
             <HiOutlineMenu className="h-6 w-6" />
           </button>
-          <div className="flex items-center space-x-2">
+          <div className="flex cursor-pointer items-center space-x-2">
             <div className="w-8 h-8 rounded-full flex items-center justify-center">
               <img src="/image.png" alt="" />
             </div>
@@ -297,7 +298,9 @@ const DashNav = ({
                   <FaUserAlt size={20} />
                 )}
               </div>
-              <div className="text-sm font-medium text-gray-900">Steve</div>
+              <div className="text-sm font-medium text-gray-900">
+                {user?.name || user?.email}
+              </div>
               {/* Arrow icon */}
               <svg
                 className={`w-4 h-4 transition-transform duration-200 ${
@@ -356,7 +359,8 @@ const DashNav = ({
         >
           <div className="flex items-center justify-between">
             <div
-              className={`flex items-center space-x-3 ${
+              onClick={() => navigate("/")}
+              className={`flex items-center cursor-pointer space-x-3 ${
                 isCollapsed ? "lg:justify-center" : ""
               }`}
             >
