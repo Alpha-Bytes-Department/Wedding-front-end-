@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { MdKeyboardArrowRight } from "react-icons/md";
 import { useAuth } from "../../../Component/Providers/AuthProvider";
 import { useAxios } from "../../../Component/Providers/useAxios";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { usePDF } from "react-to-pdf";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
@@ -44,12 +44,13 @@ type bill = {
 
 const DashHome = () => {
   const [showingAll, setShowingAll] = useState(false);
+  const navigate = useNavigate();
   const [ceremonies, setCeremonies] = useState<Ceremony[]>([]);
   const [activeBill, setActiveBill] = useState<bill | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isDownloading, setIsDownloading] = useState(false);
 
-  const [invoiceRef, setInvoiceRef] = useState<HTMLDivElement | null>(null);
+
 
   // Updated PDF download function using html2canvas and jsPDF
   const downloadPDF = async (billData?: bill) => {
@@ -567,7 +568,12 @@ const DashHome = () => {
                 size={20}
               />
             </Link>
-            <button className="bg-white hover:bg-gray-50 text-gray-700 border border-gray-300 px-6 py-3 rounded-lg font-medium transition-colors duration-200">
+            <button
+              onClick={() =>
+                navigate("/dashboard/ceremony", { state: { tab: "draft" } })
+              }
+              className="bg-white hover:bg-gray-50 text-gray-700 border border-gray-300 px-6 py-3 rounded-lg font-medium transition-colors duration-200"
+            >
               Continue Editing
             </button>
           </div>
@@ -625,40 +631,83 @@ const DashHome = () => {
             showingAll ? "lg:max-h-80 overflow-y-auto" : ""
           }`}
         >
-          {(showingAll ? ceremonies : ceremonies.slice(0, 3)).map(
-            (ceremony) => (
-              <div
-                key={ceremony.id}
-                className="flex items-start gap-6 flex-col lg:flex-row justify-between p-4 border lg:items-center border-primary rounded-2xl"
-              >
-                <div>
-                  <h3 className="font-medium text-gray-900 text-xl lg:text-2xl font-primary">
-                    {ceremony.name}
-                  </h3>
-                  <p className="text-base text-gray-500 font-secondary">
-                    {ceremony.date} • Officiant: {ceremony.officiant}
-                  </p>
-                </div>
-                <div className="flex justify-center flex-col space-y-3 lg:flex-row items-center space-x-2">
-                  <div className="flex space-x-2">
-                    <button
-                      onClick={() => costInvoice(ceremony.id)}
-                      className="px-4 py-1 cursor-pointer lg:py-2 text-sm border border-primary rounded-2xl hover:bg-gray-50"
-                    >
-                      View
-                    </button>
+          {ceremonies.length > 0 ? (
+            (showingAll ? ceremonies : ceremonies.slice(0, 3)).map(
+              (ceremony) => (
+                <div
+                  key={ceremony.id}
+                  className="flex items-start gap-6 flex-col lg:flex-row justify-between p-4 border lg:items-center border-primary rounded-2xl"
+                >
+                  <div>
+                    <h3 className="font-medium text-gray-900 text-xl lg:text-2xl font-primary">
+                      {ceremony.name}
+                    </h3>
+                    <p className="text-base text-gray-500 font-secondary">
+                      {ceremony.date} • Officiant: {ceremony.officiant}
+                    </p>
+                  </div>
+                  <div className="flex justify-center flex-col space-y-3 lg:flex-row items-center space-x-2">
+                    <div className="flex space-x-2">
+                      <button
+                        onClick={() => costInvoice(ceremony.id)}
+                        className="px-4 py-1 cursor-pointer lg:py-2 text-sm border border-primary rounded-2xl hover:bg-gray-50"
+                      >
+                        View
+                      </button>
 
-                    <button
-                      onClick={() => handleEventCardDownload(ceremony.id)}
-                      disabled={isDownloading}
-                      className="px-4 cursor-pointer py-1 lg:py-2 text-sm bg-primary border border-primary rounded-2xl text-white hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      {isDownloading ? "Downloading..." : "Download PDF"}
-                    </button>
+                      <button
+                        onClick={() => handleEventCardDownload(ceremony.id)}
+                        disabled={isDownloading}
+                        className="px-4 cursor-pointer py-1 lg:py-2 text-sm bg-primary border border-primary rounded-2xl text-white hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        {isDownloading ? "Downloading..." : "Download PDF"}
+                      </button>
+                    </div>
                   </div>
                 </div>
-              </div>
+              )
             )
+          ) : (
+            <div className="w-full py-10 flex flex-col items-center justify-center text-center space-y-4">
+              <svg
+                width="88"
+                height="88"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                className="text-yellow-500"
+                aria-hidden="true"
+                role="img"
+              >
+                <rect x="3" y="4" width="18" height="18" rx="2" stroke="currentColor" strokeWidth="1.5" />
+                <path d="M16 2v4M8 2v4M3 10h18" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                <circle cx="8.5" cy="15.5" r="1.25" fill="currentColor" />
+                <circle cx="12" cy="15.5" r="1.25" fill="currentColor" />
+                <circle cx="15.5" cy="15.5" r="1.25" fill="currentColor" />
+              </svg>
+
+              <h3 className="text-lg lg:text-xl font-semibold text-gray-900">No past ceremonies found</h3>
+
+              <p className="text-sm text-gray-500 max-w-prose">
+                You don't have any completed ceremonies yet. Create your first ceremony or continue editing an existing draft to get started.
+              </p>
+
+              <div className="flex flex-col sm:flex-row gap-3 mt-2">
+                <Link
+                  to="/dashboard/ceremony"
+                  className="inline-flex items-center justify-center px-4 py-2 bg-primary text-white rounded-2xl font-medium hover:bg-primary/90"
+                >
+                  Start a new ceremony
+                </Link>
+
+                <button
+                  onClick={() => navigate("/dashboard/ceremony", { state: { tab: "draft" } })}
+                  className="inline-flex items-center justify-center px-4 py-2 border border-primary text-gray-700 bg-white rounded-2xl font-medium hover:bg-gray-50"
+                >
+                  Continue Editing Drafts
+                </button>
+              </div>
+            </div>
           )}
         </div>
       </div>
@@ -731,34 +780,34 @@ const DashHome = () => {
                       #{activeBill._id.slice(-8).toUpperCase()}
                     </p>
                   </div>
-                    <div
+                  <div
                     style={{
                       display: "flex",
                       flexDirection: "column",
                       alignItems: "center",
                     }}
-                    >
+                  >
                     <img
                       src="/image.png"
                       alt="Erie Wedding Officiants Logo"
                       style={{
-                      width: "80px",
-                      height: "80px",
-                      objectFit: "contain",
+                        width: "80px",
+                        height: "80px",
+                        objectFit: "contain",
                       }}
                     />
                     <span
                       style={{
-                      color: "#D4AF37",
-                      fontSize: "12px",
-                      fontWeight: "bold",
-                      textAlign: "center",
-                      marginTop: "8px",
+                        color: "#D4AF37",
+                        fontSize: "12px",
+                        fontWeight: "bold",
+                        textAlign: "center",
+                        marginTop: "8px",
                       }}
                     >
                       ERIE WEDDING OFFICIANTS
                     </span>
-                    </div>
+                  </div>
                 </div>
 
                 {/* Status Overlay */}

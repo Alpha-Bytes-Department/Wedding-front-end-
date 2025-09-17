@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import type { CeremonyFormData, CeremonyData } from "./types";
 import TabNavigation from "./components/TabNavigation";
@@ -11,9 +11,18 @@ import ReviewStep from "./components/ReviewStep";
 import NavigationButtons from "./components/NavigationButtons";
 import DraftTab from "./components/DraftTab";
 import MyCeremonyTab from "./components/MyCeremonyTab";
+import { useLocation } from "react-router-dom";
 
 const Ceremony = () => {
+  const location = useLocation();
+  console.log("Current location:", location);
   const [activeTab, setActiveTab] = useState<"new" | "draft" | "my">("new");
+  useEffect(() => {
+    const tab = location.state?.tab;
+    if (tab) {
+      setActiveTab(tab);
+    }
+  }, [location.state]);
   const [currentStep, setCurrentStep] = useState(1);
   const [openDropdowns, setOpenDropdowns] = useState<{
     [key: string]: boolean;

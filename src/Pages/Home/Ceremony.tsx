@@ -1,6 +1,7 @@
 import { GoChecklist } from "react-icons/go";
 import { HiOutlineDownload } from "react-icons/hi";
 import { Link } from "react-router-dom";
+import { useAuth } from "../../Component/Providers/AuthProvider";
 
 const Ceremony = () => {
 
@@ -110,8 +111,8 @@ const Ceremony = () => {
   );
 };
 
-const buttons=()=>{
-  const user=false
+const buttons = () => {
+  const { user } = useAuth();
   return (
     <div className="flex items-center md:flex-row flex-col  gap-4">
       <Link
