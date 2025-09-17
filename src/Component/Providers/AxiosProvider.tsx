@@ -174,14 +174,13 @@ export const AxiosProvider: React.FC<AxiosProviderProps> = ({
             );
             
             if (response.status === 200 && response.data.accessToken) {
-              console.log("=== Refresh Token Successful ===");
-              const { accessToken } = response.data;
-              localStorage.setItem("accessToken", accessToken);
               
-              // If we got a new refresh token, update it too
-              if (response.data.refreshToken) {
-                localStorage.setItem("refreshToken", response.data.refreshToken);
-              }
+              console.log("=== Refresh Token Successful ===");
+              const { accessToken , refreshToken , user } = response.data;
+              localStorage.setItem("accessToken", accessToken);
+              localStorage.setItem("refreshToken", refreshToken);
+              localStorage.setItem("user", JSON.stringify(user));
+
               
               // Update the failed request with the new token
               error.config.headers.Authorization = `Bearer ${accessToken}`;
@@ -193,6 +192,7 @@ export const AxiosProvider: React.FC<AxiosProviderProps> = ({
             }
           } catch (refreshError) {
             console.log("=== Refresh Token Failed ===", refreshError);
+            localStorage.setItem("accessTokendummy", JSON.stringify(refreshError));
             localStorage.removeItem("user");
             localStorage.removeItem("accessToken");
             localStorage.removeItem("refreshToken");

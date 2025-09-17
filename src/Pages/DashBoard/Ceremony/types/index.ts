@@ -1,23 +1,28 @@
 export interface CeremonyFormData {
   title: string;
-  type: string;
   description: string;
-  vowsType: string;
-  language: string;
-  rituals: string;
-  musicCue: string;
-  notes: string;
-  date: string;
-  time: string;
-  location: string;
-  rehearsal: string;
+  ceremonyType: string; // Changed from 'type' to match backend
+  vowsType?: string;
+  language?: string;
+  vowDescription?: string;
+  rituals?: string;
+  musicCues?: string; // Changed from 'musicCue' to match backend
+  ritualsDescription?: string;
+  eventDate?: string; // Changed from 'date' to match backend
+  eventTime?: string; // Changed from 'time' to match backend
+  location?: string;
+  rehearsalDate?: string; // Changed from 'rehearsal' to match backend
+  officiantId?: string;
+  officiantName?: string;
 }
 
 export interface CeremonyData extends CeremonyFormData {
-  id: string;
-  status: "draft" | "completed";
-  createdAt: string;
-  updatedAt: string;
+  _id?: string; // Backend uses _id
+  id?: string; // Keep for compatibility
+  userId: string;
+  status: "planned" | "submitted" | "approved" | "completed" | "canceled";
+  createdAt: Date | string;
+  updatedAt: Date | string;
 }
 
 export interface Step {

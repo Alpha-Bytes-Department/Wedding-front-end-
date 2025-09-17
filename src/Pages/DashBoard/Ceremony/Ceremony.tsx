@@ -12,64 +12,76 @@ import NavigationButtons from "./components/NavigationButtons";
 import DraftTab from "./components/DraftTab";
 import MyCeremonyTab from "./components/MyCeremonyTab";
 import { useLocation } from "react-router-dom";
+import { useAuth } from "../../../Component/Providers/AuthProvider";
+import { useCeremonyApi } from "./hooks/useCeremonyApi";
+import { GlassSwal } from "../../../utils/glassSwal";
 
 const Ceremony = () => {
   const location = useLocation();
-  console.log("Current location:", location);
+  const { user } = useAuth();
+  const ceremonyApi = useCeremonyApi();
+
   const [activeTab, setActiveTab] = useState<"new" | "draft" | "my">("new");
+  const [loading, setLoading] = useState(false);
+
   useEffect(() => {
     const tab = location.state?.tab;
     if (tab) {
       setActiveTab(tab);
     }
   }, [location.state]);
+
   const [currentStep, setCurrentStep] = useState(1);
   const [openDropdowns, setOpenDropdowns] = useState<{
     [key: string]: boolean;
   }>({});
 
-  // Mock data for demonstrations
-  const [ceremonies, setCeremonies] = useState<CeremonyData[]>([
-    {
-      id: "1",
-      title: "Garden Vows-Sunset",
-      type: "Classic",
-      description: "A beautiful sunset ceremony in the garden",
-      vowsType: "Custom Vows",
-      language: "English",
-      rituals: "Unity candle",
-      musicCue: "A Thousand Years - Piano",
-      notes: "Notes about the ceremony",
-      date: "2024-08-12",
-      time: "18:00",
-      location: "Garden Venue",
-      rehearsal: "2024-08-11",
-      status: "completed",
-      createdAt: "Aug 12, 2024",
-      updatedAt: "Aug 12, 2024",
-    },
-  ]);
+  // State for ceremonies and drafts - will be populated from API
+  const [ceremonies, setCeremonies] = useState<CeremonyData[]>([]);
+  const [drafts, setDrafts] = useState<CeremonyData[]>([]);
 
-  const [drafts, setDrafts] = useState<CeremonyData[]>([
-    {
-      id: "2",
-      title: "Beach Wedding",
-      type: "Modern",
-      description: "Incomplete beach ceremony",
-      vowsType: "Prepared Script",
-      language: "English",
-      rituals: "Sand ceremony",
-      musicCue: "",
-      notes: "",
-      date: "",
-      time: "",
-      location: "Beach Resort",
-      rehearsal: "",
-      status: "draft",
-      createdAt: "Aug 20, 2024",
-      updatedAt: "Aug 22, 2024",
-    },
-  ]);
+  // State to track if we're editing an existing ceremony
+  const [editingCeremony, setEditingCeremony] = useState<CeremonyData | null>(
+    null
+  );
+
+  // Fetch ceremonies when component mounts or user changes
+  useEffect(() => {
+    if (user?._id) {
+      fetchUserCeremonies();
+    }
+  }, [user?._id]);
+
+  const fetchUserCeremonies = async () => {
+    if (!user?._id) return;
+
+    try {
+      setLoading(true);
+      const userCeremonies = await ceremonyApi.getUserCeremonies(
+        user._id,
+        user.role
+      );
+
+      // Separate completed ceremonies from drafts (planned status)
+      const completedCeremonies = userCeremonies.filter(
+        (ceremony: CeremonyData) => ceremony.status !== "planned"
+      );
+      const draftCeremonies = userCeremonies.filter(
+        (ceremony: CeremonyData) => ceremony.status === "planned"
+      );
+
+      setCeremonies(completedCeremonies);
+      setDrafts(draftCeremonies);
+    } catch (error: any) {
+      console.error("Error fetching ceremonies:", error);
+      await GlassSwal.error(
+        "Error",
+        error.message || "Failed to fetch ceremonies"
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const {
     register,
@@ -80,17 +92,20 @@ const Ceremony = () => {
   } = useForm<CeremonyFormData>({
     defaultValues: {
       title: "",
-      type: "Classic",
+      ceremonyType: "Classic",
       description: "",
       vowsType: "Custom Vows",
       language: "English",
       rituals: "Unity candle",
-      musicCue: "",
-      notes: "",
-      date: "",
-      time: "",
+      musicCues: "",
+      vowDescription: "",
+      ritualsDescription: "",
+      eventDate: "",
+      eventTime: "",
       location: "",
-      rehearsal: "",
+      rehearsalDate: "",
+      officiantId: "",
+      officiantName: "",
     },
   });
 
@@ -118,58 +133,310 @@ const Ceremony = () => {
     }
   };
 
-  const onSubmit = (data: CeremonyFormData) => {
-    const newCeremony: CeremonyData = {
-      ...data,
-      id: Date.now().toString(),
-      status: "completed",
-      createdAt: new Date().toLocaleDateString(),
-      updatedAt: new Date().toLocaleDateString(),
-    };
-    console.log("Finalized Ceremony Data:", newCeremony);
-    setCeremonies([...ceremonies, newCeremony]);
-    setActiveTab("my");
-    // Reset form
+  // Helper functions to format dates for form inputs
+  const formatDateForInput = (date: string | Date | undefined): string => {
+    if (!date) return "";
+
+    try {
+      const dateObj = typeof date === "string" ? new Date(date) : date;
+      return dateObj.toISOString().split("T")[0]; // Returns YYYY-MM-DD format
+    } catch (error) {
+      console.error("Error formatting date:", error);
+      return "";
+    }
+  };
+
+  const formatTimeForInput = (time: string | Date | undefined): string => {
+    if (!time) return "";
+
+    try {
+      const timeObj = typeof time === "string" ? new Date(time) : time;
+      return timeObj.toTimeString().split(" ")[0].slice(0, 5); // Returns HH:MM format
+    } catch (error) {
+      console.error("Error formatting time:", error);
+      return "";
+    }
+  };
+
+  const startNewCeremony = () => {
+    // Clear editing state
+    setEditingCeremony(null);
+
+    // Reset form to defaults
+    setValue("title", "");
+    setValue("description", "");
+    setValue("ceremonyType", "Classic");
+    setValue("vowsType", "Custom Vows");
+    setValue("language", "English");
+    setValue("vowDescription", "");
+    setValue("rituals", "Unity candle");
+    setValue("musicCues", "");
+    setValue("ritualsDescription", "");
+    setValue("eventDate", "");
+    setValue("eventTime", "");
+    setValue("location", "");
+    setValue("rehearsalDate", "");
+    setValue("officiantId", "");
+    setValue("officiantName", "");
+
+    // Reset to first step
     setCurrentStep(1);
+    setActiveTab("new");
   };
 
-  const saveDraft = (data: CeremonyFormData) => {
-    const draftCeremony: CeremonyData = {
-      ...data,
-      id: Date.now().toString(),
-      status: "draft",
-      createdAt: new Date().toLocaleDateString(),
-      updatedAt: new Date().toLocaleDateString(),
+  // Helper function to get current form values
+  const getCurrentFormValues = (): CeremonyFormData => {
+    return {
+      title: watch("title"),
+      description: watch("description"),
+      ceremonyType: watch("ceremonyType"),
+      vowsType: watch("vowsType"),
+      language: watch("language"),
+      vowDescription: watch("vowDescription"),
+      rituals: watch("rituals"),
+      musicCues: watch("musicCues"),
+      ritualsDescription: watch("ritualsDescription"),
+      eventDate: watch("eventDate"),
+      eventTime: watch("eventTime"),
+      location: watch("location"),
+      rehearsalDate: watch("rehearsalDate"),
+      officiantId: watch("officiantId"),
+      officiantName: watch("officiantName"),
     };
-    setDrafts([...drafts, draftCeremony]);
-    setActiveTab("draft");
   };
 
-  const deleteDraft = (id: string) => {
-    setDrafts(drafts.filter((draft) => draft.id !== id));
+  // Validation function to check if all required fields are filled
+  const validateFormForSubmission = (data: CeremonyFormData): string[] => {
+    const missingFields: string[] = [];
+
+    // Required fields for submission
+    if (!data.title?.trim()) missingFields.push("Title");
+    if (!data.description?.trim()) missingFields.push("Description");
+    if (!data.ceremonyType?.trim()) missingFields.push("Ceremony Type");
+    if (!data.vowsType?.trim()) missingFields.push("Vows Type");
+    if (!data.language?.trim()) missingFields.push("Language");
+    if (!data.eventDate?.trim()) missingFields.push("Event Date");
+    if (!data.eventTime?.trim()) missingFields.push("Event Time");
+    if (!data.location?.trim()) missingFields.push("Location");
+   
+
+    return missingFields;
+  };
+
+  const onSubmit = async (data: CeremonyFormData) => {
+    if (!user?._id) {
+      await GlassSwal.error("Error", "User not authenticated");
+      return;
+    }
+
+    // Validate all required fields before submission
+    const missingFields = validateFormForSubmission(data);
+    if (missingFields.length > 0) {
+      const fieldsList = missingFields.join(", ");
+      await GlassSwal.error(
+        "Incomplete Form",
+        `Please fill in the following required fields: ${fieldsList}`
+      );
+      return;
+    }
+
+    try {
+      setLoading(true);
+
+      if (editingCeremony) {
+        // Update existing ceremony and change status to completed
+        const ceremonyId = editingCeremony._id || editingCeremony.id;
+        if (!ceremonyId) {
+          throw new Error("No ceremony ID found for update");
+        }
+
+        const ceremonyData = {
+          ...data,
+          status: "submitted" as const,
+        };
+
+        const updatedCeremony = await ceremonyApi.updateCeremony(
+          ceremonyId,
+          ceremonyData
+        );
+
+        // Remove from drafts and add to ceremonies
+        setDrafts(
+          drafts.filter(
+            (draft) => draft._id !== ceremonyId && draft.id !== ceremonyId
+          )
+        );
+        setCeremonies([...ceremonies, updatedCeremony]);
+
+        await GlassSwal.success("Success", "Ceremony completed successfully!");
+        setEditingCeremony(null);
+      } else {
+        // Create new ceremony with completed status
+        const ceremonyData = {
+          ...data,
+          status: "completed" as const,
+        };
+
+        const newCeremony = await ceremonyApi.createCeremony(
+          ceremonyData,
+          user._id
+        );
+
+        setCeremonies([...ceremonies, newCeremony]);
+        await GlassSwal.success("Success", "Ceremony created successfully!");
+      }
+
+      setActiveTab("my");
+      setCurrentStep(1);
+    } catch (error: any) {
+      console.error("Error submitting ceremony:", error);
+      await GlassSwal.error(
+        "Error",
+        error.message || "Failed to submit ceremony"
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const saveDraft = async (data: CeremonyFormData) => {
+    if (!user?._id) {
+      await GlassSwal.error("Error", "User not authenticated");
+      return;
+    }
+
+    try {
+      setLoading(true);
+
+      if (editingCeremony) {
+        // Update existing ceremony
+        const ceremonyId = editingCeremony._id || editingCeremony.id;
+        if (!ceremonyId) {
+          throw new Error("No ceremony ID found for update");
+        }
+
+        const updatedCeremony = await ceremonyApi.updateCeremony(
+          ceremonyId,
+          data
+        );
+
+        // Update the drafts list
+        setDrafts(
+          drafts.map((draft) =>
+            draft._id === ceremonyId || draft.id === ceremonyId
+              ? updatedCeremony
+              : draft
+          )
+        );
+
+        await GlassSwal.success("Success", "Draft updated successfully!");
+      } else {
+        // Create new ceremony with planned status (draft)
+        const draftData = {
+          ...data,
+          status: "planned" as const,
+        };
+
+        const draftCeremony = await ceremonyApi.createCeremony(
+          draftData,
+          user._id
+        );
+
+        setDrafts([...drafts, draftCeremony]);
+        await GlassSwal.success("Success", "Draft saved successfully!");
+      }
+
+      setActiveTab("draft");
+    } catch (error: any) {
+      console.error("Error saving draft:", error);
+      await GlassSwal.error("Error", error.message || "Failed to save draft");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const deleteDraft = async (id: string) => {
+    try {
+      setLoading(true);
+
+      const ceremonyId = id.startsWith("6")
+        ? id
+        : drafts.find((d) => d.id === id)?._id;
+      if (!ceremonyId) {
+        throw new Error("Draft not found");
+      }
+
+      await ceremonyApi.deleteCeremony(ceremonyId);
+
+      setDrafts(drafts.filter((draft) => draft.id !== id && draft._id !== id));
+      await GlassSwal.success("Success", "Draft deleted successfully!");
+    } catch (error: any) {
+      console.error("Error deleting draft:", error);
+      await GlassSwal.error("Error", error.message || "Failed to delete draft");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const continueDraft = (draft: CeremonyData) => {
-    // Populate form with draft data
-    Object.keys(draft).forEach((key) => {
-      if (
-        key !== "id" &&
-        key !== "status" &&
-        key !== "createdAt" &&
-        key !== "updatedAt"
-      ) {
-        setValue(
-          key as keyof CeremonyFormData,
-          draft[key as keyof CeremonyFormData]
-        );
-      }
+    // Set the editing state
+    setEditingCeremony(draft);
+
+    // Populate form with draft data, formatting dates properly
+    const formData: CeremonyFormData = {
+      title: draft.title || "",
+      description: draft.description || "",
+      ceremonyType: draft.ceremonyType || "Classic",
+      vowsType: draft.vowsType || "Custom Vows",
+      language: draft.language || "English",
+      vowDescription: draft.vowDescription || "",
+      rituals: draft.rituals || "",
+      musicCues: draft.musicCues || "",
+      ritualsDescription: draft.ritualsDescription || "",
+      eventDate: formatDateForInput(draft.eventDate),
+      eventTime: formatTimeForInput(draft.eventTime),
+      location: draft.location || "",
+      rehearsalDate: formatDateForInput(draft.rehearsalDate),
+      officiantId: draft.officiantId || "",
+      officiantName: draft.officiantName || "",
+    };
+
+    Object.entries(formData).forEach(([key, value]) => {
+      setValue(key as keyof CeremonyFormData, value);
     });
+
     setActiveTab("new");
     setCurrentStep(1);
   };
 
-  const deleteCeremony = (id: string) => {
-    setCeremonies(ceremonies.filter((ceremony) => ceremony.id !== id));
+  const deleteCeremony = async (id: string) => {
+    try {
+      setLoading(true);
+
+      const ceremonyId = id.startsWith("6")
+        ? id
+        : ceremonies.find((c) => c.id === id)?._id;
+      if (!ceremonyId) {
+        throw new Error("Ceremony not found");
+      }
+
+      await ceremonyApi.deleteCeremony(ceremonyId);
+
+      setCeremonies(
+        ceremonies.filter(
+          (ceremony) => ceremony.id !== id && ceremony._id !== id
+        )
+      );
+      await GlassSwal.success("Success", "Ceremony deleted successfully!");
+    } catch (error: any) {
+      console.error("Error deleting ceremony:", error);
+      await GlassSwal.error(
+        "Error",
+        error.message || "Failed to delete ceremony"
+      );
+    } finally {
+      setLoading(false);
+    }
   };
 
   const steps = [
@@ -186,12 +453,29 @@ const Ceremony = () => {
         {/* Tab Navigation */}
         <TabNavigation activeTab={activeTab} onTabChange={setActiveTab} />
 
+        {/* Loading indicator */}
+        {loading && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-white p-6 rounded-lg shadow-lg">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
+              <p className="mt-2 text-center">Processing...</p>
+            </div>
+          </div>
+        )}
+
         {/* Tab Content */}
         {activeTab === "new" && (
           <div className="bg-white rounded-2xl shadow-lg border border-primary p-3 sm:p-6 lg:p-8">
-            <h1 className="text-3xl font-primary font-bold text-gray-900 mb-8">
-              Ceremony Builder
-            </h1>
+            <div className="flex items-center gap-4 mb-8">
+              <h1 className="text-3xl font-primary font-bold text-gray-900">
+                {editingCeremony ? "Edit Ceremony" : "Ceremony Builder"}
+              </h1>
+              {editingCeremony && (
+                <span className="px-3 py-1 bg-yellow-100 text-yellow-800 text-sm font-medium rounded-full">
+                  Editing: {editingCeremony.title || "Untitled"}
+                </span>
+              )}
+            </div>
 
             <StepIndicator steps={steps} />
 
@@ -211,6 +495,7 @@ const Ceremony = () => {
               {/* Step 2: Vows */}
               {currentStep === 2 && (
                 <VowsStep
+                  register={register}
                   watch={watch}
                   openDropdowns={openDropdowns}
                   onToggleDropdown={toggleDropdown}
@@ -243,8 +528,13 @@ const Ceremony = () => {
                 maxStep={5}
                 onPrevStep={handlePrevStep}
                 onNextStep={handleNextStep}
-                onSaveDraft={handleSubmit(saveDraft)}
-                onSubmit={handleSubmit(onSubmit)}
+                onSaveDraft={() => handleSubmit(saveDraft)()}
+                onSubmit={() => handleSubmit(onSubmit)()}
+                isLoading={loading}
+                isEditing={!!editingCeremony}
+                validateForSubmission={() =>
+                  validateFormForSubmission(getCurrentFormValues())
+                }
               />
             </form>
           </div>
@@ -256,7 +546,8 @@ const Ceremony = () => {
             drafts={drafts}
             onContinueDraft={continueDraft}
             onDeleteDraft={deleteDraft}
-            onCreateNew={() => setActiveTab("new")}
+            onCreateNew={startNewCeremony}
+            loading={loading}
           />
         )}
 
@@ -265,7 +556,8 @@ const Ceremony = () => {
           <MyCeremonyTab
             ceremonies={ceremonies}
             onDeleteCeremony={deleteCeremony}
-            onCreateNew={() => setActiveTab("new")}
+            onCreateNew={startNewCeremony}
+            loading={loading}
           />
         )}
       </div>

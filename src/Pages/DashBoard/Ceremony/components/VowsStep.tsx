@@ -1,7 +1,9 @@
 import type { CeremonyFormData } from "../types";
+import type { UseFormRegister } from "react-hook-form";
 import CustomDropdown from "./CustomDropdown";
 
 interface VowsStepProps {
+  register: UseFormRegister<CeremonyFormData>;
   watch: (name: keyof CeremonyFormData) => string;
   openDropdowns: { [key: string]: boolean };
   onToggleDropdown: (name: string) => void;
@@ -9,6 +11,7 @@ interface VowsStepProps {
 }
 
 const VowsStep = ({
+  register,
   watch,
   openDropdowns,
   onToggleDropdown,
@@ -45,6 +48,17 @@ const VowsStep = ({
             onSelect={onSelectDropdown}
           />
         </div>
+      </div>
+      <div>
+        <label className="block text-lg font-semibold text-gray-900 mb-3">
+          Vows Description
+        </label>
+        <textarea
+          {...register("vowDescription")}
+          placeholder="Additional details about your vows..."
+          rows={4}
+          className="w-full px-4 py-3 border border-primary rounded-lg focus:outline-none resize-none"
+        />
       </div>
     </div>
   );

@@ -41,11 +41,11 @@ const TypeStep = ({
             Ceremony Type
           </label>
           <CustomDropdown
-            name="type"
+            name="ceremonyType"
             options={["Classic", "Modern", "Minimal", "Rustic", "Traditional"]}
-            value={watch("type")}
+            value={watch("ceremonyType")}
             placeholder="Classic"
-            isOpen={openDropdowns.type || false}
+            isOpen={openDropdowns.ceremonyType || false}
             onToggle={onToggleDropdown}
             onSelect={onSelectDropdown}
           />

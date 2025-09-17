@@ -44,7 +44,7 @@ const RitualsStep = ({
             Music cue
           </label>
           <input
-            {...register("musicCue")}
+            {...register("musicCues")}
             type="text"
             placeholder="e.g., A Thousand Years - Piano"
             className="w-full px-4 py-3 border border-primary rounded-lg focus:outline-none  "
@@ -53,11 +53,11 @@ const RitualsStep = ({
       </div>
       <div>
         <label className="block text-lg font-semibold text-gray-900 mb-3">
-          Notes
+          Rituals Description
         </label>
         <textarea
-          {...register("notes")}
-          placeholder="Additional notes..."
+          {...register("ritualsDescription")}
+          placeholder="Additional notes about rituals..."
           rows={4}
           className="w-full px-4 py-3 border border-primary rounded-lg focus:outline-none   resize-none"
         />

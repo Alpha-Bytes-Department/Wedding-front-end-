@@ -3,8 +3,9 @@ import type { CeremonyData } from "../types";
 interface DraftTabProps {
   drafts: CeremonyData[];
   onContinueDraft: (draft: CeremonyData) => void;
-  onDeleteDraft: (id: string) => void;
+  onDeleteDraft: (id: string) => void | Promise<void>;
   onCreateNew: () => void;
+  loading?: boolean;
 }
 
 const DraftTab = ({
@@ -12,6 +13,7 @@ const DraftTab = ({
   onContinueDraft,
   onDeleteDraft,
   onCreateNew,
+  loading = false,
 }: DraftTabProps) => {
   return (
     <div className="space-y-6">
@@ -39,30 +41,37 @@ const DraftTab = ({
                 <h3 className="text-lg sm:text-xl font-primary font-semibold text-gray-900 mb-2 break-words">
                   {draft.title || "Untitled Ceremony"}
                 </h3>
-                <p className="text-sm sm:text-base font-primary text-gray-600 mb-2">
-                  Type: {draft.type}
+                <p className="text-sm sm:text-base font-secondary text-gray-600 mb-2">
+                  Type: {draft.ceremonyType}
                 </p>
-                <p className="text-sm sm:text-base font-primary text-gray-600 mb-4">
-                  Last updated: {draft.updatedAt}
+                <p className="text-sm sm:text-base font-secondary font-semibold text-gray-600 mb-4">
+                  Last updated:{" "}
+                  <span className="font-thin">
+                    {typeof draft.updatedAt === "string"
+                      ? draft.updatedAt
+                      : draft.updatedAt.toLocaleDateString()}
+                  </span>
                 </p>
                 {draft.description && (
                   <p className="text-sm sm:text-base font-primary text-gray-700 mb-4 break-words">
-                    {draft.description}
+                    "{draft.description}"
                   </p>
                 )}
               </div>
               <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 sm:ml-4 w-full sm:w-auto">
                 <button
                   onClick={() => onContinueDraft(draft)}
-                  className="px-4 py-2 bg-primary text-white rounded-lg font-primary font-medium hover:bg-primary/90 transition-colors text-sm sm:text-base"
+                  disabled={loading}
+                  className="px-4 py-2 bg-primary text-white rounded-lg font-primary font-medium hover:bg-primary/90 transition-colors text-sm sm:text-base disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Continue
                 </button>
                 <button
-                  onClick={() => onDeleteDraft(draft.id)}
-                  className="px-4 py-2 bg-red-500 text-white rounded-lg font-primary font-medium hover:bg-red-600 transition-colors text-sm sm:text-base"
+                  onClick={() => onDeleteDraft(draft.id || draft._id || "")}
+                  disabled={loading}
+                  className="px-4 py-2 bg-red-500 text-white rounded-lg font-primary font-medium hover:bg-red-600 transition-colors text-sm sm:text-base disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  Delete
+                  {loading ? "Deleting..." : "Delete"}
                 </button>
               </div>
             </div>

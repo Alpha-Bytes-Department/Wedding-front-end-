@@ -12,28 +12,33 @@ const ScheduleStep = ({ register, errors }: ScheduleStepProps) => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div>
           <label className="block text-lg font-semibold text-gray-900 mb-3">
-            Date
+            Event Date
           </label>
           <input
-            {...register("date", { required: "Date is required" })}
+            {...register("eventDate", { required: "Date is required" })}
+            // defaultValue={new Date().toISOString().split("T")[0]}
             type="date"
             className="w-full px-4 py-3 border border-primary rounded-lg focus:outline-none  "
           />
-          {errors.date && (
-            <p className="text-red-500 text-sm mt-1">{errors.date.message}</p>
+          {errors.eventDate && (
+            <p className="text-red-500 text-sm mt-1">
+              {errors.eventDate.message}
+            </p>
           )}
         </div>
         <div>
           <label className="block text-lg font-semibold text-gray-900 mb-3">
-            Time
+            Event Time
           </label>
           <input
-            {...register("time", { required: "Time is required" })}
+            {...register("eventTime", { required: "Time is required" })}
             type="time"
             className="w-full px-4 py-3 border border-primary rounded-lg focus:outline-none  "
           />
-          {errors.time && (
-            <p className="text-red-500 text-sm mt-1">{errors.time.message}</p>
+          {errors.eventTime && (
+            <p className="text-red-500 text-sm mt-1">
+              {errors.eventTime.message}
+            </p>
           )}
         </div>
         <div>
@@ -54,10 +59,10 @@ const ScheduleStep = ({ register, errors }: ScheduleStepProps) => {
         </div>
         <div>
           <label className="block text-lg font-semibold text-gray-900 mb-3">
-            Rehearsal
+            Rehearsal Date
           </label>
           <input
-            {...register("rehearsal")}
+            {...register("rehearsalDate")}
             type="date"
             className="w-full px-4 py-3 border border-primary rounded-lg focus:outline-none  "
           />
