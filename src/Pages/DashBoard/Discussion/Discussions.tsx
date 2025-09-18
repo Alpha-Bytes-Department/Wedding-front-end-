@@ -67,6 +67,11 @@ const Discussions = () => {
     }
   };
 
+  const makePayment = () => {
+    // Payment logic here
+    console.log("Payment initiated");
+  }
+
   return (
     <div className=" lg:h-[87vh] bg-white flex flex-col">
       <div className="px-6 pt-6">
@@ -221,6 +226,15 @@ const Discussions = () => {
             </button>
           </div>
         </div>
+      </div>
+
+      <div>
+        <button
+          className="m-4 px-6 py-2 rounded-full bg-gradient-to-r flex items-center from-orange-500 to-amber-600 text-white font-medium hover:from-amber-500 hover:to-orange-500 duration-300 transition-all transform hover:scale-105 shadow-lg"
+          onClick={makePayment}
+        >
+          Make Payment
+        </button>
       </div>
     </div>
   );

@@ -1,81 +1,137 @@
 import { useForm } from "react-hook-form";
+import { useAxios } from "../../../Component/Providers/useAxios";
+import { useEffect, useState } from "react";
+import { useAuth } from "../../../Component/Providers/AuthProvider";
+import GlassSwal from "../../../utils/glassSwal";
 
-const officiants = [
-  {
-    id: 1,
-    name: "Alex Rivera",
-    avatar: "https://randomuser.me/api/portraits/men/32.jpg",
-    experience: 15,
-    rating: 4.9,
-    reviews: 120,
-    status: "Available",
-  },
-  {
-    id: 2,
-    name: "Alex Rivera",
-    avatar: "https://randomuser.me/api/portraits/men/33.jpg",
-    experience: 5,
-    rating: 4.9,
-    reviews: 120,
-    status: "Available",
-  },
-  {
-    id: 3,
-    name: "Alex Rivera",
-    avatar: "https://randomuser.me/api/portraits/men/34.jpg",
-    experience: 3,
-    rating: 4.9,
-    reviews: 120,
-    status: "Available",
-  },
-];
+
+interface OfficiantProfile {
+  _id: string;
+  name: string;
+  email: string;
+  password: string;
+  phone: string;
+  address: string;
+  location: string;
+  bio: string;
+  specialization: string;
+  profilePicture: string;
+  role: string;
+  allowDownload: boolean;
+  isVerified: boolean;
+  bookingMoney: number;
+  languages: string[];
+  partner_1: string | null;
+  partner_2: string | null;
+  weddingDate: string | null;
+  refreshToken: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+interface scheduleEvent{
+  id: string;
+  name: string;
+  date: string;
+  time: string;
+  officiant: string;
+  status: string;
+}
 
 const ceremonies = [
   { id: 1, name: "Sunset Wedding" },
   { id: 2, name: "Beach Bliss" },
 ];
 
+
 const packages = [
   { id: 1, name: "Classic" },
   { id: 2, name: "Premium" },
 ];
 
-const upcomingMeetings = [
-  {
-    id: 1,
-    name: "Garden Vows-Sunset",
-    date: "2024-09-21",
-    officiant: "Alex Rivera",
-    status: "Confirmed",
-  },
-  {
-    id: 2,
-    name: "Garden Vows-Sunset",
-    date: "2024-09-21",
-    officiant: "Alex Rivera",
-    status: "Awaiting for link",
-  },
-];
-const pastMeetings = [
-  {
-    id: 1,
-    name: "Garden Vows-Sunset",
-    date: "2024-09-21",
-    officiant: "Alex Rivera",
-  },
-  {
-    id: 2,
-    name: "Garden Vows-Sunset",
-    date: "2024-09-21",
-    officiant: "Alex Rivera",
-  },
-];
+
+
 
 const Schedule = () => {
+  const axios = useAxios();
+  const {user}=useAuth()
   const { register, handleSubmit, reset } = useForm();
-  const onSubmit = (data: any) => {
+  const [events, setEvents] = useState([]);
+  const [schedule, setSchedule] = useState<scheduleEvent[]>([]);
+  const [officiants, setOfficiants] = useState<OfficiantProfile[]>([]);
+
+  useEffect(() => {
+    getOfficiants();
+    getEvents()
+    getSchedule()
+  }, []);
+
+  const getOfficiants = async () => {
+    try {
+      const response = await axios.get("/users/officiants");
+      console.log(response.data);    
+      setOfficiants(response.data.officiants);
+    } catch (error) {
+      console.error("Error fetching officiants:", error);
+    }
+  };
+
+const getEvents = async () => {
+    try {
+      const response = await axios.get(`/events/by-role/${user?._id}/${user?.role}`);
+      setEvents(response.data.events);
+    } catch (error) {
+      console.error("Error fetching events:", error);
+    }
+  };
+const getSchedule= async () => {
+    try {
+      const response = await axios.get(`/schedule/get/${user?._id}`);
+      const data = response.data.map((s: any) => ({
+        id: s._id,
+        name: s.eventName,
+        date: s.scheduleDate,
+        time: s.scheduleDateTime,
+        officiant: s.officiantName,
+        status: s.approvedStatus ? "Confirmed" : "Pending",
+      }));
+      console.log(data);
+      setSchedule(data);
+    } catch (error) {
+      console.error("Error fetching events:", error);
+    }
+  };
+
+  const onSubmit = async(data: any) => {
     console.log(data);
-    reset();
+    const event= JSON.parse(data.ceremony || "{}");
+    const scheduledData = {
+      fromUserId: user?._id,
+      fromUserName: user?.partner_1||user?.partner_2,
+      eventId: event.id,
+      eventName: event.title,
+      scheduleDate: data.date,
+      scheduleDateTime: data.time,
+      scheduleStatus: 'later' === data.meetingType,
+      officiantName: data.officiant ? JSON.parse(data.officiant).name : "",
+      officiantImage: data.officiant ? JSON.parse(data.officiant).profilePicture : "",
+      officiantId: data.officiant ? JSON.parse(data.officiant).id : "",
+      message: data.note || "",
+      packageName: data.package ,
+      approvedStatus: false
+    };
+    console.log(scheduledData);
+    try {
+      const response = await axios.post("/schedule/create", scheduledData);
+      console.log("Event scheduled successfully:", response.data);
+      await GlassSwal.success("Success", "Event scheduled successfully");
+      getSchedule();
+      reset();
+    } catch (error) {
+      await GlassSwal.error("Error", "Failed to schedule event");
+    }
+
+
+    // reset();
   };
 
   return (
@@ -96,12 +152,16 @@ const Schedule = () => {
             <div>
               <label className="block font-medium mb-1">Select Ceremony</label>
               <select
-                {...register("ceremony")}
+                {...register("ceremony", { required: true })}
                 className="w-full border border-primary rounded-lg px-4 py-2 focus:outline-none"
               >
-                {ceremonies.map((c) => (
-                  <option key={c.id} value={c.name}>
-                    {c.name}
+                <option value="">-- Select Ceremony --</option>
+                {events.map((c) => (
+                  <option
+                    key={c._id}
+                    value={JSON.stringify({ id: c._id, title: c.title })}
+                  >
+                    {c.title}
                   </option>
                 ))}
               </select>
@@ -111,7 +171,9 @@ const Schedule = () => {
                 <label className="block font-medium mb-1">Date</label>
                 <input
                   type="date"
-                  {...register("date")}
+                  {...register("date", {
+                    required: "Meeting date is required",
+                  })}
                   className="w-full border border-primary rounded-lg px-4 py-2 focus:outline-none"
                 />
               </div>
@@ -119,7 +181,9 @@ const Schedule = () => {
                 <label className="block font-medium mb-1">Time</label>
                 <input
                   type="time"
-                  {...register("time")}
+                  {...register("time", {
+                    required: "Meeting time is required",
+                  })}
                   className="w-full border border-primary rounded-lg px-4 py-2 focus:outline-none"
                 />
               </div>
@@ -166,16 +230,21 @@ const Schedule = () => {
             <div>
               <div className="flex justify-between items-center mb-1">
                 <label className="block font-medium">Select Officiant</label>
-                <button type="button" className="text-primary font-medium">
-                  Show All Officiant
-                </button>
               </div>
               <select
                 {...register("officiant")}
                 className="w-full border border-primary rounded-lg px-4 py-2 focus:outline-none"
               >
+                <option value="">Select Officiant</option>
                 {officiants.map((o) => (
-                  <option key={o.id} value={o.name}>
+                  <option
+                    key={o._id}
+                    value={JSON.stringify({
+                      id: o._id,
+                      name: o.name,
+                      profilePicture: o.profilePicture,
+                    })}
+                  >
                     {o.name}
                   </option>
                 ))}
@@ -196,14 +265,14 @@ const Schedule = () => {
             </div>
             <div>
               <label className="block font-medium mb-1">Suggest Matches</label>
-              <div className="space-y-2">
+              <div className="space-y-2 overflow-y-scroll max-h-60">
                 {officiants.map((o) => (
                   <div
-                    key={o.id}
+                    key={o._id}
                     className="flex items-center gap-3 border border-primary rounded-lg px-3 py-2"
                   >
                     <img
-                      src={o.avatar}
+                      src={o.profilePicture}
                       alt={o.name}
                       className="w-10 h-10 rounded-full object-cover"
                     />
@@ -212,17 +281,24 @@ const Schedule = () => {
                         {o.name}
                       </div>
                       <div className="text-xs text-gray-500 truncate">
-                        Custom Ceremonies, {o.experience} years of experience
+                        {o.specialization},{" "}
+                        {(() => {
+                          const d = new Date(o.createdAt);
+                          if (Number.isNaN(d.getTime()))
+                            return "1 year of experience";
+                          const years = Math.floor(
+                            (Date.now() - d.getTime()) /
+                              (1000 * 60 * 60 * 24 * 365.25)
+                          );
+                          const y = Math.max(1, years);
+                          const label = y === 1 ? "year" : "years";
+                          return `${y} ${label} of experience`;
+                        })()}
                       </div>
                       <div className="text-xs text-gray-500 truncate">
-                        {o.rating} ({o.reviews} reviews) 11:30-2:00
+                        {o.languages.join(", ")}
                       </div>
                     </div>
-                    <span
-                      className={`px-3 py-1 text-xs rounded-full border bg-white text-green-700 border-green-400`}
-                    >
-                      {o.status}
-                    </span>
                   </div>
                 ))}
               </div>
@@ -248,7 +324,7 @@ const Schedule = () => {
           <button className="text-primary font-medium">Show All</button>
         </div>
         <div className="space-y-4">
-          {upcomingMeetings.map((m) => (
+          {schedule.map((m) => (
             <div
               key={m.id}
               className="flex items-center justify-between border border-primary rounded-lg px-4 py-3"
@@ -265,9 +341,9 @@ const Schedule = () => {
                     Confirmed
                   </span>
                 )}
-                {m.status === "Awaiting for link" && (
+                {m.status.toLocaleLowerCase() === "pending" && (
                   <span className="px-3 py-1 text-xs rounded-full border bg-white text-yellow-700 border-yellow-400">
-                    Awaiting for link
+                    Pending
                   </span>
                 )}
                 <button className="bg-primary text-white px-5 py-2 rounded-lg font-medium hover:bg-primary/90 transition-colors">
@@ -279,8 +355,8 @@ const Schedule = () => {
         </div>
       </div>
 
-      {/* Past Booking */}
-      <div className="bg-white rounded-2xl shadow-xl border border-primary p-6 ">
+      {/* {/* Past Booking */}
+      {/* <div className="bg-white rounded-2xl shadow-xl border border-primary p-6 ">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-2xl font-primary font-bold text-gray-900">
             Past Booking
@@ -305,7 +381,7 @@ const Schedule = () => {
             </div>
           ))}
         </div>
-      </div>
+      </div>  */}
     </div>
   );
 };

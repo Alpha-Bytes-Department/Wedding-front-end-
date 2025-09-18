@@ -365,6 +365,16 @@ const Ceremony = () => {
       if (!ceremonyId) {
         throw new Error("Draft not found");
       }
+      const result = await GlassSwal.confirm(
+        "Are you sure?",
+        "This action cannot be undone.",
+        
+        
+      );
+
+      if (!result?.isConfirmed) {
+        return;
+      }
 
       await ceremonyApi.deleteCeremony(ceremonyId);
 
@@ -418,6 +428,15 @@ const Ceremony = () => {
         : ceremonies.find((c) => c.id === id)?._id;
       if (!ceremonyId) {
         throw new Error("Ceremony not found");
+      }
+
+      const result = await GlassSwal.confirm(
+        "Are you sure?",
+        "This action cannot be undone."
+      );
+
+      if (!result?.isConfirmed) {
+        return;
       }
 
       await ceremonyApi.deleteCeremony(ceremonyId);

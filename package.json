@@ -12,6 +12,7 @@
   "dependencies": {
     "@emailjs/browser": "^4.4.1",
     "@heroicons/react": "^2.2.0",
+    "@stripe/stripe-js": "^7.9.0",
     "@tailwindcss/vite": "^4.1.11",
     "animate.css": "^4.1.1",
     "axios": "^1.12.1",
