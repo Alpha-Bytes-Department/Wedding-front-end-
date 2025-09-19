@@ -12,6 +12,7 @@
   "dependencies": {
     "@emailjs/browser": "^4.4.1",
     "@heroicons/react": "^2.2.0",
+    "@stripe/react-stripe-js": "^4.0.2",
     "@stripe/stripe-js": "^7.9.0",
     "@tailwindcss/vite": "^4.1.11",
     "animate.css": "^4.1.1",
@@ -26,6 +27,7 @@
     "react-loader-spinner": "^6.1.6",
     "react-router-dom": "^7.8.0",
     "react-to-pdf": "^2.0.1",
+    "stripe": "^18.5.0",
     "sweetalert2": "^11.23.0",
     "swiper": "^11.2.10",
     "tailwindcss": "^4.1.11"

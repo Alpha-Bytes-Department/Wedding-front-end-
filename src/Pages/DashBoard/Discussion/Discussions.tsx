@@ -1,6 +1,9 @@
 import { useState } from "react";
 import { GoFileDirectoryFill } from "react-icons/go";
 import { IoAttachOutline } from "react-icons/io5";
+import { loadStripe } from "@stripe/stripe-js";
+import { useAxios } from "../../../Component/Providers/useAxios";
+import { useNavigate } from "react-router-dom";
 
 const officiants = [
   {
@@ -54,7 +57,7 @@ const Discussions = () => {
   const [selected, setSelected] = useState(officiants[0]);
   const [messages, setMessages] = useState(initialMessages);
   const [input, setInput] = useState("");
-
+  const axios = useAxios();
 
 
   const handleSend = () => {
@@ -66,11 +69,10 @@ const Discussions = () => {
       setInput("");
     }
   };
-
-  const makePayment = () => {
-    // Payment logic here
-    console.log("Payment initiated");
-  }
+  const navigate = useNavigate();
+  const makePayment = async () => {
+    navigate("/payment");
+  };
 
   return (
     <div className=" lg:h-[87vh] bg-white flex flex-col">

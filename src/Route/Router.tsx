@@ -19,6 +19,7 @@ import CeremonyReview from "../Pages/DashBoard/CeremonyReview/CeremonyReview";
 import ResetPassword from "../Pages/Verify_Forget/ResetPassword";
 import VerifyUser from "../Pages/Verify_Forget/verifyUser";
 import { PrivateRoute } from "../Component/PrivateRoute/PrivateRoute";
+import Payment from "../Pages/Payment/Payment";
 
 const Router = createBrowserRouter([
   {
@@ -102,6 +103,10 @@ const Router = createBrowserRouter([
       },
 
     ],
+  },
+  {
+    path: "/payment",
+    element: <Payment />,
   },
   {
     path: "*",
