@@ -23,8 +23,8 @@ const Officiant = () => {
   const fetchOfficiants = useCallback(async () => {
     try {
       const response = await axios.get("/users/officiants");
-      console.log("Officiants:", response.data.officiants);
-      const objectarray = response.data.officiants.slice(0, 4).map((officiant: any) => ({
+      console.log("Officiants in home:", response.data);
+      const objectarray = response?.data?.officiants?.slice(0, 4).map((officiant: any) => ({
         id: officiant._id,
         name: officiant.name,
         image: officiant.profilePicture,
@@ -74,7 +74,7 @@ const Officiant = () => {
         </div>
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-4 gap-14 mt-8 mb-10 lg:mb-20 justify-between">
-       {officiants.map((officiant) => (
+       {officiants?.map((officiant) => (
                  <div
                    key={officiant.id}
                    className="bg-white p-2 group rounded-2xl shadow-xl shadow-[#00000040] border-2 max-w-80 border-primary mx-auto flex flex-col h-full"

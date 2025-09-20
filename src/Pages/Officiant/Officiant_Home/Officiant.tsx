@@ -21,7 +21,7 @@ const Officiant = () => {
   const fetchOfficiants = useCallback(async () => {
     try {
       const response = await axios.get("/users/officiants");
-      console.log("Officiants:", response.data.officiants);
+      console.log("Officiants:", response.data);
       const objectarray = response.data.officiants.map((officiant: any) => ({
         id: officiant._id,
         name: officiant.name,

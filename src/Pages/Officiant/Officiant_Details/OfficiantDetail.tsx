@@ -295,7 +295,7 @@ const OfficiantDetail = () => {
       {/* testimonial carousel */}
 
     <div className="relative py-10">
-      {testimonials.length === 0 ? (
+      {testimonials?.length === 0 ? (
         <div className="text-center py-16">
         <p className="text-gray-500 text-lg font-secondary">
           No reviews found for {officiantDetails.name || "this officiant"}

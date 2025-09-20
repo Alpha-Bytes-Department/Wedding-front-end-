@@ -305,7 +305,7 @@ const Nav = () => {
                   size={20}
                   className="lg:w-6 lg:h-6 cursor-pointer"
                 />
-                {notifications.length > 0 && (
+                {notifications?.length > 0 && (
                   <span className="absolute -top-2 -right-2 bg-[#D4AF37] text-white text-xs rounded-full px-1.5 py-0.5 flex items-center justify-center min-w-[18px] h-[18px]">
                     {notifications.filter((n) => !n.isRead).length}
                   </span>
@@ -469,7 +469,7 @@ const Nav = () => {
                       size={20}
                       className="sm:w-6 sm:h-6 cursor-pointer"
                     />
-                    {notifications.length > 0 && (
+                    {notifications?.length > 0 && (
                       <span className="absolute -top-2 -right-2 bg-[#D4AF37] text-white text-xs rounded-full px-1.5 py-0.5 flex items-center justify-center min-w-[18px] h-[18px]">
                         {notifications.filter((n) => !n.isRead).length}
                       </span>
@@ -493,13 +493,13 @@ const Nav = () => {
           </form>
           <h3 className="font-bold text-lg text-center mb-4">Notifications</h3>
 
-          {notifications.length === 0 ? (
+          {notifications?.length === 0 ? (
             <div className="text-center py-6">
               <p className="text-gray-500">No notifications yet</p>
             </div>
           ) : (
             <div className="space-y-3 max-h-[400px] overflow-y-auto pr-2">
-              {notifications.map((item) => (
+              {notifications?.map((item) => (
                 <div
                   key={item._id}
                   className={`flex justify-between items-start p-3 rounded-lg ${
