@@ -25,27 +25,68 @@ interface SocketInterface {
 
 // Types
 interface Officiant {
-  id: number;
+  _id: string;
   name: string;
-  ceremony: string;
-  status: string;
-  avatar: string;
-  online: boolean;
+  email: string;
+  specialization?: string;
+  profilePicture?: string;
+  bio?: string;
+  bookingPackage?: Array<{
+    id: string;
+    name: string;
+    price: number;
+    description: string;
+    features: string[];
+  }>;
+  languages?: string[];
+  location?: string;
+  online?: boolean;
 }
 
 interface Message {
-  id: number | string;
+  _id?: string;
+  id?: number | string;
+  messageId?: string;
   sender: string;
   senderName?: string;
-  type: "text" | "file" | "image" | "document" | "link";
+  type: "text" | "file" | "image" | "document" | "link" | "booking_proposal";
   content: string;
   originalName?: string;
   fileUrl?: string;
   fileSize?: number;
   mimeType?: string;
   timestamp?: string;
+  createdAt?: string;
   serverId?: string;
   roomId?: string;
+  fileData?: {
+    originalName: string;
+    filename: string;
+    fileUrl: string;
+    fileSize: number;
+    mimeType: string;
+  };
+}
+
+interface BookingProposal {
+  id: string;
+  type: "booking_proposal";
+  title: string;
+  description: string;
+  price: number;
+  currency: string;
+  features: string[];
+  eventDate?: string;
+  location?: string;
+  duration?: string;
+  packageId?: string;
+  validUntil?: string;
+  response?: {
+    action: "accept" | "decline";
+    respondedBy: string;
+    respondedByName: string;
+    respondedAt: string;
+  };
 }
 
 interface TypingUser {
@@ -61,68 +102,12 @@ interface UploadResponse {
   fileData?: Message;
 }
 
-// Mock data
-const officiants: Officiant[] = [
-  {
-    id: 1,
-    name: "Alex Rivera",
-    ceremony: "Garden Vows-Sunset",
-    status: "Available",
-    avatar: "https://randomuser.me/api/portraits/men/32.jpg",
-    online: true,
-  },
-  {
-    id: 2,
-    name: "Emma Watson",
-    ceremony: "Beach Wedding-Evening",
-    status: "Available",
-    avatar: "https://randomuser.me/api/portraits/women/33.jpg",
-    online: true,
-  },
-  {
-    id: 3,
-    name: "John Smith",
-    ceremony: "Traditional Church",
-    status: "Offline",
-    avatar: "https://randomuser.me/api/portraits/men/34.jpg",
-    online: false,
-  },
-];
-
-const initialMessages: Message[] = [
-  {
-    id: 1,
-    sender: "officiant_1",
-    senderName: "Alex Rivera",
-    type: "file",
-    content: "Ceremony.pdf",
-    originalName: "Ceremony.pdf",
-    fileSize: 2048000,
-    timestamp: new Date(Date.now() - 300000).toISOString(),
-  },
-  {
-    id: 2,
-    sender: "officiant_1",
-    senderName: "Alex Rivera",
-    type: "text",
-    content: "Hi there! Thanks for sharing your document here. I'm on it.",
-    timestamp: new Date(Date.now() - 240000).toISOString(),
-  },
-  {
-    id: 3,
-    sender: "me",
-    senderName: "You",
-    type: "text",
-    content: "Thank you.",
-    timestamp: new Date(Date.now() - 180000).toISOString(),
-  },
-];
-
 const Discussions: React.FC = () => {
   // State management
   const [search, setSearch] = useState<string>("");
-  const [selected, setSelected] = useState<Officiant>(officiants[0]);
-  const [messages, setMessages] = useState<Message[]>(initialMessages);
+  const [officiants, setOfficiants] = useState<Officiant[]>([]);
+  const [selected, setSelected] = useState<Officiant | null>(null);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState<string>("");
   const [socket, setSocket] = useState<SocketInterface | null>(null);
   const [userId] = useState<string>(
@@ -135,6 +120,8 @@ const Discussions: React.FC = () => {
   const [uploadingFiles, setUploadingFiles] = useState<Set<string>>(new Set());
   const [connectionError, setConnectionError] = useState<string | null>(null);
   const [uploadError, setUploadError] = useState<string | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [onlineUsers, setOnlineUsers] = useState<Set<string>>(new Set());
 
   // Hooks and refs
   const axios = useAxios();
@@ -144,8 +131,36 @@ const Discussions: React.FC = () => {
   const imageInputRef = useRef<HTMLInputElement>(null);
   const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
+  // Fetch officiants
+  useEffect(() => {
+    const fetchOfficiants = async () => {
+      try {
+        setLoading(true);
+        const response = await axios.get("/chat/officiants");
+        if (response.data.success) {
+          const officiantData = response.data.data.map((officiant: any) => ({
+            ...officiant,
+            online: false, // Initial status, will be updated by socket
+          }));
+          setOfficiants(officiantData);
+          if (officiantData.length > 0) {
+            setSelected(officiantData[0]);
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching officiants:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchOfficiants();
+  }, [axios]);
+
   // Initialize socket connection
   useEffect(() => {
+    if (!selected) return;
+
     const newSocket: SocketInterface = io(
       import.meta.env.VITE_APP_SOCKET_URL || "http://localhost:5000",
       {
@@ -168,7 +183,13 @@ const Discussions: React.FC = () => {
 
       // Join room for the selected officiant
       newSocket.emit("joinRoom", {
-        roomId: `chat_${selected.id}`,
+        roomId: `chat_${selected._id}`,
+        userId: userId,
+        userName: "You",
+      });
+
+      // Mark user as online
+      newSocket.emit("userOnline", {
         userId: userId,
         userName: "You",
       });
@@ -195,23 +216,10 @@ const Discussions: React.FC = () => {
 
       // Rejoin the current room
       newSocket.emit("joinRoom", {
-        roomId: `chat_${selected.id}`,
+        roomId: `chat_${selected._id}`,
         userId: userId,
         userName: "You",
       });
-    });
-
-    newSocket.on("reconnect_attempt", (attemptNumber: number) => {
-      console.log("🔄 Reconnection attempt", attemptNumber);
-    });
-
-    newSocket.on("reconnect_error", (error: Error) => {
-      console.error("🔥 Reconnection error:", error);
-    });
-
-    newSocket.on("reconnect_failed", () => {
-      console.error("💥 Reconnection failed");
-      setIsConnected(false);
     });
 
     newSocket.on("connect_error", (error: Error) => {
@@ -219,6 +227,15 @@ const Discussions: React.FC = () => {
       setIsConnected(false);
       setConnectionError(`Connection failed: ${error.message}`);
     });
+
+    // Load existing messages
+    newSocket.on(
+      "loadExistingMessages",
+      ({ messages: existingMessages }: { messages: Message[] }) => {
+        console.log("� Loading existing messages:", existingMessages.length);
+        setMessages(existingMessages);
+      }
+    );
 
     // Chat events
     newSocket.on("receiveMessage", (messageData: Message) => {
@@ -228,17 +245,23 @@ const Discussions: React.FC = () => {
       setMessages((prev) => {
         const messageExists = prev.some(
           (msg) =>
-            msg.id === messageData.id ||
+            msg._id === messageData._id ||
+            msg.messageId === messageData.messageId ||
             (msg.content === messageData.content &&
               msg.sender === messageData.sender &&
               Math.abs(
-                new Date(msg.timestamp || "").getTime() -
-                  new Date(messageData.timestamp || "").getTime()
+                new Date(msg.timestamp || msg.createdAt || "").getTime() -
+                  new Date(
+                    messageData.timestamp || messageData.createdAt || ""
+                  ).getTime()
               ) < 1000)
         );
 
         if (messageExists) {
-          console.log("Duplicate message detected, skipping:", messageData.id);
+          console.log(
+            "Duplicate message detected, skipping:",
+            messageData._id || messageData.messageId
+          );
           return prev;
         }
 
@@ -246,12 +269,43 @@ const Discussions: React.FC = () => {
 
         // Sort messages by timestamp to ensure proper ordering
         return newMessages.sort((a, b) => {
-          const timeA = new Date(a.timestamp || "").getTime();
-          const timeB = new Date(b.timestamp || "").getTime();
+          const timeA = new Date(a.timestamp || a.createdAt || "").getTime();
+          const timeB = new Date(b.timestamp || b.createdAt || "").getTime();
           return timeA - timeB;
         });
       });
     });
+
+    // User status events
+    newSocket.on(
+      "userStatusChanged",
+      ({
+        userId: statusUserId,
+        isOnline,
+      }: {
+        userId: string;
+        isOnline: boolean;
+      }) => {
+        setOnlineUsers((prev) => {
+          const newSet = new Set(prev);
+          if (isOnline) {
+            newSet.add(statusUserId);
+          } else {
+            newSet.delete(statusUserId);
+          }
+          return newSet;
+        });
+
+        // Update officiant online status
+        setOfficiants((prev) =>
+          prev.map((officiant) =>
+            officiant._id === statusUserId
+              ? { ...officiant, online: isOnline }
+              : officiant
+          )
+        );
+      }
+    );
 
     // Typing events
     newSocket.on(
@@ -302,9 +356,9 @@ const Discussions: React.FC = () => {
       }
 
       // Properly leave room before disconnecting
-      if (newSocket.connected) {
+      if (newSocket.connected && selected) {
         newSocket.emit("leaveRoom", {
-          roomId: `chat_${selected.id}`,
+          roomId: `chat_${selected._id}`,
           userId: userId,
           userName: "You",
         });
@@ -314,7 +368,7 @@ const Discussions: React.FC = () => {
       newSocket.removeAllListeners();
       newSocket.disconnect();
     };
-  }, [selected.id, userId]);
+  }, [selected?._id, userId]);
 
   // Auto-scroll to bottom
   useEffect(() => {
@@ -325,12 +379,12 @@ const Discussions: React.FC = () => {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInput(e.target.value);
 
-    if (!socket || !isConnected) return;
+    if (!socket || !isConnected || !selected) return;
 
     if (!isTyping) {
       setIsTyping(true);
       socket.emit("typing", {
-        roomId: `chat_${selected.id}`,
+        roomId: `chat_${selected._id}`,
         userId: userId,
         userName: "You",
         isTyping: true,
@@ -346,7 +400,7 @@ const Discussions: React.FC = () => {
     typingTimeoutRef.current = setTimeout(() => {
       setIsTyping(false);
       socket?.emit("typing", {
-        roomId: `chat_${selected.id}`,
+        roomId: `chat_${selected._id}`,
         userId: userId,
         userName: "You",
         isTyping: false,
@@ -356,7 +410,7 @@ const Discussions: React.FC = () => {
 
   // Send message
   const handleSend = () => {
-    if (!input.trim()) {
+    if (!input.trim() || !selected) {
       return;
     }
 
@@ -368,7 +422,7 @@ const Discussions: React.FC = () => {
     try {
       const messageData: Message = {
         id: Date.now(),
-        roomId: `chat_${selected.id}`,
+        roomId: `chat_${selected._id}`,
         sender: userId,
         senderName: "You",
         type: "text",
@@ -383,7 +437,7 @@ const Discussions: React.FC = () => {
       // Stop typing indicator
       setIsTyping(false);
       socket.emit("typing", {
-        roomId: `chat_${selected.id}`,
+        roomId: `chat_${selected._id}`,
         userId: userId,
         userName: "You",
         isTyping: false,
@@ -403,7 +457,7 @@ const Discussions: React.FC = () => {
     file: File,
     type: "file" | "image" = "file"
   ) => {
-    if (!file || !socket || !isConnected) {
+    if (!file || !socket || !isConnected || !selected) {
       setUploadError("Cannot upload file: Not connected to server");
       return;
     }
@@ -427,14 +481,14 @@ const Discussions: React.FC = () => {
 
     const formData = new FormData();
     formData.append("file", file);
-    formData.append("roomId", `chat_${selected.id}`);
+    formData.append("roomId", `chat_${selected._id}`);
     formData.append("sender", userId);
     formData.append("senderName", "You");
     formData.append("type", type);
 
     try {
       const response = await axios.post<UploadResponse>(
-        "/api/chat/upload-chat-file",
+        "/chat/upload-chat-file",
         formData,
         {
           headers: {
@@ -479,11 +533,13 @@ const Discussions: React.FC = () => {
 
   // Handle link sharing
   const handleLinkShare = () => {
+    if (!selected) return;
+
     const url = prompt("Enter a URL to share:");
     if (url && socket && isConnected) {
       const messageData: Message = {
         id: Date.now(),
-        roomId: `chat_${selected.id}`,
+        roomId: `chat_${selected._id}`,
         sender: userId,
         senderName: "You",
         type: "link",
@@ -497,17 +553,17 @@ const Discussions: React.FC = () => {
 
   // Handle officiant selection
   const handleOfficiantSelect = (officiant: Officiant) => {
-    if (socket && isConnected) {
+    if (socket && isConnected && selected) {
       // Leave current room
       socket.emit("leaveRoom", {
-        roomId: `chat_${selected.id}`,
+        roomId: `chat_${selected._id}`,
         userId: userId,
         userName: "You",
       });
 
       // Join new room
       socket.emit("joinRoom", {
-        roomId: `chat_${officiant.id}`,
+        roomId: `chat_${officiant._id}`,
         userId: userId,
         userName: "You",
       });
@@ -687,9 +743,40 @@ const Discussions: React.FC = () => {
     }
   };
 
+  // Handle payment (placeholder - would integrate with actual payment system)
   const makePayment = async () => {
-    navigate("/payment");
+    navigate("/payment", {
+      state: {
+        eventDetails: {
+          officiant: selected?.name,
+          service: "Wedding Ceremony",
+          // Add more details as needed
+        },
+      },
+    });
   };
+
+  // Filter officiants based on search
+  const filteredOfficiants = officiants.filter(
+    (officiant) =>
+      officiant?.name?.toLowerCase().includes(search.toLowerCase()) ||
+      (officiant?.specialization &&
+        officiant.specialization.toLowerCase().includes(search.toLowerCase()))
+  );
+
+  // If loading or no officiants, show loading state
+  if (!selected || officiants.length === 0) {
+    return (
+      <div className="flex h-screen bg-gray-50">
+        <div className="flex-1 flex items-center justify-center">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-[#C7B7A3] mx-auto mb-4"></div>
+            <p className="text-gray-600">Loading chat...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="lg:h-[87vh] bg-white flex flex-col">
@@ -725,48 +812,49 @@ const Discussions: React.FC = () => {
           </div>
 
           <div className="flex-1 overflow-y-auto min-h-40 lg:max-h-[68vh] max-h-60">
-            {officiants
-              .filter((o) =>
-                o.name.toLowerCase().includes(search.toLowerCase())
-              )
-              .map((o) => (
-                <div
-                  key={`${o.id}-${o.name}`}
-                  className={`flex items-center gap-3 px-4 py-3 hover:bg-[#f8f2e4] duration-200 cursor-pointer border-b border-gray-100 ${
-                    selected.id === o.id ? "bg-[#f8f2e4]" : "bg-transparent"
-                  }`}
-                  onClick={() => handleOfficiantSelect(o)}
-                >
-                  <div className="relative">
-                    <img
-                      src={o.avatar}
-                      alt={o.name}
-                      className="w-10 h-10 rounded-full object-cover"
-                    />
-                    {o.online && (
-                      <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2 border-white"></div>
-                    )}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="font-medium text-gray-900 truncate">
-                      {o.name}
-                    </div>
-                    <div className="text-xs text-gray-500 truncate">
-                      Ceremony:{" "}
-                      <span className="text-gray-700">{o.ceremony}</span>
-                    </div>
-                  </div>
-                  <span
-                    className={`px-3 py-1 text-xs rounded-full border ${
-                      o.online
-                        ? "bg-green-50 text-green-700 border-green-200"
-                        : "bg-yellow-50 text-yellow-700 border-yellow-200"
-                    }`}
-                  >
-                    {o.online ? "Available" : "Offline"}
-                  </span>
+            {filteredOfficiants.map((o) => (
+              <div
+                key={`${o._id}-${o.name}`}
+                className={`flex items-center gap-3 px-4 py-3 hover:bg-[#f8f2e4] duration-200 cursor-pointer border-b border-gray-100 ${
+                  selected?._id === o._id ? "bg-[#f8f2e4]" : "bg-transparent"
+                }`}
+                onClick={() => handleOfficiantSelect(o)}
+              >
+                <div className="relative">
+                  <img
+                    src={
+                      o.profilePicture ||
+                      "https://via.placeholder.com/40x40?text=👤"
+                    }
+                    alt={o.name}
+                    className="w-10 h-10 rounded-full object-cover"
+                  />
+                  {o.online && (
+                    <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2 border-white"></div>
+                  )}
                 </div>
-              ))}
+                <div className="flex-1 min-w-0">
+                  <div className="font-medium text-gray-900 truncate">
+                    {o.name}
+                  </div>
+                  <div className="text-xs text-gray-500 truncate">
+                    Specialization:{" "}
+                    <span className="text-gray-700">
+                      {o.specialization || "Wedding Officiant"}
+                    </span>
+                  </div>
+                </div>
+                <span
+                  className={`px-3 py-1 text-xs rounded-full border ${
+                    o.online
+                      ? "bg-green-50 text-green-700 border-green-200"
+                      : "bg-yellow-50 text-yellow-700 border-yellow-200"
+                  }`}
+                >
+                  {o.online ? "Available" : "Offline"}
+                </span>
+              </div>
+            ))}
           </div>
         </div>
 
@@ -780,7 +868,10 @@ const Discussions: React.FC = () => {
           <div className="flex items-center gap-3 px-6 py-4 border-b border-gray-200 bg-white">
             <div className="relative">
               <img
-                src={selected.avatar}
+                src={
+                  selected.profilePicture ||
+                  "https://via.placeholder.com/40x40?text=👤"
+                }
                 alt={selected.name}
                 className="w-10 h-10 rounded-full object-cover"
               />
@@ -791,8 +882,10 @@ const Discussions: React.FC = () => {
             <div className="flex-1 min-w-0">
               <div className="font-medium text-gray-900">{selected.name}</div>
               <div className="text-xs text-gray-500">
-                Ceremony:{" "}
-                <span className="text-gray-700">{selected.ceremony}</span>
+                Specialization:{" "}
+                <span className="text-gray-700">
+                  {selected.specialization || "Wedding Officiant"}
+                </span>
               </div>
             </div>
             <span
@@ -964,15 +1057,6 @@ const Discussions: React.FC = () => {
             }}
           />
         </div>
-      </div>
-
-      <div>
-        <button
-          className="m-4 px-6 py-2 rounded-full bg-gradient-to-r flex items-center from-orange-500 to-amber-600 text-white font-medium hover:from-amber-500 hover:to-orange-500 duration-300 transition-all transform hover:scale-105 shadow-lg"
-          onClick={makePayment}
-        >
-          Make Payment
-        </button>
       </div>
     </div>
   );
