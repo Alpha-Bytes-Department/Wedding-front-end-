@@ -8,9 +8,20 @@ import {
 } from "@stripe/react-stripe-js";
 import { useAxios } from "../../Component/Providers/useAxios";
 import { useLocation } from "react-router-dom";
+import GlassSwal from "../../utils/glassSwal";
 
 // Initialize Stripe
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
+
+type searchParams = {
+  eventId: string;
+  officiantId: string;
+  officiantName: string;
+  clientId: string;
+  clientName: string;
+  eventName: string;
+  price: string;
+};
 
 interface EventData {
   title: string;
@@ -44,30 +55,44 @@ interface BillData {
   eventId: string;
   amount: number;
   status: string;
-  issuedAt: Date;
-  paidAt: Date | null;
+  issuedAt?: Date;
+  paidAt?: Date | null;
+  location?: {
+    line1: string;
+    city: string;
+    postal_code: string;
+    country: string;
+  };
+  contacts?: string;
+  transactionId?: string;
+  billingMail?: string;
+  billingName?: string;
 }
 
 const CheckoutForm = ({
   eventData,
   billData,
+  setBillData,
+  price,
 }: {
   eventData: EventData;
   billData: BillData;
+  setBillData: React.Dispatch<React.SetStateAction<BillData>>;
+  price: number;
 }) => {
   const stripe = useStripe();
   const elements = useElements();
   const axios = useAxios();
-  const {search} = useLocation();
-  const searchParams = new URLSearchParams(search);
+
   const [clientSecret, setClientSecret] = useState("");
   const [processing, setProcessing] = useState(false);
   const [success, setSuccess] = useState(false);
+
   const [error, setError] = useState("");
   const [paymentMethod, setPaymentMethod] = useState("");
   const [transactionId, setTransactionId] = useState<String>("");
   const [billingDetails, setBillingDetails] = useState({
-    name: billData.userName || "",
+    name: "",
     email: "",
     phone: "",
     address: {
@@ -77,12 +102,11 @@ const CheckoutForm = ({
       country: "US",
     },
   });
-  console.log(searchParams.get("eventId"),searchParams.get("officiantId"),searchParams.get("officiantName"));
 
   useEffect(() => {
     axios
       .post("/marketing/create-checkout-session", {
-        Price: billData.amount, // Send Price as your backend expects
+        Price: price, // Send Price as your backend expects
       })
       .then((res) => {
         setClientSecret(res.data.clientSecret);
@@ -91,7 +115,7 @@ const CheckoutForm = ({
         console.error("Error fetching clientSecret:", err);
         setError("Failed to initialize payment. Please try again.");
       });
-  }, [billData.amount]);
+  }, [price]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -162,6 +186,52 @@ const CheckoutForm = ({
         console.log("Payment succeeded:", paymentIntent.id.toUpperCase());
         setTransactionId(paymentIntent.id);
         setSuccess(true);
+
+        // Create updated bill data with all information
+        const updatedBillData = {
+          ...billData,
+          location: {
+            line1: billingDetails.address.line1,
+            city: billingDetails.address.city,
+            postal_code: billingDetails.address.postal_code,
+            country: billingDetails.address.country,
+          },
+          billingMail: billingDetails.email,
+          billingName: billingDetails.name,
+          contacts: billingDetails.phone,
+          transactionId: paymentIntent.id,
+          paidAt: new Date(),
+          status: "paid",
+        };
+
+        // Update the state
+        setBillData(updatedBillData);
+
+        // Send the complete bill data to backend
+        const updatedBill = await axios.post(`/bills/create`, updatedBillData);
+        if (updatedBill.status === 200 || updatedBill.status === 201) {
+          GlassSwal.fire({
+            title: "Success!",
+            text: "Bill created successfully! You can download the invoice in dashboard",
+            icon: "success",
+          });
+        }
+
+        // Console log after successful payment
+        console.log(
+          "Payment completed successfully! Bill data updated:",
+          updatedBillData,
+          "Payment Details:",
+          {
+            transactionId: paymentIntent.id,
+            billingName: billingDetails.name,
+            billingMail: billingDetails.email,
+            contacts: billingDetails.phone,
+            location: billingDetails.address,
+            paidAt: new Date(),
+          }
+        );
+
         // Get payment method details from paymentIntent
         const paymentMethod = paymentIntent.payment_method;
         if (typeof paymentMethod === "object" && paymentMethod?.card) {
@@ -213,7 +283,7 @@ const CheckoutForm = ({
               Event: <span className="font-medium">{eventData.title}</span>
             </p>
             <p className="text-yellow-700">
-              Amount Paid: <span className="font-bold">${billData.amount}</span>
+              Amount Paid: <span className="font-bold">${price}</span>
             </p>
             <p className="text-yellow-700">
               Payment Method:{" "}
@@ -227,12 +297,10 @@ const CheckoutForm = ({
             </p>
           </div>
         </div>
-
-        
       </div>
     );
   }
-
+  console.log("Rendering payment form. Current bill data:", billData);
   return (
     <div className="space-y-6">
       {/* Client Information */}
@@ -407,12 +475,12 @@ const CheckoutForm = ({
         <div className="space-y-3">
           <div className="flex justify-between text-gray-600">
             <span>Event Service Fee</span>
-            <span>${billData.cost}</span>
+            <span>${price}</span>
           </div>
-          <div className="flex justify-between text-gray-600">
+          {/* <div className="flex justify-between text-gray-600">
             <span>Platform Fee</span>
-            <span>${(billData.amount - billData.cost).toFixed(2)}</span>
-          </div>
+            <span>${(price - billData.cost).toFixed(2)}</span>
+          </div> */}
           <div className="flex justify-between text-gray-600">
             <span>Processing Fee</span>
             <span>Included</span>
@@ -420,7 +488,7 @@ const CheckoutForm = ({
           <div className="border-t pt-3">
             <div className="flex justify-between text-xl font-bold text-gray-900">
               <span>Total Amount</span>
-              <span>${billData.amount}</span>
+              <span>${price}</span>
             </div>
           </div>
         </div>
@@ -476,7 +544,7 @@ const CheckoutForm = ({
                 d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
               />
             </svg>
-            Secure Payment - ${billData.amount}
+            Secure Payment - ${price}
           </>
         )}
       </button>
@@ -511,45 +579,71 @@ const CheckoutForm = ({
 };
 
 const PaymentPage = () => {
-  // Mock event data based on EventSchema
-  const eventData = {
-    title: "Sarah & Michael's Wedding Ceremony",
-    description:
-      "A beautiful outdoor wedding ceremony celebrating the union of Sarah and Michael",
-    ceremonyType: "Wedding",
-    vowsType: "Traditional",
-    language: "English",
-    vowDescription: "Traditional wedding vows with personal touches",
-    rituals: "Unity Candle, Ring Exchange",
-    musicCues: "Bridal Chorus, Ave Maria, Wedding March",
-    ritualsDescription:
-      "Unity candle ceremony symbolizing the joining of two families",
-    eventDate: new Date("2024-06-15T16:00:00"),
-    eventTime: new Date("2024-06-15T16:00:00"),
-    rehearsalDate: new Date("2024-06-14T18:00:00"),
-    location: "Riverside Garden Venue, Downtown",
-    status: "submitted",
-    userId: "user123",
-    officiantId: "off456",
-    officiantName: "Rev. Patricia Johnson",
+  const axios = useAxios();
+  const [billData, setBillData] = useState<BillData>({} as BillData);
+  const { search } = useLocation();
+  const searchParams = new URLSearchParams(search);
+  const [eventData, setEvent] = useState<EventData>({} as EventData);
+  const {
+    eventId,
+    officiantId,
+    officiantName,
+    clientId,
+    clientName,
+    eventName,
+    price,
+  }: searchParams = {
+    eventId: searchParams.get("eventId") || "",
+    officiantId: searchParams.get("officiantId") || "",
+    officiantName: searchParams.get("officiantName") || "",
+    clientId: searchParams.get("clientId") || "",
+    clientName: searchParams.get("clientName") || "",
+    eventName: searchParams.get("eventName") || "",
+    price: searchParams.get("price") || "",
   };
+  console.log(
+    eventId,
+    officiantId,
+    officiantName,
+    clientId,
+    clientName,
+    eventName,
+    price
+  );
+  useEffect(() => {
+    const initializePaymentData = async () => {
+      try {
+        const event = await axios.get(`/events/${eventId}`);
+        console.log("Event data:", event.data.event);
+        setEvent(event.data.event);
+
+        // Set bill data after getting event data
+        setBillData({
+          userId: clientId,
+          userName: clientName,
+          eventType: event.data.event.ceremonyType || "Wedding",
+          eventDate: event.data.event.eventDate,
+          eventName: event.data.event.title,
+          officiantName: officiantName,
+          officiantId: officiantId,
+          cost: parseInt(price),
+          eventId: eventId,
+          amount: parseInt(price),
+          status: "unpaid",
+        });
+
+        console.log("=========================");
+      } catch (error) {
+        console.error("Error fetching payment data:", error);
+      }
+    };
+
+    if (eventId) {
+      initializePaymentData();
+    }
+  }, [eventId, clientId, clientName, officiantName, officiantId, price]);
 
   // Mock bill data based on BillSchema
-  const billData = {
-    userId: "user123",
-    userName: "Sarah Thompson",
-    eventType: "Wedding",
-    eventDate: new Date("2024-06-15T16:00:00"),
-    eventName: "Sarah & Michael's Wedding Ceremony",
-    officiantName: "Rev. Patricia Johnson",
-    officiantId: "off456",
-    cost: 450.0,
-    eventId: "event789",
-    amount: 485.0, // Including platform fees
-    status: "unpaid",
-    issuedAt: new Date(),
-    paidAt: null,
-  };
 
   const formatDate = (date: Date) => {
     return new Date(date).toLocaleDateString("en-US", {
@@ -654,13 +748,15 @@ const PaymentPage = () => {
                         {formatTime(eventData.eventTime)}
                       </p>
                     </div>
-                    <div>
-                      <span className="text-gray-600">Rehearsal:</span>
-                      <p className="font-medium text-orange-800">
-                        {formatDate(eventData.rehearsalDate)} at{" "}
-                        {formatTime(eventData.rehearsalDate)}
-                      </p>
-                    </div>
+                    {eventData.rehearsalDate && (
+                      <div>
+                        <span className="text-gray-600">Rehearsal:</span>
+                        <p className="font-medium text-orange-800">
+                          {formatDate(eventData.rehearsalDate)} at{" "}
+                          {formatTime(eventData.rehearsalDate)}
+                        </p>
+                      </div>
+                    )}
                   </div>
                 </div>
 
@@ -759,7 +855,12 @@ const PaymentPage = () => {
           <div className="lg:col-span-3">
             <div className="bg-white rounded-2xl shadow-lg p-8">
               <Elements stripe={stripePromise}>
-                <CheckoutForm eventData={eventData} billData={billData} />
+                <CheckoutForm
+                  eventData={eventData}
+                  setBillData={setBillData}
+                  billData={billData}
+                  price={parseInt(price)}
+                />
               </Elements>
             </div>
           </div>
