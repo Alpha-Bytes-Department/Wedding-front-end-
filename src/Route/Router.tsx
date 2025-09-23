@@ -24,8 +24,8 @@ import Payment from "../Pages/Payment/Payment";
 const Router = createBrowserRouter([
   {
     path: "/",
-    element: <Layout  />,
-    errorElement: <Error  />,
+    element: <Layout />,
+    errorElement: <Error />,
     children: [
       {
         path: "/",
@@ -67,7 +67,11 @@ const Router = createBrowserRouter([
   },
   {
     path: "/dashboard",
-    element: <PrivateRoute><DashBoardOutline /></PrivateRoute>,
+    element: (
+      <PrivateRoute>
+        <DashBoardOutline />
+      </PrivateRoute>
+    ),
     children: [
       {
         path: "/dashboard",
@@ -84,6 +88,11 @@ const Router = createBrowserRouter([
       {
         path: "/dashboard/notes",
         element: <Note />,
+      }
+      ,
+      {
+        path: "/dashboard/payment",
+        element: <Payment />,
       },
       {
         path: "/dashboard/discussions",
@@ -101,12 +110,7 @@ const Router = createBrowserRouter([
         path: "/dashboard/settings",
         element: <Settings />,
       },
-
     ],
-  },
-  {
-    path: "/payment",
-    element: <Payment />,
   },
   {
     path: "*",

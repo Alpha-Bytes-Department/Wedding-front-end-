@@ -1,108 +1,29 @@
 import React, { useState, useEffect, useRef } from "react";
-import { GoFileDirectoryFill } from "react-icons/go";
-import {
-  IoAttachOutline,
-  IoSend,
-  IoImage,
-  IoDocument,
-  IoLink,
-  IoCalendarOutline,
-} from "react-icons/io5";
-import { FiDownload } from "react-icons/fi";
 import { useAxios } from "../../../Component/Providers/useAxios";
 import { useAuth } from "../../../Component/Providers/AuthProvider";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import io from "socket.io-client";
 
-// Socket interface
-interface SocketInterface {
-  id?: string;
-  connected: boolean;
-  emit: (event: string, data: any) => void;
-  on: (event: string, callback: (...args: any[]) => void) => void;
-  removeAllListeners: () => void;
-  disconnect: () => void;
-  connect: () => void;
-}
-
-// Types
-interface ChatParticipant {
-  _id: string;
-  name: string;
-  email: string;
-  specialization?: string; // For officiants
-  partner_1?: string; // For users
-  partner_2?: string; // For users
-  profilePicture?: string;
-  bio?: string;
-  bookingPackage?: Array<{
-    id: string;
-    name: string;
-    price: number;
-    description: string;
-    features: string[];
-  }>;
-  languages?: string[];
-  location?: string;
-  online?: boolean;
-  role?: string;
-  lastMessageTime?: string;
-}
+// Import new components
+import ChatHeader from "./ChatHeader";
+import ChatSidebar from "./ChatSidebar";
+import MessageRenderer from "./MessageRenderer";
+import ChatInput from "./ChatInput";
+import BookingModal from "./BookingModal";
+import type {
+  SocketInterface,
+  ChatParticipant,
+  Message,
+  BookingProposal,
+  Event,
+  TypingUser,
+} from "./types";
 
 // Keep the old interface for backward compatibility
 interface Officiant extends ChatParticipant {}
 
-interface Message {
-  _id?: string;
-  id?: number | string;
-  messageId?: string;
-  sender: string;
-  senderName?: string;
-  type: "text" | "file" | "image" | "document" | "link" | "booking_proposal";
-  content: string;
-  originalName?: string;
-  fileUrl?: string;
-  fileSize?: number;
-  mimeType?: string;
-  timestamp?: string;
-  createdAt?: string;
-  serverId?: string;
-  roomId?: string;
-  fileData?: {
-    originalName: string;
-    filename: string;
-    fileUrl: string;
-    fileSize: number;
-    mimeType: string;
-  };
-  bookingData?: BookingProposal;
-}
-
-interface BookingProposal {
-  eventId: string;
-  eventName: string; // This will store the title from Event
-  price: number;
-  officiantId: string;
-  officiantName: string;
-  clientId: string;
-  clientName: string;
-  status?: "pending" | "accept" | "decline";
-  respondedBy?: string;
-  respondedAt?: string;
-}
-
-interface Event {
-  _id: string;
-  title: string;
-  description: string;
-  ceremonyType: string;
-  price?: number; // Optional since it might not exist in the schema
-  duration?: string;
-  features?: string[];
-  category?: string;
-}
-
+// Booking modal data interface
 interface BookingModalData {
   eventId: string;
   eventName: string;
@@ -111,11 +32,6 @@ interface BookingModalData {
   officiantName: string;
   clientId: string;
   clientName: string;
-}
-
-interface TypingUser {
-  userId: string;
-  userName: string;
 }
 
 interface UploadResponse {
@@ -147,17 +63,12 @@ const Discussions: React.FC = () => {
   // Booking modal state
   const [showBookingModal, setShowBookingModal] = useState<boolean>(false);
   const [events, setEvents] = useState<Event[]>([]);
-  const [selectedEvent, setSelectedEvent] = useState<string>("");
-  const [loadingEvents, setLoadingEvents] = useState<boolean>(false);
-  const [customPrice, setCustomPrice] = useState<string>(""); // Custom price input by officiant
 
   // Hooks and refs
   const axios = useAxios();
   const { user } = useAuth(); // Get actual user from auth
   const navigate = useNavigate();
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const imageInputRef = useRef<HTMLInputElement>(null);
   const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // Generate private room ID for user-officiant conversation
@@ -331,7 +242,26 @@ const Discussions: React.FC = () => {
     newSocket.on(
       "loadExistingMessages",
       ({ messages: existingMessages }: { messages: Message[] }) => {
-        console.log("� Loading existing messages:", existingMessages.length);
+        console.log("📥 Loading existing messages:", existingMessages.length);
+        console.log(
+          "📋 Message types:",
+          existingMessages.map((msg) => ({
+            id: msg.id,
+            type: msg.type,
+            sender: msg.senderName,
+          }))
+        );
+
+        // Log booking proposals specifically
+        const bookingProposals = existingMessages.filter(
+          (msg) => msg.type === "booking_proposal"
+        );
+        console.log(
+          "📅 Booking proposals found:",
+          bookingProposals.length,
+          bookingProposals
+        );
+
         setMessages(existingMessages);
       }
     );
@@ -440,6 +370,7 @@ const Discussions: React.FC = () => {
           }`
         );
 
+        // Update the online users set
         setOnlineUsers((prevOnline) => {
           const newSet = new Set(prevOnline);
           if (isOnline) {
@@ -487,6 +418,8 @@ const Discussions: React.FC = () => {
       "onlineUsersList",
       ({ onlineUsers: onlineUsersList }: { onlineUsers: string[] }) => {
         console.log(`📡 Received online users list:`, onlineUsersList);
+
+        // Update the online users set
         setOnlineUsers(new Set(onlineUsersList));
 
         // Update participants online status based on the received list
@@ -553,6 +486,9 @@ const Discussions: React.FC = () => {
     // Booking proposal event handlers
     newSocket.on("booking_proposal_received", (messageData: Message) => {
       console.log("📅 Booking proposal received:", messageData);
+      console.log("🎯 Current user role:", user?.role);
+      console.log("💼 Booking data:", messageData.bookingData);
+
       setMessages((prevMessages) => {
         // Check for duplicates
         const isDuplicate = prevMessages.some(
@@ -576,6 +512,7 @@ const Discussions: React.FC = () => {
           return prevMessages;
         }
 
+        console.log("✅ Adding booking proposal to messages");
         return [...prevMessages, messageData];
       });
     });
@@ -672,106 +609,42 @@ const Discussions: React.FC = () => {
 
   // Fetch events for booking modal
   const fetchEvents = async () => {
-    setLoadingEvents(true);
     try {
-      const response = await axios.get("/events/all");
-      // Backend returns { events: [...] }, so we need response.data.events
-      setEvents(response.data.events || []);
+      const response = await axios.get(
+        `/events/officiant-Client/${selected?._id}/${user?._id}`
+      );
+      console.log("Fetched events:", response);
+
+      setEvents(response.data.events);
     } catch (error) {
       console.error("Failed to fetch events:", error);
-      Swal.fire({
-        title: "Error",
-        text: "Failed to load events. Please try again.",
-        icon: "error",
-        confirmButtonText: "OK",
-      });
-    } finally {
-      setLoadingEvents(false);
+      // Fallback to all events if filtering fails
+      try {
+        const fallbackResponse = await axios.get("/events/all");
+        setEvents(fallbackResponse.data.events || []);
+      } catch (fallbackError) {
+        console.error("Fallback fetch also failed:", fallbackError);
+        Swal.fire({
+          title: "Error",
+          text: "Failed to load events. Please try again.",
+          icon: "error",
+          confirmButtonText: "OK",
+        });
+      }
     }
   };
 
   // Handle opening booking modal
   const handleOpenBookingModal = () => {
     setShowBookingModal(true);
-    setSelectedEvent(""); // Reset event selection
-    setCustomPrice(""); // Reset custom price
     fetchEvents();
-  };
-
-  // Handle booking proposal sending
-  const handleSendBookingProposal = () => {
-    if (!selectedEvent) {
-      Swal.fire({
-        title: "Error",
-        text: "Please select an event to proceed.",
-        icon: "warning",
-        confirmButtonText: "OK",
-      });
-      return;
-    }
-
-    if (!customPrice || parseFloat(customPrice) <= 0) {
-      Swal.fire({
-        title: "Error",
-        text: "Please enter a valid price greater than 0.",
-        icon: "warning",
-        confirmButtonText: "OK",
-      });
-      return;
-    }
-
-    if (!user?._id || !selected?._id) {
-      Swal.fire({
-        title: "Error",
-        text: "User or participant information missing.",
-        icon: "error",
-        confirmButtonText: "OK",
-      });
-      return;
-    }
-
-    const event = events.find((e) => e._id === selectedEvent);
-    if (!event) return;
-
-    const roomId = generatePrivateRoomId(user._id, selected._id);
-    const proposedPrice = parseFloat(customPrice);
-
-    const bookingData: BookingModalData = {
-      eventId: event._id,
-      eventName: event.title,
-      price: proposedPrice, // Use the custom price set by officiant
-      officiantId: user._id,
-      officiantName: user.partner_1 || user.partner_2 || "Officiant",
-      clientId: selected._id,
-      clientName: selected.partner_1 || selected.partner_2 || "Client",
-    };
-
-    if (socket) {
-      socket.emit("send_booking_proposal", {
-        roomId,
-        bookingData,
-        message: `Booking proposal for ${
-          event.title
-        } - $${proposedPrice.toFixed(2)}`,
-      });
-    }
-
-    setShowBookingModal(false);
-    setSelectedEvent("");
-    setCustomPrice(""); // Reset custom price
-
-    Swal.fire({
-      title: "Success",
-      text: "Booking proposal sent successfully!",
-      icon: "success",
-      confirmButtonText: "OK",
-    });
   };
 
   // Handle booking response (accept/decline)
   const handleBookingResponse = (
     messageId: string,
-    response: "accept" | "decline"
+    response: "accept" | "decline",
+    bookingData?: BookingProposal
   ) => {
     if (!user?._id || !selected?._id) return;
 
@@ -786,15 +659,66 @@ const Discussions: React.FC = () => {
       });
     }
 
-    if (response === "accept") {
-      // Navigate to payment page or show payment modal
-      navigate("/payment");
+    if (response === "accept" && bookingData) {
+      // Get user details for navigation
+      const userName = user.partner_1 || user.partner_2 || "Client";
+
+      // Create URL parameters with all booking details
+      const params = new URLSearchParams({
+        eventId: bookingData.eventId,
+        eventName: bookingData.eventName,
+        price: bookingData.price.toString(),
+        officiantId: bookingData.officiantId,
+        officiantName: bookingData.officiantName,
+        userId: user._id,
+        userName: userName,
+        clientId: bookingData.clientId,
+        clientName: bookingData.clientName,
+      });
+
+      // Navigate to payment page with all booking details
+      navigate(`/dashboard/payment?${params.toString()}`);
     }
   };
 
   // Handle input changes and typing indicator
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInput(e.target.value);
+
+    if (!socket || !isConnected || !selected || !user?._id) return;
+
+    const roomId = generatePrivateRoomId(user._id, selected._id);
+
+    if (!isTyping) {
+      setIsTyping(true);
+      socket.emit("typing", {
+        roomId: roomId,
+        userId: user._id,
+        userName: user.partner_1 || user.partner_2 || "User",
+        isTyping: true,
+      });
+    }
+
+    // Clear previous timeout
+    if (typingTimeoutRef.current) {
+      clearTimeout(typingTimeoutRef.current);
+    }
+
+    // Set new timeout
+    typingTimeoutRef.current = setTimeout(() => {
+      setIsTyping(false);
+      socket?.emit("typing", {
+        roomId: roomId,
+        userId: user._id,
+        userName: user.partner_1 || user.partner_2 || "User",
+        isTyping: false,
+      });
+    }, 1000);
+  };
+
+  // Handle input change for ChatInput component (string only)
+  const handleInputStringChange = (value: string) => {
+    setInput(value);
 
     if (!socket || !isConnected || !selected || !user?._id) return;
 
@@ -1026,288 +950,6 @@ const Discussions: React.FC = () => {
     setTypingUsers([]);
   };
 
-  // Utility functions
-  const formatFileSize = (bytes: number): string => {
-    if (bytes === 0) return "0 Bytes";
-    const k = 1024;
-    const sizes = ["Bytes", "KB", "MB", "GB"];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
-  };
-
-  const isValidUrl = (string: string): boolean => {
-    try {
-      new URL(string);
-      return true;
-    } catch (_) {
-      return false;
-    }
-  };
-
-  const formatTimestamp = (timestamp?: string): string => {
-    if (!timestamp) return "";
-    const date = new Date(timestamp);
-    const now = new Date();
-    const diffInHours = (now.getTime() - date.getTime()) / (1000 * 60 * 60);
-
-    if (diffInHours < 1) {
-      const minutes = Math.floor(diffInHours * 60);
-      return `${minutes}m ago`;
-    } else if (diffInHours < 24) {
-      return `${Math.floor(diffInHours)}h ago`;
-    } else {
-      return date.toLocaleDateString();
-    }
-  };
-
-  // Message renderer
-  const renderMessage = (msg: Message) => {
-    const isMyMessage = msg.sender === user?._id || msg.sender === "me";
-
-    switch (msg.type) {
-      case "image":
-        return (
-          <div
-            key={msg.id}
-            className={`flex ${isMyMessage ? "justify-end" : ""} group`}
-          >
-            <div
-              className={`max-w-xs rounded-lg p-2 ${
-                isMyMessage
-                  ? "bg-primary text-white"
-                  : "bg-white border border-primary text-gray-900"
-              }`}
-            >
-              <img
-                src={msg.fileUrl || msg.fileData?.fileUrl}
-                alt={msg.originalName || msg.fileData?.originalName}
-                className="rounded max-w-full h-auto cursor-pointer hover:opacity-90 transition-opacity"
-                onClick={() =>
-                  window.open(msg.fileUrl || msg.fileData?.fileUrl, "_blank")
-                }
-                onError={() => {
-                  console.error(
-                    "Image failed to load:",
-                    msg.fileUrl || msg.fileData?.fileUrl
-                  );
-                  console.error("Message data:", msg);
-                }}
-              />
-              <div className="text-xs mt-1 opacity-75 flex justify-between items-center">
-                <span className="truncate">{msg.originalName}</span>
-                <span className="text-xs ml-2">
-                  {formatTimestamp(msg.timestamp)}
-                </span>
-              </div>
-            </div>
-          </div>
-        );
-
-      case "file":
-      case "document":
-        return (
-          <div
-            key={msg.id}
-            className={`flex ${isMyMessage ? "justify-end" : ""} group`}
-          >
-            <div
-              className={`max-w-xs rounded-lg px-4 py-3 ${
-                isMyMessage
-                  ? "bg-primary text-white"
-                  : "bg-white border border-primary text-gray-900"
-              }`}
-            >
-              <div className="flex items-center gap-3">
-                <GoFileDirectoryFill size={24} />
-                <div className="flex-1 min-w-0">
-                  <div className="font-medium truncate">
-                    {msg.originalName ||
-                      msg.fileData?.originalName ||
-                      msg.content}
-                  </div>
-                  <div className="text-xs opacity-75 flex justify-between">
-                    <span>
-                      {msg.fileSize || msg.fileData?.fileSize
-                        ? formatFileSize(
-                            (msg.fileSize || msg.fileData?.fileSize)!
-                          )
-                        : ""}
-                    </span>
-                    <span>{formatTimestamp(msg.timestamp)}</span>
-                  </div>
-                </div>
-                {(msg.fileUrl || msg.fileData?.fileUrl) && (
-                  <a
-                    href={msg.fileUrl || msg.fileData?.fileUrl}
-                    download={msg.originalName || msg.fileData?.originalName}
-                    className="p-1 rounded hover:bg-black/10 transition-colors"
-                    title="Download file"
-                  >
-                    <FiDownload size={16} />
-                  </a>
-                )}
-              </div>
-            </div>
-          </div>
-        );
-
-      case "link":
-        return (
-          <div
-            key={msg.id}
-            className={`flex ${isMyMessage ? "justify-end" : ""} group`}
-          >
-            <div
-              className={`max-w-xs rounded-lg px-4 py-2 ${
-                isMyMessage
-                  ? "bg-primary text-white"
-                  : "bg-white border border-primary text-gray-900"
-              }`}
-            >
-              <div className="flex items-center gap-2 mb-2">
-                <IoLink size={16} />
-                <span className="text-sm font-medium">Shared Link</span>
-              </div>
-              {isValidUrl(msg.content) ? (
-                <a
-                  href={msg.content}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-sm underline hover:no-underline break-all"
-                >
-                  {msg.content}
-                </a>
-              ) : (
-                <span className="text-sm break-all">{msg.content}</span>
-              )}
-              <div className="text-xs mt-2 opacity-75">
-                {formatTimestamp(msg.timestamp)}
-              </div>
-            </div>
-          </div>
-        );
-
-      case "booking_proposal":
-        return (
-          <div
-            key={msg.id}
-            className={`flex ${isMyMessage ? "justify-end" : ""} group`}
-          >
-            <div
-              className={`max-w-sm rounded-lg border-2 ${
-                isMyMessage
-                  ? "border-primary bg-primary/5"
-                  : "border-green-400 bg-green-50"
-              }`}
-            >
-              <div className="p-4">
-                <div className="flex items-center gap-2 mb-3">
-                  <IoCalendarOutline size={20} className="text-primary" />
-                  <span className="font-semibold text-gray-800">
-                    Booking Proposal
-                  </span>
-                </div>
-
-                {msg.bookingData && (
-                  <div className="space-y-2">
-                    <div>
-                      <h4 className="font-medium text-gray-800">
-                        {msg.bookingData.eventName}
-                      </h4>
-                      <p className="text-2xl font-bold text-primary">
-                        ${msg.bookingData.price}
-                      </p>
-                    </div>
-
-                    <div className="text-sm text-gray-600">
-                      <p>
-                        <span className="font-medium">From:</span>{" "}
-                        {msg.bookingData.officiantName}
-                      </p>
-                      <p>
-                        <span className="font-medium">To:</span>{" "}
-                        {msg.bookingData.clientName}
-                      </p>
-                    </div>
-
-                    {msg.bookingData.status === "pending" &&
-                      !isMyMessage &&
-                      user?.role !== "officiant" && (
-                        <div className="flex gap-2 mt-3">
-                          <button
-                            onClick={() =>
-                              handleBookingResponse(
-                                String(msg.id || ""),
-                                "accept"
-                              )
-                            }
-                            className="flex-1 bg-green-500 text-white px-3 py-2 rounded-md text-sm font-medium hover:bg-green-600 transition-colors"
-                          >
-                            Accept
-                          </button>
-                          <button
-                            onClick={() =>
-                              handleBookingResponse(
-                                String(msg.id || ""),
-                                "decline"
-                              )
-                            }
-                            className="flex-1 bg-red-500 text-white px-3 py-2 rounded-md text-sm font-medium hover:bg-red-600 transition-colors"
-                          >
-                            Decline
-                          </button>
-                        </div>
-                      )}
-
-                    {msg.bookingData.status === "accept" && (
-                      <div className="bg-green-100 border border-green-300 rounded-md p-2 mt-3">
-                        <p className="text-sm text-green-800 font-medium">
-                          ✅ Booking Accepted
-                        </p>
-                      </div>
-                    )}
-
-                    {msg.bookingData.status === "decline" && (
-                      <div className="bg-red-100 border border-red-300 rounded-md p-2 mt-3">
-                        <p className="text-sm text-red-800 font-medium">
-                          ❌ Booking Declined
-                        </p>
-                      </div>
-                    )}
-                  </div>
-                )}
-
-                <div className="text-xs mt-3 opacity-75 text-gray-600">
-                  {formatTimestamp(msg.timestamp)}
-                </div>
-              </div>
-            </div>
-          </div>
-        );
-
-      default:
-        return (
-          <div
-            key={msg.id}
-            className={`flex ${isMyMessage ? "justify-end" : ""} group`}
-          >
-            <div
-              className={`max-w-xs rounded-lg px-4 py-2 font-medium ${
-                isMyMessage
-                  ? "bg-primary text-white"
-                  : "bg-white border border-primary text-gray-900"
-              }`}
-            >
-              <div>{msg.content}</div>
-              <div className="text-xs mt-1 opacity-75">
-                {formatTimestamp(msg.timestamp)}
-              </div>
-            </div>
-          </div>
-        );
-    }
-  };
-
   // Filter officiants based on search
   const filteredOfficiants = officiants.filter(
     (officiant) =>
@@ -1332,6 +974,54 @@ const Discussions: React.FC = () => {
     );
   }
 
+  // Add missing handler functions
+  const handleLinkSend = (url: string) => {
+    if (!socket || !selected) return;
+    console.log("user of client:", selected);
+    const linkMessage: Message = {
+      id: Date.now(),
+      sender: user?._id || "",
+      senderName:
+        user?.partner_1 && user?.partner_2
+          ? `${user.partner_1} & ${user.partner_2}`
+          : user?.email || "",
+      type: "link",
+      content: url,
+      timestamp: new Date().toISOString(),
+      roomId: generatePrivateRoomId(user?._id || "", selected._id),
+    };
+
+    socket.emit("private_message", linkMessage);
+    setMessages((prev) => [...prev, linkMessage]);
+  };
+
+  const handleSendBookingProposalViaModal = (proposal: BookingProposal) => {
+    if (!socket || !selected) return;
+
+    const roomId = generatePrivateRoomId(user?._id || "", selected._id);
+    const message = `Booking proposal for ${proposal.eventName}`;
+
+    console.log("📤 Sending booking proposal:", {
+      roomId,
+      bookingData: proposal,
+      message,
+      selectedUser: selected,
+    });
+
+    // Use the correct event that the backend expects
+    socket.emit("send_booking_proposal", {
+      roomId,
+      bookingData: proposal,
+      message,
+    });
+  };
+
+  // Compute user display name
+  const getUserDisplayName = () => {
+    if (user?.name) return user.name;
+    else return `${user.partner_1} & ${user.partner_2}`;
+  };
+
   if (!selected) {
     return (
       <div className="flex h-screen bg-gray-50">
@@ -1351,96 +1041,19 @@ const Discussions: React.FC = () => {
   return (
     <div className="lg:h-[87vh] bg-white flex flex-col">
       {/* Header */}
-      <div className="px-6 pt-6">
-        <div className="text-gray-500 text-sm mb-1">Dashboard / Discussion</div>
-        <div className="flex justify-between items-center">
-          <h1 className="text-3xl font-primary font-bold text-gray-900 mb-2">
-            {user?.role === "officiant"
-              ? "Messages from Clients"
-              : "Discussion with Officiant"}
-          </h1>
-          <div
-            className={`px-3 py-1 rounded-full text-sm ${
-              isConnected
-                ? "bg-green-100 text-green-700"
-                : "bg-red-100 text-red-700"
-            }`}
-          >
-            {isConnected ? "🟢 Connected" : "🔴 Disconnected"}
-          </div>
-        </div>
-      </div>
+      <ChatHeader userRole={user?.role} isConnected={isConnected} />
 
       <div className="flex-1 flex flex-col lg:flex-row lg:gap-0 gap-14 bg-white border-t border-gray-200">
         {/* Sidebar */}
-        <div className="w-full lg:w-80 border border-gray-200 bg-white flex flex-col">
-          <div className="p-4">
-            <input
-              className="w-full px-4 py-2 border border-gray-200 rounded-full focus:outline-none focus:border-yellow-600 duration-300"
-              placeholder={
-                user?.role === "officiant"
-                  ? "Search clients...."
-                  : "Search officiants...."
-              }
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-            />
-          </div>
-
-          <div className="flex-1 overflow-y-auto min-h-40 lg:max-h-[68vh] max-h-60">
-            {filteredOfficiants.map((o) => (
-              <div
-                key={`${o._id}-${o.name}`}
-                className={`flex items-center gap-3 px-4 py-3 hover:bg-[#f8f2e4] duration-200 cursor-pointer border-b border-gray-100 ${
-                  selected?._id === o._id ? "bg-[#f8f2e4]" : "bg-transparent"
-                }`}
-                onClick={() => handleOfficiantSelect(o)}
-              >
-                <div className="relative">
-                  <img
-                    src={
-                      o.profilePicture ||
-                      "https://via.placeholder.com/40x40?text=👤"
-                    }
-                    alt={o.name}
-                    className="w-10 h-10 rounded-full object-cover"
-                  />
-                  {o.online && (
-                    <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2 border-white"></div>
-                  )}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="font-medium text-gray-900 truncate">
-                    {o.name}
-                  </div>
-                  <div className="text-xs text-gray-500 truncate">
-                    {user?.role === "officiant" ? (
-                      // Show user info when officiant is viewing
-                      <span className="text-gray-700">Client</span>
-                    ) : (
-                      // Show officiant specialization when user is viewing
-                      <>
-                        Specialization:{" "}
-                        <span className="text-gray-700">
-                          {o.specialization || "Wedding Officiant"}
-                        </span>
-                      </>
-                    )}
-                  </div>
-                </div>
-                <span
-                  className={`px-3 py-1 text-xs rounded-full border ${
-                    o.online
-                      ? "bg-green-50 text-green-700 border-green-200"
-                      : "bg-yellow-50 text-yellow-700 border-yellow-200"
-                  }`}
-                >
-                  {o.online ? "Available" : "Offline"}
-                </span>
-              </div>
-            ))}
-          </div>
-        </div>
+        <ChatSidebar
+          userRole={user?.role}
+          search={search}
+          setSearch={setSearch}
+          filteredParticipants={filteredOfficiants}
+          selected={selected}
+          setSelected={handleOfficiantSelect}
+          onlineUsers={onlineUsers}
+        />
 
         {/* Chat Area */}
         <div className="flex-1 rounded-xl flex flex-col bg-[#f8f2e4]">
@@ -1453,8 +1066,7 @@ const Discussions: React.FC = () => {
             <div className="relative">
               <img
                 src={
-                  selected.profilePicture ||
-                  "https://via.placeholder.com/40x40?text=👤"
+                  selected.profilePicture 
                 }
                 alt={selected.name}
                 className="w-10 h-10 rounded-full object-cover"
@@ -1523,7 +1135,15 @@ const Discussions: React.FC = () => {
 
           {/* Chat Messages */}
           <div className="flex-1 overflow-y-auto max-h-96 2xl:max-h-[735px] xl:max-h-[500px] px-6 py-4 flex flex-col gap-4">
-            {messages.map(renderMessage)}
+            {messages.map((msg) => (
+              <MessageRenderer
+                key={msg._id || msg.id}
+                msg={msg}
+                isMyMessage={msg.sender === user?._id}
+                userRole={user?.role}
+                onBookingResponse={handleBookingResponse}
+              />
+            ))}
 
             {/* Typing Indicator */}
             {typingUsers.length > 0 && (
@@ -1549,245 +1169,35 @@ const Discussions: React.FC = () => {
           </div>
 
           {/* Chat Input */}
-          <div className="bg-white border-t border-gray-200 px-2 lg:px-6 py-4">
-            <div className="flex justify-center items-center gap-1 sm:gap-3">
-              <div className="relative">
-                <button
-                  className="flex items-center md:gap-2 px-2 md:px-4 py-2 rounded-full border border-primary text-primary bg-primary/10 hover:bg-primary/20 font-medium transition-colors"
-                  onClick={() => setShowAttachMenu(!showAttachMenu)}
-                  disabled={!isConnected}
-                >
-                  <IoAttachOutline size={24} />
-                  <span className="hidden md:inline">Attach</span>
-                </button>
-
-                {showAttachMenu && (
-                  <div className="absolute bottom-full mb-2 left-0 bg-white border border-gray-200 rounded-lg shadow-lg p-2 min-w-[160px] z-10">
-                    <button
-                      className="w-full flex items-center gap-2 px-3 py-2 text-left hover:bg-gray-50 rounded transition-colors"
-                      onClick={() => {
-                        imageInputRef.current?.click();
-                        setShowAttachMenu(false);
-                      }}
-                      disabled={!isConnected}
-                    >
-                      <IoImage size={16} />
-                      Image
-                    </button>
-                    <button
-                      className="w-full flex items-center gap-2 px-3 py-2 text-left hover:bg-gray-50 rounded transition-colors"
-                      onClick={() => {
-                        fileInputRef.current?.click();
-                        setShowAttachMenu(false);
-                      }}
-                      disabled={!isConnected}
-                    >
-                      <IoDocument size={16} />
-                      Document
-                    </button>
-                    <button
-                      className="w-full flex items-center gap-2 px-3 py-2 text-left hover:bg-gray-50 rounded transition-colors"
-                      onClick={() => {
-                        handleLinkShare();
-                        setShowAttachMenu(false);
-                      }}
-                      disabled={!isConnected}
-                    >
-                      <IoLink size={16} />
-                      Link
-                    </button>
-
-                    {/* Booking button only for officiants */}
-                    {user?.role === "officiant" && (
-                      <button
-                        className="w-full flex items-center gap-2 px-3 py-2 text-left hover:bg-gray-50 rounded transition-colors"
-                        onClick={() => {
-                          handleOpenBookingModal();
-                          setShowAttachMenu(false);
-                        }}
-                        disabled={!isConnected}
-                      >
-                        <IoCalendarOutline size={16} />
-                        Send Booking
-                      </button>
-                    )}
-                  </div>
-                )}
-              </div>
-
-              <input
-                className="flex-1 px-4 py-2 rounded-full border border-gray-300 focus:outline-none focus:border-yellow-600 disabled:bg-gray-100 disabled:cursor-not-allowed"
-                placeholder={isConnected ? "Type message...." : "Connecting..."}
-                value={input}
-                onChange={handleInputChange}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") handleSend();
-                }}
-                disabled={!isConnected}
-              />
-
-              <button
-                className="px-6 py-2 rounded-full bg-primary text-white font-medium hover:bg-primary/90 transition-colors flex items-center gap-2 disabled:bg-gray-300 disabled:cursor-not-allowed"
-                onClick={handleSend}
-                disabled={!isConnected || !input.trim()}
-              >
-                <IoSend size={16} />
-                <span className="hidden sm:inline">Send</span>
-              </button>
-            </div>
-          </div>
-
-          {/* Hidden file inputs */}
-          <input
-            ref={fileInputRef}
-            type="file"
-            className="hidden"
-            accept=".pdf,.doc,.docx,.txt,.zip,.rar"
-            onChange={(e) => {
-              if (e.target.files?.[0]) {
-                handleFileUpload(e.target.files[0], "file");
-                e.target.value = "";
-              }
-            }}
-          />
-
-          <input
-            ref={imageInputRef}
-            type="file"
-            className="hidden"
-            accept="image/*"
-            onChange={(e) => {
-              if (e.target.files?.[0]) {
-                handleFileUpload(e.target.files[0], "image");
-                e.target.value = "";
-              }
-            }}
+          <ChatInput
+            inputMessage={input}
+            onInputChange={handleInputStringChange}
+            onSendMessage={handleSend}
+            onSendImage={(file) => handleFileUpload(file, "image")}
+            onSendFile={(file) => handleFileUpload(file, "file")}
+            onSendLink={handleLinkSend}
+            onCreateBooking={handleOpenBookingModal}
+            showMenu={showAttachMenu}
+            onToggleMenu={() => setShowAttachMenu(!showAttachMenu)}
+            userRole={user?.role}
+            isConnected={isConnected}
           />
         </div>
       </div>
 
       {/* Booking Proposal Modal */}
-      {showBookingModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-lg shadow-xl max-w-md w-full max-h-[90vh] overflow-y-auto">
-            <div className="p-6">
-              <h2 className="text-xl font-semibold text-gray-800 mb-4">
-                Send Booking Proposal
-              </h2>
-
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Select Event
-                  </label>
-                  {loadingEvents ? (
-                    <div className="text-center py-4">
-                      <div className="inline-block animate-spin rounded-full h-6 w-6 border-b-2 border-primary"></div>
-                      <p className="text-sm text-gray-600 mt-2">
-                        Loading events...
-                      </p>
-                    </div>
-                  ) : (
-                    <select
-                      value={selectedEvent}
-                      onChange={(e) => setSelectedEvent(e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
-                    >
-                      <option value="">Choose an event...</option>
-                      {events.map((event) => (
-                        <option key={event._id} value={event._id}>
-                          {event.title}
-                        </option>
-                      ))}
-                    </select>
-                  )}
-                </div>
-
-                {/* Custom Price Input */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Set Your Price ($)
-                  </label>
-                  <input
-                    type="number"
-                    value={customPrice}
-                    onChange={(e) => setCustomPrice(e.target.value)}
-                    placeholder="Enter your price..."
-                    min="0"
-                    step="0.01"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
-                  />
-                </div>
-
-                {selectedEvent && (
-                  <div className="bg-gray-50 p-4 rounded-lg">
-                    <h3 className="font-medium text-gray-800 mb-2">
-                      Event Details
-                    </h3>
-                    {(() => {
-                      const event = events.find((e) => e._id === selectedEvent);
-                      return event ? (
-                        <div className="space-y-1 text-sm text-gray-600">
-                          <p>
-                            <span className="font-medium">Event:</span>{" "}
-                            {event.title}
-                          </p>
-                          <p>
-                            <span className="font-medium">
-                              Event Default Price:
-                            </span>{" "}
-                            ${event.price || 0}
-                          </p>
-                          {customPrice && (
-                            <p>
-                              <span className="font-medium">
-                                Your Proposed Price:
-                              </span>{" "}
-                              <span className="text-primary font-semibold">
-                                ${customPrice}
-                              </span>
-                            </p>
-                          )}
-                          {event.description && (
-                            <p>
-                              <span className="font-medium">Description:</span>{" "}
-                              {event.description}
-                            </p>
-                          )}
-                        </div>
-                      ) : null;
-                    })()}
-                  </div>
-                )}
-              </div>
-
-              <div className="flex gap-3 mt-6">
-                <button
-                  onClick={() => {
-                    setShowBookingModal(false);
-                    setSelectedEvent("");
-                    setCustomPrice(""); // Reset custom price on cancel
-                  }}
-                  className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition-colors"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={handleSendBookingProposal}
-                  disabled={
-                    !selectedEvent ||
-                    !customPrice ||
-                    parseFloat(customPrice || "0") <= 0
-                  }
-                  className="flex-1 px-4 py-2 bg-primary text-white rounded-md hover:bg-primary/90 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed"
-                >
-                  Send Proposal
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+      <BookingModal
+        isOpen={showBookingModal}
+        onClose={() => {
+          setShowBookingModal(false);
+        }}
+        events={events}
+        onSendBookingProposal={handleSendBookingProposalViaModal}
+        officiantId={user?._id || ""}
+        officiantName={getUserDisplayName()}
+        clientId={selected?._id || ""}
+        clientName={selected?.name || ""}
+      />
     </div>
   );
 };

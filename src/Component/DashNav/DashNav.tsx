@@ -99,14 +99,14 @@ const DashNav = ({
             icon: PiClipboardTextBold,
             current: location.pathname.includes("/dashboard/ceremony"),
           },
-        ]),
 
-    {
-      name: "Schedule",
-      href: "/dashboard/schedule",
-      icon: IoCalendarNumberOutline,
-      current: location.pathname.includes("/dashboard/schedule"),
-    },
+          {
+            name: "Schedule",
+            href: "/dashboard/schedule",
+            icon: IoCalendarNumberOutline,
+            current: location.pathname.includes("/dashboard/schedule"),
+          },
+        ]),
     {
       name: "Discussions",
       href: "/dashboard/discussions",

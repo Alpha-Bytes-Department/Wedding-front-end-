@@ -16,7 +16,12 @@ type Notification = {
   isRead: boolean;
   createdAt: string;
 };
-
+type user={
+  name:string;
+  email:string;
+  role:string;
+  _id:string
+}
 
 
 const Nav = () => {
@@ -229,16 +234,32 @@ const Nav = () => {
         >
           Officiant
         </NavLink>
-        <NavLink
-          to="/dashboard/ceremony"
-          className={({ isActive }) =>
-            isActive
-              ? "text-black font-secondary font-bold text-base lg:text-lg"
-              : "text-black hover:text-[#D4AF37] transition-colors duration-300 font-secondary font-normal text-base lg:text-lg"
-          }
-        >
-          Ceremony
-        </NavLink>
+
+        {user?.role !== "officiant" ? (
+          <NavLink
+            to="/dashboard/ceremony"
+            className={({ isActive }) =>
+              isActive
+                ? "text-black font-secondary font-bold text-lg sm:text-xl py-2 sm:py-3 border-b border-[#D4AF37]"
+                : "text-black hover:text-[#D4AF37] transition-colors duration-300 font-secondary font-normal text-lg sm:text-xl py-2 sm:py-3  "
+            }
+            onClick={toggleMenu}
+          >
+            Ceremony
+          </NavLink>
+        ) : (
+          <NavLink
+            to="/dashboard"
+            className={({ isActive }) =>
+              isActive
+                ? "text-black font-secondary font-bold text-lg sm:text-xl py-2 sm:py-3 border-b border-[#D4AF37]"
+                : "text-black hover:text-[#D4AF37] transition-colors duration-300 font-secondary font-normal text-lg sm:text-xl py-2 sm:py-3 "
+            }
+            onClick={toggleMenu}
+          >
+            Dashboard
+          </NavLink>
+        )}
         <button
           onClick={scrollToClientReview}
           className="text-black hover:text-[#D4AF37] transition-colors duration-300 font-secondary font-normal text-base lg:text-lg cursor-pointer"
@@ -390,17 +411,33 @@ const Nav = () => {
           >
             Officiants
           </NavLink>
-          <NavLink
-            to="/dashboard/ceremony"
-            className={({ isActive }) =>
-              isActive
-                ? "text-black font-secondary font-bold text-lg sm:text-xl py-2 sm:py-3 border-b border-[#D4AF37]"
-                : "text-black hover:text-[#D4AF37] transition-colors duration-300 font-secondary font-normal text-lg sm:text-xl py-2 sm:py-3 border-b border-gray-200"
-            }
-            onClick={toggleMenu}
-          >
-            Ceremony
-          </NavLink>
+
+          {user?.role !== "officiant" ? (
+            <NavLink
+              to="/dashboard/ceremony"
+              className={({ isActive }) =>
+                isActive
+                  ? "text-black font-secondary font-bold text-lg sm:text-xl py-2 sm:py-3 border-b border-[#D4AF37]"
+                  : "text-black hover:text-[#D4AF37] transition-colors duration-300 font-secondary font-normal text-lg sm:text-xl py-2 sm:py-3 border-b border-gray-200"
+              }
+              onClick={toggleMenu}
+            >
+              Ceremony
+            </NavLink>
+          ) : (
+            <NavLink
+              to="/dashboard"
+              className={({ isActive }) =>
+                isActive
+                  ? "text-black font-secondary font-bold text-lg sm:text-xl py-2 sm:py-3 border-b border-[#D4AF37]"
+                  : "text-black hover:text-[#D4AF37] transition-colors duration-300 font-secondary font-normal text-lg sm:text-xl py-2 sm:py-3 border-b border-gray-200"
+              }
+              onClick={toggleMenu}
+            >
+              Dashboard
+            </NavLink>
+          )}
+
           <button
             onClick={() => {
               scrollToClientReview();

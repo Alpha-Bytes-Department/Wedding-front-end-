@@ -7,6 +7,7 @@ import {
   useElements,
 } from "@stripe/react-stripe-js";
 import { useAxios } from "../../Component/Providers/useAxios";
+import { useLocation } from "react-router-dom";
 
 // Initialize Stripe
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
@@ -57,12 +58,14 @@ const CheckoutForm = ({
   const stripe = useStripe();
   const elements = useElements();
   const axios = useAxios();
-
+  const {search} = useLocation();
+  const searchParams = new URLSearchParams(search);
   const [clientSecret, setClientSecret] = useState("");
   const [processing, setProcessing] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState("");
   const [paymentMethod, setPaymentMethod] = useState("");
+  const [transactionId, setTransactionId] = useState<String>("");
   const [billingDetails, setBillingDetails] = useState({
     name: billData.userName || "",
     email: "",
@@ -74,6 +77,7 @@ const CheckoutForm = ({
       country: "US",
     },
   });
+  console.log(searchParams.get("eventId"),searchParams.get("officiantId"),searchParams.get("officiantName"));
 
   useEffect(() => {
     axios
@@ -155,6 +159,8 @@ const CheckoutForm = ({
         console.error("Payment failed:", error);
         setError(error.message || "Payment failed. Please try again.");
       } else if (paymentIntent.status === "succeeded") {
+        console.log("Payment succeeded:", paymentIntent.id.toUpperCase());
+        setTransactionId(paymentIntent.id);
         setSuccess(true);
         // Get payment method details from paymentIntent
         const paymentMethod = paymentIntent.payment_method;
@@ -216,26 +222,13 @@ const CheckoutForm = ({
             <p className="text-yellow-700">
               Transaction ID:{" "}
               <span className="font-mono text-xs">
-                TXN-{Math.random().toString(36).substr(2, 9).toUpperCase()}
+                {transactionId.toUpperCase()}
               </span>
             </p>
           </div>
         </div>
 
-        <div className="space-y-3">
-          <button
-            onClick={() => window.print()}
-            className="bg-orange-500 text-white px-6 py-3 rounded-lg hover:bg-orange-600 transition-colors mr-4"
-          >
-            Download Receipt
-          </button>
-          <button
-            onClick={() => setSuccess(false)}
-            className="bg-yellow-600 text-white px-6 py-3 rounded-lg hover:bg-yellow-700 transition-colors"
-          >
-            Back to Dashboard
-          </button>
-        </div>
+        
       </div>
     );
   }
