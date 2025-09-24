@@ -23,17 +23,6 @@ import type {
 // Keep the old interface for backward compatibility
 interface Officiant extends ChatParticipant {}
 
-// Booking modal data interface
-interface BookingModalData {
-  eventId: string;
-  eventName: string;
-  price: number;
-  officiantId: string;
-  officiantName: string;
-  clientId: string;
-  clientName: string;
-}
-
 interface UploadResponse {
   success: boolean;
   message: string;
@@ -518,36 +507,56 @@ const Discussions: React.FC = () => {
     });
 
     newSocket.on(
-      "booking_response_received",
+      "booking_proposal_response_received",
       ({
         messageId,
         response,
         userId,
+        bookingData,
       }: {
         messageId: string;
         response: "accept" | "decline";
         userId: string;
+        bookingData?: BookingProposal;
       }) => {
         console.log("📋 Booking response received:", {
           messageId,
           response,
           userId,
+          bookingData,
         });
 
         setMessages((prevMessages) =>
           prevMessages.map((msg) => {
-            if (msg.id === messageId && msg.type === "booking_proposal") {
+            if (
+              (String(msg.id) === messageId ||
+                String(msg._id) === messageId ||
+                String(msg.serverId) === messageId ||
+                String(msg.messageId) === messageId) &&
+              msg.type === "booking_proposal"
+            ) {
+              console.log(
+                "📋 Updating booking proposal message:",
+                msg.id,
+                "with status:",
+                response
+              );
               return {
                 ...msg,
-                bookingData: msg.bookingData
-                  ? {
-                      ...msg.bookingData,
-                      status: response,
-                      respondedBy: userId,
-                      respondedAt: new Date().toISOString(),
-                    }
-                  : undefined,
-              };
+                bookingData:
+                  bookingData ||
+                  (msg.bookingData
+                    ? {
+                        ...msg.bookingData,
+                        status:
+                          response === "accept"
+                            ? "accepted"
+                            : ("declined" as "accepted" | "declined"),
+                        respondedBy: userId,
+                        respondedAt: new Date().toISOString(),
+                      }
+                    : undefined),
+              } as Message;
             }
             return msg;
           })
@@ -641,43 +650,118 @@ const Discussions: React.FC = () => {
   };
 
   // Handle booking response (accept/decline)
-  const handleBookingResponse = (
+  const handleBookingResponse = async (
     messageId: string,
     response: "accept" | "decline",
     bookingData?: BookingProposal
   ) => {
-    if (!user?._id || !selected?._id) return;
+    if (!user?._id || !selected?._id || !socket) return;
 
-    const roomId = generatePrivateRoomId(user._id, selected._id);
+    console.log("📅 Booking response initiated:", {
+      messageId,
+      response,
+      bookingData,
+      userId: user._id,
+      selectedUser: selected._id,
+    });
 
-    if (socket) {
-      socket.emit("booking_response", {
+    try {
+      const roomId = generatePrivateRoomId(user._id, selected._id);
+      console.log("🏠 Room ID for response:", roomId);
+
+      // Update the booking status locally first (optimistic update)
+      setMessages((prevMessages) => {
+        return prevMessages.map((msg) => {
+          if (
+            (String(msg.id) === messageId ||
+              String(msg._id) === messageId ||
+              String(msg.messageId) === messageId ||
+              String(msg.serverId) === messageId) &&
+            msg.type === "booking_proposal"
+          ) {
+            console.log("🔄 Optimistically updating message:", msg);
+            return {
+              ...msg,
+              bookingData: msg.bookingData
+                ? {
+                    ...msg.bookingData,
+                    status:
+                      response === "accept"
+                        ? "accepted"
+                        : ("declined" as "accepted" | "declined"),
+                    respondedBy: user._id || "",
+                    respondedAt: new Date().toISOString(),
+                  }
+                : undefined,
+            } as Message;
+          }
+          return msg;
+        });
+      });
+
+      // Prepare data for socket emission
+      const responseData = {
         roomId,
         messageId,
         response,
-        userId: user._id,
+        bookingData: bookingData
+          ? {
+              ...bookingData,
+              status: response === "accept" ? "accepted" : "declined",
+              respondedBy: user._id || "",
+              respondedAt: new Date().toISOString(),
+            }
+          : undefined,
+      };
+
+      console.log("📡 Sending booking response via socket:", responseData);
+
+      // Send response via socket
+      socket.emit("booking_proposal_response", responseData);
+
+      // Handle accept response - redirect to payment
+      if (response === "accept" && bookingData) {
+        // Show success message
+        await Swal.fire({
+          title: "Booking Accepted!",
+          text: "You have accepted the booking proposal. You will be redirected to payment.",
+          icon: "success",
+          confirmButtonText: "Proceed to Payment",
+        });
+
+        // Get user details for navigation
+        const userName = user.partner_1 || user.partner_2 || "Client";
+
+        // Create URL parameters with all booking details
+        const params = new URLSearchParams({
+          eventId: bookingData.eventId,
+          eventName: bookingData.eventName,
+          price: bookingData.price.toString(),
+          officiantId: bookingData.officiantId,
+          officiantName: bookingData.officiantName,
+          clientId: user._id,
+          clientName: userName,
+        });
+
+        // Navigate to payment page with all booking details
+        navigate(`/dashboard/payment?${params.toString()}`);
+      } else if (response === "decline") {
+        // Show decline message
+        Swal.fire({
+          title: "Booking Declined",
+          text: "You have declined the booking proposal.",
+          icon: "info",
+          confirmButtonText: "OK",
+        });
+      }
+    } catch (error) {
+      console.error("Error responding to booking proposal:", error);
+      Swal.fire({
+        title: "Error",
+        text: "Failed to respond to booking proposal. Please try again.",
+        icon: "error",
+        confirmButtonText: "OK",
       });
-    }
-
-    if (response === "accept" && bookingData) {
-      // Get user details for navigation
-      const userName = user.partner_1 || user.partner_2 || "Client";
-
-      // Create URL parameters with all booking details
-      const params = new URLSearchParams({
-        eventId: bookingData.eventId,
-        eventName: bookingData.eventName,
-        price: bookingData.price.toString(),
-        officiantId: bookingData.officiantId,
-        officiantName: bookingData.officiantName,
-        userId: user._id,
-        userName: userName,
-        clientId: bookingData.clientId,
-        clientName: bookingData.clientName,
-      });
-
-      // Navigate to payment page with all booking details
-      navigate(`/dashboard/payment?${params.toString()}`);
     }
   };
 
@@ -977,7 +1061,9 @@ const Discussions: React.FC = () => {
   // Add missing handler functions
   const handleLinkSend = (url: string) => {
     if (!socket || !selected) return;
-    console.log("user of client:", selected);
+    console.log("🔗 Sending link to:", selected.name, "URL:", url);
+
+    const roomId = generatePrivateRoomId(user?._id || "", selected._id);
     const linkMessage: Message = {
       id: Date.now(),
       sender: user?._id || "",
@@ -988,10 +1074,13 @@ const Discussions: React.FC = () => {
       type: "link",
       content: url,
       timestamp: new Date().toISOString(),
-      roomId: generatePrivateRoomId(user?._id || "", selected._id),
+      roomId: roomId,
     };
 
-    socket.emit("private_message", linkMessage);
+    // Use sendMessage to match backend handler
+    socket.emit("sendMessage", linkMessage);
+
+    // Add to local messages immediately for better UX
     setMessages((prev) => [...prev, linkMessage]);
   };
 
@@ -1018,8 +1107,10 @@ const Discussions: React.FC = () => {
 
   // Compute user display name
   const getUserDisplayName = () => {
-    if (user?.name) return user.name;
-    else return `${user.partner_1} & ${user.partner_2}`;
+    if (user?.partner_1 && user?.partner_2) {
+      return `${user.partner_1} & ${user.partner_2}`;
+    }
+    return user?.email || "User";
   };
 
   if (!selected) {
@@ -1065,9 +1156,7 @@ const Discussions: React.FC = () => {
           <div className="flex items-center gap-3 px-6 py-4 border-b border-gray-200 bg-white">
             <div className="relative">
               <img
-                src={
-                  selected.profilePicture 
-                }
+                src={selected.profilePicture}
                 alt={selected.name}
                 className="w-10 h-10 rounded-full object-cover"
               />

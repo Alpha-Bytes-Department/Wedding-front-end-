@@ -166,10 +166,18 @@ const MessageRenderer: React.FC<MessageRendererProps> = ({
             </div>
             {isValidUrl(msg.content) ? (
               <a
-                href={msg.content}
+                href={
+                  msg.content.startsWith("http")
+                    ? msg.content
+                    : `https://${msg.content}`
+                }
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-sm underline hover:no-underline break-all"
+                className={`text-sm underline hover:no-underline break-all block ${
+                  isMyMessage
+                    ? "text-white hover:text-gray-200"
+                    : "text-blue-600 hover:text-blue-800"
+                }`}
               >
                 {msg.content}
               </a>
@@ -233,7 +241,13 @@ const MessageRenderer: React.FC<MessageRendererProps> = ({
                         <button
                           onClick={() =>
                             onBookingResponse(
-                              String(msg.id || ""),
+                              String(
+                                msg._id ||
+                                  msg.messageId ||
+                                  msg.serverId ||
+                                  msg.id ||
+                                  ""
+                              ),
                               "accept",
                               msg.bookingData
                             )
@@ -245,7 +259,13 @@ const MessageRenderer: React.FC<MessageRendererProps> = ({
                         <button
                           onClick={() =>
                             onBookingResponse(
-                              String(msg.id || ""),
+                              String(
+                                msg._id ||
+                                  msg.messageId ||
+                                  msg.serverId ||
+                                  msg.id ||
+                                  ""
+                              ),
                               "decline",
                               msg.bookingData
                             )
@@ -257,15 +277,40 @@ const MessageRenderer: React.FC<MessageRendererProps> = ({
                       </div>
                     )}
 
-                  {msg.bookingData.status === "accept" && (
-                    <div className="bg-green-100 border border-green-300 rounded-md p-2 mt-3">
-                      <p className="text-sm text-green-800 font-medium">
+                  {msg.bookingData.status === "accepted" && (
+                    <div className="bg-green-100 border border-green-300 rounded-md p-3 mt-3">
+                      <p className="text-sm text-green-800 font-medium mb-2">
                         ✅ Booking Accepted
                       </p>
+                      {/* Only show payment link to client (not officiant) */}
+                      {!isMyMessage &&
+                        userRole !== "officiant" &&
+                        msg.bookingData && (
+                          <a
+                            href={`/payment?eventId=${
+                              msg.bookingData.eventId
+                            }&officiantId=${
+                              msg.bookingData.officiantId
+                            }&officiantName=${encodeURIComponent(
+                              msg.bookingData.officiantName
+                            )}&clientId=${
+                              msg.bookingData.clientId
+                            }&clientName=${encodeURIComponent(
+                              msg.bookingData.clientName
+                            )}&eventName=${encodeURIComponent(
+                              msg.bookingData.eventName
+                            )}&price=${msg.bookingData.price}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-block bg-primary text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-primary/80 transition-colors"
+                          >
+                            Proceed to Payment →
+                          </a>
+                        )}
                     </div>
                   )}
 
-                  {msg.bookingData.status === "decline" && (
+                  {msg.bookingData.status === "declined" && (
                     <div className="bg-red-100 border border-red-300 rounded-md p-2 mt-3">
                       <p className="text-sm text-red-800 font-medium">
                         ❌ Booking Declined

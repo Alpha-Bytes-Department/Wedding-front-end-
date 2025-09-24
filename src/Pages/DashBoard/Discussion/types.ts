@@ -71,7 +71,7 @@ export interface BookingProposal {
   officiantName: string;
   clientId: string;
   clientName: string;
-  status?: "pending" | "accept" | "decline";
+  status?: "pending" | "accepted" | "declined";
   respondedBy?: string;
   respondedAt?: string;
 }

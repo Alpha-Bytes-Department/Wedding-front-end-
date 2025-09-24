@@ -42,6 +42,8 @@ type bill = {
   paidAt: string;
 };
 
+
+
 const DashHome = () => {
   const [showingAll, setShowingAll] = useState(false);
   const navigate = useNavigate();
@@ -49,7 +51,7 @@ const DashHome = () => {
   const [activeBill, setActiveBill] = useState<bill | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isDownloading, setIsDownloading] = useState(false);
-
+  const [newBookings, setNewBookings] = useState<number>(0);
 
 
   // Updated PDF download function using html2canvas and jsPDF
@@ -160,6 +162,16 @@ const DashHome = () => {
       GlassSwal.error("Error", "Failed to generate PDF. Please try again.");
     } finally {
       setIsDownloading(false);
+    }
+  };
+
+  const fetchScheduleData = async () => {
+    try {
+      const response = await axios.get(`/schedule/get-officiant/${user?._id}`);
+      console.log('wskkkkkkkkkkkkkkkkkkkk',response.data);
+      setNewBookings(response.data.length);
+    } catch (error) {
+      console.error("Error fetching schedule data:", error);
     }
   };
 
@@ -480,6 +492,7 @@ const DashHome = () => {
   const getNotifications = async () => {
     try {
       const response = await axios.get("/notifications/my");
+      console.log(`Found ${response.data.notifications.length} notifications for user ${user?._id}`);
       setNotifications(response.data.notifications);
     } catch (error) {
       console.error("Error fetching notifications:", error);
@@ -510,6 +523,7 @@ const DashHome = () => {
   useEffect(() => {
     getNotifications();
     getCeremonies();
+    fetchScheduleData();
   }, []);
 
   const costInvoice = async (ceremonyId: string) => {
@@ -544,6 +558,8 @@ const DashHome = () => {
     setShowingAll((prev) => !prev);
   };
 
+  
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col lg:flex-row gap-6 lg:gap-10">
@@ -554,7 +570,7 @@ const DashHome = () => {
               Dashboard Home
             </h1>
             <p className="text-black-web font-secondary text-lg lg:text-xl">
-              Welcome Back! {user?.partner_1} & {user?.partner_2}.
+              Welcome Back! {user?.name ? user.name : `${user.partner_1} & ${user.partner_2}`}.
             </p>
           </div>
           <div className="mt-6 flex flex-col lg:flex-row gap-4 mx-auto ">
@@ -576,6 +592,14 @@ const DashHome = () => {
             >
               Continue Editing
             </button>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-4 md:gap-x-10 font-secondary mt-5">
+              <div className="border flex flex-col py-2 px-4 rounded-md border-gray-200">
+                <p>New bookings</p> <p>{newBookings}</p>
+              </div>
+              <div className="border flex flex-col py-2 px-4 rounded-md border-gray-200">
+                <p>New bookings</p> <p>{newBookings}</p>
+              </div>
           </div>
         </div>
 
@@ -1319,5 +1343,6 @@ const DashHome = () => {
     </div>
   );
 };
+
 
 export default DashHome;
