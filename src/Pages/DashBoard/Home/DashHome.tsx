@@ -42,8 +42,6 @@ type bill = {
   paidAt: string;
 };
 
-
-
 const DashHome = () => {
   const [showingAll, setShowingAll] = useState(false);
   const navigate = useNavigate();
@@ -51,8 +49,8 @@ const DashHome = () => {
   const [activeBill, setActiveBill] = useState<bill | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isDownloading, setIsDownloading] = useState(false);
-  const [newBookings, setNewBookings] = useState<number>(0);
-
+  const [newBookings, setNewBookings] = useState([]);
+  const [ceremony, setCeremony] = useState([]);
 
   // Updated PDF download function using html2canvas and jsPDF
   const downloadPDF = async (billData?: bill) => {
@@ -168,8 +166,8 @@ const DashHome = () => {
   const fetchScheduleData = async () => {
     try {
       const response = await axios.get(`/schedule/get-officiant/${user?._id}`);
-      console.log('wskkkkkkkkkkkkkkkkkkkk',response.data);
-      setNewBookings(response.data.length);
+      console.log("wskkkkkkkkkkkkkkkkkkkk", response.data);
+      setNewBookings(response.data);
     } catch (error) {
       console.error("Error fetching schedule data:", error);
     }
@@ -492,7 +490,9 @@ const DashHome = () => {
   const getNotifications = async () => {
     try {
       const response = await axios.get("/notifications/my");
-      console.log(`Found ${response.data.notifications.length} notifications for user ${user?._id}`);
+      console.log(
+        `Found ${response.data.notifications.length} notifications for user ${user?._id}`
+      );
       setNotifications(response.data.notifications);
     } catch (error) {
       console.error("Error fetching notifications:", error);
@@ -524,6 +524,7 @@ const DashHome = () => {
     getNotifications();
     getCeremonies();
     fetchScheduleData();
+    getCeremony();
   }, []);
 
   const costInvoice = async (ceremonyId: string) => {
@@ -557,8 +558,11 @@ const DashHome = () => {
   const toggleShowAll = () => {
     setShowingAll((prev) => !prev);
   };
-
-  
+  const getCeremony = async () => {
+    const response = await axios.get(`/events/officiantAccess/all`);
+    console.log("ceremony", response);
+    setCeremony(response?.data && response?.data.events);
+  };
 
   return (
     <div className="space-y-6">
@@ -570,37 +574,75 @@ const DashHome = () => {
               Dashboard Home
             </h1>
             <p className="text-black-web font-secondary text-lg lg:text-xl">
-              Welcome Back! {user?.name ? user.name : `${user.partner_1} & ${user.partner_2}`}.
+              Welcome Back!{" "}
+              {user?.name ? user.name : `${user.partner_1} & ${user.partner_2}`}
+              .
             </p>
           </div>
-          <div className="mt-6 flex flex-col lg:flex-row gap-4 mx-auto ">
-            <Link
-              to="/dashboard/ceremony"
-              className="bg-primary group text-white px-6 py-3 rounded-lg font-medium transition-colors duration-200 flex items-center space-x-2"
-            >
-              <span>Start A new Ceremony</span>
-              <MdKeyboardArrowRight
-                className="group-hover:translate-x-3 transition-transform duration-200"
-                size={20}
-              />
-            </Link>
-            <button
-              onClick={() =>
-                navigate("/dashboard/ceremony", { state: { tab: "draft" } })
-              }
-              className="bg-white hover:bg-gray-50 text-gray-700 border border-gray-300 px-6 py-3 rounded-lg font-medium transition-colors duration-200"
-            >
-              Continue Editing
-            </button>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-4 md:gap-x-10 font-secondary mt-5">
+
+          {user?.role === "officiant" ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-4 md:gap-x-10 font-secondary mt-5">
               <div className="border flex flex-col py-2 px-4 rounded-md border-gray-200">
-                <p>New bookings</p> <p>{newBookings}</p>
+                <p>New bookings</p> <p>{newBookings.length}</p>
               </div>
               <div className="border flex flex-col py-2 px-4 rounded-md border-gray-200">
-                <p>New bookings</p> <p>{newBookings}</p>
+                <p>Total Clients served</p>{" "}
+                <p>
+                  {
+                    ceremony.filter(
+                      (ceremony) =>
+                        ceremony.officiantId === user._id &&
+                        ceremony.status === "completed"
+                    ).length
+                  }
+                </p>
               </div>
-          </div>
+              <div className="border flex flex-col py-2 px-4 rounded-md border-gray-200">
+                <p>
+                  {
+                    ceremony.filter(
+                      (ceremony) =>
+                        ceremony.officiantId === user._id &&
+                        ceremony.status === "approved"
+                    ).length
+                  }
+                </p>
+              </div>
+              <div className="border flex flex-col py-2 px-4 rounded-md border-gray-200">
+                <p>Confirmed this week</p>{" "}
+                <p>
+                  {
+                    newBookings.filter((booking) => {
+                      const sevenDaysAgo = new Date();
+                      sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+                      return new Date(booking.updatedAt) >= sevenDaysAgo;
+                    }).length
+                  }
+                </p>
+              </div>
+            </div>
+          ) : (
+            <div className="mt-6 flex flex-col lg:flex-row gap-4 mx-auto ">
+              <Link
+                to="/dashboard/ceremony"
+                className="bg-primary group text-white px-6 py-3 rounded-lg font-medium transition-colors duration-200 flex items-center space-x-2"
+              >
+                <span>Start A new Ceremony</span>
+                <MdKeyboardArrowRight
+                  className="group-hover:translate-x-3 transition-transform duration-200"
+                  size={20}
+                />
+              </Link>
+              <button
+                onClick={() =>
+                  navigate("/dashboard/ceremony", { state: { tab: "draft" } })
+                }
+                className="bg-white hover:bg-gray-50 text-gray-700 border border-gray-300 px-6 py-3 rounded-lg font-medium transition-colors duration-200"
+              >
+                Continue Editing
+              </button>
+            </div>
+          )}
         </div>
 
         {/* Notifications */}
@@ -703,17 +745,33 @@ const DashHome = () => {
                 aria-hidden="true"
                 role="img"
               >
-                <rect x="3" y="4" width="18" height="18" rx="2" stroke="currentColor" strokeWidth="1.5" />
-                <path d="M16 2v4M8 2v4M3 10h18" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                <rect
+                  x="3"
+                  y="4"
+                  width="18"
+                  height="18"
+                  rx="2"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                />
+                <path
+                  d="M16 2v4M8 2v4M3 10h18"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                />
                 <circle cx="8.5" cy="15.5" r="1.25" fill="currentColor" />
                 <circle cx="12" cy="15.5" r="1.25" fill="currentColor" />
                 <circle cx="15.5" cy="15.5" r="1.25" fill="currentColor" />
               </svg>
 
-              <h3 className="text-lg lg:text-xl font-semibold text-gray-900">No past ceremonies found</h3>
+              <h3 className="text-lg lg:text-xl font-semibold text-gray-900">
+                No past ceremonies found
+              </h3>
 
               <p className="text-sm text-gray-500 max-w-prose">
-                You don't have any completed ceremonies yet. Create your first ceremony or continue editing an existing draft to get started.
+                You don't have any completed ceremonies yet. Create your first
+                ceremony or continue editing an existing draft to get started.
               </p>
 
               <div className="flex flex-col sm:flex-row gap-3 mt-2">
@@ -725,7 +783,9 @@ const DashHome = () => {
                 </Link>
 
                 <button
-                  onClick={() => navigate("/dashboard/ceremony", { state: { tab: "draft" } })}
+                  onClick={() =>
+                    navigate("/dashboard/ceremony", { state: { tab: "draft" } })
+                  }
                   className="inline-flex items-center justify-center px-4 py-2 border border-primary text-gray-700 bg-white rounded-2xl font-medium hover:bg-gray-50"
                 >
                   Continue Editing Drafts
@@ -1343,6 +1403,5 @@ const DashHome = () => {
     </div>
   );
 };
-
 
 export default DashHome;
