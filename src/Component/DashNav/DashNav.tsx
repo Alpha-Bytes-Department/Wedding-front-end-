@@ -91,34 +91,33 @@ const DashNav = ({
             icon: PiClipboardTextBold,
             current: location.pathname.includes("/dashboard/bookings"),
           },
+          {
+            name: "Discussions",
+            href: "/dashboard/discussions",
+            icon: PiChats,
+            current: location.pathname.includes("/dashboard/discussions"),
+          },
         ]
       : [
+          {
+            name: "Booking",
+            href: "/dashboard/schedule",
+            icon: IoCalendarNumberOutline,
+            current: location.pathname.includes("/dashboard/schedule"),
+          },
+          {
+            name: "Discussions",
+            href: "/dashboard/discussions",
+            icon: PiChats,
+            current: location.pathname.includes("/dashboard/discussions"),
+          },
           {
             name: "Ceremony Builder",
             href: "/dashboard/ceremony",
             icon: PiClipboardTextBold,
             current: location.pathname.includes("/dashboard/ceremony"),
           },
-
-          {
-            name: "Schedule",
-            href: "/dashboard/schedule",
-            icon: IoCalendarNumberOutline,
-            current: location.pathname.includes("/dashboard/schedule"),
-          },
         ]),
-    {
-      name: "Discussions",
-      href: "/dashboard/discussions",
-      icon: PiChats,
-      current: location.pathname.includes("/dashboard/discussions"),
-    },
-    {
-      name: "Notes",
-      href: "/dashboard/notes",
-      icon: LiaStickyNoteSolid,
-      current: location.pathname.includes("/dashboard/notes"),
-    },
     ...(user?.role === "officiant"
       ? [
           {
@@ -129,6 +128,14 @@ const DashNav = ({
           },
         ]
       : []),
+
+    {
+      name: "Notes",
+      href: "/dashboard/notes",
+      icon: LiaStickyNoteSolid,
+      current: location.pathname.includes("/dashboard/notes"),
+    },
+
     {
       name: "Settings",
       href: "/dashboard/settings",
@@ -157,7 +164,7 @@ const DashNav = ({
       {/* Mobile Menu Overlay */}
       {isMobileMenuOpen && (
         <div
-          className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
+          className="fixed inset-0 bg-[#272b08be] bg-opacity-50 z-40 lg:hidden"
           onClick={toggleMobileMenu}
         />
       )}
@@ -218,7 +225,7 @@ const DashNav = ({
                 )}
               </div>
               <div className="text-sm font-medium text-gray-900 hidden sm:block">
-                Steve
+                {user?.name || user?.email}
               </div>
               {/* Arrow icon */}
               <svg

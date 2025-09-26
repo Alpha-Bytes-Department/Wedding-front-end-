@@ -24,6 +24,7 @@ interface User {
   location: string;
   partner_1: string;
   partner_2: string;
+  name?:string;
   profilePicture: string;
   refreshToken: string;
   role: string;

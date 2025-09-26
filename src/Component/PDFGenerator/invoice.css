@@ -1,0 +1,31 @@
+/* Invoice styles to avoid CSS conflicts with html2canvas */
+.invoice-container {
+  background-color: #ffffff !important;
+  color: #000000 !important;
+  font-family: Arial, sans-serif !important;
+}
+
+.invoice-container * {
+  box-sizing: border-box !important;
+}
+
+.invoice-header {
+  background-color: transparent !important;
+  color: #000000 !important;
+}
+
+.invoice-gold {
+  color: #d4af37 !important;
+}
+
+.invoice-gray {
+  color: #666666 !important;
+}
+
+.invoice-green {
+  color: #10b981 !important;
+}
+
+.invoice-red {
+  color: #ef4444 !important;
+}

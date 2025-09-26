@@ -237,7 +237,7 @@ const Nav = () => {
 
         {user?.role !== "officiant" ? (
           <NavLink
-            to="/dashboard/ceremony"
+            to="/dashboard"
             className={({ isActive }) =>
               isActive
                 ? "text-black font-secondary font-bold text-lg sm:text-xl py-2 sm:py-3 border-b border-[#D4AF37]"
@@ -366,7 +366,7 @@ const Nav = () => {
       {/* Mobile Menu Overlay */}
       {isMenuOpen && (
         <div
-          className="lg:hidden fixed inset-0 bg-black bg-opacity-50 z-20"
+          className="lg:hidden fixed inset-0 bg-[#1a1904ab] bg-opacity-50 z-20"
           onClick={toggleMenu}
         ></div>
       )}
@@ -414,7 +414,7 @@ const Nav = () => {
 
           {user?.role !== "officiant" ? (
             <NavLink
-              to="/dashboard/ceremony"
+              to="/dashboard"
               className={({ isActive }) =>
                 isActive
                   ? "text-black font-secondary font-bold text-lg sm:text-xl py-2 sm:py-3 border-b border-[#D4AF37]"

@@ -583,7 +583,14 @@ const DashHome = () => {
           {user?.role === "officiant" ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-4 md:gap-x-10 font-secondary mt-5">
               <div className="border flex flex-col py-2 px-4 rounded-md border-gray-200">
-                <p>New bookings</p> <p>{newBookings.length}</p>
+                <p>New bookings</p>{" "}
+                <p>
+                  {
+                    newBookings.filter(
+                      (booking) => booking.approvedStatus === false
+                    ).length
+                  }
+                </p>
               </div>
               <div className="border flex flex-col py-2 px-4 rounded-md border-gray-200">
                 <p>Total Clients served</p>{" "}
@@ -598,6 +605,7 @@ const DashHome = () => {
                 </p>
               </div>
               <div className="border flex flex-col py-2 px-4 rounded-md border-gray-200">
+                <p>Ongoing Clients</p>
                 <p>
                   {
                     ceremony.filter(
@@ -615,7 +623,10 @@ const DashHome = () => {
                     newBookings.filter((booking) => {
                       const sevenDaysAgo = new Date();
                       sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
-                      return new Date(booking.updatedAt) >= sevenDaysAgo;
+                      return (
+                        new Date(booking.updatedAt) >= sevenDaysAgo &&
+                        booking.approvedStatus === true
+                      );
                     }).length
                   }
                 </p>
