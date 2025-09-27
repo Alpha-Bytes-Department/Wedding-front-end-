@@ -52,6 +52,8 @@ const Settings = () => {
         phone: info.contact,
         location: info.location,
         weddingDate: info.weddingDate,
+        bio: info.officiantBio,
+        bookingMoney: info.booking,
       });
 
       console.log("Update response:", response.data);
@@ -235,7 +237,7 @@ const Settings = () => {
         console.log("Account deletion confirmed");
         //  delete account API here
         const response = await axios.delete("/users/delete-account");
-        
+
         if (response.status === 200) {
           console.log("Account deletion response:", response.data);
           GlassSwal.success(
@@ -243,8 +245,7 @@ const Settings = () => {
             "Your account has been successfully deleted."
           );
           navigate("/login");
-        }
-        else{
+        } else {
           GlassSwal.error(
             "Account Deletion Failed",
             "Failed to delete your account. Please try again."
@@ -310,32 +311,68 @@ const Settings = () => {
           </div>
           <form onSubmit={profileForm.handleSubmit(onProfileSubmit)}>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Partner 1 name
-                </label>
-                <input
-                  {...profileForm.register("partner1Name")}
-                  type="text"
-                  disabled={!isEditingProfile}
-                  className={`w-full px-4 py-3 border border-primary rounded-lg focus:outline-none    ${
-                    !isEditingProfile ? "bg-gray-50 cursor-not-allowed" : ""
-                  }`}
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Partner 2 name
-                </label>
-                <input
-                  {...profileForm.register("partner2Name")}
-                  type="text"
-                  disabled={!isEditingProfile}
-                  className={`w-full px-4 py-3 border border-primary rounded-lg focus:outline-none    ${
-                    !isEditingProfile ? "bg-gray-50 cursor-not-allowed" : ""
-                  }`}
-                />
-              </div>
+              {user?.role === "officiant" ? (
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Name
+                  </label>
+                  <input
+                    {...profileForm.register("Name")}
+                    type="text"
+                    disabled={!isEditingProfile}
+                    defaultValue={user?.name || ""}
+                    className={`w-full px-4 py-3 border border-primary rounded-lg focus:outline-none    ${
+                      !isEditingProfile ? "bg-gray-50 cursor-not-allowed" : ""
+                    }`}
+                  />
+                </div>
+              ) : (
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Partner 1 name
+                  </label>
+                  <input
+                    {...profileForm.register("partner1Name")}
+                    type="text"
+                    disabled={!isEditingProfile}
+                    className={`w-full px-4 py-3 border border-primary rounded-lg focus:outline-none    ${
+                      !isEditingProfile ? "bg-gray-50 cursor-not-allowed" : ""
+                    }`}
+                  />
+                </div>
+              )}
+
+              {user?.role != "officiant" ? (
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Partner 2 name
+                  </label>
+                  <input
+                    {...profileForm.register("partner2Name")}
+                    type="number"
+                    disabled={!isEditingProfile}
+                    className={`w-full px-4 py-3 border border-primary rounded-lg focus:outline-none    ${
+                      !isEditingProfile ? "bg-gray-50 cursor-not-allowed" : ""
+                    }`}
+                  />
+                </div>
+              ) : (
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Booking Price (per event)
+                  </label>
+                  <input
+                    {...profileForm.register("booking")}
+                    type="number"
+                    disabled={!isEditingProfile}
+                    defaultValue={user?.bookingMoney || 0}
+                    className={`w-full px-4 py-3 border border-primary rounded-lg focus:outline-none    ${
+                      !isEditingProfile ? "bg-gray-50 cursor-not-allowed" : ""
+                    }`}
+                  />
+                </div>
+              )}
+
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Contact
@@ -363,20 +400,38 @@ const Settings = () => {
                 />
               </div>
             </div>
-            <div className="mb-6">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Wedding Date
-              </label>
-              <input
-                {...profileForm.register("weddingDate")}
-                type="date"
-                disabled={!isEditingProfile}
-                placeholder="DD / MM / YYYY"
-                className={`w-full lg:w-1/2 px-4 py-3 border border-primary rounded-lg focus:outline-none    ${
-                  !isEditingProfile ? "bg-gray-50 cursor-not-allowed" : ""
-                }`}
-              />
-            </div>
+            {user?.role === "officiant" ? (
+              <div className="mb-6">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Officiant Bio
+                </label>
+                <textarea
+                  {...profileForm.register("officiantBio")}
+                    
+                  disabled={!isEditingProfile}
+                  placeholder={user?.bio || "Write something about yourself..."}
+                  className={`w-full h-40 px-4 py-3 border border-primary rounded-lg focus:outline-none    ${
+                    !isEditingProfile ? "bg-gray-50 cursor-not-allowed" : ""
+                  }`}
+                />
+              </div>
+            ) : (
+              <div className="mb-6">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Wedding Date
+                </label>
+                <input
+                  {...profileForm.register("weddingDate")}
+                  type="date"
+                  disabled={!isEditingProfile}
+                  placeholder="DD / MM / YYYY"
+                  className={`w-full lg:w-1/2 px-4 py-3 border border-primary rounded-lg focus:outline-none    ${
+                    !isEditingProfile ? "bg-gray-50 cursor-not-allowed" : ""
+                  }`}
+                />
+              </div>
+            )}
+
             {isEditingProfile && (
               <div className="flex flex-col sm:flex-row gap-3">
                 <button

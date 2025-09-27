@@ -28,6 +28,8 @@ interface User {
   profilePicture: string;
   refreshToken: string;
   role: string;
+  bio?: string;
+  phone?: string;
   updatedAt: string;
   weddingDate: string;
   __v: number;

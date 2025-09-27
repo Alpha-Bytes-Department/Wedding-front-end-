@@ -11,6 +11,7 @@ interface Booking {
   fromUserName: string;
   scheduleDate: string;
   officiantName: string;
+  message?: string;
 }
 
 interface Ceremony {
@@ -102,6 +103,10 @@ const Bookings = () => {
     getCeremonies();
   },[])
 
+  const showNote=(note:string)=>{
+    GlassSwal.info("Note from user",note)
+  }
+
 
   console.log('Ongoing Bookings State:', ongoingCeremonies);
   return (
@@ -175,6 +180,12 @@ const Bookings = () => {
                         className="bg-[#AF4B4B4D] text-[#3b1919] text-sm px-5 py-2 rounded-lg font-medium hover:bg-primary/90 transition-colors"
                       >
                         Approve
+                      </button>
+                      <button
+                        onClick={() => showNote(m.message || "No note provided")}
+                        className="bg-[#AF4B4B4D] text-[#3b1919] text-sm px-5 py-2 rounded-lg font-medium hover:bg-primary/90 transition-colors"
+                      >
+                        View Note
                       </button>
                       <button
                         onClick={() => handleBookingUpdate(m._id, "rejected")}

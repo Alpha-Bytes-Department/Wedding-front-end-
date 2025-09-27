@@ -40,6 +40,14 @@ type bill = {
   status: string;
   issuedAt: string;
   paidAt: string;
+  location: {
+    line1: string;
+    city: string;
+    country: string;
+    postal_code: string;
+  };
+  contacts: string;
+  transactionId: string;
 };
 
 const DashHome = () => {
@@ -166,7 +174,7 @@ const DashHome = () => {
   const fetchScheduleData = async () => {
     try {
       const response = await axios.get(`/schedule/get-officiant/${user?._id}`);
-      console.log("wskkkkkkkkkkkkkkkkkkkk", response.data);
+     
       setNewBookings(response.data);
     } catch (error) {
       console.error("Error fetching schedule data:", error);
@@ -205,7 +213,12 @@ const DashHome = () => {
               color: #666;
               margin: 0;
               font-size: 14px;
-            ">#${bill._id.slice(-8).toUpperCase()}</p>
+            ">#${bill._id.slice(-12).toUpperCase()}</p>
+            <p style="
+              color: #666;
+              margin: 0;
+              font-size: 14px;
+            ">Trnx ID : ${bill.transactionId}</p>
           </div>
           <div style="
             display: flex;
@@ -323,7 +336,7 @@ const DashHome = () => {
               font-weight: bold;
             ">${bill.userName}</p>
             <p style="color: #666; margin: 0 0 2px 0; font-size: 12px;">Address</p>
-            <p style="color: #666; margin: 0 0 2px 0; font-size: 12px;">City, State, IN - 000 000</p>
+            <p style="color: #666; margin: 0 0 2px 0; font-size: 12px;">${bill.location.line1}, ${bill.location.city}, ${bill.location.country} - ${bill.location.postal_code}</p>
             <p style="color: #666; margin: 0; font-size: 12px;">+0 (000) 123-4567</p>
           </div>
         </div>
@@ -369,31 +382,7 @@ const DashHome = () => {
             )}</div>
           </div>
 
-          ${
-            bill.amount > 0
-              ? `
-          <!-- Additional Amount Row -->
-          <div style="display: flex; margin-bottom: 12px;">
-            <div style="width: 50%;">
-              <p style="
-                margin: 0 0 4px 0;
-                font-size: 14px;
-                font-weight: bold;
-                color: #000;
-              ">Additional Services</p>
-              <p style="margin: 0; font-size: 12px; color: #666;">Extra charges and fees</p>
-            </div>
-            <div style="width: 15%; font-size: 14px; text-align: center;">1</div>
-            <div style="width: 15%; font-size: 14px; text-align: right;">${formatCurrency(
-              bill.amount
-            )}</div>
-            <div style="width: 20%; font-size: 14px; text-align: right;">${formatCurrency(
-              bill.amount
-            )}</div>
-          </div>
-          `
-              : ""
-          }
+         
         </div>
 
         <!-- Total Section -->
@@ -411,7 +400,7 @@ const DashHome = () => {
             <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
               <span style="font-size: 14px; color: #666;">Subtotal</span>
               <span style="font-size: 14px; color: #000;">${formatCurrency(
-                bill.cost + bill.amount
+                 bill.amount
               )}</span>
             </div>
             <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
@@ -427,7 +416,7 @@ const DashHome = () => {
             ">
               <span style="font-size: 16px; font-weight: bold; color: #000;">Total</span>
               <span style="font-size: 16px; font-weight: bold; color: #000;">${formatCurrency(
-                bill.cost + bill.amount
+                 bill.amount
               )}</span>
             </div>
             <div style="
@@ -438,7 +427,7 @@ const DashHome = () => {
               <div style="display: flex; justify-content: space-between;">
                 <span style="font-size: 14px; font-weight: bold; color: #D4AF37;">Amount due</span>
                 <span style="font-size: 18px; font-weight: bold; color: #D4AF37;">
-                  US$ ${(bill.cost + bill.amount).toFixed(2)}
+                  US$ ${( bill.amount).toFixed(2)}
                 </span>
               </div>
             </div>
@@ -462,6 +451,7 @@ const DashHome = () => {
               bill.officiantName
             }</p>
             <p style="margin: 0;">Event ID: ${bill.eventId}</p>
+            <p style="margin: 0;">Event : ${bill.eventName}</p>
           </div>
         </div>
       </div>
@@ -587,7 +577,7 @@ const DashHome = () => {
                 <p>
                   {
                     newBookings.filter(
-                      (booking) => booking.approvedStatus === false
+                      (booking) => booking.approvedStatus === "pending"
                     ).length
                   }
                 </p>
@@ -625,7 +615,7 @@ const DashHome = () => {
                       sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
                       return (
                         new Date(booking.updatedAt) >= sevenDaysAgo &&
-                        booking.approvedStatus === true
+                        booking.approvedStatus === "approved"
                       );
                     }).length
                   }
@@ -872,7 +862,16 @@ const DashHome = () => {
                         fontSize: "14px",
                       }}
                     >
-                      #{activeBill._id.slice(-8).toUpperCase()}
+                      #{activeBill._id.slice(-12).toUpperCase()}
+                    </p>
+                    <p
+                      style={{
+                        color: "#666",
+                        margin: "0",
+                        fontSize: "14px",
+                      }}
+                    >
+                      TrnxId: {activeBill.transactionId.toUpperCase()}
                     </p>
                   </div>
                   <div
@@ -1089,7 +1088,7 @@ const DashHome = () => {
                         fontSize: "12px",
                       }}
                     >
-                      City, State, IN - 000 000
+                      {activeBill.location.line1}, {activeBill.location.city}{activeBill.location.country}, IN - {activeBill.location.postal_code}
                     </p>
                     <p
                       style={{
@@ -1098,7 +1097,7 @@ const DashHome = () => {
                         fontSize: "12px",
                       }}
                     >
-                      +0 (000) 123-4567
+                      {activeBill.contacts}
                     </p>
                   </div>
                 </div>
@@ -1214,59 +1213,7 @@ const DashHome = () => {
                     </div>
                   </div>
 
-                  {/* Additional Amount Row (if exists) */}
-                  {activeBill.amount > 0 && (
-                    <div style={{ display: "flex", marginBottom: "12px" }}>
-                      <div style={{ width: "50%" }}>
-                        <p
-                          style={{
-                            margin: "0 0 4px 0",
-                            fontSize: "14px",
-                            fontWeight: "bold",
-                            color: "#000",
-                          }}
-                        >
-                          Additional Services
-                        </p>
-                        <p
-                          style={{
-                            margin: "0",
-                            fontSize: "12px",
-                            color: "#666",
-                          }}
-                        >
-                          Extra charges and fees
-                        </p>
-                      </div>
-                      <div
-                        style={{
-                          width: "15%",
-                          fontSize: "14px",
-                          textAlign: "center",
-                        }}
-                      >
-                        1
-                      </div>
-                      <div
-                        style={{
-                          width: "15%",
-                          fontSize: "14px",
-                          textAlign: "right",
-                        }}
-                      >
-                        {formatCurrency(activeBill.amount)}
-                      </div>
-                      <div
-                        style={{
-                          width: "20%",
-                          fontSize: "14px",
-                          textAlign: "right",
-                        }}
-                      >
-                        {formatCurrency(activeBill.amount)}
-                      </div>
-                    </div>
-                  )}
+                  
                 </div>
 
                 {/* Total Section */}
@@ -1296,7 +1243,7 @@ const DashHome = () => {
                         Subtotal
                       </span>
                       <span style={{ fontSize: "14px", color: "#000" }}>
-                        {formatCurrency(activeBill.cost + activeBill.amount)}
+                        {formatCurrency(activeBill.amount)}
                       </span>
                     </div>
                     <div
@@ -1338,7 +1285,7 @@ const DashHome = () => {
                           color: "#000",
                         }}
                       >
-                        {formatCurrency(activeBill.cost + activeBill.amount)}
+                        {formatCurrency(activeBill.amount)}
                       </span>
                     </div>
                     <div
@@ -1370,7 +1317,7 @@ const DashHome = () => {
                             color: "#D4AF37",
                           }}
                         >
-                          US$ {(activeBill.cost + activeBill.amount).toFixed(2)}
+                          US$ {( activeBill.amount).toFixed(2)}
                         </span>
                       </div>
                     </div>
@@ -1401,6 +1348,9 @@ const DashHome = () => {
                     </p>
                     <p style={{ margin: "0" }}>
                       Event ID: {activeBill.eventId}
+                    </p>
+                    <p style={{ margin: "0" }}>
+                      Event : {activeBill.eventName}
                     </p>
                   </div>
                 </div>

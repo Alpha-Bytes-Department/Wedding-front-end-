@@ -33,7 +33,7 @@ interface scheduleEvent {
   date: string;
   time: string;
   officiant: string;
-  approvedStatus: boolean;
+  status: string;
 }
 
 const Schedule = () => {
@@ -259,7 +259,7 @@ const Schedule = () => {
                 </div>
                 <div className="flex items-center gap-2">
                   <span className="px-3 py-1 text-xs rounded-full border bg-white text-yellow-700 border-yellow-400">
-                    {m.approvedStatus ? "Approved" : "Pending"}{" "}
+                    {m.status}
                   </span>
                   <button
                     onClick={() => navigate(`/dashboard/discussions`)}
