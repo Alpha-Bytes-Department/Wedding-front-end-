@@ -4,6 +4,7 @@ import type { CeremonyFormData, CeremonyData } from "./types";
 import TabNavigation from "./components/TabNavigation";
 import StepIndicator from "./components/StepIndicator";
 import TypeStep from "./components/TypeStep";
+import GreetingsStep from "./components/GreetingsStep";
 import VowsStep from "./components/VowsStep";
 import RitualsStep from "./components/RitualsStep";
 import ScheduleStep from "./components/ScheduleStep";
@@ -15,6 +16,7 @@ import { useLocation } from "react-router-dom";
 import { useAuth } from "../../../Component/Providers/AuthProvider";
 import { useCeremonyApi } from "./hooks/useCeremonyApi";
 import { GlassSwal } from "../../../utils/glassSwal";
+import { CeremonyProvider } from "./contexts/CeremonyContext";
 
 const Ceremony = () => {
   const location = useLocation();
@@ -94,12 +96,33 @@ const Ceremony = () => {
       title: "",
       ceremonyType: "Classic",
       description: "",
-      vowsType: "Custom Vows",
-      language: "English",
-      rituals: "Unity candle",
-      musicCues: "",
-      vowDescription: "",
-      ritualsDescription: "",
+      // Greetings step defaults
+      groomName: "",
+      brideName: "",
+      language: "",
+      greetingSpeech: "",
+      presentationOfBride: "",
+      questionForPresentation: "",
+      responseToQuestion: "",
+      invocation: "",
+      // Vows step defaults
+      chargeToGroomAndBride: "",
+      pledge: "",
+      introductionToExchangeOfVows: "",
+      vows: "",
+      readings: "",
+      introductionToExchangeOfRings: "",
+      blessingsOfRings: "",
+      exchangeOfRingsGroom: "",
+      exchangeOfRingsBride: "",
+      prayerOnTheNewUnion: "",
+      // Rituals defaults
+      ritualsSelection: "",
+      ritualsOption: "",
+      closingStatement: "",
+      pronouncing: "",
+      kiss: "",
+      introductionOfCouple: "",
       eventDate: "",
       eventTime: "",
       location: "",
@@ -122,7 +145,7 @@ const Ceremony = () => {
   };
 
   const handleNextStep = () => {
-    if (currentStep < 5) {
+    if (currentStep < 6) {
       setCurrentStep(currentStep + 1);
     }
   };
@@ -166,12 +189,6 @@ const Ceremony = () => {
     setValue("title", "");
     setValue("description", "");
     setValue("ceremonyType", "Classic");
-    setValue("vowsType", "Custom Vows");
-    setValue("language", "English");
-    setValue("vowDescription", "");
-    setValue("rituals", "Unity candle");
-    setValue("musicCues", "");
-    setValue("ritualsDescription", "");
     setValue("eventDate", "");
     setValue("eventTime", "");
     setValue("location", "");
@@ -190,12 +207,6 @@ const Ceremony = () => {
       title: watch("title"),
       description: watch("description"),
       ceremonyType: watch("ceremonyType"),
-      vowsType: watch("vowsType"),
-      language: watch("language"),
-      vowDescription: watch("vowDescription"),
-      rituals: watch("rituals"),
-      musicCues: watch("musicCues"),
-      ritualsDescription: watch("ritualsDescription"),
       eventDate: watch("eventDate"),
       eventTime: watch("eventTime"),
       location: watch("location"),
@@ -213,12 +224,9 @@ const Ceremony = () => {
     if (!data.title?.trim()) missingFields.push("Title");
     if (!data.description?.trim()) missingFields.push("Description");
     if (!data.ceremonyType?.trim()) missingFields.push("Ceremony Type");
-    if (!data.vowsType?.trim()) missingFields.push("Vows Type");
-    if (!data.language?.trim()) missingFields.push("Language");
     if (!data.eventDate?.trim()) missingFields.push("Event Date");
     if (!data.eventTime?.trim()) missingFields.push("Event Time");
     if (!data.location?.trim()) missingFields.push("Location");
-   
 
     return missingFields;
   };
@@ -367,9 +375,7 @@ const Ceremony = () => {
       }
       const result = await GlassSwal.confirm(
         "Are you sure?",
-        "This action cannot be undone.",
-        
-        
+        "This action cannot be undone."
       );
 
       if (!result?.isConfirmed) {
@@ -397,12 +403,6 @@ const Ceremony = () => {
       title: draft.title || "",
       description: draft.description || "",
       ceremonyType: draft.ceremonyType || "Classic",
-      vowsType: draft.vowsType || "Custom Vows",
-      language: draft.language || "English",
-      vowDescription: draft.vowDescription || "",
-      rituals: draft.rituals || "",
-      musicCues: draft.musicCues || "",
-      ritualsDescription: draft.ritualsDescription || "",
       eventDate: formatDateForInput(draft.eventDate),
       eventTime: formatTimeForInput(draft.eventTime),
       location: draft.location || "",
@@ -460,127 +460,141 @@ const Ceremony = () => {
 
   const steps = [
     { number: 1, title: "Type", active: currentStep >= 1 },
-    { number: 2, title: "Vows", active: currentStep >= 2 },
-    { number: 3, title: "Rituals", active: currentStep >= 3 },
-    { number: 4, title: "Schedule", active: currentStep >= 4 },
-    { number: 5, title: "Review", active: currentStep >= 5 },
+    { number: 2, title: "Greetings", active: currentStep >= 2 },
+    { number: 3, title: "Vows", active: currentStep >= 3 },
+    { number: 4, title: "Rituals", active: currentStep >= 4 },
+    { number: 5, title: "Schedule", active: currentStep >= 5 },
+    { number: 6, title: "Review", active: currentStep >= 6 },
   ];
 
   return (
-    <div className=" bg-white  lg:p-8">
-      <div className="">
-        {/* Tab Navigation */}
-        <TabNavigation activeTab={activeTab} onTabChange={setActiveTab} />
+    <CeremonyProvider>
+      <div className=" bg-white  lg:p-8">
+        <div className="">
+          {/* Tab Navigation */}
+          <TabNavigation activeTab={activeTab} onTabChange={setActiveTab} />
 
-        {/* Loading indicator */}
-        {loading && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white p-6 rounded-lg shadow-lg">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
-              <p className="mt-2 text-center">Processing...</p>
+          {/* Loading indicator */}
+          {loading && (
+            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+              <div className="bg-white p-6 rounded-lg shadow-lg">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
+                <p className="mt-2 text-center">Processing...</p>
+              </div>
             </div>
-          </div>
-        )}
+          )}
 
-        {/* Tab Content */}
-        {activeTab === "new" && (
-          <div className="bg-white rounded-2xl shadow-lg border border-primary p-3 sm:p-6 lg:p-8">
-            <div className="flex items-center gap-4 mb-8">
-              <h1 className="text-3xl font-primary font-bold text-gray-900">
-                {editingCeremony ? "Edit Ceremony" : "Ceremony Builder"}
-              </h1>
-              {editingCeremony && (
-                <span className="px-3 py-1 bg-yellow-100 text-yellow-800 text-sm font-medium rounded-full">
-                  Editing: {editingCeremony.title || "Untitled"}
-                </span>
-              )}
+          {/* Tab Content */}
+          {activeTab === "new" && (
+            <div className="bg-white rounded-2xl shadow-lg border border-primary p-3 sm:p-6 lg:p-8">
+              <div className="flex items-center gap-4 mb-8">
+                <h1 className="text-3xl font-primary font-bold text-gray-900">
+                  {editingCeremony ? "Edit Ceremony" : "Ceremony Builder"}
+                </h1>
+                {editingCeremony && (
+                  <span className="px-3 py-1 bg-yellow-100 text-yellow-800 text-sm font-medium rounded-full">
+                    Editing: {editingCeremony.title || "Untitled"}
+                  </span>
+                )}
+              </div>
+
+              <StepIndicator steps={steps} />
+
+              <form onSubmit={handleSubmit(onSubmit)}>
+                {/* Step 1: Type */}
+                {currentStep === 1 && (
+                  <TypeStep
+                    register={register}
+                    errors={errors}
+                    watch={watch}
+                    openDropdowns={openDropdowns}
+                    onToggleDropdown={toggleDropdown}
+                    onSelectDropdown={handleDropdownSelect}
+                  />
+                )}
+
+                {/* Step 2: Greetings */}
+                {currentStep === 2 && (
+                  <GreetingsStep
+                    register={register}
+                    watch={watch}
+                    openDropdowns={openDropdowns}
+                    onToggleDropdown={toggleDropdown}
+                    onSelectDropdown={handleDropdownSelect}
+                  />
+                )}
+
+                {/* Step 3: Vows */}
+                {currentStep === 3 && (
+                  <VowsStep
+                    register={register}
+                    watch={watch}
+                    openDropdowns={openDropdowns}
+                    onToggleDropdown={toggleDropdown}
+                    onSelectDropdown={handleDropdownSelect}
+                  />
+                )}
+
+                {/* Step 4: Rituals */}
+                {currentStep === 4 && (
+                  <RitualsStep
+                    register={register}
+                    watch={watch}
+                    openDropdowns={openDropdowns}
+                    onToggleDropdown={toggleDropdown}
+                    onSelectDropdown={handleDropdownSelect}
+                  />
+                )}
+
+                {/* Step 5: Schedule */}
+                {currentStep === 5 && (
+                  <ScheduleStep register={register} errors={errors} />
+                )}
+
+                {/* Step 6: Review */}
+                {currentStep === 6 && <ReviewStep watch={watch} />}
+
+                {/* Navigation Buttons */}
+                <NavigationButtons
+                  currentStep={currentStep}
+                  maxStep={6}
+                  onPrevStep={handlePrevStep}
+                  onNextStep={handleNextStep}
+                  onSaveDraft={() => handleSubmit(saveDraft)()}
+                  onSubmit={() => handleSubmit(onSubmit)()}
+                  isLoading={loading}
+                  isEditing={!!editingCeremony}
+                  validateForSubmission={() =>
+                    validateFormForSubmission(getCurrentFormValues())
+                  }
+                />
+              </form>
             </div>
+          )}
 
-            <StepIndicator steps={steps} />
+          {/* Draft Tab */}
+          {activeTab === "draft" && (
+            <DraftTab
+              drafts={drafts}
+              onContinueDraft={continueDraft}
+              onDeleteDraft={deleteDraft}
+              onCreateNew={startNewCeremony}
+              loading={loading}
+            />
+          )}
 
-            <form onSubmit={handleSubmit(onSubmit)}>
-              {/* Step 1: Type */}
-              {currentStep === 1 && (
-                <TypeStep
-                  register={register}
-                  errors={errors}
-                  watch={watch}
-                  openDropdowns={openDropdowns}
-                  onToggleDropdown={toggleDropdown}
-                  onSelectDropdown={handleDropdownSelect}
-                />
-              )}
-
-              {/* Step 2: Vows */}
-              {currentStep === 2 && (
-                <VowsStep
-                  register={register}
-                  watch={watch}
-                  openDropdowns={openDropdowns}
-                  onToggleDropdown={toggleDropdown}
-                  onSelectDropdown={handleDropdownSelect}
-                />
-              )}
-
-              {/* Step 3: Rituals */}
-              {currentStep === 3 && (
-                <RitualsStep
-                  register={register}
-                  watch={watch}
-                  openDropdowns={openDropdowns}
-                  onToggleDropdown={toggleDropdown}
-                  onSelectDropdown={handleDropdownSelect}
-                />
-              )}
-
-              {/* Step 4: Schedule */}
-              {currentStep === 4 && (
-                <ScheduleStep register={register} errors={errors} />
-              )}
-
-              {/* Step 5: Review */}
-              {currentStep === 5 && <ReviewStep watch={watch} />}
-
-              {/* Navigation Buttons */}
-              <NavigationButtons
-                currentStep={currentStep}
-                maxStep={5}
-                onPrevStep={handlePrevStep}
-                onNextStep={handleNextStep}
-                onSaveDraft={() => handleSubmit(saveDraft)()}
-                onSubmit={() => handleSubmit(onSubmit)()}
-                isLoading={loading}
-                isEditing={!!editingCeremony}
-                validateForSubmission={() =>
-                  validateFormForSubmission(getCurrentFormValues())
-                }
-              />
-            </form>
-          </div>
-        )}
-
-        {/* Draft Tab */}
-        {activeTab === "draft" && (
-          <DraftTab
-            drafts={drafts}
-            onContinueDraft={continueDraft}
-            onDeleteDraft={deleteDraft}
-            onCreateNew={startNewCeremony}
-            loading={loading}
-          />
-        )}
-
-        {/* My Ceremony Tab */}
-        {activeTab === "my" && (
-          <MyCeremonyTab
-            ceremonies={ceremonies}
-            onDeleteCeremony={deleteCeremony}
-            onCreateNew={startNewCeremony}
-            loading={loading}
-          />
-        )}
+          {/* My Ceremony Tab */}
+          {activeTab === "my" && (
+            <MyCeremonyTab
+              ceremonies={ceremonies}
+              onDeleteCeremony={deleteCeremony}
+              onCreateNew={startNewCeremony}
+              loading={loading}
+            />
+          )}
+        </div>
       </div>
-    </div>
+    </CeremonyProvider>
   );
 };
 

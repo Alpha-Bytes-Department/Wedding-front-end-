@@ -2,12 +2,33 @@ export interface CeremonyFormData {
   title: string;
   description: string;
   ceremonyType: string; // Changed from 'type' to match backend
-  vowsType?: string;
+  // Greetings step fields
+  groomName?: string;
+  brideName?: string;
   language?: string;
-  vowDescription?: string;
-  rituals?: string;
-  musicCues?: string; // Changed from 'musicCue' to match backend
-  ritualsDescription?: string;
+  greetingSpeech?: string;
+  presentationOfBride?: string;
+  questionForPresentation?: string;
+  responseToQuestion?: string;
+  invocation?: string;
+  // Vows step fields
+  chargeToGroomAndBride?: string;
+  pledge?: string;
+  introductionToExchangeOfVows?: string;
+  vows?: string;
+  readings?: string;
+  introductionToExchangeOfRings?: string;
+  blessingsOfRings?: string;
+  exchangeOfRingsGroom?: string;
+  exchangeOfRingsBride?: string;
+  prayerOnTheNewUnion?: string;
+  // Rituals step fields
+  ritualsSelection?: string;
+  ritualsOption?: string;
+  closingStatement?: string;
+  pronouncing?: string;
+  kiss?: string;
+  introductionOfCouple?: string;
   eventDate?: string; // Changed from 'date' to match backend
   eventTime?: string; // Changed from 'time' to match backend
   location?: string;

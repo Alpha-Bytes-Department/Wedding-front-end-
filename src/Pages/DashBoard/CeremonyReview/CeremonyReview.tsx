@@ -133,10 +133,11 @@ const CeremonyReview = () => {
 
   const steps = [
     { number: 1, title: "Type", active: currentStep >= 1 },
-    { number: 2, title: "Vows", active: currentStep >= 2 },
-    { number: 3, title: "Rituals", active: currentStep >= 3 },
-    { number: 4, title: "Schedule", active: currentStep >= 4 },
-    { number: 5, title: "Review", active: currentStep >= 5 },
+    { number: 2, title: "Greetings", active: currentStep >= 2 },
+    { number: 3, title: "Vows", active: currentStep >= 3 },
+    { number: 4, title: "Rituals", active: currentStep >= 4 },
+    { number: 5, title: "Schedule", active: currentStep >= 5 },
+    { number: 6, title: "Review", active: currentStep >= 6 },
   ];
 
   return (

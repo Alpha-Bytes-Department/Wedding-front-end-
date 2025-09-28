@@ -32,6 +32,9 @@ const Settings = () => {
       weddingDate: user?.weddingDate
         ? new Date(user.weddingDate).toISOString().split("T")[0]
         : "",
+      officiantBio: user?.bio || "",
+      booking: user?.bookingMoney || 0,
+      name: user?.name || "",
     },
   });
 
@@ -42,6 +45,24 @@ const Settings = () => {
       confirmPassword: "",
     },
   });
+
+  // Reset form when user data changes
+  useEffect(() => {
+    if (user) {
+      profileForm.reset({
+        partner1Name: user.partner_1 || "",
+        partner2Name: user.partner_2 || "",
+        contact: user.phone || "",
+        location: user.location || "",
+        weddingDate: user.weddingDate
+          ? new Date(user.weddingDate).toISOString().split("T")[0]
+          : "",
+        officiantBio: user.bio || "",
+        booking: user.bookingMoney || 0,
+        name: user.name || "",
+      });
+    }
+  }, [user, profileForm]);
 
   const onProfileSubmit = async (info: any) => {
     console.log("Profile data:", info);
@@ -229,9 +250,7 @@ const Settings = () => {
   const deleteAccount = () => {
     GlassSwal.confirm(
       "Delete Account",
-      "Are you sure you want to delete your account? This action cannot be undone.",
-      "Yes, Delete Account",
-      "Cancel"
+      "Are you sure you want to delete your account? This action cannot be undone."
     ).then(async (result) => {
       if (result.isConfirmed) {
         console.log("Account deletion confirmed");
@@ -317,10 +336,9 @@ const Settings = () => {
                     Name
                   </label>
                   <input
-                    {...profileForm.register("Name")}
+                    {...profileForm.register("name")}
                     type="text"
                     disabled={!isEditingProfile}
-                    defaultValue={user?.name || ""}
                     className={`w-full px-4 py-3 border border-primary rounded-lg focus:outline-none    ${
                       !isEditingProfile ? "bg-gray-50 cursor-not-allowed" : ""
                     }`}
@@ -349,7 +367,7 @@ const Settings = () => {
                   </label>
                   <input
                     {...profileForm.register("partner2Name")}
-                    type="number"
+                    type="text"
                     disabled={!isEditingProfile}
                     className={`w-full px-4 py-3 border border-primary rounded-lg focus:outline-none    ${
                       !isEditingProfile ? "bg-gray-50 cursor-not-allowed" : ""
@@ -365,7 +383,6 @@ const Settings = () => {
                     {...profileForm.register("booking")}
                     type="number"
                     disabled={!isEditingProfile}
-                    defaultValue={user?.bookingMoney || 0}
                     className={`w-full px-4 py-3 border border-primary rounded-lg focus:outline-none    ${
                       !isEditingProfile ? "bg-gray-50 cursor-not-allowed" : ""
                     }`}
@@ -407,7 +424,6 @@ const Settings = () => {
                 </label>
                 <textarea
                   {...profileForm.register("officiantBio")}
-                    
                   disabled={!isEditingProfile}
                   placeholder={user?.bio || "Write something about yourself..."}
                   className={`w-full h-40 px-4 py-3 border border-primary rounded-lg focus:outline-none    ${
