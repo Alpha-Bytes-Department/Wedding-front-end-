@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { useAxios } from "../../../Component/Providers/useAxios";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useAuth } from "../../../Component/Providers/AuthProvider";
 import { useForm } from "react-hook-form";
 import { GlassSwal } from "../../../utils/glassSwal";
@@ -35,10 +35,10 @@ const Note = () => {
     handleSubmit,
     formState: { errors },
     reset,
-  } = useForm();
+  } = useForm<NoteFormData>();
 
   //  ============ gathering all users ================
-  const getUsers = async () => {
+  const getUsers = useCallback(async () => {
     try {
       const response = await axios.get(`/schedule/get-officiant/${user?._id}`);
       const userids = response.data
@@ -56,10 +56,10 @@ const Note = () => {
     } catch (error) {
       console.log(error);
     }
-  };
+  }, [axios, user?._id]);
 
   // ================== get all officiant data ===================
-  const getOfficiants = async () => {
+  const getOfficiants = useCallback(async () => {
     try {
       const response = await axios.get(`/users/officiants`);
       const officiants = response.data.officiants.map((officiant: any) => ({
@@ -73,10 +73,10 @@ const Note = () => {
     } catch (error) {
       console.log(error);
     }
-  };
+  }, [axios]);
 
   // ============= get all note data ==============
-  const getNotes = async () => {
+  const getNotes = useCallback(async () => {
     try {
       const { data } = await axios.get(`/notes/forUser/${user?._id}`);
       const formattedNotes = data.map((note: any) => ({
@@ -91,13 +91,17 @@ const Note = () => {
     } catch (error) {
       console.log(error);
     }
-  };
+  }, [axios, user?._id]);
 
   useEffect(() => {
+
+
+
+    
     getUsers();
     getOfficiants();
     getNotes();
-  }, []);
+  }, [getUsers, getOfficiants, getNotes]);
 
   // ============= form handling ==============
 

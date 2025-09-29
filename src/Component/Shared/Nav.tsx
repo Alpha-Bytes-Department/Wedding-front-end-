@@ -16,12 +16,7 @@ type Notification = {
   isRead: boolean;
   createdAt: string;
 };
-type user={
-  name:string;
-  email:string;
-  role:string;
-  _id:string
-}
+
 
 
 const Nav = () => {
@@ -466,7 +461,7 @@ const Nav = () => {
             </div>
           ) : (
             <div className="mt-6 sm:mt-8 flex items-center justify-center">
-              {user?.profileImage ? (
+              {user?.profilePicture ? (
                 <div className="flex gap-3 lg:gap-4 items-center relative">
                   <div className="relative">
                     <BsBellFill
@@ -487,7 +482,7 @@ const Nav = () => {
                   </div>
                   <div className="rounded-full p-2 lg:p-3 border-2 border-[#D4AF37]">
                     <img
-                      src={user.profileImage}
+                      src={user.profilePicture}
                       alt="Profile"
                       className="w-8 h-8 lg:w-10 lg:h-10 rounded-full"
                     />

@@ -21,7 +21,7 @@ const NavigationButtons = ({
   onSubmit,
   isLoading = false,
   isEditing = false,
-  validateForSubmission,
+  
 }: NavigationButtonsProps) => {
   const handleSubmitClick = () => {
     onSubmit();

@@ -1,12 +1,12 @@
 import React, { type ReactNode } from "react";
 import axios, {
-  type AxiosInstance,
+  // type AxiosInstance,
   type AxiosResponse,
   type InternalAxiosRequestConfig,
 } from "axios";
 // Import the context from separate file
 import { AxiosContext } from "./AxiosContext";
-import { useLocation, useNavigate } from "react-router-dom";
+// import {  useNavigate } from "react-router-dom";
 
 interface AxiosProviderProps {
   children: ReactNode;
@@ -14,9 +14,9 @@ interface AxiosProviderProps {
 }
 
 // Add type for requests with retry flag
-interface ExtendedInternalAxiosRequestConfig extends InternalAxiosRequestConfig {
-  _retry?: boolean;
-}
+// interface ExtendedInternalAxiosRequestConfig extends InternalAxiosRequestConfig {
+//   _retry?: boolean;
+// }
 
 export const AxiosProvider: React.FC<AxiosProviderProps> = ({
   children,

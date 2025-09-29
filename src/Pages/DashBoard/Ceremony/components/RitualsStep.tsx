@@ -21,33 +21,43 @@ interface RitualOption {
 
 // Ritual Types
 const ritualTypes = [
+  "Unity Candle Ceremony",
   "Sand Ceremony",
+  "Handfasting Ceremony",
+  "Wine/Cup Ceremony",
   "Rose Ceremony",
-  "Unity Candle",
-  "Ring Warming",
-  "Handfasting",
-  "Wine Ceremony",
+  "Ring Warming Ceremony",
+  "Tree Planting Ceremony",
+  "Stone Ceremony",
+  "Oathing Stone Ceremony",
+  "Cord of Three Strands",
 ];
 
 // Sand Ceremony Options
 const sandCeremonyOptions: RitualOption[] = [
   {
     id: "sand1",
-    label: "Sand Ceremony Option 1",
+    label: "Traditional Sand Ceremony",
     content:
-      "{groom_name} and {bride_name}, today you are making a life-long commitment to share the rest of your lives with each other. Your relationship is symbolized through the pouring of these two individual containers of sand.",
+      "{groom_name} and {bride_name}, today you are making a life-long commitment to share the rest of your lives with each other. The two separate bottles of sand represent your lives until this moment—individual and unique. As you each hold your sand, remember that they represent everything you were, everything you are, and everything you will ever be. Now, as you pour your sand together, your lives also join together as one. Just as these grains of sand can never be separated and poured again into individual containers, so will your marriage be—an inseparable union of two lives joined in love.",
   },
   {
     id: "sand2",
-    label: "Sand Ceremony Option 2",
+    label: "Family Sand Ceremony",
     content:
-      "{groom_name} and {bride_name}, the two separate bottles of sand represent your lives until this moment; individual and unique. As you now combine your sand together, your lives also join together as one.",
+      "{groom_name} and {bride_name}, the sand you hold represents not only yourselves, but also your families, your friends, and all who have shaped you into the people you are today. As you pour your sand together, you unite not just two lives, but two histories, two families, and two futures. This blended sand can never be separated, just as your union will be permanent and unbreakable.",
   },
   {
     id: "sand3",
-    label: "Sand Ceremony Option 3",
+    label: "Symbolic Sand Ceremony",
     content:
-      "{groom_name} and {bride_name}, today you are making a life-long commitment to share the rest of your lives with each other. Your relationship is symbolized through the pouring of these two individual containers of sand; one, representing you, {groom_name} (he pours a portion of his sand in vase) and all that you were, all that you are, and all that you will ever be, and the other representing you, {bride_name}, (she pours a portion of her sand on top {groom_name}'s sand) and all that you were and all that you are, and all that you will ever be. Each one holds its own unique beauty, strength, and character. They can stand on their own and be whole, without the need of anything else. When the two are blended together they represent an entirely new and extraordinary love relationship. Each grain of sand brings to the mixture a lasting beauty that forever enriches the combination. (Both {groom_name} & {bride_name} together pour their remaining sand in the central vase) As you each hold your sand the separate containers of sand represent your lives to this moment; individual and unique. As you now combine your sand together, your lives also join together as one. The life that each of you have experienced until now, individually, will hereafter be inseparably united, for the two shall become one. Just as these grains of sand can never be separated and poured again into the individual containers, so will your union be.",
+      "Each grain of sand brings to this mixture a lasting beauty that forever enriches the combination. {groom_name}, as you pour your sand, you bring your strength, your dreams, and your love. {bride_name}, as you pour your sand, you bring your grace, your wisdom, and your devotion. Together, you create something entirely new and beautiful—a symbol of your united love that will endure through all the seasons of your life together.",
+  },
+  {
+    id: "sand4",
+    label: "Spiritual Sand Ceremony",
+    content:
+      "Like countless grains of sand on the shore, your love is infinite and eternal. {groom_name} and {bride_name}, as you combine these individual containers of sand, remember that just as the ocean shapes the shore over time, your love will continue to shape and strengthen your marriage through all the years to come. May this blended sand remind you that you are stronger together than you could ever be apart.",
   },
 ];
 
@@ -77,21 +87,151 @@ const roseCeremonyOptions: RitualOption[] = [
 const unityCandleOptions: RitualOption[] = [
   {
     id: "candle1",
-    label: "Unity Candle Option 1",
+    label: "Traditional Unity Candle",
     content:
-      "{groom_name} and {bride_name}, the two candles you each hold represent your individual lives, your families, and your friends. When you light the center candle together, you are joining your lives, but not extinguishing your individuality.",
+      "{groom_name} and {bride_name}, the two candles you brought from your families represent your lives before today. Lighting the center candle represents the joining of your two lives to one. As you light the unity candle together, the two of you now share one light. This represents that you are joined together in love, yet remain two individuals.",
   },
   {
     id: "candle2",
-    label: "Unity Candle Option 2",
+    label: "Family Unity Candle",
     content:
-      "The lighting of the Unity Candle symbolizes the joining of {groom_name} and {bride_name}'s lives. As you light this candle together, may the light of your love shine brightly for all to see.",
+      "The outer candles represent {groom_name} and {bride_name} as individuals and the love, wisdom, and strength they have received from their families. Together they will light the center candle, representing their commitment to one another and the new family they are creating today.",
   },
   {
     id: "candle3",
-    label: "Unity Candle Option 3",
+    label: "Spiritual Unity Candle",
     content:
-      "{groom_name} and {bride_name}, from every human being there rises a light that reaches straight to heaven. When two souls that are destined for each other find one another, their streams of light flow together and a single brighter light goes forth from their united being.",
+      "From every human being there rises a light that reaches straight to heaven. And when two souls that are destined for each other find one another, their streams of light flow together and a single brighter light goes forth from their united being. {groom_name} and {bride_name}, may the light of your love burn brightly, and may it light the way for others.",
+  },
+  {
+    id: "candle4",
+    label: "Modern Unity Candle",
+    content:
+      "{groom_name} and {bride_name}, you have each lit a candle representing your individual lives, your individual personalities and your individual dreams. Together you will light the center unity candle. The individual candles remain lit, showing that while you are now united as one, you have not lost your individuality. Let this unity candle be a symbol of your commitment to each other and to your marriage.",
+  },
+];
+
+// Handfasting Ceremony Options
+const handfastingOptions: RitualOption[] = [
+  {
+    id: "handfasting1",
+    label: "Traditional Handfasting",
+    content:
+      "{groom_name} and {bride_name}, please join hands. The handfasting ceremony is an ancient tradition that symbolizes your union. As we bind your hands, we bind your lives. Let this cord represent the ties that will hold you together through all of life's joys and challenges. You are bound not to restrict each other, but to support and strengthen one another.",
+  },
+  {
+    id: "handfasting2",
+    label: "Celtic Handfasting",
+    content:
+      "The tradition of handfasting comes from ancient Celtic customs. {groom_name} and {bride_name}, as your hands are joined, so your lives become one. The cords we place around your hands represent the invisible bonds of love that unite you. These bonds are not made of rope or cord, but of love, trust, and mutual respect.",
+  },
+  {
+    id: "handfasting3",
+    label: "Modern Handfasting",
+    content:
+      "{groom_name} and {bride_name}, this cord represents the ties that bind you together. Unlike the bonds that restrict, these are bonds that liberate—freeing you to be your truest selves while joined in love. As we tie this knot, remember that your love is a choice you make each day, and these bonds grow stronger with each act of kindness and understanding.",
+  },
+];
+
+// Wine/Cup Ceremony Options
+const wineCeremonyOptions: RitualOption[] = [
+  {
+    id: "wine1",
+    label: "Traditional Wine Ceremony",
+    content:
+      "{groom_name} and {bride_name}, this cup of wine represents the fullness of life. As you share from this cup, you share the sweet and the bitter moments that life will offer. By drinking together, you acknowledge that from this day forward, your lives will be intimately joined, and whatever life brings, you will face together.",
+  },
+  {
+    id: "wine2",
+    label: "Unity Cup Ceremony",
+    content:
+      "This ceremonial cup represents life—both the bitter and the sweet. {groom_name} and {bride_name}, as you drink from this shared cup, remember that from this moment forward, you will share all that life has to offer. The joy will be doubled because you share it, and any sorrow will be halved because your partner bears it with you.",
+  },
+  {
+    id: "wine3",
+    label: "Blessing Cup Ceremony",
+    content:
+      "May this cup be a symbol of your new life together. {groom_name} and {bride_name}, as you drink from this cup, may your love be as rich and enduring as fine wine, growing more precious with each passing year. Let this shared cup remind you that in marriage, two lives become one, sharing in all joys and sorrows.",
+  },
+];
+
+// Ring Warming Ceremony Options
+const ringWarmingOptions: RitualOption[] = [
+  {
+    id: "ringwarming1",
+    label: "Traditional Ring Warming",
+    content:
+      "We invite you all to take a moment to hold {groom_name} and {bride_name}'s wedding rings. As you hold them, please offer a silent prayer, blessing, or good wish for their marriage. These rings will carry not only their promises to each other, but also the love and blessings of everyone here today.",
+  },
+  {
+    id: "ringwarming2",
+    label: "Community Ring Warming",
+    content:
+      "These rings represent {groom_name} and {bride_name}'s unending love for each other. By passing these rings among their family and friends, each of you adds your love, your prayers, and your blessings to these symbols. When they wear these rings, they will carry with them the support and love of this entire community.",
+  },
+];
+
+// Tree Planting Ceremony Options
+const treePlantingOptions: RitualOption[] = [
+  {
+    id: "tree1",
+    label: "Unity Tree Planting",
+    content:
+      "{groom_name} and {bride_name}, this tree you plant together represents your marriage. Like your love, it will grow stronger and more beautiful with each passing season. Its roots will deepen just as your love deepens, and its branches will reach skyward just as your hopes and dreams reach toward the future. May this tree flourish as your marriage flourishes.",
+  },
+  {
+    id: "tree2",
+    label: "Family Tree Planting",
+    content:
+      "This tree represents the new family you are creating today. {groom_name} and {bride_name}, as you plant this tree together, remember that like any growing thing, your marriage will need care, attention, and nurturing. But with love and dedication, it will grow strong and provide shelter and beauty for generations to come.",
+  },
+];
+
+// Stone Ceremony Options
+const stoneCeremonyOptions: RitualOption[] = [
+  {
+    id: "stone1",
+    label: "Unity Stone Ceremony",
+    content:
+      "{groom_name} and {bride_name}, these stones represent the solid foundation of your love. As you place your stones together, you create a strong foundation for your marriage. Just as these stones will endure through time and weather, may your love endure through all of life's seasons.",
+  },
+  {
+    id: "stone2",
+    label: "Wishing Stone Ceremony",
+    content:
+      "Friends and family, you each received a stone as you arrived today. Please take a moment to hold your stone and make a wish or say a prayer for {groom_name} and {bride_name}. These stones, blessed with your love and good wishes, will become the foundation of a garden that will remind them always of this day and your love for them.",
+  },
+];
+
+// Oathing Stone Ceremony Options
+const oathingStoneOptions: RitualOption[] = [
+  {
+    id: "oathingstone1",
+    label: "Traditional Oathing Stone",
+    content:
+      "{groom_name} and {bride_name}, this ancient stone has witnessed countless promises through the ages. As you place your hands upon it together, you join your promises to all those who came before you. May this stone remind you that your vows are sacred and enduring, as solid and permanent as the stone itself.",
+  },
+  {
+    id: "oathingstone2",
+    label: "Sacred Oathing Stone",
+    content:
+      "This oathing stone represents the permanence and strength of the commitment you make today. {groom_name} and {bride_name}, as you touch this stone together, remember that your marriage, like this stone, is meant to withstand the tests of time. Let its strength remind you of the strength you find in each other.",
+  },
+];
+
+// Cord of Three Strands Options
+const cordOfThreeStrandsOptions: RitualOption[] = [
+  {
+    id: "cord1",
+    label: "Traditional Cord of Three Strands",
+    content:
+      "{groom_name} and {bride_name}, this cord is made of three strands. Two strands represent each of you—your individual strengths, your unique gifts, and your separate identities. The third strand represents God (or your shared faith/values), who joins you together. A cord of three strands is not easily broken. When woven together, these three strands create something stronger than any individual strand could be alone.",
+  },
+  {
+    id: "cord2",
+    label: "Unity Cord of Three Strands",
+    content:
+      "As we braid these three cords together, we symbolize the joining of {groom_name}, {bride_name}, and the divine presence in your marriage. Each strand maintains its own strength and character, but together they create an unbreakable bond. May your marriage be strengthened by this three-fold cord that cannot be easily broken.",
   },
 ];
 
@@ -149,7 +289,7 @@ const kissOptions: RitualOption[] = [
   {
     id: "kiss2",
     label: "Modern Kiss",
-    content: "You may now kiss each other as married partners!",
+    content: "May your first act as a married couple be one of love. You may now kiss each other for the first time as husband and wife!",
   },
   {
     id: "kiss3",
@@ -266,8 +406,22 @@ const RitualsStep = ({
         return sandCeremonyOptions;
       case "Rose Ceremony":
         return roseCeremonyOptions;
-      case "Unity Candle":
+      case "Unity Candle Ceremony":
         return unityCandleOptions;
+      case "Handfasting Ceremony":
+        return handfastingOptions;
+      case "Wine/Cup Ceremony":
+        return wineCeremonyOptions;
+      case "Ring Warming Ceremony":
+        return ringWarmingOptions;
+      case "Tree Planting Ceremony":
+        return treePlantingOptions;
+      case "Stone Ceremony":
+        return stoneCeremonyOptions;
+      case "Oathing Stone Ceremony":
+        return oathingStoneOptions;
+      case "Cord of Three Strands":
+        return cordOfThreeStrandsOptions;
       default:
         return [];
     }
@@ -344,7 +498,7 @@ const RitualsStep = ({
                   onClick={() => openModal(option.id)}
                   className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors text-sm"
                 >
-                  Preview {option.label}
+                   {option.label}
                 </button>
               ))}
             </div>
@@ -395,7 +549,7 @@ const RitualsStep = ({
                 onClick={() => openModal(option.id)}
                 className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors text-sm"
               >
-                Preview {option.label}
+                 {option.label}
               </button>
             ))}
           </div>
@@ -447,7 +601,7 @@ const RitualsStep = ({
                 onClick={() => openModal(option.id)}
                 className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors text-sm"
               >
-                Preview {option.label}
+                 {option.label}
               </button>
             ))}
           </div>
@@ -497,7 +651,7 @@ const RitualsStep = ({
                 onClick={() => openModal(option.id)}
                 className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors text-sm"
               >
-                Preview {option.label}
+                 {option.label}
               </button>
             ))}
           </div>
@@ -549,7 +703,7 @@ const RitualsStep = ({
                 onClick={() => openModal(option.id)}
                 className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors text-sm"
               >
-                Preview {option.label}
+                 {option.label}
               </button>
             ))}
           </div>
@@ -558,7 +712,7 @@ const RitualsStep = ({
 
       {/* Modal for Option Preview */}
       {selectedModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-[#6851134d] flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-lg max-w-2xl w-full max-h-[80vh] overflow-y-auto">
             <div className="p-6">
               <div className="flex justify-between items-center mb-4">
@@ -568,6 +722,13 @@ const RitualsStep = ({
                       ...sandCeremonyOptions,
                       ...roseCeremonyOptions,
                       ...unityCandleOptions,
+                      ...handfastingOptions,
+                      ...wineCeremonyOptions,
+                      ...ringWarmingOptions,
+                      ...treePlantingOptions,
+                      ...stoneCeremonyOptions,
+                      ...oathingStoneOptions,
+                      ...cordOfThreeStrandsOptions,
                       ...closingOptions,
                       ...pronouncingOptions,
                       ...kissOptions,
@@ -641,6 +802,69 @@ const RitualsStep = ({
                         currentGroomName
                       );
                     } else if (
+                      handfastingOptions.find((opt) => opt.id === selectedModal)
+                    ) {
+                      return getOptionContent(
+                        handfastingOptions,
+                        selectedModal,
+                        currentBrideName,
+                        currentGroomName
+                      );
+                    } else if (
+                      wineCeremonyOptions.find((opt) => opt.id === selectedModal)
+                    ) {
+                      return getOptionContent(
+                        wineCeremonyOptions,
+                        selectedModal,
+                        currentBrideName,
+                        currentGroomName
+                      );
+                    } else if (
+                      ringWarmingOptions.find((opt) => opt.id === selectedModal)
+                    ) {
+                      return getOptionContent(
+                        ringWarmingOptions,
+                        selectedModal,
+                        currentBrideName,
+                        currentGroomName
+                      );
+                    } else if (
+                      treePlantingOptions.find((opt) => opt.id === selectedModal)
+                    ) {
+                      return getOptionContent(
+                        treePlantingOptions,
+                        selectedModal,
+                        currentBrideName,
+                        currentGroomName
+                      );
+                    } else if (
+                      stoneCeremonyOptions.find((opt) => opt.id === selectedModal)
+                    ) {
+                      return getOptionContent(
+                        stoneCeremonyOptions,
+                        selectedModal,
+                        currentBrideName,
+                        currentGroomName
+                      );
+                    } else if (
+                      oathingStoneOptions.find((opt) => opt.id === selectedModal)
+                    ) {
+                      return getOptionContent(
+                        oathingStoneOptions,
+                        selectedModal,
+                        currentBrideName,
+                        currentGroomName
+                      );
+                    } else if (
+                      cordOfThreeStrandsOptions.find((opt) => opt.id === selectedModal)
+                    ) {
+                      return getOptionContent(
+                        cordOfThreeStrandsOptions,
+                        selectedModal,
+                        currentBrideName,
+                        currentGroomName
+                      );
+                    } else if (
                       closingOptions.find((opt) => opt.id === selectedModal)
                     ) {
                       return getOptionContent(
@@ -701,7 +925,14 @@ const RitualsStep = ({
                       roseCeremonyOptions.find(
                         (opt) => opt.id === selectedModal
                       ) ||
-                      unityCandleOptions.find((opt) => opt.id === selectedModal)
+                      unityCandleOptions.find((opt) => opt.id === selectedModal) ||
+                      handfastingOptions.find((opt) => opt.id === selectedModal) ||
+                      wineCeremonyOptions.find((opt) => opt.id === selectedModal) ||
+                      ringWarmingOptions.find((opt) => opt.id === selectedModal) ||
+                      treePlantingOptions.find((opt) => opt.id === selectedModal) ||
+                      stoneCeremonyOptions.find((opt) => opt.id === selectedModal) ||
+                      oathingStoneOptions.find((opt) => opt.id === selectedModal) ||
+                      cordOfThreeStrandsOptions.find((opt) => opt.id === selectedModal)
                     ) {
                       handleSelection("ritualsOption", selectedModal);
                     } else if (

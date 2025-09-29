@@ -11,11 +11,9 @@ export const PrivateRoute = ({ children }: { children: ReactNode }) => {
     if(loading){
         return (
           <div className="min-h-screen flex items-center justify-center bg-white">
-            <div className=' border-8  p-10 rounded-full size-60 flex items-center justify-center border-[#d4af3728]'>
+            <div className=' border-8  p-10 rounded-full size-60 flex items-center justify-center border-[#d4af3728]' role="status" aria-label="infinity-spin-loading">
                 <InfinitySpin
-                  visible={true}                  
                   color="#D4AF37"
-                  ariaLabel="infinity-spin-loading"
                 />
             </div>
           </div>

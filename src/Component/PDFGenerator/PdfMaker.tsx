@@ -96,7 +96,7 @@ const PdfMaker: React.FC<PdfMakerProps> = ({ eventId }) => {
               color: #666;
               margin: 0;
               font-size: 14px;
-            ">Transaction id: ${bill.transactionId.toUpperCase()}</p>
+            ">Transaction id: ${bill?.transactionId?.toUpperCase()}</p>
           </div>
           
           <div style="

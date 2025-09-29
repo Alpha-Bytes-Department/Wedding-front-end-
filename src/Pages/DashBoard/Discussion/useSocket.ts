@@ -1,7 +1,7 @@
 // hooks/useSocket.ts
 import { useEffect, useRef, useState, useCallback } from "react";
-import io, { Socket } from "socket.io-client";
-import {type Message, type TypingUser, type SocketEvents } from "./chat";
+import io from "socket.io-client";
+import {type Message } from "./chat";
 
 interface UseSocketProps {
   userId: string;
@@ -10,7 +10,7 @@ interface UseSocketProps {
 }
 
 interface UseSocketReturn {
-  socket: Socket | null;
+  socket: ReturnType<typeof io> | null;
   isConnected: boolean;
   error: string | null;
   joinRoom: (roomId: string) => void;
@@ -74,15 +74,15 @@ interface UseSocketReturn {
   ) => void;
 }
 
+
 export const useSocket = ({
   userId,
   userName,
   serverUrl,
 }: UseSocketProps): UseSocketReturn => {
-  const socketRef = useRef<Socket | null>(null);
+  const socketRef = useRef<ReturnType<typeof io> | null>(null);
   const [isConnected, setIsConnected] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
-
   const SOCKET_SERVER_URL =
     serverUrl || process.env.REACT_APP_SOCKET_URL || "http://localhost:5000";
 

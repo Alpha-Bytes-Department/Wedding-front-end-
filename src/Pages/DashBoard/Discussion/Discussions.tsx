@@ -766,39 +766,39 @@ const Discussions: React.FC = () => {
   };
 
   // Handle input changes and typing indicator
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setInput(e.target.value);
+  // const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   setInput(e.target.value);
 
-    if (!socket || !isConnected || !selected || !user?._id) return;
+  //   if (!socket || !isConnected || !selected || !user?._id) return;
 
-    const roomId = generatePrivateRoomId(user._id, selected._id);
+  //   const roomId = generatePrivateRoomId(user._id, selected._id);
 
-    if (!isTyping) {
-      setIsTyping(true);
-      socket.emit("typing", {
-        roomId: roomId,
-        userId: user._id,
-        userName: user.partner_1 || user.partner_2 || "User",
-        isTyping: true,
-      });
-    }
+  //   if (!isTyping) {
+  //     setIsTyping(true);
+  //     socket.emit("typing", {
+  //       roomId: roomId,
+  //       userId: user._id,
+  //       userName: user.partner_1 || user.partner_2 || "User",
+  //       isTyping: true,
+  //     });
+  //   }
 
-    // Clear previous timeout
-    if (typingTimeoutRef.current) {
-      clearTimeout(typingTimeoutRef.current);
-    }
+  //   // Clear previous timeout
+  //   if (typingTimeoutRef.current) {
+  //     clearTimeout(typingTimeoutRef.current);
+  //   }
 
-    // Set new timeout
-    typingTimeoutRef.current = setTimeout(() => {
-      setIsTyping(false);
-      socket?.emit("typing", {
-        roomId: roomId,
-        userId: user._id,
-        userName: user.partner_1 || user.partner_2 || "User",
-        isTyping: false,
-      });
-    }, 1000);
-  };
+  //   // Set new timeout
+  //   typingTimeoutRef.current = setTimeout(() => {
+  //     setIsTyping(false);
+  //     socket?.emit("typing", {
+  //       roomId: roomId,
+  //       userId: user._id,
+  //       userName: user.partner_1 || user.partner_2 || "User",
+  //       isTyping: false,
+  //     });
+  //   }, 1000);
+  // };
 
   // Handle input change for ChatInput component (string only)
   const handleInputStringChange = (value: string) => {
@@ -987,25 +987,25 @@ const Discussions: React.FC = () => {
   };
 
   // Handle link sharing
-  const handleLinkShare = () => {
-    if (!selected || !user?._id) return;
+  // const handleLinkShare = () => {
+  //   if (!selected || !user?._id) return;
 
-    const url = prompt("Enter a URL to share:");
-    if (url && socket && isConnected) {
-      const roomId = generatePrivateRoomId(user._id, selected._id);
-      const messageData: Message = {
-        id: Date.now(),
-        roomId: roomId,
-        sender: user._id,
-        senderName: user.partner_1 || user.partner_2 || "User",
-        type: "link",
-        content: url,
-        timestamp: new Date().toISOString(),
-      };
+  //   const url = prompt("Enter a URL to share:");
+  //   if (url && socket && isConnected) {
+  //     const roomId = generatePrivateRoomId(user._id, selected._id);
+  //     const messageData: Message = {
+  //       id: Date.now(),
+  //       roomId: roomId,
+  //       sender: user._id,
+  //       senderName: user.partner_1 || user.partner_2 || "User",
+  //       type: "link",
+  //       content: url,
+  //       timestamp: new Date().toISOString(),
+  //     };
 
-      socket.emit("sendMessage", messageData);
-    }
-  };
+  //     socket.emit("sendMessage", messageData);
+  //   }
+  // };
 
   // Handle officiant selection
   const handleOfficiantSelect = (officiant: Officiant) => {

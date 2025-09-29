@@ -3,7 +3,7 @@ import { MdKeyboardArrowRight } from "react-icons/md";
 import { useAuth } from "../../../Component/Providers/AuthProvider";
 import { useAxios } from "../../../Component/Providers/useAxios";
 import { Link, useNavigate } from "react-router-dom";
-import { usePDF } from "react-to-pdf";
+// import { usePDF } from "react-to-pdf";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import GlassSwal from "../../../utils/glassSwal";
@@ -16,6 +16,23 @@ type Notification = {
   isRead: boolean;
   createdAt: string;
 };
+
+type events={
+  officiantId:string;
+  status:string;
+  _id:string;
+  title:string;
+
+
+}
+
+type booking={
+  _id:string;
+  eventDate:Date;
+  eventType:string;
+  approvedStatus:string;
+  updatedAt:Date;
+}
 
 type Ceremony = {
   id: string;
@@ -57,8 +74,8 @@ const DashHome = () => {
   const [activeBill, setActiveBill] = useState<bill | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isDownloading, setIsDownloading] = useState(false);
-  const [newBookings, setNewBookings] = useState([]);
-  const [ceremony, setCeremony] = useState([]);
+  const [newBookings, setNewBookings] = useState<booking[]>([]);
+  const [ceremony, setCeremony] = useState<events[]>([]);
 
   // Updated PDF download function using html2canvas and jsPDF
   const downloadPDF = async (billData?: bill) => {
@@ -565,7 +582,7 @@ const DashHome = () => {
             </h1>
             <p className="text-black-web font-secondary text-lg lg:text-xl">
               Welcome Back!{" "}
-              {user?.name ? user.name : `${user.partner_1} & ${user.partner_2}`}
+              {user?.name ? user.name : `${user?.partner_1} & ${user?.partner_2}`}
               .
             </p>
           </div>
