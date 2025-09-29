@@ -77,19 +77,19 @@ const onSubmit = async (data: FormData) => {
             <div className=" flex gap-3 items-center">
               <SlLocationPin size={24} className=" text-primary" />{" "}
               <p className=" font-secondary font-medium text-lg text-black">
-                1055 Arthur ave Elk Groot, 67. New Palmas South Carolina.
+                123 Love Lane, Erie, Pennsylvania 
               </p>
             </div>
             <div className=" flex gap-3 items-center">
               <PiPhoneCallFill size={24} className=" text-primary" />{" "}
               <p className=" font-secondary font-medium text-lg text-black">
-                +1 234 678 9108 99
+                +1 (814) 201-7107
               </p>
             </div>
             <div className=" flex gap-3 items-center">
               <TbMail size={24} className=" text-primary" />{" "}
               <p className=" font-secondary font-medium text-lg text-black">
-                Contact@moralizer.com
+                info@erieweddingofficiants.com
               </p>
             </div>
           </div>

@@ -103,7 +103,7 @@ const Ceremony = () => {
               </p>
             </div>
           </div>
-          {buttons()}
+          <Buttons />
         </div>
         
       </div>
@@ -111,7 +111,7 @@ const Ceremony = () => {
   );
 };
 
-const buttons = () => {
+const Buttons = () => {
   const { user } = useAuth();
   return (
     <div className="flex items-center md:flex-row flex-col  gap-4">
@@ -119,7 +119,7 @@ const buttons = () => {
         to={"/dashboard"}
         className="bg-primary text-white py-2 px-4 rounded-xl text-lg font-semibold font-secondary"
       >
-        Start Planning
+        Book Your Consultation
       </Link>
       {!user ? (
         <Link
@@ -141,4 +141,4 @@ const buttons = () => {
   );
 }
 
-export  { buttons , Ceremony};
+export { Buttons, Ceremony };

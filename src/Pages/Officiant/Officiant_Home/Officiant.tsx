@@ -65,8 +65,9 @@ const Officiant = () => {
           <span className="text-primary">Ceremony Guide</span>{" "}
         </h1>
         <p className="text-base md:text-lg lg:text-xl text-text">
-          Lorem ipsum, dolor sit amet consectetur adipisicing elit. Voluptas,
-          culpa modi ab fugiat sint reprehenderit.
+          Our officiants are dedicated to crafting personalized ceremonies that
+          reflect your unique love story. With professionalism and warmth, they
+          ensure your special day is memorable and meaningful.
         </p>
       </div>
 

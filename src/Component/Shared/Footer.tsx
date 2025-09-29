@@ -300,10 +300,10 @@ const Footer = () => {
           </h1>
           <ul>
             <li className=" text-[16px] text-text font-secondary py-3">
-              <a href="mailto:contact@moralizer.com">Email Us</a>
+              <a href="mailto:info@erieweddingofficiants.com">Email Us</a>
             </li>
             <li className=" text-[16px] text-text font-secondary py-3">
-              <a href="tel:+1234678910899">Call Us</a>
+              <a  href="tel:+18142017107">Call Us</a>
             </li>
             <li onClick={() => scrollToReview("contact")} className=" text-[16px] cursor-pointer text-text font-secondary py-3">
               Help Center

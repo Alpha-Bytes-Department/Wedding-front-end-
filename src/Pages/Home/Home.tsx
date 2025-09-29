@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
-import { Ceremony, buttons } from "./Ceremony";
+import { Ceremony, Buttons } from "./Ceremony";
 import ClientReview from "./ClientReview";
 import ContactForm from "./ContactForm";
 import Header from "./Header";
@@ -41,7 +41,7 @@ const Home = () => {
             Join us today and create the wedding ceremony you've always dreamed
             of with ease.
           </p>{" "}
-          {buttons()}
+          <Buttons />
         </div>
         <img src="/shake.jpg" alt="" className="md:w-1/3 rounded-md" />
       </div>

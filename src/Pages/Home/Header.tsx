@@ -1,4 +1,4 @@
-import { buttons } from "./Ceremony";
+import { Buttons } from "./Ceremony";
 
 const Header = () => {
   
@@ -20,7 +20,7 @@ const Header = () => {
           wedding ceremonies. Plan, <br className="md:block hidden" /> approve,
           and perfect every detail with ease and joy.
         </p>
-        {buttons()}
+        <Buttons />
       </div>
 
       <div

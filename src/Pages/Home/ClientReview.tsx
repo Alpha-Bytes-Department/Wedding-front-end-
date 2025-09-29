@@ -118,9 +118,9 @@ const handleResize = () => {
             Client <span className="text-primary">Review</span> to our service
           </h1>
           <p className="text-sm sm:text-base md:text-lg xl:text-xl text-start font-normal font-secondary text-black-web mt-2 sm:mt-3 md:mt-4">
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Quasi
-            eveniet rerum nostrum ex dolore similique repudiandae vitae
-            blanditiis quidem corrupti.
+            Hear what our satisfied clients have to say about their experience
+            with Erie Wedding Officiants. Your feedback inspires us to create
+            unforgettable ceremonies.
           </p>
         </div>
       </div>

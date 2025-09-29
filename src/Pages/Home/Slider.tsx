@@ -12,17 +12,17 @@ const Slider = () => {
   const texts = [
     {
       description:
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed dapibus placerat velit. Donec in porttitor elit. Suspendisse accumsan iaculis tincidunt. ",
-      title: "Effortless Ceremony Planning  💍",
+          "With Erie Wedding Officiants, every moment of your ceremony is personalized to reflect your unique love story and personality. Your love, our guidance.",
+      title: "Stress-Free Ceremony Planning  💍",
     },
     {
       description:
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed dapibus placerat velit. Donec in porttitor elit. Suspendisse accumsan iaculis tincidunt. ",
+        "Our experienced officiants work closely with you to craft a ceremony that truly represents your journey together, ensuring every detail is perfect.",
       title: "Seamless Collaboration 📜",
     },
     {
       description:
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed dapibus placerat velit. Donec in porttitor elit. Suspendisse accumsan iaculis tincidunt. ",
+        "With Erie Wedding Officiants, every moment of your ceremony is personalized to reflect your unique love story and personality. Your love, our guidance.",
       title: "Organized & Accessible  🔔",
     },
   ];
@@ -31,8 +31,8 @@ const Slider = () => {
   return (
     <div className="min-h-screen bg-white py-16">
       <h1 className="text-2xl sm:text-3xl font-bold md:text-[55px] px-5  font-primary text-center mb-16">
-        What We Serve To Plan Your <br />
-        <span className="text-primary">Best Wedding</span>
+        Make It
+        <span className="text-primary">Yours</span>
       </h1>
 
       <div className="flex items-center justify-center" id="slidercontainer">
