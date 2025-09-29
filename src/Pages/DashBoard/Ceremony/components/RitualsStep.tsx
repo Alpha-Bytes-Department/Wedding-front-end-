@@ -7,6 +7,7 @@ import { useCeremonyContext } from "../contexts/CeremonyContext";
 interface RitualsStepProps {
   register: UseFormRegister<CeremonyFormData>;
   watch: (name: keyof CeremonyFormData) => string;
+  setValue: (name: keyof CeremonyFormData, value: string) => void;
   openDropdowns: { [key: string]: boolean };
   onToggleDropdown: (name: string) => void;
   onSelectDropdown: (name: string, value: string) => void;
@@ -182,6 +183,7 @@ const introductionOptions: RitualOption[] = [
 const RitualsStep = ({
   register,
   watch,
+  setValue,
   openDropdowns,
   onToggleDropdown,
   onSelectDropdown,
@@ -198,13 +200,47 @@ const RitualsStep = ({
   };
 
   const handleRitualSelection = (ritualType: string) => {
+    // Use setValue for proper React Hook Form integration
+    setValue("ritualsSelection", ritualType);
     onSelectDropdown("ritualsSelection", ritualType);
     // Clear the ritual option when a different ritual is selected
+    setValue("ritualsOption", "");
     onSelectDropdown("ritualsOption", "");
   };
 
   const handleSelection = (fieldName: string, optionId: string) => {
-    onSelectDropdown(fieldName, optionId);
+    // Find the option and get its content with name replacements
+    let options: RitualOption[] = [];
+    switch (fieldName) {
+      case "ritualsOption":
+        options = currentRitualOptions;
+        break;
+      case "closingStatement":
+        options = closingOptions;
+        break;
+      case "pronouncing":
+        options = pronouncingOptions;
+        break;
+      case "kiss":
+        options = kissOptions;
+        break;
+      case "introductionOfCouple":
+        options = introductionOptions;
+        break;
+    }
+    
+    const option = options.find(opt => opt.id === optionId);
+    if (option) {
+      const currentBrideName = brideName || "Bride's Name";
+      const currentGroomName = groomName || "Groom's Name";
+      const content = option.content
+        .replace(/{bride_name}/g, currentBrideName)
+        .replace(/{groom_name}/g, currentGroomName);
+      
+      // Use setValue for proper React Hook Form integration
+      setValue(fieldName as keyof CeremonyFormData, content);
+      onSelectDropdown(fieldName, content);
+    }
   };
 
   const getOptionContent = (
@@ -246,6 +282,11 @@ const RitualsStep = ({
         <label className="block text-lg font-semibold text-gray-900 mb-3">
           Ritual Selection
         </label>
+        {/* Hidden input for form registration */}
+        <input
+          type="hidden"
+          {...register("ritualsSelection")}
+        />
         <CustomDropdown
           name="ritualsSelection"
           options={ritualTypes}
@@ -264,14 +305,25 @@ const RitualsStep = ({
             {currentRitual} Options
           </label>
           <div className="space-y-3">
+            {/* Hidden input for form registration */}
+            <input
+              type="hidden"
+              {...register("ritualsOption")}
+            />
             <CustomDropdown
               name="ritualsOption"
               options={currentRitualOptions.map((opt) => opt.label)}
               value={(() => {
-                const currentOptionId = watch("ritualsOption");
-                const currentOption = currentRitualOptions.find(
-                  (opt) => opt.id === currentOptionId
-                );
+                const currentContent = watch("ritualsOption");
+                if (!currentContent) return "";
+                const currentBrideName = brideName || "Bride's Name";
+                const currentGroomName = groomName || "Groom's Name";
+                const currentOption = currentRitualOptions.find((opt) => {
+                  const optionContent = opt.content
+                    .replace(/{bride_name}/g, currentBrideName)
+                    .replace(/{groom_name}/g, currentGroomName);
+                  return optionContent === currentContent;
+                });
                 return currentOption?.label || "";
               })()}
               placeholder={`Select ${currentRitual.toLowerCase()} option`}
@@ -306,14 +358,25 @@ const RitualsStep = ({
           Closing Statement
         </label>
         <div className="space-y-3">
+          {/* Hidden input for form registration */}
+          <input
+            type="hidden"
+            {...register("closingStatement")}
+          />
           <CustomDropdown
             name="closingStatement"
             options={closingOptions.map((opt) => opt.label)}
             value={(() => {
-              const currentOptionId = watch("closingStatement");
-              const currentOption = closingOptions.find(
-                (opt) => opt.id === currentOptionId
-              );
+              const currentContent = watch("closingStatement");
+              if (!currentContent) return "";
+              const currentBrideName = brideName || "Bride's Name";
+              const currentGroomName = groomName || "Groom's Name";
+              const currentOption = closingOptions.find((opt) => {
+                const optionContent = opt.content
+                  .replace(/{bride_name}/g, currentBrideName)
+                  .replace(/{groom_name}/g, currentGroomName);
+                return optionContent === currentContent;
+              });
               return currentOption?.label || "";
             })()}
             placeholder="Select closing statement"
@@ -345,14 +408,25 @@ const RitualsStep = ({
           Pronouncing
         </label>
         <div className="space-y-3">
+          {/* Hidden input for form registration */}
+          <input
+            type="hidden"
+            {...register("pronouncing")}
+          />
           <CustomDropdown
             name="pronouncing"
             options={pronouncingOptions.map((opt) => opt.label)}
             value={(() => {
-              const currentOptionId = watch("pronouncing");
-              const currentOption = pronouncingOptions.find(
-                (opt) => opt.id === currentOptionId
-              );
+              const currentContent = watch("pronouncing");
+              if (!currentContent) return "";
+              const currentBrideName = brideName || "Bride's Name";
+              const currentGroomName = groomName || "Groom's Name";
+              const currentOption = pronouncingOptions.find((opt) => {
+                const optionContent = opt.content
+                  .replace(/{bride_name}/g, currentBrideName)
+                  .replace(/{groom_name}/g, currentGroomName);
+                return optionContent === currentContent;
+              });
               return currentOption?.label || "";
             })()}
             placeholder="Select pronouncement option"
@@ -386,14 +460,25 @@ const RitualsStep = ({
           Kiss
         </label>
         <div className="space-y-3">
+          {/* Hidden input for form registration */}
+          <input
+            type="hidden"
+            {...register("kiss")}
+          />
           <CustomDropdown
             name="kiss"
             options={kissOptions.map((opt) => opt.label)}
             value={(() => {
-              const currentOptionId = watch("kiss");
-              const currentOption = kissOptions.find(
-                (opt) => opt.id === currentOptionId
-              );
+              const currentContent = watch("kiss");
+              if (!currentContent) return "";
+              const currentBrideName = brideName || "Bride's Name";
+              const currentGroomName = groomName || "Groom's Name";
+              const currentOption = kissOptions.find((opt) => {
+                const optionContent = opt.content
+                  .replace(/{bride_name}/g, currentBrideName)
+                  .replace(/{groom_name}/g, currentGroomName);
+                return optionContent === currentContent;
+              });
               return currentOption?.label || "";
             })()}
             placeholder="Select kiss option"
@@ -425,14 +510,25 @@ const RitualsStep = ({
           Introduction of Couple
         </label>
         <div className="space-y-3">
+          {/* Hidden input for form registration */}
+          <input
+            type="hidden"
+            {...register("introductionOfCouple")}
+          />
           <CustomDropdown
             name="introductionOfCouple"
             options={introductionOptions.map((opt) => opt.label)}
             value={(() => {
-              const currentOptionId = watch("introductionOfCouple");
-              const currentOption = introductionOptions.find(
-                (opt) => opt.id === currentOptionId
-              );
+              const currentContent = watch("introductionOfCouple");
+              if (!currentContent) return "";
+              const currentBrideName = brideName || "Bride's Name";
+              const currentGroomName = groomName || "Groom's Name";
+              const currentOption = introductionOptions.find((opt) => {
+                const optionContent = opt.content
+                  .replace(/{bride_name}/g, currentBrideName)
+                  .replace(/{groom_name}/g, currentGroomName);
+                return optionContent === currentContent;
+              });
               return currentOption?.label || "";
             })()}
             placeholder="Select couple introduction option"

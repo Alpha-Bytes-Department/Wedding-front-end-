@@ -1,261 +1,456 @@
-import { useState } from "react";
-import { useForm } from "react-hook-form";
-import type { CeremonyFormData, CeremonyData } from "../Ceremony/types";
-import StepIndicator from "../Ceremony/components/StepIndicator";
-import TypeStep from "../Ceremony/components/TypeStep";
-import VowsStep from "../Ceremony/components/VowsStep";
-import RitualsStep from "../Ceremony/components/RitualsStep";
-import ScheduleStep from "../Ceremony/components/ScheduleStep";
-import ReviewStep from "../Ceremony/components/ReviewStep";
-import NavigationButtons from "../Ceremony/components/NavigationButtons";
-import { FaLink } from "react-icons/fa6";
+import { useEffect, useState, useCallback } from "react";
+import { useAxios } from "../../../Component/Providers/useAxios";
+import { useAuth } from "../../../Component/Providers/AuthProvider";
+
+interface CeremonyEvent {
+  _id: string;
+  title: string;
+  description: string;
+  ceremonyType: string;
+  groomName?: string;
+  brideName?: string;
+  language?: string;
+  greetingSpeech?: string;
+  presentationOfBride?: string;
+  questionForPresentation?: string;
+  responseToQuestion?: string;
+  invocation?: string;
+  chargeToGroomAndBride?: string;
+  pledge?: string;
+  introductionToExchangeOfVows?: string;
+  vows?: string;
+  readings?: string;
+  introductionToExchangeOfRings?: string;
+  blessingsOfRings?: string;
+  exchangeOfRingsGroom?: string;
+  exchangeOfRingsBride?: string;
+  prayerOnTheNewUnion?: string;
+  ritualsSelection?: string;
+  ritualsOption?: string;
+  closingStatement?: string;
+  pronouncing?: string;
+  kiss?: string;
+  introductionOfCouple?: string;
+  eventDate?: string;
+  eventTime?: string;
+  location?: string;
+  rehearsalDate?: string;
+  officiantId?: string;
+  officiantName?: string;
+  userId: string;
+  status: "planned" | "submitted" | "approved" | "completed" | "canceled" | "cancelled";
+  createdAt: string;
+  updatedAt: string;
+}
 
 const CeremonyReview = () => {
-  const [currentStep, setCurrentStep] = useState(1);
-  const [openDropdowns, setOpenDropdowns] = useState<{
-    [key: string]: boolean;
-  }>({});
+  const [events, setEvents] = useState<CeremonyEvent[]>([]);
+  const [selectedEvent, setSelectedEvent] = useState<CeremonyEvent | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [fetchLoading, setFetchLoading] = useState(true);
+  const axios = useAxios();
+  const { user } = useAuth();
 
-  // Mock data for demonstrations
-  const [ceremonies, setCeremonies] = useState<CeremonyData[]>([
-    {
-      id: "1",
-      title: "Garden Vows-Sunset",
-      type: "Classic",
-      description: "A beautiful sunset ceremony in the garden",
-      vowsType: "Custom Vows",
-      language: "English",
-      rituals: "Unity candle",
-      musicCue: "A Thousand Years - Piano",
-      notes: "Notes about the ceremony",
-      date: "2024-08-12",
-      time: "18:00",
-      location: "Garden Venue",
-      rehearsal: "2024-08-11",
-      status: "completed",
-      createdAt: "Aug 12, 2024",
-      updatedAt: "Aug 12, 2024",
-    },
-  ]);
+  const fetchEvents = useCallback(async () => {
+    if (!user?._id) return;
+    setFetchLoading(true);
+    try {
+      const { data } = await axios.get(`/events/by-role/${user._id}/${user?.role}`);
+      console.log("API Response:", data);
+      // Ensure data is an array
+      if (Array.isArray(data)) {
+        setEvents(data);
+      } else if (data && Array.isArray(data.events)) {
+        // In case the API returns { events: [...] }
+        setEvents(data.events);
+      } else {
+        console.warn("API did not return an array:", data);
+        setEvents([]);
+      }
+    } catch (error) {
+      console.error("Error fetching events:", error);
+      setEvents([]); // Set empty array on error
+    } finally {
+      setFetchLoading(false);
+    }
+  }, [user?._id, user?.role, axios]);
 
-  const [drafts, setDrafts] = useState<CeremonyData[]>([
-    {
-      id: "2",
-      title: "Beach Wedding",
-      type: "Modern",
-      description: "Incomplete beach ceremony",
-      vowsType: "Prepared Script",
-      language: "English",
-      rituals: "Sand ceremony",
-      musicCue: "",
-      notes: "",
-      date: "",
-      time: "",
-      location: "Beach Resort",
-      rehearsal: "",
-      status: "draft",
-      createdAt: "Aug 20, 2024",
-      updatedAt: "Aug 22, 2024",
-    },
-  ]);
+  useEffect(() => {
+    fetchEvents();
+  }, [fetchEvents]);
 
-  const {
-    register,
-    handleSubmit,
-    watch,
-    setValue,
-    formState: { errors },
-  } = useForm<CeremonyFormData>({
-    defaultValues: {
-      title: "",
-      type: "Classic",
-      description: "",
-      vowsType: "Custom Vows",
-      language: "English",
-      rituals: "Unity candle",
-      musicCue: "",
-      notes: "",
-      date: "",
-      time: "",
-      location: "",
-      rehearsal: "",
-    },
-  });
-
-  const toggleDropdown = (key: string) => {
-    setOpenDropdowns((prev) => ({
-      ...prev,
-      [key]: !prev[key],
-    }));
-  };
-
-  const handleDropdownSelect = (name: string, value: string) => {
-    setValue(name as keyof CeremonyFormData, value);
-    setOpenDropdowns((prev) => ({ ...prev, [name]: false }));
-  };
-
-  const handleNextStep = () => {
-    if (currentStep < 5) {
-      setCurrentStep(currentStep + 1);
+  const updateEventStatus = async (eventId: string, newStatus: "approved" | "canceled") => {
+    setLoading(true);
+    try {
+      await axios.patch(`/events/update/${eventId}`, { status: newStatus });
+      // Update the local state
+      setEvents(prevEvents => 
+        prevEvents.map(event => 
+          event._id === eventId 
+            ? { ...event, status: newStatus }
+            : event
+        )
+      );
+      console.log(`Event ${eventId} status updated to ${newStatus}`);
+    } catch (error) {
+      console.error(`Error updating event status to ${newStatus}:`, error);
+    } finally {
+      setLoading(false);
     }
   };
 
-  const handlePrevStep = () => {
-    if (currentStep > 1) {
-      setCurrentStep(currentStep - 1);
-    }
+  const handleApprove = (eventId: string) => {
+    updateEventStatus(eventId, "approved");
   };
 
-  const onSubmit = (data: CeremonyFormData) => {
-    const newCeremony: CeremonyData = {
-      ...data,
-      id: Date.now().toString(),
-      status: "completed",
-      createdAt: new Date().toLocaleDateString(),
-      updatedAt: new Date().toLocaleDateString(),
-    };
-    console.log("Finalized Ceremony Data:", newCeremony);
-    setCeremonies([...ceremonies, newCeremony]);
-    // Reset form
-    setCurrentStep(1);
+  const handleCancel = (eventId: string) => {
+    updateEventStatus(eventId, "canceled");
   };
 
-  const saveDraft = (data: CeremonyFormData) => {
-    const draftCeremony: CeremonyData = {
-      ...data,
-      id: Date.now().toString(),
-      status: "draft",
-      createdAt: new Date().toLocaleDateString(),
-      updatedAt: new Date().toLocaleDateString(),
-    };
-    setDrafts([...drafts, draftCeremony]);
+  const openViewModal = (event: CeremonyEvent) => {
+    setSelectedEvent(event);
+    (document.getElementById("ceremony_view_modal") as HTMLDialogElement)?.showModal();
   };
-
-  const steps = [
-    { number: 1, title: "Type", active: currentStep >= 1 },
-    { number: 2, title: "Greetings", active: currentStep >= 2 },
-    { number: 3, title: "Vows", active: currentStep >= 3 },
-    { number: 4, title: "Rituals", active: currentStep >= 4 },
-    { number: 5, title: "Schedule", active: currentStep >= 5 },
-    { number: 6, title: "Review", active: currentStep >= 6 },
-  ];
 
   return (
-    <div className=" bg-white  lg:p-8">
-      <div className="">
-        {/* Tab Navigation */}
+    <div className="space-y-6">
+      <h1 className="text-3xl font-primary font-bold text-gray-900 mb-8">
+        Ceremony Review
+      </h1>
 
-        {/* Tab Content */}
-        <div className="bg-white rounded-2xl shadow-lg border border-primary p-3 sm:p-6 lg:p-8">
-          <h1 className="text-3xl font-primary font-bold text-gray-900 mb-8">
-            Ceremony Review
-          </h1>
-
-          <StepIndicator steps={steps} />
-
-          <form onSubmit={handleSubmit(onSubmit)}>
-            {/* Step 1: Type */}
-            {currentStep === 1 && (
-              <TypeStep
-                register={register}
-                errors={errors}
-                watch={watch}
-                openDropdowns={openDropdowns}
-                onToggleDropdown={toggleDropdown}
-                onSelectDropdown={handleDropdownSelect}
-              />
-            )}
-
-            {/* Step 2: Vows */}
-            {currentStep === 2 && (
-              <VowsStep
-                watch={watch}
-                openDropdowns={openDropdowns}
-                onToggleDropdown={toggleDropdown}
-                onSelectDropdown={handleDropdownSelect}
-              />
-            )}
-
-            {/* Step 3: Rituals */}
-            {currentStep === 3 && (
-              <RitualsStep
-                register={register}
-                watch={watch}
-                openDropdowns={openDropdowns}
-                onToggleDropdown={toggleDropdown}
-                onSelectDropdown={handleDropdownSelect}
-              />
-            )}
-
-            {/* Step 4: Schedule */}
-            {currentStep === 4 && (
-              <ScheduleStep register={register} errors={errors} />
-            )}
-
-            {/* Step 5: Review */}
-            {currentStep === 5 && <ReviewStep watch={watch} />}
-
-            {/* Navigation Buttons */}
-            <NavigationButtons
-              currentStep={currentStep}
-              maxStep={5}
-              onPrevStep={handlePrevStep}
-              onNextStep={handleNextStep}
-              onSaveDraft={handleSubmit(saveDraft)}
-              onSubmit={handleSubmit(onSubmit)}
-            />
-          </form>
+      {fetchLoading ? (
+        <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-8 text-center">
+          <p className="text-gray-500 text-lg">
+            Loading ceremonies...
+          </p>
         </div>
-        {/*Upload file*/}
-        <div className="border-2 border-primary border-dashed rounded-xl w-50 mt-14">
-          <label
-            htmlFor="File"
-            className="flex flex-col items-center rounded  p-4 text-gray-900 shadow-sm sm:p-6 cursor-pointer"
+      ) : !Array.isArray(events) || events.length === 0 ? (
+        <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-8 text-center">
+          <p className="text-gray-500 text-lg">
+            No ceremonies found for review.
+          </p>
+        </div>
+      ) : (
+        events.map((event) => (
+          <div
+            key={event._id}
+            className="bg-white rounded-2xl border border-primary p-4 md:p-6 shadow-xl w-full flex flex-col"
           >
-            <FaLink className="text-primary text-4xl" />
-            <span className="mt-4 font-medium text-[#676767]"> Add Notes </span>
-
-            <input multiple type="file" id="File" className="sr-only" />
-          </label>
-        </div>
-        {/*Notes*/}
-        <div className="space-y-8 mt-8">
-          <div className="bg-white rounded-2xl border border-primary p-4 md:p-6 shadow-xl w-full flex flex-col">
+            {/* Top Section */}
             <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-2">
               <div className="flex flex-wrap gap-x-8 gap-y-2">
                 <span className="text-primary font-primary font-medium text-base md:text-lg">
-                  Title :{" "}
-                  <span className=" text-black font-bold">
-                    Garden Vows-Sunset
+                  Title:{" "}
+                  <span className="font-medium text-black">
+                    {event.title}
                   </span>
+                </span>
+                <span
+                  className={`p-1 border border-primary rounded-full px-2 text-center font-bold ${
+                    event.status === "approved"
+                      ? "text-green-600"
+                      : event.status === "planned"
+                      ? "text-yellow-600"
+                      : event.status === "submitted"
+                      ? "text-blue-600"
+                      : event.status === "completed"
+                      ? "text-blue-600"
+                      : event.status === "canceled" ||
+                        event.status === "cancelled"
+                      ? "text-red-600"
+                      : "text-gray-600"
+                  }`}
+                >
+                  {event.status}
                 </span>
               </div>
               <span className="text-xs text-primary font-secondary mt-2 md:mt-0">
-                12-20-25
+                {new Date(event.createdAt).toLocaleDateString()}
               </span>
             </div>
+
+            {/* User Information */}
             <hr className="border-t border-primary mb-4" />
-            <div className="text-gray-700 text-sm md:text-base mb-4">
-              <input
-                type="text"
-                placeholder="Type Here "
-                className="mb-20 w-full border-none"
-              />
+            <div className="mb-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                <div>
+                  <span className="text-primary font-medium">Couple:</span>
+                  <span className="text-gray-700 ml-2">
+                    {event.groomName && event.brideName
+                      ? `${event.groomName} & ${event.brideName}`
+                      : "Names not specified"}
+                  </span>
+                </div>
+                <div>
+                  <span className="text-primary font-medium">Event Date:</span>
+                  <span className="text-gray-700 ml-2">
+                    {event.eventDate
+                      ? new Date(event.eventDate).toLocaleDateString()
+                      : "Date not specified"}
+                  </span>
+                </div>
+                <div>
+                  <span className="text-primary font-medium">Location:</span>
+                  <span className="text-gray-700 ml-2">
+                    {event.location || "Location not specified"}
+                  </span>
+                </div>
+                <div>
+                  <span className="text-primary font-medium">Officiant:</span>
+                  <span className="text-gray-700 ml-2">
+                    {event.officiantName || "Officiant not specified"}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Description */}
+            <hr className="border-t border-primary mb-4" />
+            <div className="text-gray-700 min-h-24 text-sm md:text-base mb-4">
+              {event.description || "No description provided"}
             </div>
             <hr className="border-t border-primary mb-4" />
+
+            {/* Buttons */}
             <div className="flex justify-end gap-4">
-              <button className="px-6 py-2 border border-primary text-primary rounded-full font-medium hover:bg-primary hover:text-white transition-colors">
-                Save
+              <button
+                onClick={() => handleCancel(event._id)}
+                disabled={loading || event.status === "canceled" || event.status === "cancelled"}
+                className="px-6 py-2 border border-red-500 text-red-500 rounded-full font-medium hover:bg-red-500 hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {loading ? "Processing..." : "Cancel"}
               </button>
-              <button className="px-6 py-2 border border-primary text-white bg-primary rounded-full font-medium hover:bg-primary hover:text-white transition-colors">
-                Send
+              <button
+                onClick={() => handleApprove(event._id)}
+                disabled={loading || event.status === "approved"}
+                className="px-6 py-2 border border-green-500 text-green-500 rounded-full font-medium hover:bg-green-500 hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {loading ? "Processing..." : "Approve"}
+              </button>
+              <button
+                onClick={() => openViewModal(event)}
+                className="px-6 py-2 border border-primary text-[#e0b94c] rounded-full font-medium hover:bg-primary hover:text-white transition-colors"
+              >
+                View
               </button>
             </div>
           </div>
-        </div>
-      </div>
-    </div>
-  );
-};
+        ))
+      )}
 
-export default CeremonyReview;
+      {/* View Modal */}
+      <dialog id="ceremony_view_modal" className="modal">
+        <div className="modal-box max-w-5xl bg-white text-gray-800 rounded-2xl shadow-lg max-h-[90vh] overflow-y-auto">
+          <form method="dialog">
+            <button className="btn btn-sm btn-circle btn-ghost absolute right-3 top-3 z-10">
+              ✕
+            </button>
+          </form>
+
+          {selectedEvent && (
+            <>
+              <h2 className="text-2xl font-bold text-[#e0b94c] mb-6 pr-8">
+                {selectedEvent.title}
+              </h2>
+
+              {/* Basic Information */}
+              <div className="mb-6">
+                <h3 className="text-lg font-semibold text-gray-800 mb-3 border-b border-gray-200 pb-2">
+                  Basic Information
+                </h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                  <div>
+                    <p className="text-sm text-gray-500">Ceremony Type</p>
+                    <p className="font-semibold">{selectedEvent.ceremonyType || "—"}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-500">Language</p>
+                    <p className="font-semibold">{selectedEvent.language || "—"}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-500">Event Date</p>
+                    <p className="font-semibold">
+                      {selectedEvent.eventDate
+                        ? new Date(selectedEvent.eventDate).toLocaleDateString()
+                        : "—"}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-500">Event Time</p>
+                    <p className="font-semibold">
+                      {selectedEvent.eventTime
+                        ? new Date(selectedEvent.eventTime).toLocaleTimeString([], {
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          })
+                        : "—"}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-500">Location</p>
+                    <p className="font-semibold">{selectedEvent.location || "—"}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-500">Officiant</p>
+                    <p className="font-semibold">{selectedEvent.officiantName || "—"}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-500">Rehearsal Date</p>
+                    <p className="font-semibold">
+                      {selectedEvent.rehearsalDate
+                        ? new Date(selectedEvent.rehearsalDate).toLocaleDateString()
+                        : "—"}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-500">Status</p>
+                    <span className="px-3 py-1 text-sm rounded-full bg-[#e0b94c] text-white font-medium">
+                      {selectedEvent.status}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Couple Information */}
+              {(selectedEvent.groomName || selectedEvent.brideName) && (
+                <div className="mb-6">
+                  <h3 className="text-lg font-semibold text-gray-800 mb-3 border-b border-gray-200 pb-2">
+                    Couple
+                  </h3>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    {selectedEvent.groomName && (
+                      <div>
+                        <p className="text-sm text-gray-500">Groom's Name</p>
+                        <p className="font-semibold">{selectedEvent.groomName}</p>
+                      </div>
+                    )}
+                    {selectedEvent.brideName && (
+                      <div>
+                        <p className="text-sm text-gray-500">Bride's Name</p>
+                        <p className="font-semibold">{selectedEvent.brideName}</p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* Description */}
+              {selectedEvent.description && (
+                <div className="mb-6">
+                  <h3 className="text-lg font-semibold text-gray-800 mb-3 border-b border-gray-200 pb-2">
+                    Description
+                  </h3>
+                  <p className="font-medium text-gray-700 leading-relaxed">
+                    {selectedEvent.description}
+                  </p>
+                </div>
+              )}
+
+              {/* Greeting Elements */}
+              <div className="mb-6">
+                <h3 className="text-lg font-semibold text-gray-800 mb-3 border-b border-gray-200 pb-2">
+                  Greeting Elements
+                </h3>
+                <div className="space-y-4">
+                  {[
+                    { label: "Greeting Speech", key: "greetingSpeech" },
+                    { label: "Presentation of Bride", key: "presentationOfBride" },
+                    { label: "Question for Presentation", key: "questionForPresentation" },
+                    { label: "Response to Question", key: "responseToQuestion" },
+                    { label: "Invocation", key: "invocation" },
+                  ].map(item => {
+                    const content = selectedEvent[item.key as keyof CeremonyEvent] as string;
+                    return content ? (
+                      <div key={item.key}>
+                        <p className="text-sm text-gray-500 font-medium">{item.label}</p>
+                        <p className="font-medium text-gray-700 mt-1">{content}</p>
+                      </div>
+                    ) : null;
+                  })}
+                </div>
+              </div>
+
+              {/* Vows Elements */}
+              <div className="mb-6">
+                <h3 className="text-lg font-semibold text-gray-800 mb-3 border-b border-gray-200 pb-2">
+                  Vows Elements
+                </h3>
+                <div className="space-y-4">
+                  {[
+                    { label: "Charge to Groom and Bride", key: "chargeToGroomAndBride" },
+                    { label: "Pledge", key: "pledge" },
+                    { label: "Introduction to Exchange of Vows", key: "introductionToExchangeOfVows" },
+                    { label: "Vows", key: "vows" },
+                    { label: "Readings", key: "readings" },
+                    { label: "Introduction to Exchange of Rings", key: "introductionToExchangeOfRings" },
+                    { label: "Blessings of Rings", key: "blessingsOfRings" },
+                    { label: "Exchange of Rings (Groom)", key: "exchangeOfRingsGroom" },
+                    { label: "Exchange of Rings (Bride)", key: "exchangeOfRingsBride" },
+                    { label: "Prayer on the New Union", key: "prayerOnTheNewUnion" },
+                  ].map(item => {
+                    const content = selectedEvent[item.key as keyof CeremonyEvent] as string;
+                    return content ? (
+                      <div key={item.key}>
+                        <p className="text-sm text-gray-500 font-medium">{item.label}</p>
+                        <p className="font-medium text-gray-700 mt-1">{content}</p>
+                      </div>
+                    ) : null;
+                  })}
+                </div>
+              </div>
+
+              {/* Ritual Elements */}
+              <div className="mb-6">
+                <h3 className="text-lg font-semibold text-gray-800 mb-3 border-b border-gray-200 pb-2">
+                  Ritual Elements
+                </h3>
+                <div className="space-y-4">
+                  {[
+                    { label: "Rituals Selection", key: "ritualsSelection" },
+                    { label: "Rituals Option", key: "ritualsOption" },
+                    { label: "Closing Statement", key: "closingStatement" },
+                    { label: "Pronouncing", key: "pronouncing" },
+                    { label: "Kiss", key: "kiss" },
+                    { label: "Introduction of Couple", key: "introductionOfCouple" },
+                  ].map(item => {
+                    const content = selectedEvent[item.key as keyof CeremonyEvent] as string;
+                    return content ? (
+                      <div key={item.key}>
+                        <p className="text-sm text-gray-500 font-medium">{item.label}</p>
+                        <p className="font-medium text-gray-700 mt-1">{content}</p>
+                      </div>
+                    ) : null;
+                  })}
+                </div>
+              </div>
+
+              {/* Timestamps */}
+              <div className="pt-4 border-t border-gray-200">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm text-gray-500">
+                  <div>
+                    <span className="font-medium">Created: </span>
+                    {new Date(selectedEvent.createdAt).toLocaleDateString()} at{" "}
+                    {new Date(selectedEvent.createdAt).toLocaleTimeString([], {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}
+                  </div>
+                  <div>
+                    <span className="font-medium">Last Updated: </span>
+                    {new Date(selectedEvent.updatedAt).toLocaleDateString()} at{" "}
+                    {new Date(selectedEvent.updatedAt).toLocaleTimeString([], {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}
+                  </div>
+                </div>
+              </div>
+            </>
+          )}
+        </div>
+      </dialog>
+    </div>
+  )
+}
+
+export default CeremonyReview

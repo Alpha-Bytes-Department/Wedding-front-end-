@@ -137,7 +137,35 @@ const GreetingsStep = ({
   };
 
   const handleSelection = (fieldName: string, optionId: string) => {
-    onSelectDropdown(fieldName, optionId);
+    // Find the option and get its content with name replacements
+    let options: GreetingOption[] = [];
+    switch (fieldName) {
+      case "greetingSpeech":
+        options = greetingOptions;
+        break;
+      case "presentationOfBride":
+        options = presentationOptions;
+        break;
+      case "questionForPresentation":
+        options = questionOptions;
+        break;
+      case "responseToQuestion":
+        options = responseOptions;
+        break;
+      case "invocation":
+        options = invocationOptions;
+        break;
+    }
+    
+    const option = options.find(opt => opt.id === optionId);
+    if (option) {
+      const currentBrideName = brideName || "Bride's Name";
+      const currentGroomName = groomName || "Groom's Name";
+      const content = option.content
+        .replace(/{bride_name}/g, currentBrideName)
+        .replace(/{groom_name}/g, currentGroomName);
+      onSelectDropdown(fieldName, content);
+    }
   };
 
   const getOptionContent = (
@@ -203,17 +231,13 @@ const GreetingsStep = ({
           name="language"
           options={[
             "English",
-            "Spanish",
             "French",
-            "German",
-            "Italian",
-            "Portuguese",
           ]}
-          value={watch("language")}
+          value={watch("language") || ""}
           placeholder="Select language"
           isOpen={openDropdowns.language || false}
           onToggle={() => onToggleDropdown("language")}
-          onSelect={(value) => onSelectDropdown("language", value)}
+          onSelect={(name, value) => onSelectDropdown(name, value)}
         />
       </div>
 
@@ -226,7 +250,19 @@ const GreetingsStep = ({
           <CustomDropdown
             name="greetingSpeech"
             options={greetingOptions.map((opt) => opt.label)}
-            value={watch("greetingSpeech")}
+            value={(() => {
+              const currentContent = watch("greetingSpeech");
+              if (!currentContent) return "";
+              const currentBrideName = brideName || "Bride's Name";
+              const currentGroomName = groomName || "Groom's Name";
+              const currentOption = greetingOptions.find((opt) => {
+                const optionContent = opt.content
+                  .replace(/{bride_name}/g, currentBrideName)
+                  .replace(/{groom_name}/g, currentGroomName);
+                return optionContent === currentContent;
+              });
+              return currentOption?.label || "";
+            })()}
             placeholder="Select greeting option"
             isOpen={openDropdowns.greetingSpeech || false}
             onToggle={() => onToggleDropdown("greetingSpeech")}
@@ -263,7 +299,19 @@ const GreetingsStep = ({
             <CustomDropdown
               name="presentationOfBride"
               options={presentationOptions.map((opt) => opt.label)}
-              value={watch("presentationOfBride")}
+              value={(() => {
+                const currentContent = watch("presentationOfBride");
+                if (!currentContent) return "";
+                const currentBrideName = brideName || "Bride's Name";
+                const currentGroomName = groomName || "Groom's Name";
+                const currentOption = presentationOptions.find((opt) => {
+                  const optionContent = opt.content
+                    .replace(/{bride_name}/g, currentBrideName)
+                    .replace(/{groom_name}/g, currentGroomName);
+                  return optionContent === currentContent;
+                });
+                return currentOption?.label || "";
+              })()}
               placeholder="Select presentation option"
               isOpen={openDropdowns.presentationOfBride || false}
               onToggle={() => onToggleDropdown("presentationOfBride")}
@@ -298,7 +346,19 @@ const GreetingsStep = ({
             <CustomDropdown
               name="questionForPresentation"
               options={questionOptions.map((opt) => opt.label)}
-              value={watch("questionForPresentation")}
+              value={(() => {
+                const currentContent = watch("questionForPresentation");
+                if (!currentContent) return "";
+                const currentBrideName = brideName || "Bride's Name";
+                const currentGroomName = groomName || "Groom's Name";
+                const currentOption = questionOptions.find((opt) => {
+                  const optionContent = opt.content
+                    .replace(/{bride_name}/g, currentBrideName)
+                    .replace(/{groom_name}/g, currentGroomName);
+                  return optionContent === currentContent;
+                });
+                return currentOption?.label || "";
+              })()}
               placeholder="Select question option"
               isOpen={openDropdowns.questionForPresentation || false}
               onToggle={() => onToggleDropdown("questionForPresentation")}
@@ -334,7 +394,19 @@ const GreetingsStep = ({
             <CustomDropdown
               name="responseToQuestion"
               options={responseOptions.map((opt) => opt.label)}
-              value={watch("responseToQuestion")}
+              value={(() => {
+                const currentContent = watch("responseToQuestion");
+                if (!currentContent) return "";
+                const currentBrideName = brideName || "Bride's Name";
+                const currentGroomName = groomName || "Groom's Name";
+                const currentOption = responseOptions.find((opt) => {
+                  const optionContent = opt.content
+                    .replace(/{bride_name}/g, currentBrideName)
+                    .replace(/{groom_name}/g, currentGroomName);
+                  return optionContent === currentContent;
+                });
+                return currentOption?.label || "";
+              })()}
               placeholder="Select response option"
               isOpen={openDropdowns.responseToQuestion || false}
               onToggle={() => onToggleDropdown("responseToQuestion")}
@@ -369,7 +441,19 @@ const GreetingsStep = ({
             <CustomDropdown
               name="invocation"
               options={invocationOptions.map((opt) => opt.label)}
-              value={watch("invocation")}
+              value={(() => {
+                const currentContent = watch("invocation");
+                if (!currentContent) return "";
+                const currentBrideName = brideName || "Bride's Name";
+                const currentGroomName = groomName || "Groom's Name";
+                const currentOption = invocationOptions.find((opt) => {
+                  const optionContent = opt.content
+                    .replace(/{bride_name}/g, currentBrideName)
+                    .replace(/{groom_name}/g, currentGroomName);
+                  return optionContent === currentContent;
+                });
+                return currentOption?.label || "";
+              })()}
               placeholder="Select invocation option"
               isOpen={openDropdowns.invocation || false}
               onToggle={() => onToggleDropdown("invocation")}

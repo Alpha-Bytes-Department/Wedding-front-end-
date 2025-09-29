@@ -248,7 +248,50 @@ const VowsStep = ({
   };
 
   const handleSelection = (fieldName: string, optionId: string) => {
-    onSelectDropdown(fieldName, optionId);
+    // Find the option and get its content with name replacements
+    let options: VowOption[] = [];
+    switch (fieldName) {
+      case "chargeToGroomAndBride":
+        options = chargeOptions;
+        break;
+      case "pledge":
+        options = pledgeOptions;
+        break;
+      case "introductionToExchangeOfVows":
+        options = vowIntroOptions;
+        break;
+      case "vows":
+        options = vowOptions;
+        break;
+      case "readings":
+        options = readingOptions;
+        break;
+      case "introductionToExchangeOfRings":
+        options = ringIntroOptions;
+        break;
+      case "blessingsOfRings":
+        options = ringBlessingOptions;
+        break;
+      case "exchangeOfRingsGroom":
+        options = ringExchangeGroomOptions;
+        break;
+      case "exchangeOfRingsBride":
+        options = ringExchangeBrideOptions;
+        break;
+      case "prayerOnTheNewUnion":
+        options = prayerOptions;
+        break;
+    }
+    
+    const option = options.find(opt => opt.id === optionId);
+    if (option) {
+      const currentBrideName = brideName || "Bride's Name";
+      const currentGroomName = groomName || "Groom's Name";
+      const content = option.content
+        .replace(/{bride_name}/g, currentBrideName)
+        .replace(/{groom_name}/g, currentGroomName);
+      onSelectDropdown(fieldName, content);
+    }
   };
 
   const getOptionContent = (
@@ -276,7 +319,19 @@ const VowsStep = ({
           <CustomDropdown
             name="chargeToGroomAndBride"
             options={chargeOptions.map((opt) => opt.label)}
-            value={watch("chargeToGroomAndBride")}
+            value={(() => {
+              const currentContent = watch("chargeToGroomAndBride");
+              if (!currentContent) return "";
+              const currentBrideName = brideName || "Bride's Name";
+              const currentGroomName = groomName || "Groom's Name";
+              const currentOption = chargeOptions.find((opt) => {
+                const optionContent = opt.content
+                  .replace(/{bride_name}/g, currentBrideName)
+                  .replace(/{groom_name}/g, currentGroomName);
+                return optionContent === currentContent;
+              });
+              return currentOption?.label || "";
+            })()}
             placeholder="Select charge option"
             isOpen={openDropdowns.chargeToGroomAndBride || false}
             onToggle={() => onToggleDropdown("chargeToGroomAndBride")}
@@ -309,7 +364,19 @@ const VowsStep = ({
           <CustomDropdown
             name="pledge"
             options={pledgeOptions.map((opt) => opt.label)}
-            value={watch("pledge")}
+            value={(() => {
+              const currentContent = watch("pledge");
+              if (!currentContent) return "";
+              const currentBrideName = brideName || "Bride's Name";
+              const currentGroomName = groomName || "Groom's Name";
+              const currentOption = pledgeOptions.find((opt) => {
+                const optionContent = opt.content
+                  .replace(/{bride_name}/g, currentBrideName)
+                  .replace(/{groom_name}/g, currentGroomName);
+                return optionContent === currentContent;
+              });
+              return currentOption?.label || "";
+            })()}
             placeholder="Select pledge option"
             isOpen={openDropdowns.pledge || false}
             onToggle={() => onToggleDropdown("pledge")}
@@ -342,7 +409,19 @@ const VowsStep = ({
           <CustomDropdown
             name="introductionToExchangeOfVows"
             options={vowIntroOptions.map((opt) => opt.label)}
-            value={watch("introductionToExchangeOfVows")}
+            value={(() => {
+              const currentContent = watch("introductionToExchangeOfVows");
+              if (!currentContent) return "";
+              const currentBrideName = brideName || "Bride's Name";
+              const currentGroomName = groomName || "Groom's Name";
+              const currentOption = vowIntroOptions.find((opt) => {
+                const optionContent = opt.content
+                  .replace(/{bride_name}/g, currentBrideName)
+                  .replace(/{groom_name}/g, currentGroomName);
+                return optionContent === currentContent;
+              });
+              return currentOption?.label || "";
+            })()}
             placeholder="Select vow introduction option"
             isOpen={openDropdowns.introductionToExchangeOfVows || false}
             onToggle={() => onToggleDropdown("introductionToExchangeOfVows")}
@@ -376,7 +455,19 @@ const VowsStep = ({
           <CustomDropdown
             name="vows"
             options={vowOptions.map((opt) => opt.label)}
-            value={watch("vows")}
+            value={(() => {
+              const currentContent = watch("vows");
+              if (!currentContent) return "";
+              const currentBrideName = brideName || "Bride's Name";
+              const currentGroomName = groomName || "Groom's Name";
+              const currentOption = vowOptions.find((opt) => {
+                const optionContent = opt.content
+                  .replace(/{bride_name}/g, currentBrideName)
+                  .replace(/{groom_name}/g, currentGroomName);
+                return optionContent === currentContent;
+              });
+              return currentOption?.label || "";
+            })()}
             placeholder="Select vow option"
             isOpen={openDropdowns.vows || false}
             onToggle={() => onToggleDropdown("vows")}
@@ -409,7 +500,19 @@ const VowsStep = ({
           <CustomDropdown
             name="readings"
             options={readingOptions.map((opt) => opt.label)}
-            value={watch("readings")}
+            value={(() => {
+              const currentContent = watch("readings");
+              if (!currentContent) return "";
+              const currentBrideName = brideName || "Bride's Name";
+              const currentGroomName = groomName || "Groom's Name";
+              const currentOption = readingOptions.find((opt) => {
+                const optionContent = opt.content
+                  .replace(/{bride_name}/g, currentBrideName)
+                  .replace(/{groom_name}/g, currentGroomName);
+                return optionContent === currentContent;
+              });
+              return currentOption?.label || "";
+            })()}
             placeholder="Select reading option"
             isOpen={openDropdowns.readings || false}
             onToggle={() => onToggleDropdown("readings")}
@@ -442,7 +545,19 @@ const VowsStep = ({
           <CustomDropdown
             name="introductionToExchangeOfRings"
             options={ringIntroOptions.map((opt) => opt.label)}
-            value={watch("introductionToExchangeOfRings")}
+            value={(() => {
+              const currentContent = watch("introductionToExchangeOfRings");
+              if (!currentContent) return "";
+              const currentBrideName = brideName || "Bride's Name";
+              const currentGroomName = groomName || "Groom's Name";
+              const currentOption = ringIntroOptions.find((opt) => {
+                const optionContent = opt.content
+                  .replace(/{bride_name}/g, currentBrideName)
+                  .replace(/{groom_name}/g, currentGroomName);
+                return optionContent === currentContent;
+              });
+              return currentOption?.label || "";
+            })()}
             placeholder="Select ring introduction option"
             isOpen={openDropdowns.introductionToExchangeOfRings || false}
             onToggle={() => onToggleDropdown("introductionToExchangeOfRings")}
@@ -478,7 +593,19 @@ const VowsStep = ({
           <CustomDropdown
             name="blessingsOfRings"
             options={ringBlessingOptions.map((opt) => opt.label)}
-            value={watch("blessingsOfRings")}
+            value={(() => {
+              const currentContent = watch("blessingsOfRings");
+              if (!currentContent) return "";
+              const currentBrideName = brideName || "Bride's Name";
+              const currentGroomName = groomName || "Groom's Name";
+              const currentOption = ringBlessingOptions.find((opt) => {
+                const optionContent = opt.content
+                  .replace(/{bride_name}/g, currentBrideName)
+                  .replace(/{groom_name}/g, currentGroomName);
+                return optionContent === currentContent;
+              });
+              return currentOption?.label || "";
+            })()}
             placeholder="Select ring blessing option"
             isOpen={openDropdowns.blessingsOfRings || false}
             onToggle={() => onToggleDropdown("blessingsOfRings")}
@@ -513,7 +640,19 @@ const VowsStep = ({
           <CustomDropdown
             name="exchangeOfRingsGroom"
             options={ringExchangeGroomOptions.map((opt) => opt.label)}
-            value={watch("exchangeOfRingsGroom")}
+            value={(() => {
+              const currentContent = watch("exchangeOfRingsGroom");
+              if (!currentContent) return "";
+              const currentBrideName = brideName || "Bride's Name";
+              const currentGroomName = groomName || "Groom's Name";
+              const currentOption = ringExchangeGroomOptions.find((opt) => {
+                const optionContent = opt.content
+                  .replace(/{bride_name}/g, currentBrideName)
+                  .replace(/{groom_name}/g, currentGroomName);
+                return optionContent === currentContent;
+              });
+              return currentOption?.label || "";
+            })()}
             placeholder="Select groom's ring exchange option"
             isOpen={openDropdowns.exchangeOfRingsGroom || false}
             onToggle={() => onToggleDropdown("exchangeOfRingsGroom")}
@@ -548,7 +687,19 @@ const VowsStep = ({
           <CustomDropdown
             name="exchangeOfRingsBride"
             options={ringExchangeBrideOptions.map((opt) => opt.label)}
-            value={watch("exchangeOfRingsBride")}
+            value={(() => {
+              const currentContent = watch("exchangeOfRingsBride");
+              if (!currentContent) return "";
+              const currentBrideName = brideName || "Bride's Name";
+              const currentGroomName = groomName || "Groom's Name";
+              const currentOption = ringExchangeBrideOptions.find((opt) => {
+                const optionContent = opt.content
+                  .replace(/{bride_name}/g, currentBrideName)
+                  .replace(/{groom_name}/g, currentGroomName);
+                return optionContent === currentContent;
+              });
+              return currentOption?.label || "";
+            })()}
             placeholder="Select bride's ring exchange option"
             isOpen={openDropdowns.exchangeOfRingsBride || false}
             onToggle={() => onToggleDropdown("exchangeOfRingsBride")}
@@ -583,7 +734,19 @@ const VowsStep = ({
           <CustomDropdown
             name="prayerOnTheNewUnion"
             options={prayerOptions.map((opt) => opt.label)}
-            value={watch("prayerOnTheNewUnion")}
+            value={(() => {
+              const currentContent = watch("prayerOnTheNewUnion");
+              if (!currentContent) return "";
+              const currentBrideName = brideName || "Bride's Name";
+              const currentGroomName = groomName || "Groom's Name";
+              const currentOption = prayerOptions.find((opt) => {
+                const optionContent = opt.content
+                  .replace(/{bride_name}/g, currentBrideName)
+                  .replace(/{groom_name}/g, currentGroomName);
+                return optionContent === currentContent;
+              });
+              return currentOption?.label || "";
+            })()}
             placeholder="Select prayer option"
             isOpen={openDropdowns.prayerOnTheNewUnion || false}
             onToggle={() => onToggleDropdown("prayerOnTheNewUnion")}

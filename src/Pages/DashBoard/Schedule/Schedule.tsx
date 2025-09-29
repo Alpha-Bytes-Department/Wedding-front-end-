@@ -92,7 +92,7 @@ const Schedule = () => {
         : "",
       officiantId: data.officiant ? JSON.parse(data.officiant).id : "",
       message: data.note || "",
-      approvedStatus: false,
+      
     };
     console.log(scheduledData);
     try {

@@ -279,10 +279,10 @@ const Ceremony = () => {
         await GlassSwal.success("Success", "Ceremony completed successfully!");
         setEditingCeremony(null);
       } else {
-        // Create new ceremony with completed status
+        // Create new ceremony with submitted status
         const ceremonyData = {
           ...data,
-          status: "completed" as const,
+          status: "submitted" as const,
         };
 
         const newCeremony = await ceremonyApi.createCeremony(
@@ -540,6 +540,7 @@ const Ceremony = () => {
                   <RitualsStep
                     register={register}
                     watch={watch}
+                    setValue={setValue}
                     openDropdowns={openDropdowns}
                     onToggleDropdown={toggleDropdown}
                     onSelectDropdown={handleDropdownSelect}
@@ -552,7 +553,7 @@ const Ceremony = () => {
                 )}
 
                 {/* Step 6: Review */}
-                {currentStep === 6 && <ReviewStep watch={watch} />}
+                {currentStep === 6 && <ReviewStep watch={watch} setValue={setValue} />}
 
                 {/* Navigation Buttons */}
                 <NavigationButtons

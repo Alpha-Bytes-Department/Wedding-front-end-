@@ -106,7 +106,8 @@ export class CeremonyApiService {
       const payload = {
         ...formattedData,
         userId,
-        status: "planned",
+        // Use the status from ceremonyData if provided, otherwise default to "planned"
+        status: ceremonyData.status || "planned",
       };
 
       const response = await this.axios.post("/events/create", payload);

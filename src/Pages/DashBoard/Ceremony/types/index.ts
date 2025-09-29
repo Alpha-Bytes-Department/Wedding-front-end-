@@ -35,6 +35,7 @@ export interface CeremonyFormData {
   rehearsalDate?: string; // Changed from 'rehearsal' to match backend
   officiantId?: string;
   officiantName?: string;
+  status?: "draft" | "planned" | "submitted" | "completed" | "approved" | "canceled";
 }
 
 export interface CeremonyData extends CeremonyFormData {
