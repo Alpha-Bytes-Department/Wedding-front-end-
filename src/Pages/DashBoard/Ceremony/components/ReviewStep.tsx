@@ -1,9 +1,24 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { CeremonyFormData } from "../types";
 import { useCeremonyContext } from "../contexts/CeremonyContext";
+import { useAxios } from "../../../../Component/Providers/useAxios";
+import { useAuth } from "../../../../Component/Providers/AuthProvider";
 
 interface ReviewStepProps {
   watch: (name: keyof CeremonyFormData) => string;
+  setValue: (name: keyof CeremonyFormData, value: string) => void;
+}
+
+interface Officiant {
+  id: string;
+  name: string;
+  profilePicture?: string;
+}
+
+interface ScheduleResponse {
+  officiantId: string;
+  officiantName: string;
+  officiantImage?: string;
 }
 
 // Option mappings for displaying labels instead of IDs
@@ -344,7 +359,7 @@ const getOptionContent = (
   return contentMappings[category]?.[optionId] || "Content not available";
 };
 
-const ReviewStep = ({ watch }: ReviewStepProps) => {
+const ReviewStep = ({ watch, setValue }: ReviewStepProps) => {
   const [selectedModal, setSelectedModal] = useState<{
     category: string;
     optionId: string;
@@ -360,6 +375,24 @@ const ReviewStep = ({ watch }: ReviewStepProps) => {
   const closeModal = () => {
     setSelectedModal(null);
   };
+
+  const axios=useAxios()
+  const {user}=useAuth()
+  const [officiant, setOfficiant] = useState<Officiant[]>([])
+  useEffect(() => {
+    const getOfficiants = async () => {
+      const response = await axios.get(`/schedule/get/${user?._id}`)
+      console.log('Available officiant: ', response.data)
+      const officiantList: Officiant[] = response.data.map((officiant: ScheduleResponse) => ({
+        id: officiant.officiantId,
+        name: officiant.officiantName,
+        profilePicture: officiant.officiantImage
+      }))
+      console.log('Formatted officiant list: ', officiantList)
+      setOfficiant(officiantList)
+    }
+    getOfficiants()
+  }, [user?._id, axios])
 
   // Helper function to format date for display
   const formatDate = (dateString: string) => {
@@ -1050,12 +1083,58 @@ const ReviewStep = ({ watch }: ReviewStepProps) => {
               </div>
             </div>
             <div>
-              <span className="font-medium text-gray-700 block">
-                Officiant:
+              <span className="font-medium text-gray-700 block mb-2">
+                Select Officiant:
               </span>
-              <span className="text-gray-900 bg-white px-3 py-2 rounded border block">
-                {watch("officiantName") || "Officiant not specified"}
-              </span>
+              <select
+                className="w-full px-3 py-2 border border-primary rounded-lg focus:outline-none focus:ring-2 focus:ring-primary bg-white text-gray-900"
+                value={watch("officiantId") || ""}
+                onChange={(e) => {
+                  const selectedOfficiant = officiant.find(off => off.id === e.target.value);
+                  if (selectedOfficiant) {
+                    // Store both officiantId and officiantName
+                    setValue("officiantId", selectedOfficiant.id);
+                    setValue("officiantName", selectedOfficiant.name);
+                  } else {
+                    // Clear values if no officiant selected
+                    setValue("officiantId", "");
+                    setValue("officiantName", "");
+                  }
+                }}
+              >
+                <option value="">Choose an officiant...</option>
+                {officiant.length > 0 ? (
+                  officiant.map((off) => (
+                    <option key={off.id} value={off.id}>
+                      {off.name}
+                    </option>
+                  ))
+                ) : (
+                  <option value="" disabled>
+                    No officiants available
+                  </option>
+                )}
+              </select>
+              {watch("officiantName") && (
+                <div className="mt-2 p-2 bg-green-50 border border-green-200 rounded-lg">
+                  <div className="flex items-center text-sm text-green-800">
+                    <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                    </svg>
+                    Selected Officiant: <span className="font-medium ml-1">{watch("officiantName")}</span>
+                  </div>
+                </div>
+              )}
+              {officiant.length === 0 && (
+                <div className="mt-2 p-2 bg-yellow-50 border border-yellow-200 rounded-lg">
+                  <div className="flex items-center text-sm text-yellow-800">
+                    <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                    </svg>
+                    No officiants found. Please contact support.
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
