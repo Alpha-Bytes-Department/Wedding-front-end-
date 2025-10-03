@@ -84,13 +84,16 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       const profilePicture = result.user.photoURL;
 
       // send token/email to your backend to register/login & get your own tokens
-      const response = await axios.post("http://localhost:5000/api/users/social-login", {
-        email,
-        firebaseToken: token,
-        partner_1,
-        partner_2,
-        profilePicture,
-      });
+      const response = await axios.post(
+        "https://wedding-biz-backend.onrender.com/api/users/social-login",
+        {
+          email,
+          firebaseToken: token,
+          partner_1,
+          partner_2,
+          profilePicture,
+        }
+      );
       console.log("Backend response:", response.data);
       login(response.data); // backend should respond with AuthResponse
     } catch (error) {
