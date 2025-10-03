@@ -84,15 +84,21 @@ export const useSocket = ({
   const [isConnected, setIsConnected] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const SOCKET_SERVER_URL =
-    serverUrl || process.env.REACT_APP_SOCKET_URL || "http://localhost:5000";
+    serverUrl || import.meta.env.VITE_APP_SOCKET_URL || "http://localhost:5000";
 
   useEffect(() => {
     // Initialize socket connection
     socketRef.current = io(SOCKET_SERVER_URL, {
-      transports: ["websocket", "polling"],
+      transports: ["polling", "websocket"], // Try polling first for better compatibility
       upgrade: true,
       rememberUpgrade: true,
       timeout: 20000,
+      forceNew: true,
+      secure: SOCKET_SERVER_URL.startsWith('https'),
+      autoConnect: true,
+      reconnection: true,
+      reconnectionAttempts: 5,
+      reconnectionDelay: 1000,
     });
 
     const socket = socketRef.current;
