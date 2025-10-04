@@ -82,15 +82,15 @@ const onSubmit = async (data: FormData) => {
             </div>
             <div className=" flex gap-3 items-center">
               <PiPhoneCallFill size={24} className=" text-primary" />{" "}
-              <p className=" font-secondary font-medium text-lg text-black">
+              <a href="tel:+18142017107" className=" font-secondary font-medium text-lg text-black">
                 +1 (814) 201-7107
-              </p>
+              </a>
             </div>
             <div className=" flex gap-3 items-center">
               <TbMail size={24} className=" text-primary" />{" "}
-              <p className=" font-secondary font-medium text-lg text-black">
+              <a href="mailto:info@erieweddingofficiants.com" className=" font-secondary font-medium text-lg text-black">
                 info@erieweddingofficiants.com
-              </p>
+              </a>
             </div>
           </div>
         </div>
@@ -104,6 +104,10 @@ const onSubmit = async (data: FormData) => {
               <input
                 {...register("firstName", {
                   required: "First name is required",
+                  pattern:{
+                    value: /^[A-Za-z]+$/,
+                    message: "First name should contain only letters"
+                  }
                 })}
                 placeholder="First Name"
                 className="w-full border p-2 rounded-lg outline-none border-gray-400 bg-gray-100 focus:bg-white transition-all duration-300 focus:border-[#D4AF37]"
@@ -116,7 +120,14 @@ const onSubmit = async (data: FormData) => {
             </div>
             <div className="flex-1">
               <input
-                {...register("lastName", { required: "Last name is required" })}
+                {...register("lastName",
+                   {
+                  required: "Last name is required",
+                  pattern:{
+                    value: /^[A-Za-z]+$/,
+                    message: "Last name should contain only letters"
+                  }
+                })}
                 placeholder="Last Name"
                 className="w-full border p-2 rounded-lg outline-none border-gray-400 bg-gray-100 focus:bg-white transition-all duration-300 focus:border-[#D4AF37]"
               />

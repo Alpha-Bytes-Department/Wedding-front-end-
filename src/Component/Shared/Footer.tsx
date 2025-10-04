@@ -88,7 +88,7 @@ const Footer = () => {
               className="border border-primary rounded-2xl text-xl font-secondary px-5 py-2 bg-[#D4AF3733]"
             />
             <button
-              className=" border border-primary rounded-2xl text-xl font-secondary px-5 py-2 bg-transparent"
+              className=" cursor-pointer border border-primary rounded-2xl text-xl font-secondary px-5 py-2 bg-transparent"
               type="submit"
             >
               Join
@@ -99,7 +99,7 @@ const Footer = () => {
             <span
               onClick={() =>
                 (
-                  document.getElementById("my_modal_3") as HTMLDialogElement
+                  document.getElementById("privacy-modal") as HTMLDialogElement
                 )?.showModal()
               }
               className="underline cursor-pointer"
@@ -241,7 +241,7 @@ const Footer = () => {
             </li>
           </ul>
         </div>
-        <div className="cursor-pointer">
+        <div className="">
           <h1 className=" text-start font-secondary font-semibold text-lg pb-3">
             Legal Info
           </h1>
@@ -249,28 +249,22 @@ const Footer = () => {
             <li
               onClick={() =>
                 (
-                  document.getElementById("my_modal_3") as HTMLDialogElement
+                  document.getElementById("privacy-modal") as HTMLDialogElement
                 )?.showModal()
               }
-              className=" text-[16px] text-text font-secondary py-3"
+              className=" cursor-pointer text-[16px] text-text font-secondary py-3"
             >
               Privacy Policy
             </li>
             <li
               onClick={() =>
                 (
-                  document.getElementById("my_modal_3") as HTMLDialogElement
+                  document.getElementById("privacy-modal") as HTMLDialogElement
                 )?.showModal()
               }
-              className=" text-[16px] text-text font-secondary py-3"
+              className="cursor-pointer text-[16px] text-text font-secondary py-3"
             >
               Terms of Use
-            </li>
-            <li
-              onClick={() => scrollToReview("contact")}
-              className=" text-[16px] text-text font-secondary py-3"
-            >
-              Support Center
             </li>
           </ul>
         </div>
@@ -285,7 +279,10 @@ const Footer = () => {
             >
               Social Media
             </li>
-            <li onClick={() => setGlowSubscribe(true)} className=" text-[16px] text-text cursor-pointer font-secondary py-3">
+            <li
+              onClick={() => setGlowSubscribe(true)}
+              className=" text-[16px] text-text cursor-pointer font-secondary py-3"
+            >
               Newsletter
             </li>
 
@@ -303,11 +300,9 @@ const Footer = () => {
               <a href="mailto:info@erieweddingofficiants.com">Email Us</a>
             </li>
             <li className=" text-[16px] text-text font-secondary py-3">
-              <a  href="tel:+18142017107">Call Us</a>
+              <a href="tel:+18142017107">Call Us</a>
             </li>
-            <li onClick={() => scrollToReview("contact")} className=" text-[16px] cursor-pointer text-text font-secondary py-3">
-              Help Center
-            </li>
+           
           </ul>
         </div>
       </div>
@@ -331,7 +326,7 @@ const Footer = () => {
         </div>
       </div>
       {/*=================== Privacy policy modal ===========================  */}
-      <dialog id="my_modal_3" className="modal ">
+      <dialog id="privacy-modal" className="modal ">
         <div className="modal-box max-w-4xl">
           <form method="dialog">
             {/* if there is a button in form, it will close the modal */}
@@ -352,10 +347,11 @@ const Footer = () => {
             </p>
 
             <p>
-              At <strong>Your Company</strong>, we value your trust and are
-              committed to protecting your privacy. This Privacy Policy explains
-              how we collect, use, and safeguard your information when you
-              interact with our website, services, and communications.
+              At <strong>Erie Wedding Officiants</strong>, we value your trust
+              and are committed to protecting your privacy. This Privacy Policy
+              explains how we collect, use, and safeguard your information when
+              you interact with our wedding event management services, website,
+              and communications.
             </p>
 
             <h3 className="font-semibold text-lg text-primary">
@@ -364,7 +360,12 @@ const Footer = () => {
             <ul className="list-disc list-inside space-y-2">
               <li>
                 <strong>Personal Information:</strong> such as your name, email
-                address, and contact details when you subscribe or sign up.
+                address, phone number, and contact details when you inquire
+                about our wedding services or subscribe to our updates.
+              </li>
+              <li>
+                <strong>Wedding Details:</strong> event dates, venues, guest
+                count, and specific ceremony requirements.
               </li>
               <li>
                 <strong>Usage Data:</strong> information on how you use our
@@ -381,10 +382,19 @@ const Footer = () => {
               2. How We Use Your Information
             </h3>
             <ul className="list-disc list-inside space-y-2">
-              <li>To send you updates, newsletters, and promotional offers.</li>
-              <li>To personalize your experience and improve our services.</li>
               <li>
-                To respond to your inquiries and provide customer support.
+                To provide wedding officiant and event management services.
+              </li>
+              <li>
+                To send you updates, newsletters, and promotional offers related
+                to wedding services.
+              </li>
+              <li>
+                To personalize your wedding experience and improve our services.
+              </li>
+              <li>
+                To respond to your inquiries and provide customer support for
+                your special day.
               </li>
               <li>To comply with legal and regulatory requirements.</li>
             </ul>
@@ -399,7 +409,12 @@ const Footer = () => {
             <ul className="list-disc list-inside space-y-2">
               <li>
                 <strong>Service Providers:</strong> trusted third parties who
-                assist in operating our website or sending communications.
+                assist in operating our website, processing payments, or
+                providing wedding-related services.
+              </li>
+              <li>
+                <strong>Wedding Vendors:</strong> only with your explicit
+                consent to coordinate your event.
               </li>
               <li>
                 <strong>Legal Obligations:</strong> when required by law or to
@@ -412,8 +427,8 @@ const Footer = () => {
             </h3>
             <p>
               We implement industry-standard measures to protect your personal
-              information. However, no online system can guarantee 100%
-              security.
+              information and wedding details. However, no online system can
+              guarantee 100% security.
             </p>
 
             <h3 className="font-semibold text-lg text-primary">
@@ -441,8 +456,9 @@ const Footer = () => {
               7. Third-Party Links
             </h3>
             <p>
-              Our website may contain links to third-party sites. We are not
-              responsible for the privacy practices of external websites.
+              Our website may contain links to third-party wedding vendor sites.
+              We are not responsible for the privacy practices of external
+              websites.
             </p>
 
             <h3 className="font-semibold text-lg text-primary">
@@ -460,9 +476,9 @@ const Footer = () => {
               If you have any questions about this Privacy Policy, you can
               contact us at:
               <br />
-              📧 support@example.com
+              📧 info@erieweddingofficiants.com
               <br />
-              📍 Company Address, City, Country
+              📍 123 Love Lane, Erie, Pennsylvania
             </p>
           </div>
         </div>

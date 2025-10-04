@@ -146,16 +146,17 @@ const Schedule = () => {
               </select>
             </div>
             <div className="flex gap-4 flex-col md:flex-row">
-              <div className="flex-1">
+                <div className="flex-1">
                 <label className="block font-medium mb-1">Date</label>
                 <input
                   type="date"
+                  min={new Date().toISOString().split('T')[0]}
                   {...register("date", {
-                    required: "Meeting date is required",
+                  required: "Meeting date is required",
                   })}
                   className="w-full border border-primary rounded-lg px-4 py-2 focus:outline-none"
                 />
-              </div>
+                </div>
               <div className="flex-1">
                 <label className="block font-medium mb-1">Time</label>
                 <input

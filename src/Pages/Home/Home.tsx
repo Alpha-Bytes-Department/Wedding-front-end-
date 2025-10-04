@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import {  useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { Ceremony, Buttons } from "./Ceremony";
 import ClientReview from "./ClientReview";
@@ -24,7 +24,17 @@ const Home = () => {
         }
       }, 300); // Slightly longer delay for components to fully render
     }
+    else {
+      // Scroll to top if no hash
+      window.scrollTo({
+        top: 0,
+        left: 0,
+        behavior: "smooth"
+      });
+    }
   }, [location]);
+ 
+
   return (
     <div className="text-black ">
       <Header />

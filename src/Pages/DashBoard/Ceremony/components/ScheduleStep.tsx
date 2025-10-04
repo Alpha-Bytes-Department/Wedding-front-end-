@@ -1,12 +1,19 @@
-import type { UseFormRegister, FieldErrors } from "react-hook-form";
+import type {
+  UseFormRegister,
+  FieldErrors,
+  UseFormWatch,
+} from "react-hook-form";
 import type { CeremonyFormData } from "../types";
 
 interface ScheduleStepProps {
   register: UseFormRegister<CeremonyFormData>;
   errors: FieldErrors<CeremonyFormData>;
+  watch: UseFormWatch<CeremonyFormData>;
 }
 
-const ScheduleStep = ({ register, errors }: ScheduleStepProps) => {
+const ScheduleStep = ({ register, errors, watch }: ScheduleStepProps) => {
+  const eventDate = watch("eventDate");
+
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -15,6 +22,7 @@ const ScheduleStep = ({ register, errors }: ScheduleStepProps) => {
             Event Date
           </label>
           <input
+            min={new Date().toISOString().split("T")[0]}
             {...register("eventDate", { required: "Date is required" })}
             // defaultValue={new Date().toISOString().split("T")[0]}
             type="date"
@@ -62,6 +70,8 @@ const ScheduleStep = ({ register, errors }: ScheduleStepProps) => {
             Rehearsal Date
           </label>
           <input
+            min={new Date().toISOString().split("T")[0]}
+            max={eventDate || undefined}
             {...register("rehearsalDate")}
             type="date"
             className="w-full px-4 py-3 border border-primary rounded-lg focus:outline-none  "

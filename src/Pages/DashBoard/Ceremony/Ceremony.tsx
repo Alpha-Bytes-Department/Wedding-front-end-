@@ -549,11 +549,17 @@ const Ceremony = () => {
 
                 {/* Step 5: Schedule */}
                 {currentStep === 5 && (
-                  <ScheduleStep register={register} errors={errors} />
+                  <ScheduleStep
+                    register={register}
+                    errors={errors}
+                    watch={watch}
+                  />
                 )}
 
                 {/* Step 6: Review */}
-                {currentStep === 6 && <ReviewStep watch={watch} setValue={setValue} />}
+                {currentStep === 6 && (
+                  <ReviewStep watch={watch} setValue={setValue} />
+                )}
 
                 {/* Navigation Buttons */}
                 <NavigationButtons

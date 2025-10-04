@@ -9,9 +9,6 @@ export default defineConfig({
     port: 3000,
     host: true,
     open: true,
-    // proxy: {
-    //   "/api": "http://localhost:8080",
-    // },
   },
   build: {
     chunkSizeWarningLimit: 3000, // Adjust the limit as needed (in KB)

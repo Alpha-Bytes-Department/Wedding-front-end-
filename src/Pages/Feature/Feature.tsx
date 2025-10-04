@@ -1,6 +1,6 @@
 import { Buttons } from "../Home/Ceremony";
 import ContactForm from "../Home/ContactForm";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const Feature = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -95,7 +95,14 @@ const Feature = () => {
     setSelectedState(null);
   };
 
- 
+ useEffect(() => {
+window.scrollTo({
+        top: 0,
+        left: 0,
+        behavior: "smooth"
+      });
+    
+}, []);
 
 
 
