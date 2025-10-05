@@ -1,7 +1,7 @@
 import { FaArrowRight, FaUserTie } from 'react-icons/fa6';
 import { useAxios } from '../../Component/Providers/useAxios';
 import { useCallback, useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const Officiant = () => {
   const axios = useAxios();
@@ -65,12 +65,12 @@ const Officiant = () => {
             Our officiants are experienced professionals who are dedicated to
             making your ceremony unforgettable.
           </p>
-          <p className="flex items-center gap-3 font-normal font-secondary text-primary">
+          <Link to={'/officiant'} className="flex items-center gap-3 font-normal font-secondary text-primary">
             SEE MORE{" "}
             <span className=" group-hover:translate-x-5 transition-transform duration-300">
               <FaArrowRight />
             </span>
-          </p>
+          </Link>
         </div>
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-4 gap-14 mt-8 mb-10 lg:mb-20 justify-between">
