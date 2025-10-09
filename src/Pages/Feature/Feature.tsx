@@ -132,10 +132,12 @@ window.scrollTo({
                 </div>
               </div>
               <h2 className="text-2xl lg:text-3xl font-bold text-gray-800 mb-6 leading-tight">
-                Effortless Ceremony Planning 💍
+                Stress-Free Ceremony Planning 💍
               </h2>
               <p className="text-gray-600 text-base lg:text-lg leading-relaxed mb-8">
-                With Erie Wedding Officiants, every moment of your ceremony is personalized to reflect your unique love story and personality. Your love, our guidance.
+                With Erie Wedding Officiants, every moment of your ceremony is
+                personalized to reflect your unique love story and personality.
+                Your love, our guidance.
               </p>
               <button className="bg-primary group hover:bg-primary/90 text-white px-8 py-3 rounded-full font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg flex items-center gap-2">
                 Book for consult
@@ -253,7 +255,9 @@ window.scrollTo({
                 Seamless Collaboration 📜
               </h2>
               <p className="text-gray-600 text-base lg:text-lg leading-relaxed mb-8">
-                With Erie Wedding Officiants, every moment of your ceremony is personalized to reflect your unique love story and personality. Your love, our guidance.
+                With Erie Wedding Officiants, every moment of your ceremony is
+                personalized to reflect your unique love story and personality.
+                Your love, our guidance.
               </p>
               <button className="bg-primary group hover:bg-primary/90 text-white px-8 py-3 rounded-full font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg flex items-center gap-2">
                 Book for consult
@@ -335,7 +339,10 @@ window.scrollTo({
                 Organized & Accessible 🔔
               </h2>
               <p className="text-gray-600 text-base lg:text-lg leading-relaxed mb-8">
-                Your love story is unique, and your ceremony should be too. Our experienced officiants work closely with you to craft a ceremony that truly represents your journey together, ensuring every detail is perfect.
+                Your love story is unique, and your ceremony should be too. Our
+                experienced officiants work closely with you to craft a ceremony
+                that truly represents your journey together, ensuring every
+                detail is perfect.
               </p>
               <button className="bg-primary group hover:bg-primary/90 text-white px-8 py-3 rounded-full font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg flex items-center gap-2">
                 Book for consult
@@ -402,41 +409,45 @@ window.scrollTo({
 
         <p className=" md:text-xl text-gray-700 leading-relaxed mb-4">
           With years of experience, we specialize in creating
-          <span className="text-primary font-semibold"> personalized wedding ceremonies </span>
-          that reflect your <span className="italic">unique love story</span>. Whether you prefer a
-          <span className="font-medium"> traditional </span> or <span className="font-medium">modern</span> ceremony,
-          we are here to make your special day unforgettable.
+          <span className="text-primary font-semibold">
+            {" "}
+            personalized wedding ceremonies{" "}
+          </span>
+          that reflect your <span className="italic">unique love story</span>.
+          Whether you prefer a<span className="font-medium"> traditional </span>{" "}
+          or <span className="font-medium">modern</span> ceremony, we are here
+          to make your special day unforgettable.
         </p>
 
         <p className="text-lg md:text-xl md:text- text-gray-600 mb-6">
-          We understand the importance of finding the right officiant to officiate your wedding, and we are dedicated to ensuring that your ceremony is exactly how you envision it.
+          We understand the importance of finding the right officiant to
+          officiate your wedding, and we are dedicated to ensuring that your
+          ceremony is exactly how you envision it.
         </p>
-<p className="text-lg pb-6 md:-base text-gray-700 mr-2">Guidance on marriage licenses:</p>
+        <p className="text-lg pb-6 md:-base text-gray-700 mr-2">
+          Guidance on marriage licenses:
+        </p>
         <div className="inline-flex items-center justify-center gap-3 bg-white/60 backdrop-blur-sm px-4 py-2 rounded-full shadow-sm">
-          
-          <button 
-            onClick={() => openModal('pennsylvania')}
+          <button
+            onClick={() => openModal("pennsylvania")}
             className="px-3 py-1 rounded-lg bg-primary text-white text-lg font-semibold hover:bg-primary/90 transition-colors duration-200"
           >
             Pennsylvania
           </button>
-          <button 
-            onClick={() => openModal('ohio')}
+          <button
+            onClick={() => openModal("ohio")}
             className="px-3 py-1 rounded-lg bg-primary/90 text-white text-lg font-semibold hover:bg-primary transition-colors duration-200"
           >
             Ohio
           </button>
-          <button 
-            onClick={() => openModal('newyork')}
+          <button
+            onClick={() => openModal("newyork")}
             className="px-3 py-1 rounded-lg bg-primary/80 text-white text-lg font-semibold hover:bg-primary/90 transition-colors duration-200"
           >
             New York
           </button>
         </div>
-
-       
       </div>
-
 
       <div className="flex flex-col md:flex-row  md:justify-between items-center md:items-start gap-4 my-10 px-5 md:px-10 lg:px-20">
         <div className=" text-start flex flex-col justify-start gap-4">
@@ -466,13 +477,18 @@ window.scrollTo({
                 onClick={closeModal}
                 className="p-2 hover:bg-white/20 rounded-full transition-colors duration-200 group"
               >
-                <svg 
-                  className="w-6 h-6 group-hover:rotate-90 transition-transform duration-200" 
-                  fill="none" 
-                  stroke="currentColor" 
+                <svg
+                  className="w-6 h-6 group-hover:rotate-90 transition-transform duration-200"
+                  fill="none"
+                  stroke="currentColor"
                   viewBox="0 0 24 24"
                 >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
                 </svg>
               </button>
             </div>
@@ -480,40 +496,60 @@ window.scrollTo({
             {/* Modal Content */}
             <div className="p-6 overflow-y-auto max-h-[calc(90vh-120px)]">
               <div className="space-y-8">
-                {marriageLicenseData[selectedState].sections.map((section, sectionIndex) => (
-                  <div key={sectionIndex} className="bg-gradient-to-br from-pink-50 to-white rounded-xl p-6 shadow-sm border border-pink-100">
-                    <h3 className="text-xl md:text-2xl font-bold font-primary text-gray-800 mb-4 flex items-center">
-                      <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center text-white font-bold text-sm mr-3">
-                        {sectionIndex + 1}
-                      </div>
-                      {section.title}
-                    </h3>
-                    <div className="space-y-4">
-                      {section.content.map((item, itemIndex) => (
-                        <div key={itemIndex} className="flex items-start space-x-3">
-                          <div className="w-2 h-2 bg-primary rounded-full mt-2 flex-shrink-0"></div>
-                          <p className="text-gray-700 leading-relaxed font-secondary">
-                            {item}
-                          </p>
+                {marriageLicenseData[selectedState].sections.map(
+                  (section, sectionIndex) => (
+                    <div
+                      key={sectionIndex}
+                      className="bg-gradient-to-br from-pink-50 to-white rounded-xl p-6 shadow-sm border border-pink-100"
+                    >
+                      <h3 className="text-xl md:text-2xl font-bold font-primary text-gray-800 mb-4 flex items-center">
+                        <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center text-white font-bold text-sm mr-3">
+                          {sectionIndex + 1}
                         </div>
-                      ))}
+                        {section.title}
+                      </h3>
+                      <div className="space-y-4">
+                        {section.content.map((item, itemIndex) => (
+                          <div
+                            key={itemIndex}
+                            className="flex items-start space-x-3"
+                          >
+                            <div className="w-2 h-2 bg-primary rounded-full mt-2 flex-shrink-0"></div>
+                            <p className="text-gray-700 leading-relaxed font-secondary">
+                              {item}
+                            </p>
+                          </div>
+                        ))}
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  )
+                )}
               </div>
 
               {/* Important Notice */}
               <div className="mt-8 bg-gradient-to-r from-amber-50 to-orange-50 border-l-4 border-amber-400 p-6 rounded-r-xl">
                 <div className="flex items-start">
                   <div className="flex-shrink-0">
-                    <svg className="w-6 h-6 text-amber-600" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                    <svg
+                      className="w-6 h-6 text-amber-600"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
+                        clipRule="evenodd"
+                      />
                     </svg>
                   </div>
                   <div className="ml-3">
-                    <h4 className="text-lg font-semibold text-amber-800 font-primary">Important Notice</h4>
+                    <h4 className="text-lg font-semibold text-amber-800 font-primary">
+                      Important Notice
+                    </h4>
                     <p className="text-amber-700 font-secondary">
-                      Requirements and procedures may vary by county. Always verify current information and requirements with the local office before applying for your marriage license.
+                      Requirements and procedures may vary by county. Always
+                      verify current information and requirements with the local
+                      office before applying for your marriage license.
                     </p>
                   </div>
                 </div>

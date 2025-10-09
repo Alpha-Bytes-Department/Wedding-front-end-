@@ -282,31 +282,7 @@ const MessageRenderer: React.FC<MessageRendererProps> = ({
                       <p className="text-sm text-green-800 font-medium mb-2">
                         ✅ Booking Accepted
                       </p>
-                      {/* Only show payment link to client (not officiant) */}
-                      {!isMyMessage &&
-                        userRole !== "officiant" &&
-                        msg.bookingData && (
-                          <a
-                            href={`/payment?eventId=${
-                              msg.bookingData.eventId
-                            }&officiantId=${
-                              msg.bookingData.officiantId
-                            }&officiantName=${encodeURIComponent(
-                              msg.bookingData.officiantName
-                            )}&clientId=${
-                              msg.bookingData.clientId
-                            }&clientName=${encodeURIComponent(
-                              msg.bookingData.clientName
-                            )}&eventName=${encodeURIComponent(
-                              msg.bookingData.eventName
-                            )}&price=${msg.bookingData.price}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="inline-block bg-primary text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-primary/80 transition-colors"
-                          >
-                            Proceed to Payment →
-                          </a>
-                        )}
+                      
                     </div>
                   )}
 
