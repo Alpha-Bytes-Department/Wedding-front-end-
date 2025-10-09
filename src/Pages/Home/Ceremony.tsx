@@ -29,7 +29,7 @@ const Ceremony = () => {
           <div className="w-[350px] border-2 -top-10 left-10 border-amber-500 h-[435px] absolute z-20"></div>
           {/* Image above all */}
           <img
-            src="/bride.png"
+            src="/bride.jpg"
             alt=""
             className="w-[350px] h-[435px] object-cover -top-5 left-5 absolute z-60"
           />
