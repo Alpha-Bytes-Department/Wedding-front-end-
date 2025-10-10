@@ -2,14 +2,17 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 
+// Check if running on Windows
+const isWindows = process.platform === 'win32';
+
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react(), tailwindcss()],
   server: {
     port: 3000,
-    host: '0.0.0.0',
+    host: isWindows ? 'localhost' : '0.0.0.0',
     open: true,
-    strictPort: true,
+    strictPort: false,
     hmr: {
       clientPort: 3000
     },
