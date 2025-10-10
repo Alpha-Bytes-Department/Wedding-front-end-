@@ -23,92 +23,107 @@ interface Ceremony {
 }
 
 const Bookings = () => {
-
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [showFullList, setShowFullList] = useState(false);
   const [ongoingCeremonies, setOngoingCeremonies] = useState<Booking[]>([]);
-  const [completedCeremonies, setCompletedCeremonies] = useState<Ceremony[]>([]);
+  const [completedCeremonies, setCompletedCeremonies] = useState<Ceremony[]>(
+    []
+  );
   const [seeFullCeremonies, setSeeFullCeremonies] = useState(false);
   const [seeOngoingCeremonies, setSeeOngoingCeremonies] = useState(false);
-  const {user}= useAuth()
+  const { user } = useAuth();
 
-  const toggleShowFullList = (id:number) => {
-   switch(id){
-    case 1:
-      setShowFullList(!showFullList);
-      break;
-    case 2:
-      setSeeFullCeremonies(!seeFullCeremonies)
-      break;
-    case 3:
-      setSeeOngoingCeremonies(!seeOngoingCeremonies)
-      break;
-   }
-  }
-  const navigate=useNavigate()
+  const toggleShowFullList = (id: number) => {
+    switch (id) {
+      case 1:
+        setShowFullList(!showFullList);
+        break;
+      case 2:
+        setSeeFullCeremonies(!seeFullCeremonies);
+        break;
+      case 3:
+        setSeeOngoingCeremonies(!seeOngoingCeremonies);
+        break;
+    }
+  };
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
-  const axios =useAxios()
+  const axios = useAxios();
   const fetchBookings = async () => {
     setLoading(true);
     try {
       const response = await axios.get(`/schedule/get-officiant/${user?._id}`);
-      setBookings(response.data.filter((booking:Booking)=> booking.approvedStatus==='pending'));
-      setOngoingCeremonies(response.data.filter((booking:Booking)=> booking.approvedStatus==='approved'));
-      console.log('Bookings:', response.data);
-      console.log(response.data);
+      setBookings(
+        response.data.filter(
+          (booking: Booking) => booking.approvedStatus === "pending"
+        )
+      );
+      setOngoingCeremonies(
+        response.data.filter(
+          (booking: Booking) => booking.approvedStatus === "approved"
+        )
+      );
+      //console.log('Bookings:', response.data);
+      //console.log(response.data);
     } catch (error) {
-      console.error('Error fetching bookings:', error);
+      console.error("Error fetching bookings:", error);
     } finally {
       setLoading(false);
     }
-  };  
+  };
   const getCeremonies = async () => {
     setLoading(true);
     try {
       const response = await axios.get(`/events/officiantAccess/all`);
 
       const completed = response.data.events.filter(
-        (event: any) => event.status === "completed" && event.officiantId === user?._id
+        (event: any) =>
+          event.status === "completed" && event.officiantId === user?._id
       );
       const ongoing = response.data.events.filter(
-        (event: any) => event.status == "approved" && event.officiantId === user?._id
+        (event: any) =>
+          event.status == "approved" && event.officiantId === user?._id
       );
       setCompletedCeremonies(completed);
-      
-      console.log('Completed Ceremonies:', completed);
-      console.log('Ongoing Ceremonies:', ongoing);
+
+      //console.log('Completed Ceremonies:', completed);
+      //console.log('Ongoing Ceremonies:', ongoing);
     } catch (error) {
-      console.error('Error fetching completed ceremonies:', error);
+      console.error("Error fetching completed ceremonies:", error);
     } finally {
       setLoading(false);
     }
   };
-  const handleBookingUpdate=async(id:string,approvedStatus:string)=>{
+  const handleBookingUpdate = async (id: string, approvedStatus: string) => {
     try {
       setLoading(true);
-      const response = await axios.put(`/schedule/update/${id}`, { approvedStatus });
-      await GlassSwal.success("Booking updated successfully","success")
-      console.log('Booking updated:', response.data);
+      const response = await axios.put(`/schedule/update/${id}`, {
+        approvedStatus,
+      });
+      await GlassSwal.success("Booking updated successfully", "success");
+      //console.log('Booking updated:', response.data);
       fetchBookings(); // Refresh the bookings list
     } catch (error) {
-      await GlassSwal.error("Failed to update booking. Please try again later.","error")
+      await GlassSwal.error(
+        "Failed to update booking. Please try again later.",
+        "error"
+      );
     } finally {
       setLoading(false);
       fetchBookings();
     }
   };
 
-  useEffect(()=>{
+  useEffect(() => {
     fetchBookings();
     getCeremonies();
-  },[])
+  }, []);
 
-  const showNote=(note:string)=>{
-    GlassSwal.info("Note from user",note)
-  }
+  const showNote = (note: string) => {
+    GlassSwal.info("Note from user", note);
+  };
 
-
-  console.log('Ongoing Bookings State:', ongoingCeremonies);
+  //console.log('Ongoing Bookings State:', ongoingCeremonies);
   return (
     <div>
       {loading ? (
@@ -182,7 +197,9 @@ const Bookings = () => {
                         Approve
                       </button>
                       <button
-                        onClick={() => showNote(m.message || "No note provided")}
+                        onClick={() =>
+                          showNote(m.message || "No note provided")
+                        }
                         className="bg-[#AF4B4B4D] text-[#3b1919] text-sm px-5 py-2 rounded-lg font-medium hover:bg-primary/90 transition-colors"
                       >
                         View Note
@@ -258,8 +275,8 @@ const Bookings = () => {
                           {m.fromUserName}
                         </div>
                         <div className="text-sm text-gray-500">
-                          {new Date(m.scheduleDate).toDateString()}{" "}
-                          · Officiant: {m.officiantName}
+                          {new Date(m.scheduleDate).toDateString()} · Officiant:{" "}
+                          {m.officiantName}
                         </div>
                       </div>
                       <div className="flex items-center gap-2">
@@ -346,6 +363,6 @@ const Bookings = () => {
       )}
     </div>
   );
-}
+};
 
-export default Bookings
+export default Bookings;

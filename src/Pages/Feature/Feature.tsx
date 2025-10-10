@@ -527,12 +527,13 @@ window.scrollTo({
               </div>
 
               {/* Important Notice */}
-              <div className="mt-8 bg-gradient-to-r from-amber-50 to-orange-50 border-l-4 border-amber-400 p-6 rounded-r-xl">
-                <div className="flex items-start">
-                  <div className="flex-shrink-0">
-                    <svg
-                      className="w-6 h-6 text-amber-600"
-                      fill="currentColor"
+              {selectedState !== "pennsylvania" && 
+                <div className="mt-8 bg-gradient-to-r from-amber-50 to-orange-50 border-l-4 border-amber-400 p-6 rounded-r-xl">
+                  <div className="flex items-start">
+                    <div className="flex-shrink-0">
+                      <svg
+                        className="w-6 h-6 text-amber-600"
+                        fill="currentColor"
                       viewBox="0 0 20 20"
                     >
                       <path
@@ -553,7 +554,7 @@ window.scrollTo({
                     </p>
                   </div>
                 </div>
-              </div>
+              </div>}
 
               {/* Close Button */}
               <div className="mt-8 text-center">

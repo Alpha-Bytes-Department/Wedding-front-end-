@@ -15,10 +15,10 @@ const Header = () => {
           Design Your Dream Ceremony, <br className="" /> Together.
         </h1>
         <p className="lg:text-xl text-sm md:text-[16px] text-center text-black font-secondary font-normal py-13">
-          Welcome to a modern platform where couples and officiants{" "}
-          <br className="md:block hidden" /> unite to create unforgettable
-          wedding ceremonies. Plan, <br className="md:block hidden" /> approve,
-          and perfect every detail with ease and joy.
+          Where love meets collaboration—a modern platform{" "}
+          <br className="md:block hidden" /> for couples and officiants to
+          create, refine, <br className="md:block hidden" /> and celebrate
+          unforgettable wedding ceremonies.
         </p>
         <Buttons />
       </div>
