@@ -55,6 +55,44 @@ const Officiant = () => {
   };
   return (
     <div className=" lg:px-30  px-5 md:px-10">
+      {/* ============================== Web profile integration ============================== */}
+      <div className=" flex max-w-sm gap-6 flex-col items-center py-5 mx-auto">
+        <div className="group w-80 flex items-center gap-4 border-2 border-primary px-4 py-2 rounded-full hover:shadow-xl hover:shadow-primary transition-shadow duration-300">
+          <h2 className="text-primary italic text-lg font-semibold font-secondary">
+            Find Us On The Knot
+          </h2>
+          <FaArrowRight className="text-primary group-hover:translate-x-3 transition-transform duration-300 " />
+          <a
+            href="https://www.theknot.com/marketplace/erie-wedding-officiants-erie-pa-2046958"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <img
+              className="h-12 mt-2"
+              src="https://www.startuphub.ai/wp-content/uploads/The-Knot-logo.png"
+              alt=""
+            />
+          </a>
+        </div>
+        <div className="group flex items-center gap-4 border-2 border-primary px-4 py-2 rounded-full hover:shadow-xl hover:shadow-primary transition-shadow duration-300">
+          <h2 className="text-primary italic text-lg font-semibold font-secondary">
+            Find Us On Wedding Wire
+          </h2>
+          <FaArrowRight className="text-primary group-hover:translate-x-3 transition-transform duration-300 " />
+          <a
+            href="https://www.theknot.com/marketplace/erie-wedding-officiants-erie-pa-2046958"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <img
+              className="h-12 mt-2"
+              src="https://www.nicepng.com/png/full/367-3678920_weddingwire-icon-wedding-wire-logo.png"
+              alt=""
+            />
+          </a>
+        </div>
+      </div>
+
       <div className=" text-start flex flex-col md:flex-row gap-6 justify-between">
         <h1 className="text-3xl font-primary md:text-[55px]  font-bold">
           Meet Our Officiants for Perfect{" "}
@@ -65,7 +103,10 @@ const Officiant = () => {
             Our officiants are experienced professionals who are dedicated to
             making your ceremony unforgettable.
           </p>
-          <Link to={'/officiant'} className="flex items-center gap-3 font-normal font-secondary text-primary">
+          <Link
+            to={"/officiant"}
+            className="flex items-center gap-3 font-normal font-secondary text-primary"
+          >
             SEE MORE{" "}
             <span className=" group-hover:translate-x-5 transition-transform duration-300">
               <FaArrowRight />
@@ -74,49 +115,47 @@ const Officiant = () => {
         </div>
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-4 gap-14 mt-8 mb-10 lg:mb-20 justify-between">
-       {officiants?.map((officiant) => (
-                 <div
-                   key={officiant.id}
-                   className="bg-white p-2 group rounded-2xl shadow-xl shadow-[#00000040] border-2 max-w-80 border-primary mx-auto flex flex-col h-full"
-                 >
-                 
-                   <div className="flex h-60 justify-center items-center min-h-[160px]">
-                     {shouldShowImage(officiant) ? (
-                       <img
-                         src={officiant.image}
-                         alt={officiant.name}
-                         className="w-58 mx-auto"
-                         onError={() => handleImageError(officiant.id)}
-                       />
-                     ) : (
-                       <FaUserTie className="text-gray-400 size-36 " />
-                     )}
-                   </div>
-       
-                   <h2 className="text-text font-secondary text-center font-bold text-2xl py-5">
-                     {officiant.name}
-                   </h2>
-                   <p className="text-lg text-center pb-5 text-text">
-                     {officiant.role}
-                   </p>
-                   <p className="pb-8 text-[16px] text-center text-black-web flex-1">
-                     {officiant.description}
-                   </p>
-       
-                   <div
-                     onClick={() => NavigateToDetail(officiant.id)}
-                     className="mt-auto text-primary cursor-pointer flex items-center justify-center gap-2 font-secondary font-bold text-[16px] underline"
-                   >
-                     VIEW MORE{" "}
-                     <FaArrowRight
-                       size={18}
-                       className="group-hover:translate-x-3 transition-transform duration-300"
-                     />
-                   </div>
-                 </div>
-               ))}
+        {officiants?.map((officiant) => (
+          <div
+            key={officiant.id}
+            className="bg-white p-2 group rounded-2xl shadow-xl shadow-[#00000040] border-2 max-w-80 border-primary mx-auto flex flex-col h-full"
+          >
+            <div className="flex h-60 justify-center items-center min-h-[160px]">
+              {shouldShowImage(officiant) ? (
+                <img
+                  src={officiant.image}
+                  alt={officiant.name}
+                  className="w-58 mx-auto"
+                  onError={() => handleImageError(officiant.id)}
+                />
+              ) : (
+                <FaUserTie className="text-gray-400 size-36 " />
+              )}
+            </div>
+
+            <h2 className="text-text font-secondary text-center font-bold text-2xl py-5">
+              {officiant.name}
+            </h2>
+            <p className="text-lg text-center pb-5 text-text">
+              {officiant.role}
+            </p>
+            <p className="pb-8 text-[16px] text-center text-black-web flex-1">
+              {officiant.description}
+            </p>
+
+            <div
+              onClick={() => NavigateToDetail(officiant.id)}
+              className="mt-auto text-primary cursor-pointer flex items-center justify-center gap-2 font-secondary font-bold text-[16px] underline"
+            >
+              VIEW MORE{" "}
+              <FaArrowRight
+                size={18}
+                className="group-hover:translate-x-3 transition-transform duration-300"
+              />
+            </div>
+          </div>
+        ))}
       </div>
-     
     </div>
   );
 }
