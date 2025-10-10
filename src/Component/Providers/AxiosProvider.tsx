@@ -20,7 +20,7 @@ interface AxiosProviderProps {
 
 export const AxiosProvider: React.FC<AxiosProviderProps> = ({
   children,
-  baseURL = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000/api",
+  baseURL = import.meta.env.VITE_API_BASE_URL || "https://erieweddingofficiants.com/api",
 }) => {
   // Create a ref to track document visibility
   const isTabActiveRef = React.useRef(true);
