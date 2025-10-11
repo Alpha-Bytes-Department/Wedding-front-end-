@@ -1,6 +1,7 @@
 import { useState } from "react";
 import jsPDF from "jspdf";
 import type { CeremonyData } from "../types";
+import AddReview from "./AddReview";
 
 interface MyCeremonyTabProps {
   ceremonies: CeremonyData[];
@@ -236,32 +237,35 @@ const MyCeremonyTab = ({
             <hr className="border-t border-primary mb-4" />
 
             {/* Buttons */}
-            <div className="flex justify-end gap-4">
-              <button
-                onClick={() =>
-                  onDeleteCeremony(ceremony.id || ceremony._id || "")
-                }
-                disabled={loading}
-                className="px-6 py-2 border border-primary text-[#e0b94c] rounded-full font-medium hover:bg-primary hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {loading ? "Deleting..." : "Delete"}
-              </button>
-              <button
-                onClick={() => generatePDF(ceremony)}
-                disabled={isGeneratingPDF}
-                className="px-6 py-2 border border-primary text-[#e0b94c] rounded-full font-medium hover:bg-primary hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {isGeneratingPDF ? "Generating..." : "Download PDF"}
-              </button>
-              <button
-                onClick={() => {
-                  setSelectedCeremony(ceremony);
-                  (document.getElementById("ceremony_modal") as HTMLDialogElement)?.showModal();
-                }}
-                className="px-6 py-2 border border-primary text-[#e0b94c] rounded-full font-medium hover:bg-primary hover:text-white transition-colors"
-              >
-                View
-              </button>
+            <div className=" flex justify-between flex-wrap gap-4">
+              <AddReview status={ceremony.status} eventid={ ceremony._id } officiantid={ ceremony.officiantId } eventName={ ceremony.title }/>
+              <div className="flex justify-end gap-4 ">
+                <button
+                  onClick={() =>
+                    onDeleteCeremony(ceremony.id || ceremony._id || "")
+                  }
+                  disabled={loading}
+                  className="px-2 md:px-6 py-2 border border-primary text-[#e0b94c] rounded-full font-medium hover:bg-primary hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {loading ? "Deleting..." : "Delete"}
+                </button>
+                <button
+                  onClick={() => generatePDF(ceremony)}
+                  disabled={isGeneratingPDF}
+                  className="px-6 py-2 border border-primary text-[#e0b94c] rounded-full font-medium hover:bg-primary hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {isGeneratingPDF ? "Generating..." : "Download PDF"}
+                </button>
+                <button
+                  onClick={() => {
+                    setSelectedCeremony(ceremony);
+                    (document.getElementById("ceremony_modal") as HTMLDialogElement)?.showModal();
+                  }}
+                  className="px-6 py-2 border border-primary text-[#e0b94c] rounded-full font-medium hover:bg-primary hover:text-white transition-colors"
+                >
+                  View
+                </button>
+              </div>
             </div>
           </div>
         ))

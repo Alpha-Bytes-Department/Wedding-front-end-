@@ -181,7 +181,7 @@ export class CeremonyApiService {
       const response = await this.axios.get(
         `/events/by-role/${userId}/${userRole}`
       );
-      console.log("Fetched ceremonies:", response.data);
+      // console.log("Fetched ceremonies:", response.data);
 
       if (response.status === 200) {
         return response.data.events.map((event: any) => ({
