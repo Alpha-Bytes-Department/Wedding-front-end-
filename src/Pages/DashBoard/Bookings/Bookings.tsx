@@ -84,10 +84,11 @@ const Bookings = () => {
         (event: any) =>
           event.status == "approved" && event.officiantId === user?._id
       );
+
       setCompletedCeremonies(completed);
 
       //console.log('Completed Ceremonies:', completed);
-      //console.log('Ongoing Ceremonies:', ongoing);
+      console.log('Ongoing Ceremonies:', ongoing);
     } catch (error) {
       console.error("Error fetching completed ceremonies:", error);
     } finally {
@@ -101,7 +102,7 @@ const Bookings = () => {
         approvedStatus,
       });
       await GlassSwal.success("Booking updated successfully", "success");
-      //console.log('Booking updated:', response.data);
+      console.log('Booking updated:', response.data);
       fetchBookings(); // Refresh the bookings list
     } catch (error) {
       await GlassSwal.error(
