@@ -79,7 +79,7 @@ const CeremonyReview = () => {
     fetchEvents();
   }, [fetchEvents]);
 
-  const updateEventStatus = async (eventId: string, newStatus: "approved" | "canceled") => {
+  const updateEventStatus = async (eventId: string, newStatus: "approved" | "canceled" | "completed") => {
     setLoading(true);
     try {
       await axios.patch(`/events/update/${eventId}`, { status: newStatus });
@@ -120,9 +120,7 @@ const CeremonyReview = () => {
 
       {fetchLoading ? (
         <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-8 text-center">
-          <p className="text-gray-500 text-lg">
-            Loading ceremonies...
-          </p>
+          <p className="text-gray-500 text-lg">Loading ceremonies...</p>
         </div>
       ) : !Array.isArray(events) || events.length === 0 ? (
         <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-8 text-center">
@@ -141,9 +139,7 @@ const CeremonyReview = () => {
               <div className="flex flex-wrap gap-x-8 gap-y-2">
                 <span className="text-primary font-primary font-medium text-base md:text-lg">
                   Title:{" "}
-                  <span className="font-medium text-black">
-                    {event.title}
-                  </span>
+                  <span className="font-medium text-black">{event.title}</span>
                 </span>
                 <span
                   className={`p-1 border border-primary rounded-full px-2 text-center font-bold ${
@@ -213,20 +209,33 @@ const CeremonyReview = () => {
 
             {/* Buttons */}
             <div className="flex justify-end gap-4">
-              <button
-                onClick={() => handleCancel(event._id)}
-                disabled={loading || event.status === "canceled" || event.status === "cancelled"}
-                className="px-6 py-2 border border-red-500 text-red-500 rounded-full font-medium hover:bg-red-500 hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {loading ? "Processing..." : "Cancel"}
-              </button>
-              <button
-                onClick={() => handleApprove(event._id)}
-                disabled={loading || event.status === "approved"}
-                className="px-6 py-2 border border-green-500 text-green-500 rounded-full font-medium hover:bg-green-500 hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {loading ? "Processing..." : "Approve"}
-              </button>
+              {event.status !== "cancelled" && event.status !== "completed" && (
+                <button
+                  onClick={() => handleCancel(event._id)}
+                  disabled={loading}
+                  className="px-6 py-2 border border-red-500 text-red-500 rounded-full font-medium hover:bg-red-500 hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {loading ? "Processing..." : "Cancel"}
+                </button>
+              )}
+              {event.status == "approved" && (
+                <button
+                  onClick={() => updateEventStatus(event._id, "completed")}
+                  disabled={loading}
+                  className="px-6 py-2 border border-blue-300 text-blue-500 rounded-full font-medium hover:bg-blue-500 hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {loading ? "Processing..." : "Complete"}
+                </button>
+              )}
+              {event.status !== "approved" && event.status !== "completed" && (
+                <button
+                  onClick={() => handleApprove(event._id)}
+                  disabled={loading}
+                  className="px-6 py-2 border border-green-500 text-green-500 rounded-full font-medium hover:bg-green-500 hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {loading ? "Processing..." : "Approve"}
+                </button>
+              )}
               <button
                 onClick={() => openViewModal(event)}
                 className="px-6 py-2 border border-primary text-[#e0b94c] rounded-full font-medium hover:bg-primary hover:text-white transition-colors"
@@ -261,11 +270,15 @@ const CeremonyReview = () => {
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                   <div>
                     <p className="text-sm text-gray-500">Ceremony Type</p>
-                    <p className="font-semibold">{selectedEvent.ceremonyType || "—"}</p>
+                    <p className="font-semibold">
+                      {selectedEvent.ceremonyType || "—"}
+                    </p>
                   </div>
                   <div>
                     <p className="text-sm text-gray-500">Language</p>
-                    <p className="font-semibold">{selectedEvent.language || "—"}</p>
+                    <p className="font-semibold">
+                      {selectedEvent.language || "—"}
+                    </p>
                   </div>
                   <div>
                     <p className="text-sm text-gray-500">Event Date</p>
@@ -279,26 +292,35 @@ const CeremonyReview = () => {
                     <p className="text-sm text-gray-500">Event Time</p>
                     <p className="font-semibold">
                       {selectedEvent.eventTime
-                        ? new Date(selectedEvent.eventTime).toLocaleTimeString([], {
-                            hour: "2-digit",
-                            minute: "2-digit",
-                          })
+                        ? new Date(selectedEvent.eventTime).toLocaleTimeString(
+                            [],
+                            {
+                              hour: "2-digit",
+                              minute: "2-digit",
+                            }
+                          )
                         : "—"}
                     </p>
                   </div>
                   <div>
                     <p className="text-sm text-gray-500">Location</p>
-                    <p className="font-semibold">{selectedEvent.location || "—"}</p>
+                    <p className="font-semibold">
+                      {selectedEvent.location || "—"}
+                    </p>
                   </div>
                   <div>
                     <p className="text-sm text-gray-500">Officiant</p>
-                    <p className="font-semibold">{selectedEvent.officiantName || "—"}</p>
+                    <p className="font-semibold">
+                      {selectedEvent.officiantName || "—"}
+                    </p>
                   </div>
                   <div>
                     <p className="text-sm text-gray-500">Rehearsal Date</p>
                     <p className="font-semibold">
                       {selectedEvent.rehearsalDate
-                        ? new Date(selectedEvent.rehearsalDate).toLocaleDateString()
+                        ? new Date(
+                            selectedEvent.rehearsalDate
+                          ).toLocaleDateString()
                         : "—"}
                     </p>
                   </div>
@@ -321,13 +343,17 @@ const CeremonyReview = () => {
                     {selectedEvent.groomName && (
                       <div>
                         <p className="text-sm text-gray-500">Groom's Name</p>
-                        <p className="font-semibold">{selectedEvent.groomName}</p>
+                        <p className="font-semibold">
+                          {selectedEvent.groomName}
+                        </p>
                       </div>
                     )}
                     {selectedEvent.brideName && (
                       <div>
                         <p className="text-sm text-gray-500">Bride's Name</p>
-                        <p className="font-semibold">{selectedEvent.brideName}</p>
+                        <p className="font-semibold">
+                          {selectedEvent.brideName}
+                        </p>
                       </div>
                     )}
                   </div>
@@ -354,16 +380,31 @@ const CeremonyReview = () => {
                 <div className="space-y-4">
                   {[
                     { label: "Greeting Speech", key: "greetingSpeech" },
-                    { label: "Presentation of Bride", key: "presentationOfBride" },
-                    { label: "Question for Presentation", key: "questionForPresentation" },
-                    { label: "Response to Question", key: "responseToQuestion" },
+                    {
+                      label: "Presentation of Bride",
+                      key: "presentationOfBride",
+                    },
+                    {
+                      label: "Question for Presentation",
+                      key: "questionForPresentation",
+                    },
+                    {
+                      label: "Response to Question",
+                      key: "responseToQuestion",
+                    },
                     { label: "Invocation", key: "invocation" },
-                  ].map(item => {
-                    const content = selectedEvent[item.key as keyof CeremonyEvent] as string;
+                  ].map((item) => {
+                    const content = selectedEvent[
+                      item.key as keyof CeremonyEvent
+                    ] as string;
                     return content ? (
                       <div key={item.key}>
-                        <p className="text-sm text-gray-500 font-medium">{item.label}</p>
-                        <p className="font-medium text-gray-700 mt-1">{content}</p>
+                        <p className="text-sm text-gray-500 font-medium">
+                          {item.label}
+                        </p>
+                        <p className="font-medium text-gray-700 mt-1">
+                          {content}
+                        </p>
                       </div>
                     ) : null;
                   })}
@@ -377,22 +418,46 @@ const CeremonyReview = () => {
                 </h3>
                 <div className="space-y-4">
                   {[
-                    { label: "Charge to Groom and Bride", key: "chargeToGroomAndBride" },
+                    {
+                      label: "Charge to Groom and Bride",
+                      key: "chargeToGroomAndBride",
+                    },
                     { label: "Pledge", key: "pledge" },
-                    { label: "Introduction to Exchange of Vows", key: "introductionToExchangeOfVows" },
+                    {
+                      label: "Introduction to Exchange of Vows",
+                      key: "introductionToExchangeOfVows",
+                    },
                     { label: "Vows", key: "vows" },
                     { label: "Readings", key: "readings" },
-                    { label: "Introduction to Exchange of Rings", key: "introductionToExchangeOfRings" },
+                    {
+                      label: "Introduction to Exchange of Rings",
+                      key: "introductionToExchangeOfRings",
+                    },
                     { label: "Blessings of Rings", key: "blessingsOfRings" },
-                    { label: "Exchange of Rings (Groom)", key: "exchangeOfRingsGroom" },
-                    { label: "Exchange of Rings (Bride)", key: "exchangeOfRingsBride" },
-                    { label: "Prayer on the New Union", key: "prayerOnTheNewUnion" },
-                  ].map(item => {
-                    const content = selectedEvent[item.key as keyof CeremonyEvent] as string;
+                    {
+                      label: "Exchange of Rings (Groom)",
+                      key: "exchangeOfRingsGroom",
+                    },
+                    {
+                      label: "Exchange of Rings (Bride)",
+                      key: "exchangeOfRingsBride",
+                    },
+                    {
+                      label: "Prayer on the New Union",
+                      key: "prayerOnTheNewUnion",
+                    },
+                  ].map((item) => {
+                    const content = selectedEvent[
+                      item.key as keyof CeremonyEvent
+                    ] as string;
                     return content ? (
                       <div key={item.key}>
-                        <p className="text-sm text-gray-500 font-medium">{item.label}</p>
-                        <p className="font-medium text-gray-700 mt-1">{content}</p>
+                        <p className="text-sm text-gray-500 font-medium">
+                          {item.label}
+                        </p>
+                        <p className="font-medium text-gray-700 mt-1">
+                          {content}
+                        </p>
                       </div>
                     ) : null;
                   })}
@@ -411,13 +476,22 @@ const CeremonyReview = () => {
                     { label: "Closing Statement", key: "closingStatement" },
                     { label: "Pronouncing", key: "pronouncing" },
                     { label: "Kiss", key: "kiss" },
-                    { label: "Introduction of Couple", key: "introductionOfCouple" },
-                  ].map(item => {
-                    const content = selectedEvent[item.key as keyof CeremonyEvent] as string;
+                    {
+                      label: "Introduction of Couple",
+                      key: "introductionOfCouple",
+                    },
+                  ].map((item) => {
+                    const content = selectedEvent[
+                      item.key as keyof CeremonyEvent
+                    ] as string;
                     return content ? (
                       <div key={item.key}>
-                        <p className="text-sm text-gray-500 font-medium">{item.label}</p>
-                        <p className="font-medium text-gray-700 mt-1">{content}</p>
+                        <p className="text-sm text-gray-500 font-medium">
+                          {item.label}
+                        </p>
+                        <p className="font-medium text-gray-700 mt-1">
+                          {content}
+                        </p>
                       </div>
                     ) : null;
                   })}
@@ -429,7 +503,9 @@ const CeremonyReview = () => {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm text-gray-500">
                   <div>
                     <span className="font-medium">Created: </span>
-                    {new Date(selectedEvent.createdAt).toLocaleDateString()} at{" "}
+                    {new Date(
+                      selectedEvent.createdAt
+                    ).toLocaleDateString()} at{" "}
                     {new Date(selectedEvent.createdAt).toLocaleTimeString([], {
                       hour: "2-digit",
                       minute: "2-digit",
@@ -437,7 +513,9 @@ const CeremonyReview = () => {
                   </div>
                   <div>
                     <span className="font-medium">Last Updated: </span>
-                    {new Date(selectedEvent.updatedAt).toLocaleDateString()} at{" "}
+                    {new Date(
+                      selectedEvent.updatedAt
+                    ).toLocaleDateString()} at{" "}
                     {new Date(selectedEvent.updatedAt).toLocaleTimeString([], {
                       hour: "2-digit",
                       minute: "2-digit",
@@ -450,7 +528,7 @@ const CeremonyReview = () => {
         </div>
       </dialog>
     </div>
-  )
+  );
 }
 
 export default CeremonyReview
