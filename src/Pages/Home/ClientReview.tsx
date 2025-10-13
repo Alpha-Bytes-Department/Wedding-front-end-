@@ -115,10 +115,10 @@ const handleResize = () => {
             className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16"
           />
           <h1 className=" text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-[55px] font-primary font-bold text-start leading-tight">
-            Client <span className="text-primary">Review</span> to our service
+            Client <span className="text-primary">Reviews</span> to our service
           </h1>
           <p className="text-sm sm:text-base md:text-lg xl:text-xl text-start font-normal font-secondary text-black-web mt-2 sm:mt-3 md:mt-4">
-            Hear what our satisfied clients have to say about their experience
+            what our satisfied clients have to say about their experience
             with Erie Wedding Officiants. Your feedback inspires us to create
             unforgettable ceremonies.
           </p>

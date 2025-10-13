@@ -227,7 +227,7 @@ const Nav = () => {
               : "text-black hover:text-[#D4AF37] transition-colors duration-300 font-secondary font-normal text-base lg:text-lg"
           }
         >
-          Officiant
+          Officiants
         </NavLink>
 
         {user?.role !== "officiant" ? (

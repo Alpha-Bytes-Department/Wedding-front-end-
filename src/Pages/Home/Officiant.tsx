@@ -140,6 +140,7 @@ const Officiant = () => {
               {officiant.role}
             </p>
             <p className="pb-8 text-[16px] text-center text-black-web flex-1">
+              
               {officiant.description}
             </p>
 
