@@ -163,7 +163,7 @@ const OfficiantDetail = () => {
             {shouldShowImage() ? (
               <img
                 src={officiantDetails.profilePicture}
-                alt={officiantDetails.name || "Officiant"}
+                alt={officiantDetails.name }
                 className="w-full h-full object-cover"
                 onError={handleImageError}
               />
