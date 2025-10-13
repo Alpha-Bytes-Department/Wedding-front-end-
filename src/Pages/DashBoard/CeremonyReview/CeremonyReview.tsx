@@ -199,7 +199,7 @@ const CeremonyReview = () => {
                 </div>
               </div>
             </div>
-
+ 
             {/* Description */}
             <hr className="border-t border-primary mb-4" />
             <div className="text-gray-700 min-h-24 text-sm md:text-base mb-4">
