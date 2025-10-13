@@ -1128,6 +1128,16 @@ const Discussions: React.FC = () => {
       </div>
     );
   }
+    const getProfileImageUrl = (profilePicture?: string) => {
+    if (!profilePicture) return "";
+    // Check if it's already a complete URL
+    if (profilePicture.startsWith("http")) {
+      return profilePicture;
+    }
+    // For images in the public folder, construct the URL relative to the app root
+    return `/${profilePicture}`;
+  };
+
 
   return (
     <div className="lg:h-[87vh] bg-white flex flex-col">
@@ -1156,7 +1166,7 @@ const Discussions: React.FC = () => {
           <div className="flex items-center gap-3 px-6 py-4 border-b border-gray-200 bg-white">
             <div className="relative">
               <img
-                src={selected.profilePicture}
+                src={getProfileImageUrl(selected.profilePicture) }
                 alt={selected.name}
                 className="w-10 h-10 rounded-full object-cover"
               />

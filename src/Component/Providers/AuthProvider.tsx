@@ -80,7 +80,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       const token = await result.user.getIdToken(); // Firebase ID token
       const email = result.user.email;
       const partner_1 = " "; // Get partner_1 from your app's state or user input
-      const partner_2 = result.user.displayName; // Get partner_2 from your app's state or user input
+      const partner_2 = result.user.displayName;
+      const name = result.user.displayName; // Get name from your app's state or user input
       const profilePicture = result.user.photoURL;
 
       // send token/email to your backend to register/login & get your own tokens
@@ -91,6 +92,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           firebaseToken: token,
           partner_1,
           partner_2,
+          name,
           profilePicture,
         }
       );

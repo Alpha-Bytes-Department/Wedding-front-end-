@@ -26,6 +26,15 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({
     const date = new Date(timestamp);
     return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
   };
+  const getProfileImageUrl = (profilePicture?: string) => {
+    if (!profilePicture) return "";
+    // Check if it's already a complete URL
+    if (profilePicture.startsWith("http")) {
+      return profilePicture;
+    }
+    // For images in the public folder, construct the URL relative to the app root
+    return `/${profilePicture}`;
+  };
 
   return (
     <div className="w-full lg:w-80 border border-gray-200 bg-white flex flex-col">
@@ -72,10 +81,9 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({
                     <img
                       className="h-10 w-10 rounded-full object-cover"
                       src={
-                        participant.profilePicture ||
-                        "https://via.placeholder.com/40"
+                        getProfileImageUrl(participant.profilePicture) 
                       }
-                      alt=""
+                      alt={participant.name || "Profile"}
                     />
                     <div
                       className={`absolute -bottom-1 -right-1 h-3 w-3 rounded-full border-2 border-white ${
