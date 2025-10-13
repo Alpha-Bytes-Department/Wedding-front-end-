@@ -21,38 +21,38 @@ const OfficiantDetail = () => {
   const [imageError, setImageError] = useState<boolean>(false);
   const [testimonials, setTestimonials] = useState<any[]>([]);
 
-    // ======================Dummy data for testimonials if API fails=====================
-    const dummyTestimonials = [
-      {
-        id: "64b2f0c1f5a2b12345678911",
-        name: "Emily Carter",
-        role: "verified",
-        review:
-          "The officiant was amazing! The ceremony felt personal, heartfelt, and beautifully done.",
-        rating: 5,
-        avatar: "https://randomuser.me/api/portraits/women/45.jpg",
-      },
-      {
-        id: "64b2f0c1f5a2b12345678912",
-        name: "Michael Johnson",
-        role: "verified",
-        review:
-          "Very professional and kind. Everything was smooth and organized, highly recommend.",
-        rating: 4,
-        avatar: "https://randomuser.me/api/portraits/men/32.jpg",
-      },
-      {
-        id: "64b2f0c1f5a2b12345678913",
-        name: "Sophia Martinez",
-        role: "verified",
-        review:
-          "Absolutely wonderful officiant. The ceremony was tailored perfectly to us!",
-        rating: 5,
-        avatar: "https://randomuser.me/api/portraits/women/68.jpg",
-      },
-    ];
+  // ======================Dummy data for testimonials if API fails=====================
+  const dummyTestimonials = [
+    {
+      id: "64b2f0c1f5a2b12345678911",
+      name: "Emily Carter",
+      role: "verified",
+      review:
+        "The officiant was amazing! The ceremony felt personal, heartfelt, and beautifully done.",
+      rating: 5,
+      avatar: "https://randomuser.me/api/portraits/women/45.jpg",
+    },
+    {
+      id: "64b2f0c1f5a2b12345678912",
+      name: "Michael Johnson",
+      role: "verified",
+      review:
+        "Very professional and kind. Everything was smooth and organized, highly recommend.",
+      rating: 4,
+      avatar: "https://randomuser.me/api/portraits/men/32.jpg",
+    },
+    {
+      id: "64b2f0c1f5a2b12345678913",
+      name: "Sophia Martinez",
+      role: "verified",
+      review:
+        "Absolutely wonderful officiant. The ceremony was tailored perfectly to us!",
+      rating: 5,
+      avatar: "https://randomuser.me/api/portraits/women/68.jpg",
+    },
+  ];
 
-    // ======================Fetching officiant details====================
+  // ======================Fetching officiant details====================
   const fetchOfficiantDetails = async () => {
     try {
       const response = await axios.get(`/users/officiants/${officiantId}`);
@@ -62,11 +62,11 @@ const OfficiantDetail = () => {
       setImageError(false);
     } catch (error) {
       console.error("Error fetching officiant details:", error);
-        // Fallback to dummy data if API call fails
+      // Fallback to dummy data if API call fails
     }
   };
 
-    // ======================Fetching testimonial details====================
+  // ======================Fetching testimonial details====================
   const fetchTestimonial = async () => {
     try {
       const response = await axios.get(`/reviews/public/${officiantId}`);
@@ -83,19 +83,18 @@ const OfficiantDetail = () => {
     } catch (error) {
       console.error("Error fetching testimonial details:", error);
       // Fallback to dummy data if API call fails
-      setTestimonials(dummyTestimonials); 
-      
+      setTestimonials(dummyTestimonials);
     }
   };
   const navigate = useNavigate();
-    // ======================Handle first render====================
+  // ======================Handle first render====================
   useEffect(() => {
     fetchOfficiantDetails();
     fetchTestimonial();
   }, [officiantId]);
 
   const [screenSize, setScreenSize] = useState<"sm" | "md" | "lg" | "xl">("lg");
-    // ======================Handle screen resize====================
+  // ======================Handle screen resize====================
   useEffect(() => {
     const handleResize = () => {
       const width = window.innerWidth;
@@ -140,6 +139,16 @@ const OfficiantDetail = () => {
     return officiantDetails?.profilePicture && !imageError;
   };
 
+  const getProfileImageUrl = () => {
+    if (!officiantDetails?.profilePicture) return "";
+    // Check if it's already a complete URL
+    if (officiantDetails.profilePicture.startsWith("http")) {
+      return officiantDetails.profilePicture;
+    }
+    // For images in the public folder, construct the URL relative to the app root
+    return `/${officiantDetails.profilePicture}`;
+  };
+
   // Don't render anything until officiantDetails is loaded
   if (!officiantDetails) {
     return (
@@ -162,8 +171,8 @@ const OfficiantDetail = () => {
           <div className="p-2 rounded-full border-2 border-primary overflow-hidden size-38 flex items-center justify-center">
             {shouldShowImage() ? (
               <img
-                src={officiantDetails.profilePicture}
-                alt={officiantDetails.name }
+                src={getProfileImageUrl()}
+                alt={officiantDetails.name}
                 className="w-full h-full object-cover"
                 onError={handleImageError}
               />
@@ -294,104 +303,104 @@ const OfficiantDetail = () => {
 
       {/* testimonial carousel */}
 
-    <div className="relative py-10">
-      {testimonials?.length === 0 ? (
-        <div className="text-center py-16">
-        <p className="text-gray-500 text-lg font-secondary">
-          No reviews found for {officiantDetails.name || "this officiant"}
-        </p>
-        </div>
-      ) : (
-        <>
-        <Swiper
-          slidesPerView={getSwiperConfig().slidesPerView}
-          spaceBetween={getSwiperConfig().spaceBetween}
-          loop={testimonials.length > 3}
-          autoplay={{
-            delay: 4000,
-            disableOnInteraction: false,
-          }}
-          navigation={{
-            prevEl: prevBtnRef.current,
-            nextEl: nextBtnRef.current,
-          }}
-          onInit={(swiper) => {
-            // @ts-ignore
-            swiper.params.navigation.prevEl = prevBtnRef.current;
-            // @ts-ignore
-            swiper.params.navigation.nextEl = nextBtnRef.current;
-            swiper.navigation.init();
-            swiper.navigation.update();
-          }}
-          modules={[Navigation, Pagination, Autoplay]}
-          className="testimonial-swiper"
-        >
-          {testimonials.map((testimonial) => (
-            <SwiperSlide key={testimonial.id}>
-            <div className="flex flex-col items-start max-w-sm mx-auto">
-              <div className="relative bg-white border-2 border-primary rounded-2xl p-6 mb-6 shadow-lg">
-                <p className="text-gray-700 font-secondary text-sm leading-relaxed mb-4 text-center">
-                "{testimonial.review}"
-                </p>
-
-                <div className="flex justify-end gap-1">
-                {Array.from({ length: 5 }).map((_, i) => (
-                  <BsFillStarFill
-                    key={i}
-                    className={
-                    i < testimonial.rating
-                      ? "text-yellow-500 text-lg"
-                      : "text-yellow-500 text-lg opacity-50"
-                    }
-                  />
-                ))}
-                </div>
-              </div>
-
-              <div className="flex gap-3 items-start">
-                <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-primary shadow-md mb-3">
-                <img
-                  src={testimonial.avatar}
-                  alt={testimonial.name}
-                  className="w-full h-full object-cover"
-                />
-                </div>
-                <div>
-                <h4 className="font-primary font-bold text-gray-800 text-lg">
-                  {testimonial.name}
-                </h4>
-                <p className="italic text-sm font-primary">
-                  {testimonial.role}
-                </p>
-                </div>
-              </div>
-            </div>
-            </SwiperSlide>
-          ))}
-        </Swiper>
-
-        {/* Navigation Buttons - only show if more than 3 testimonials */}
-        {testimonials.length > 3 && (
+      <div className="relative py-10">
+        {testimonials?.length === 0 ? (
+          <div className="text-center py-16">
+            <p className="text-gray-500 text-lg font-secondary">
+              No reviews found for {officiantDetails.name || "this officiant"}
+            </p>
+          </div>
+        ) : (
           <>
-          <button
-            ref={prevBtnRef}
-            className="absolute left-1/3 lg:left-4 lg:top-1/2 transform -translate-y-1/2 z-10 bg-[#F6EED5] hover:bg-yellow-600 w-12 h-12 rounded-full shadow-lg transition-all duration-300 flex justify-center items-center hover:scale-105"
-            aria-label="Previous"
-          >
-            <AiOutlineDoubleLeft size={20} className="text-black" />
-          </button>
-          <button
-            ref={nextBtnRef}
-            className="absolute right-1/3 lg:right-4 lg:top-1/2 transform -translate-y-1/2 z-10 bg-[#F6EED5] hover:bg-yellow-600 w-12 h-12 rounded-full shadow-lg transition-all duration-300 flex justify-center items-center hover:scale-105"
-            aria-label="Next"
-          >
-            <AiOutlineDoubleRight size={20} className="text-black" />
-          </button>
+            <Swiper
+              slidesPerView={getSwiperConfig().slidesPerView}
+              spaceBetween={getSwiperConfig().spaceBetween}
+              loop={testimonials.length > 3}
+              autoplay={{
+                delay: 4000,
+                disableOnInteraction: false,
+              }}
+              navigation={{
+                prevEl: prevBtnRef.current,
+                nextEl: nextBtnRef.current,
+              }}
+              onInit={(swiper) => {
+                // @ts-ignore
+                swiper.params.navigation.prevEl = prevBtnRef.current;
+                // @ts-ignore
+                swiper.params.navigation.nextEl = nextBtnRef.current;
+                swiper.navigation.init();
+                swiper.navigation.update();
+              }}
+              modules={[Navigation, Pagination, Autoplay]}
+              className="testimonial-swiper"
+            >
+              {testimonials.map((testimonial) => (
+                <SwiperSlide key={testimonial.id}>
+                  <div className="flex flex-col items-start max-w-sm mx-auto">
+                    <div className="relative bg-white border-2 border-primary rounded-2xl p-6 mb-6 shadow-lg">
+                      <p className="text-gray-700 font-secondary text-sm leading-relaxed mb-4 text-center">
+                        "{testimonial.review}"
+                      </p>
+
+                      <div className="flex justify-end gap-1">
+                        {Array.from({ length: 5 }).map((_, i) => (
+                          <BsFillStarFill
+                            key={i}
+                            className={
+                              i < testimonial.rating
+                                ? "text-yellow-500 text-lg"
+                                : "text-yellow-500 text-lg opacity-50"
+                            }
+                          />
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="flex gap-3 items-start">
+                      <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-primary shadow-md mb-3">
+                        <img
+                          src={testimonial.avatar}
+                          alt={testimonial.name}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                      <div>
+                        <h4 className="font-primary font-bold text-gray-800 text-lg">
+                          {testimonial.name}
+                        </h4>
+                        <p className="italic text-sm font-primary">
+                          {testimonial.role}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </SwiperSlide>
+              ))}
+            </Swiper>
+
+            {/* Navigation Buttons - only show if more than 3 testimonials */}
+            {testimonials.length > 3 && (
+              <>
+                <button
+                  ref={prevBtnRef}
+                  className="absolute left-1/3 lg:left-4 lg:top-1/2 transform -translate-y-1/2 z-10 bg-[#F6EED5] hover:bg-yellow-600 w-12 h-12 rounded-full shadow-lg transition-all duration-300 flex justify-center items-center hover:scale-105"
+                  aria-label="Previous"
+                >
+                  <AiOutlineDoubleLeft size={20} className="text-black" />
+                </button>
+                <button
+                  ref={nextBtnRef}
+                  className="absolute right-1/3 lg:right-4 lg:top-1/2 transform -translate-y-1/2 z-10 bg-[#F6EED5] hover:bg-yellow-600 w-12 h-12 rounded-full shadow-lg transition-all duration-300 flex justify-center items-center hover:scale-105"
+                  aria-label="Next"
+                >
+                  <AiOutlineDoubleRight size={20} className="text-black" />
+                </button>
+              </>
+            )}
           </>
         )}
-        </>
-      )}
-    </div>
+      </div>
     </div>
   );
 };
