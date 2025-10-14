@@ -47,6 +47,7 @@ const Discussions: React.FC = () => {
   const [connectionError, setConnectionError] = useState<string | null>(null);
   const [uploadError, setUploadError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
+  const [messagesLoading, setMessagesLoading] = useState<boolean>(false);
   const [onlineUsers, setOnlineUsers] = useState<Set<string>>(new Set());
 
   // Booking modal state
@@ -163,6 +164,7 @@ const Discussions: React.FC = () => {
           user.partner_1 || user.partner_2 || "User"
         }`
       );
+      setMessagesLoading(true); // Start loading messages
       newSocket.emit("joinRoom", {
         roomId: roomId,
         userId: user._id,
@@ -194,7 +196,7 @@ const Discussions: React.FC = () => {
 
       // Attempt to reconnect for certain disconnect reasons
       if (reason === "io server disconnect" || reason === "transport close") {
-        console.log("🔄 Attempting to reconnect...");
+        console.log(" Attempting to reconnect...");
         setTimeout(() => {
           if (!newSocket.connected) {
             newSocket.connect();
@@ -252,6 +254,7 @@ const Discussions: React.FC = () => {
         );
 
         setMessages(existingMessages);
+        setMessagesLoading(false); // Stop loading messages
       }
     );
 
@@ -1042,8 +1045,8 @@ const Discussions: React.FC = () => {
         officiant.specialization.toLowerCase().includes(search.toLowerCase()))
   );
 
-  // If loading or no officiants, show loading state
-  if (loading || !user?._id || officiants.length === 0) {
+  // If still loading or user not authenticated, show loading state
+  if (loading || !user?._id) {
     return (
       <div className="flex h-screen bg-gray-50">
         <div className="flex-1 flex items-center justify-center">
@@ -1051,6 +1054,29 @@ const Discussions: React.FC = () => {
             <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-[#C7B7A3] mx-auto mb-4"></div>
             <p className="text-gray-600">
               {!user?._id ? "Please log in to access chat" : "Loading chat..."}
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // If no participants available, show empty state
+  if (officiants.length === 0) {
+    return (
+      <div className="flex h-screen bg-gray-50">
+        <div className="flex-1 flex items-center justify-center">
+          <div className="text-center">
+            <div className="text-6xl text-gray-300 mb-4">💬</div>
+            <h3 className="text-xl font-semibold text-gray-700 mb-2">
+              {user.role === "officiant"
+                ? "No conversations yet"
+                : "No officiants available"}
+            </h3>
+            <p className="text-gray-500">
+              {user.role === "officiant"
+                ? "When clients message you, they'll appear here."
+                : "Start a conversation with an officiant to begin chatting."}
             </p>
           </div>
         </div>
@@ -1128,7 +1154,7 @@ const Discussions: React.FC = () => {
       </div>
     );
   }
-    const getProfileImageUrl = (profilePicture?: string) => {
+  const getProfileImageUrl = (profilePicture?: string) => {
     if (!profilePicture) return "";
     // Check if it's already a complete URL
     if (profilePicture.startsWith("http")) {
@@ -1137,7 +1163,6 @@ const Discussions: React.FC = () => {
     // For images in the public folder, construct the URL relative to the app root
     return `/${profilePicture}`;
   };
-
 
   return (
     <div className="lg:h-[87vh] bg-white flex flex-col">
@@ -1166,7 +1191,7 @@ const Discussions: React.FC = () => {
           <div className="flex items-center gap-3 px-6 py-4 border-b border-gray-200 bg-white">
             <div className="relative">
               <img
-                src={getProfileImageUrl(selected.profilePicture) }
+                src={getProfileImageUrl(selected.profilePicture)}
                 alt={selected.name}
                 className="w-10 h-10 rounded-full object-cover"
               />
@@ -1234,15 +1259,32 @@ const Discussions: React.FC = () => {
 
           {/* Chat Messages */}
           <div className="flex-1 overflow-y-auto max-h-96 2xl:max-h-[735px] xl:max-h-[500px] px-6 py-4 flex flex-col gap-4">
-            {messages.map((msg) => (
-              <MessageRenderer
-                key={msg._id || msg.id}
-                msg={msg}
-                isMyMessage={msg.sender === user?._id}
-                userRole={user?.role}
-                onBookingResponse={handleBookingResponse}
-              />
-            ))}
+            {messagesLoading ? (
+              <div className="flex-1 flex items-center justify-center">
+                <div className="text-center">
+                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#C7B7A3] mx-auto mb-4"></div>
+                  <p className="text-gray-600">Loading messages...</p>
+                </div>
+              </div>
+            ) : messages.length === 0 ? (
+              <div className="flex-1 flex items-center justify-center">
+                <div className="text-center">
+                  <p className="text-gray-500">
+                    No messages yet. Start the conversation!
+                  </p>
+                </div>
+              </div>
+            ) : (
+              messages.map((msg) => (
+                <MessageRenderer
+                  key={msg._id || msg.id}
+                  msg={msg}
+                  isMyMessage={msg.sender === user?._id}
+                  userRole={user?.role}
+                  onBookingResponse={handleBookingResponse}
+                />
+              ))
+            )}
 
             {/* Typing Indicator */}
             {typingUsers.length > 0 && (
