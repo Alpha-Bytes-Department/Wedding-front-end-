@@ -80,7 +80,7 @@ const Officiant = () => {
           </h2>
           <FaArrowRight className="text-primary group-hover:translate-x-3 transition-transform duration-300 " />
           <a
-            href="https://www.theknot.com/marketplace/erie-wedding-officiants-erie-pa-2046958"
+            href="https://www.weddingwire.com/biz/reverie-fairview/602bec43c5203bc9.html"
             target="_blank"
             rel="noopener noreferrer"
           >
@@ -140,8 +140,20 @@ const Officiant = () => {
               {officiant.role}
             </p>
             <p className="pb-8 text-[16px] text-center text-black-web flex-1">
-              
-              {officiant.description}
+              {officiant.description.length > 100 ? (
+                <>
+                  {officiant.description.slice(0, 100)}
+                  <span className="text-gray-400">.... </span>
+                  <span
+                    className="text-gray-400 cursor-pointer hover:text-gray-600"
+                    onClick={() => NavigateToDetail(officiant.id)}
+                  >
+                    see more
+                  </span>
+                </>
+              ) : (
+                officiant.description
+              )}
             </p>
 
             <div

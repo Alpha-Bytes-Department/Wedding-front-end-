@@ -109,6 +109,29 @@ const OfficiantDetail = () => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
+
+    useEffect(() => {
+      if (location.hash === "#client-review") {
+        // Small delay to ensure the component is rendered
+        setTimeout(() => {
+          const element = document.getElementById("client-review");
+          if (element) {
+            element.scrollIntoView({
+              behavior: "smooth",
+              block: "start",
+            });
+          }
+        }, 300); // Slightly longer delay for components to fully render
+      } else {
+        // Scroll to top if no hash
+        window.scrollTo({
+          top: 0,
+          left: 0,
+          behavior: "smooth",
+        });
+      }
+    }, [location]);
+
   const getSwiperConfig = () => {
     switch (screenSize) {
       case "sm":
@@ -223,7 +246,7 @@ const OfficiantDetail = () => {
               </div>
               <div className="text-text text-base md:text-lg lg:text-xl font-secondary gap-3 font-normal flex">
                 <HiOutlineChatBubbleLeftRight size={27} />{" "}
-                <p>Speaks {officiantDetails.languages.join(", ")}</p>
+                <p>Speaks : {officiantDetails.languages.join(", ")}</p>
               </div>
             </div>
             <div className="text-text text-base md:text-lg lg:text-xl font-secondary gap-3 font-normal flex pt-5">

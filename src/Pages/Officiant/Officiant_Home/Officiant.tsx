@@ -76,13 +76,12 @@ const Officiant = () => {
         </p>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-4 gap-6 px-5 md:px-10 lg:px-20 xl:gap-14 mt-8 mb-10 lg:mb-20 justify-between">
+      <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6 px-5 md:px-10 lg:px-20 xl:gap-14 mt-8 mb-10 lg:mb-20 justify-between">
         {officiants.map((officiant) => (
           <div
             key={officiant.id}
             className="bg-white p-2 group rounded-2xl shadow-xl shadow-[#00000040] border-2 max-w-80 border-primary mx-auto flex flex-col h-full"
           >
-          
             <div className="flex h-60 justify-center items-center min-h-[160px]">
               {shouldShowImage(officiant) ? (
                 <img
@@ -103,7 +102,20 @@ const Officiant = () => {
               {officiant.role}
             </p>
             <p className="pb-8 text-[16px] text-center text-black-web flex-1">
-              {officiant.description}
+              {officiant.description.length > 100 ? (
+                <>
+                  {officiant.description.slice(0, 100)}
+                  <span className="text-gray-400">.... </span>
+                  <span
+                    className="text-gray-400 cursor-pointer hover:text-gray-600"
+                    onClick={() => NavigateToDetail(officiant.id)}
+                  >
+                    see more
+                  </span>
+                </>
+              ) : (
+                officiant.description
+              )}
             </p>
 
             <div

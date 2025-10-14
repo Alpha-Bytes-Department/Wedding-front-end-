@@ -19,7 +19,7 @@ type PublicReview = {
 };
 
 const [publicReviews, setPublicReviews] = useState<PublicReview[]>([]);
-
+ 
 
 const handleResize = () => {
   const width = window.innerWidth;
@@ -112,7 +112,7 @@ const handleResize = () => {
           <img
             src="/flower.png"
             alt="Flower"
-            className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16"
+            className="w-12 h-12  sm:w-14 sm:h-14 md:w-16 md:h-16"
           />
           <h1 className=" text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-[55px] font-primary font-bold text-start leading-tight">
             Client <span className="text-primary">Reviews</span> to our service
@@ -169,7 +169,7 @@ const handleResize = () => {
         </div>
         <div className=" size-12 border-2 rounded-full border-primary flex justify-center items-center ">
           {item?.userImageUrl ? (
-            <img src={item.userImageUrl} className="size-12" alt={item.userName} />
+            <img src={item.userImageUrl} className="size-12 rounded-full" alt={item.userName} />
           ) : (
             <FaRegUserCircle  className="size-10 text-primary" />
           )}
