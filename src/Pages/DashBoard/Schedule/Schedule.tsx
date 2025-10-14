@@ -107,6 +107,16 @@ const Schedule = () => {
 
     // reset();
   };
+  const getProfileImageUrl = (profilePicture:string) => {
+    if (!profilePicture) return "";
+    // Check if it's already a complete URL
+    if (profilePicture.startsWith("http")) {
+      return profilePicture;
+    }
+    // For images in the public folder, construct the URL relative to the app root
+    return `/${profilePicture}`;
+  };
+
 
   return (
     <div className="min-h-screen bg-white p-4 md:p-8">
@@ -190,7 +200,7 @@ const Schedule = () => {
                     className="flex items-center gap-3 border border-primary rounded-lg px-3 py-2"
                   >
                     <img
-                      src={o.profilePicture}
+                      src={getProfileImageUrl(o.profilePicture)}
                       alt={o.name}
                       className="w-10 h-10 rounded-full object-cover"
                     />
