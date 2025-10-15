@@ -34,6 +34,8 @@ interface scheduleEvent {
   time: string;
   officiant: string;
   status: string;
+  approvedStatus?: string;
+  officiantImage?: string;
 }
 
 const Schedule = () => {
@@ -64,12 +66,13 @@ const Schedule = () => {
     try {
       const response = await axios.get(`/schedule/get/${user?._id}`);
       const data = response.data.map((s: any) => ({
-        id: s._id,
-        name: s.eventName,
+        _id: s._id,
+        name: s.fromUserName,
         date: s.scheduleDate,
         time: s.scheduleDateTime,
         officiant: s.officiantName,
-        status: s.approvedStatus ? "Confirmed" : "Pending",
+        status: s.approvedStatus,
+        officiantImage: s.officiantImage,
       }));
       console.log(data);
       setSchedule(data);
@@ -83,7 +86,8 @@ const Schedule = () => {
 
     const scheduledData = {
       fromUserId: user?._id,
-      fromUserName: user?.partner_1 || user?.partner_2,
+      fromUserName: user?.name || user?.partner_1,
+      fromUserImage: user?.profilePicture || "",
       scheduleDate: data.date,
       scheduleDateTime: data.time,
       officiantName: data.officiant ? JSON.parse(data.officiant).name : "",
@@ -156,17 +160,17 @@ const Schedule = () => {
               </select>
             </div>
             <div className="flex gap-4 flex-col md:flex-row">
-                <div className="flex-1">
+              <div className="flex-1">
                 <label className="block font-medium mb-1">Date</label>
                 <input
                   type="date"
-                  min={new Date().toISOString().split('T')[0]}
+                  min={new Date().toISOString().split("T")[0]}
                   {...register("date", {
-                  required: "Meeting date is required",
+                    required: "Meeting date is required",
                   })}
                   className="w-full border border-primary rounded-lg px-4 py-2 focus:outline-none"
                 />
-                </div>
+              </div>
               <div className="flex-1">
                 <label className="block font-medium mb-1">Time</label>
                 <input
@@ -261,11 +265,17 @@ const Schedule = () => {
                 className="flex items-center justify-between border border-primary rounded-lg px-4 py-3"
               >
                 <div>
-                  <div className="font-medium text-gray-900">{m.name}</div>
+                  <div className="font-medium text-gray-900 flex gap-4">
+                    <img
+                      src={getProfileImageUrl(m?.officiantImage || "")}
+                      alt={m.officiant}
+                      className="w-10 h-10 rounded-full object-cover"
+                    />
+                    <p>Officiant : {m.officiant}</p>
+                  </div>
                   <div className="text-sm text-gray-500">
                     {new Date(m.date).toDateString()} ·{" "}
-                    <span className="font-medium">Officiant:</span>{" "}
-                    {m.officiant}
+                    <span className="font-medium">Client:</span> {m.name}
                   </div>
                 </div>
                 <div className="flex items-center gap-2">

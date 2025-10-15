@@ -787,12 +787,14 @@ const DashHome = () => {
                 No past ceremonies found
               </h3>
 
-              <p className="text-sm text-gray-500 max-w-prose">
-                You don't have any completed ceremonies yet. Create your first
-                ceremony or continue editing an existing draft to get started.
-              </p>
+              {user?.role === "user" && (
+                <p className="text-sm text-gray-500 max-w-prose">
+                  You don't have any completed ceremonies yet. Create your first
+                  ceremony or continue editing an existing draft to get started.
+                </p>
+              )}
 
-              <div className="flex flex-col sm:flex-row gap-3 mt-2">
+              {user?.role==='user'&&<div className="flex flex-col sm:flex-row gap-3 mt-2">
                 <Link
                   to="/dashboard/ceremony"
                   className="inline-flex items-center justify-center px-4 py-2 bg-primary text-white rounded-2xl font-medium hover:bg-primary/90"
@@ -808,7 +810,7 @@ const DashHome = () => {
                 >
                   Continue Editing Drafts
                 </button>
-              </div>
+              </div>}
             </div>
           )}
         </div>

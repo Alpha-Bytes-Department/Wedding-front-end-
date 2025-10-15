@@ -9,6 +9,7 @@ interface Booking {
   _id: string;
   approvedStatus: string;
   fromUserName: string;
+  fromUserImage: string;
   scheduleDate: string;
   officiantName: string;
   message?: string;
@@ -123,6 +124,15 @@ const Bookings = () => {
   const showNote = (note: string) => {
     GlassSwal.info("Note from user", note);
   };
+  const getProfileImageUrl = (profilePicture: string) => {
+    if (!profilePicture) return "";
+    // Check if it's already a complete URL
+    if (profilePicture.startsWith("http")) {
+      return profilePicture;
+    }
+    // For images in the public folder, construct the URL relative to the app root
+    return `/${profilePicture}`;
+  };
 
   //console.log('Ongoing Bookings State:', ongoingCeremonies);
   return (
@@ -161,6 +171,11 @@ const Bookings = () => {
                   >
                     <div>
                       <div className="font-medium text-gray-900">
+                        <img
+                          src={getProfileImageUrl(m?.fromUserImage)}
+                          alt={m.fromUserName}
+                          className="w-10 h-10 rounded-full object-cover"
+                        />
                         {m.fromUserName}
                       </div>
                       <div className="text-sm text-gray-500">
@@ -179,10 +194,15 @@ const Bookings = () => {
                 bookings.slice(0, 3).map((m) => (
                   <div
                     key={m._id}
-                    className="flex items-center justify-between border border-primary rounded-lg px-4 py-3"
+                    className="flex items-center gap-4 flex-col md:flex-row justify-between border border-primary rounded-lg px-4 py-3"
                   >
                     <div>
-                      <div className="font-medium text-gray-900">
+                      <div className="font-medium items-center flex gap-4 text-gray-900">
+                        <img
+                          src={getProfileImageUrl(m?.fromUserImage)}
+                          alt={m.fromUserName}
+                          className="w-10 h-10 rounded-full object-cover"
+                        />
                         {m.fromUserName}
                       </div>
                       <div className="text-sm text-gray-500">
