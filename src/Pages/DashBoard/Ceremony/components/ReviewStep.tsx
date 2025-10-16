@@ -12,7 +12,7 @@ interface ReviewStepProps {
 interface Officiant {
   id: string;
   name: string;
-  profilePicture?: string;
+  profilePicture: string;
 }
 
 interface ScheduleResponse {
@@ -385,6 +385,7 @@ const ReviewStep = ({ watch, setValue }: ReviewStepProps) => {
       console.log('Available officiant: ', response.data)
       const officiantList: Officiant[] = response.data.map((officiant: ScheduleResponse) => ({
         id: officiant.officiantId,
+
         name: officiant.officiantName,
         profilePicture: officiant.officiantImage
       }))
@@ -426,6 +427,9 @@ const ReviewStep = ({ watch, setValue }: ReviewStepProps) => {
       return timeString;
     }
   };
+
+  
+
 
   return (
     <div className="space-y-8">
@@ -1106,12 +1110,13 @@ const ReviewStep = ({ watch, setValue }: ReviewStepProps) => {
                 {officiant.length > 0 ? (
                   officiant.map((off) => (
                     <option key={off.id} value={off.id}>
+                      
                       {off.name}
                     </option>
                   ))
                 ) : (
                   <option value="" disabled>
-                    No officiants available
+                    Please book a officiant first ...
                   </option>
                 )}
               </select>

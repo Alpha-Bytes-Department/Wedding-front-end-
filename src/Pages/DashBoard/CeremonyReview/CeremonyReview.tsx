@@ -1,6 +1,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { useAxios } from "../../../Component/Providers/useAxios";
 import { useAuth } from "../../../Component/Providers/AuthProvider";
+import GlassSwal from "../../../utils/glassSwal";
 
 interface CeremonyEvent {
   _id: string;
@@ -82,16 +83,23 @@ const CeremonyReview = () => {
   const updateEventStatus = async (eventId: string, newStatus: "approved" | "canceled" | "completed") => {
     setLoading(true);
     try {
-      await axios.patch(`/events/update/${eventId}`, { status: newStatus });
-      // Update the local state
-      setEvents(prevEvents => 
-        prevEvents.map(event => 
-          event._id === eventId 
-            ? { ...event, status: newStatus }
-            : event
-        )
+      const willUpdate = await GlassSwal.confirm(
+        "Are you sure?",
+        `Are you sure you want to ${newStatus} this event?`
       );
-      console.log(`Event ${eventId} status updated to ${newStatus}`);
+      console.log("User confirmation result:", willUpdate);
+      if (willUpdate.isConfirmed) {
+        await axios.patch(`/events/update/${eventId}`, { status: newStatus });
+        // Update the local state
+        setEvents(prevEvents =>
+          prevEvents.map(event =>
+            event._id === eventId
+              ? { ...event, status: newStatus }
+              : event
+          )
+        );
+        console.log(`Event ${eventId} status updated to ${newStatus}`);
+      }
     } catch (error) {
       console.error(`Error updating event status to ${newStatus}:`, error);
     } finally {
@@ -209,7 +217,7 @@ const CeremonyReview = () => {
 
             {/* Buttons */}
             <div className="flex justify-end gap-4">
-              {event.status !== "cancelled" && event.status !== "completed" && (
+              {event.status !== "canceled" && event.status !== "completed" && (
                 <button
                   onClick={() => handleCancel(event._id)}
                   disabled={loading}
