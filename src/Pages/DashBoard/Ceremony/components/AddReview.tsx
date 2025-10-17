@@ -67,7 +67,7 @@ const AddReview = ({
       const reviewData = {
         userId: user?._id,
         userImageUrl: user?.profilePicture,
-        userName: user?.partner_1,
+        userName: user?.name? user?.name : user?.partner_1,
         rating: data.rating,
         eventId: eventid,
         officiantId: officiantid || "not found",

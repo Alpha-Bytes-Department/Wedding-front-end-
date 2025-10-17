@@ -460,7 +460,7 @@ const PdfMaker: React.FC<PdfMakerProps> = ({ eventId }) => {
       setActiveBill(billResponse.data.bill || billResponse.data);
     } catch (error) {
       console.error("Error fetching bill:", error);
-      setError("Failed to fetch bill data.");
+      setError("Payment was not completed yet.");
     }
   };
 

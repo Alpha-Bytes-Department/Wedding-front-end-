@@ -114,6 +114,7 @@ const BookingModal: React.FC<BookingModalProps> = ({
                   {event.title} - {event.ceremonyType}
                 </option>
               ))}
+              {events.length === 0 && (<option value="">No events are submitted for this client</option>)}
             </select>
           </div>
 

@@ -79,8 +79,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       console.log("Firebase user:", result.user);
       const token = await result.user.getIdToken(); // Firebase ID token
       const email = result.user.email;
-      const partner_1 = " "; // Get partner_1 from your app's state or user input
-      const partner_2 = result.user.displayName;
+      const partner_1 = result.user.displayName; // Get partner_1 from your app's state or user input
+      const partner_2 = " ";
       const name = result.user.displayName; // Get name from your app's state or user input
       const profilePicture = result.user.photoURL;
 

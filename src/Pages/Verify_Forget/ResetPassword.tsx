@@ -130,7 +130,7 @@ const ResetPassword = () => {
                   })}
                   type={showPassword ? "text" : "password"}
                   id="newPassword"
-                  className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-colors duration-200 bg-white/70 backdrop-blur-sm"
+                  className="w-full px-4 py-3 pr-12 text-black border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-colors duration-200 bg-white/70 backdrop-blur-sm"
                   placeholder="Enter your new password"
                 />
                 <button
@@ -169,7 +169,7 @@ const ResetPassword = () => {
                   })}
                   type={showConfirmPassword ? "text" : "password"}
                   id="confirmPassword"
-                  className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-colors duration-200 bg-white/70 backdrop-blur-sm"
+                  className="w-full px-4 py-3 text-black pr-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-colors duration-200 bg-white/70 backdrop-blur-sm"
                   placeholder="Confirm your new password"
                 />
                 <button

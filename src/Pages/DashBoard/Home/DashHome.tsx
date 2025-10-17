@@ -17,22 +17,20 @@ type Notification = {
   createdAt: string;
 };
 
-type events={
-  officiantId:string;
-  status:string;
-  _id:string;
-  title:string;
+type events = {
+  officiantId: string;
+  status: string;
+  _id: string;
+  title: string;
+};
 
-
-}
-
-type booking={
-  _id:string;
-  eventDate:Date;
-  eventType:string;
-  approvedStatus:string;
-  updatedAt:Date;
-}
+type booking = {
+  _id: string;
+  eventDate: Date;
+  eventType: string;
+  approvedStatus: string;
+  updatedAt: Date;
+};
 
 type Ceremony = {
   id: string;
@@ -76,6 +74,10 @@ const DashHome = () => {
   const [isDownloading, setIsDownloading] = useState(false);
   const [newBookings, setNewBookings] = useState<booking[]>([]);
   const [ceremony, setCeremony] = useState<events[]>([]);
+  const [billAvailability, setBillAvailability] = useState<
+    Record<string, boolean>
+  >({});
+  const [checkingBills, setCheckingBills] = useState(false);
 
   // Updated PDF download function using html2canvas and jsPDF
   const downloadPDF = async (billData?: bill) => {
@@ -191,7 +193,7 @@ const DashHome = () => {
   const fetchScheduleData = async () => {
     try {
       const response = await axios.get(`/schedule/get-officiant/${user?._id}`);
-     
+
       setNewBookings(response.data);
     } catch (error) {
       console.error("Error fetching schedule data:", error);
@@ -353,7 +355,11 @@ const DashHome = () => {
               font-weight: bold;
             ">${bill.userName}</p>
             <p style="color: #666; margin: 0 0 2px 0; font-size: 12px;">Address</p>
-            <p style="color: #666; margin: 0 0 2px 0; font-size: 12px;">${bill.location.line1}, ${bill.location.city}, ${bill.location.country} - ${bill.location.postal_code}</p>
+            <p style="color: #666; margin: 0 0 2px 0; font-size: 12px;">${
+              bill.location.line1
+            }, ${bill.location.city}, ${bill.location.country} - ${
+      bill.location.postal_code
+    }</p>
             <p style="color: #666; margin: 0; font-size: 12px;">+0 (000) 123-4567</p>
           </div>
         </div>
@@ -417,7 +423,7 @@ const DashHome = () => {
             <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
               <span style="font-size: 14px; color: #666;">Subtotal</span>
               <span style="font-size: 14px; color: #000;">${formatCurrency(
-                 bill.amount
+                bill.amount
               )}</span>
             </div>
             <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
@@ -433,7 +439,7 @@ const DashHome = () => {
             ">
               <span style="font-size: 16px; font-weight: bold; color: #000;">Total</span>
               <span style="font-size: 16px; font-weight: bold; color: #000;">${formatCurrency(
-                 bill.amount
+                bill.amount
               )}</span>
             </div>
             <div style="
@@ -444,7 +450,7 @@ const DashHome = () => {
               <div style="display: flex; justify-content: space-between;">
                 <span style="font-size: 14px; font-weight: bold; color: #D4AF37;">Amount due</span>
                 <span style="font-size: 18px; font-weight: bold; color: #D4AF37;">
-                  US$ ${( bill.amount).toFixed(2)}
+                  US$ ${bill.amount.toFixed(2)}
                 </span>
               </div>
             </div>
@@ -475,6 +481,31 @@ const DashHome = () => {
     `;
   };
 
+  // Function to check bill availability for each ceremony
+  const checkBillAvailability = async (ceremonies: Ceremony[]) => {
+    if (ceremonies.length === 0) return;
+
+    setCheckingBills(true);
+    const availability: Record<string, boolean> = {};
+
+    // Check each ceremony for bill availability in parallel
+    const promises = ceremonies.map(async (ceremony) => {
+      try {
+        await axios.get(`/bills/${ceremony.id}`);
+        availability[ceremony.id] = true;
+      } catch (error) {
+        availability[ceremony.id] = false;
+        console.log(
+          `No bill data found for ceremony: ${ceremony.name} (${ceremony.id})`
+        );
+      }
+    });
+
+    await Promise.all(promises);
+    setBillAvailability(availability);
+    setCheckingBills(false);
+  };
+
   // Function to handle PDF download directly from event card
   const handleEventCardDownload = async (ceremonyId: string) => {
     try {
@@ -484,7 +515,10 @@ const DashHome = () => {
       await downloadPDF(billData);
     } catch (error) {
       console.error("Error fetching invoice for download:", error);
-      // You could add a toast notification here
+      GlassSwal.error(
+        "Error",
+        "Invoice data not found for this ceremony. Unable to generate PDF."
+      );
     } finally {
       setIsDownloading(false);
     }
@@ -511,17 +545,20 @@ const DashHome = () => {
       const response = await axios.get(
         `/events/by-role/${user?._id}/${user?.role}`
       );
-      setCeremonies(
-        response.data.events
-          .filter((ceremony: any) => ceremony.status === "completed")
-          .map((ceremony: any) => ({
-            id: ceremony._id,
-            name: ceremony.title,
-            date: new Date(ceremony.eventDate).toLocaleDateString(),
-            officiant: ceremony.officiantName,
-            complete: ceremony.status,
-          }))
-      );
+      const ceremonyData = response.data.events
+        .filter((ceremony: any) => ceremony.status === "completed")
+        .map((ceremony: any) => ({
+          id: ceremony._id,
+          name: ceremony.title,
+          date: new Date(ceremony.eventDate).toLocaleDateString(),
+          officiant: ceremony.officiantName,
+          complete: ceremony.status,
+        }));
+
+      setCeremonies(ceremonyData);
+
+      // Check bill availability after setting ceremonies
+      await checkBillAvailability(ceremonyData);
     } catch (error) {
       console.error("Error fetching ceremonies:", error);
     }
@@ -542,8 +579,11 @@ const DashHome = () => {
       setError(null);
       (document.getElementById("my_modal_4") as HTMLDialogElement).showModal();
     } catch (error) {
-      setError("Failed to fetch invoice.");
+      setError(
+        "Invoice data not found for this ceremony. Please contact support if this is unexpected."
+      );
       console.error("Error fetching invoice:", error);
+      (document.getElementById("my_modal_4") as HTMLDialogElement).showModal();
     }
   };
 
@@ -582,7 +622,9 @@ const DashHome = () => {
             </h1>
             <p className="text-black-web font-secondary text-lg lg:text-xl">
               Welcome Back!{" "}
-              {user?.name ? user.name : `${user?.partner_1} & ${user?.partner_2}`}
+              {user?.name
+                ? user.name
+                : `${user?.partner_1} & ${user?.partner_2}`}
               .
             </p>
           </div>
@@ -731,22 +773,49 @@ const DashHome = () => {
                     </p>
                   </div>
                   <div className="flex justify-center flex-col space-y-3 lg:flex-row items-center space-x-2">
-                    <div className="flex space-x-2">
-                      <button
-                        onClick={() => costInvoice(ceremony.id)}
-                        className="px-4 py-1 cursor-pointer lg:py-2 text-sm border border-primary rounded-2xl hover:bg-gray-50"
-                      >
-                        View
-                      </button>
+                    {checkingBills ? (
+                      <div className="flex items-center space-x-2 text-gray-500">
+                        <span className="text-sm">Checking data...</span>
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary"></div>
+                      </div>
+                    ) : billAvailability[ceremony.id] === false ? (
+                      <div className="flex flex-col space-y-2 items-center">
+                        <div className="flex items-center space-x-2">
+                          <button
+                            disabled
+                            className="px-4 py-1 lg:py-2 text-sm border border-gray-300 rounded-2xl bg-gray-100 text-gray-400 cursor-not-allowed"
+                          >
+                            View
+                          </button>
+                          <button
+                            disabled
+                            className="px-4 py-1 lg:py-2 text-sm border border-gray-300 rounded-2xl bg-gray-100 text-gray-400 cursor-not-allowed"
+                          >
+                            Download PDF
+                          </button>
+                        </div>
+                        <p className="text-xs text-red-500 text-center">
+                          Invoice data not available
+                        </p>
+                      </div>
+                    ) : (
+                      <div className={`flex items-center space-x-2`}>
+                        <button
+                          onClick={() => costInvoice(ceremony.id)}
+                          className="px-4 py-1 cursor-pointer lg:py-2 text-sm border border-primary rounded-2xl hover:bg-gray-50"
+                        >
+                          View
+                        </button>
 
-                      <button
-                        onClick={() => handleEventCardDownload(ceremony.id)}
-                        disabled={isDownloading}
-                        className="px-4 cursor-pointer py-1 lg:py-2 text-sm bg-primary border border-primary rounded-2xl text-white hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed"
-                      >
-                        {isDownloading ? "Downloading..." : "Download PDF"}
-                      </button>
-                    </div>
+                        <button
+                          onClick={() => handleEventCardDownload(ceremony.id)}
+                          disabled={isDownloading}
+                          className="px-4 cursor-pointer py-1 lg:py-2 text-sm bg-primary border border-primary rounded-2xl text-white hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                          {isDownloading ? "Downloading..." : "Download PDF"}
+                        </button>
+                      </div>
+                    )}
                   </div>
                 </div>
               )
@@ -794,23 +863,27 @@ const DashHome = () => {
                 </p>
               )}
 
-              {user?.role==='user'&&<div className="flex flex-col sm:flex-row gap-3 mt-2">
-                <Link
-                  to="/dashboard/ceremony"
-                  className="inline-flex items-center justify-center px-4 py-2 bg-primary text-white rounded-2xl font-medium hover:bg-primary/90"
-                >
-                  Start a new ceremony
-                </Link>
+              {user?.role === "user" && (
+                <div className="flex flex-col sm:flex-row gap-3 mt-2">
+                  <Link
+                    to="/dashboard/ceremony"
+                    className="inline-flex items-center justify-center px-4 py-2 bg-primary text-white rounded-2xl font-medium hover:bg-primary/90"
+                  >
+                    Start a new ceremony
+                  </Link>
 
-                <button
-                  onClick={() =>
-                    navigate("/dashboard/ceremony", { state: { tab: "draft" } })
-                  }
-                  className="inline-flex items-center justify-center px-4 py-2 border border-primary text-gray-700 bg-white rounded-2xl font-medium hover:bg-gray-50"
-                >
-                  Continue Editing Drafts
-                </button>
-              </div>}
+                  <button
+                    onClick={() =>
+                      navigate("/dashboard/ceremony", {
+                        state: { tab: "draft" },
+                      })
+                    }
+                    className="inline-flex items-center justify-center px-4 py-2 border border-primary text-gray-700 bg-white rounded-2xl font-medium hover:bg-gray-50"
+                  >
+                    Continue Editing Drafts
+                  </button>
+                </div>
+              )}
             </div>
           )}
         </div>
@@ -1107,7 +1180,9 @@ const DashHome = () => {
                         fontSize: "12px",
                       }}
                     >
-                      {activeBill.location.line1}, {activeBill.location.city}{activeBill.location.country}, IN - {activeBill.location.postal_code}
+                      {activeBill.location.line1}, {activeBill.location.city}
+                      {activeBill.location.country}, IN -{" "}
+                      {activeBill.location.postal_code}
                     </p>
                     <p
                       style={{
@@ -1231,8 +1306,6 @@ const DashHome = () => {
                       {formatCurrency(activeBill.cost)}
                     </div>
                   </div>
-
-                  
                 </div>
 
                 {/* Total Section */}
@@ -1336,7 +1409,7 @@ const DashHome = () => {
                             color: "#D4AF37",
                           }}
                         >
-                          US$ {( activeBill.amount).toFixed(2)}
+                          US$ {activeBill.amount.toFixed(2)}
                         </span>
                       </div>
                     </div>

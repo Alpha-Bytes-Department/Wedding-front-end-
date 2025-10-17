@@ -261,11 +261,13 @@ const Note = () => {
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
               >
                 <option value="">Select a client</option>
+                
                 {users.map((u) => (
                   <option key={u.fromUserId} value={u.fromUserId}>
                     {u.fromUserName}
                   </option>
                 ))}
+                {users.length===0 && <option value="">Sorry , you have no bookings.</option>}
               </select>
               {errors.client && (
                 <p className="text-red-500 text-sm mt-1">

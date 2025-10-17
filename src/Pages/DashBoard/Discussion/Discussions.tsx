@@ -145,7 +145,7 @@ const Discussions: React.FC = () => {
       if (newSocket.connected && user?._id) {
         newSocket.emit("userOffline", {
           userId: user._id,
-          userName: user.partner_1 || user.partner_2 || "User",
+          userName: user.name || user.partner_1 || "User",
         });
       }
     };
@@ -175,7 +175,7 @@ const Discussions: React.FC = () => {
       console.log(`📡 Marking user as online: ${user._id}`);
       newSocket.emit("userOnline", {
         userId: user._id,
-        userName: user.partner_1 || user.partner_2 || "User",
+        userName: user.name || user.partner_1 || "User",
       });
 
       // Request online status for all participants
@@ -190,7 +190,7 @@ const Discussions: React.FC = () => {
       if (user?._id) {
         newSocket.emit("userOffline", {
           userId: user._id,
-          userName: user.partner_1 || user.partner_2 || "User",
+          userName: user.name || user.partner_1 || "User",
         });
       }
 
@@ -213,13 +213,13 @@ const Discussions: React.FC = () => {
       newSocket.emit("joinRoom", {
         roomId: roomId,
         userId: user._id,
-        userName: user.partner_1 || user.partner_2 || "User",
+        userName: user.name || user.partner_1 || "User",
       });
 
       // Mark user as online again after reconnection
       newSocket.emit("userOnline", {
         userId: user._id,
-        userName: user.partner_1 || user.partner_2 || "User",
+        userName: user.name || user.partner_1 || "User",
       });
     });
 
@@ -598,13 +598,13 @@ const Discussions: React.FC = () => {
         newSocket.emit("leaveRoom", {
           roomId: roomId,
           userId: user._id,
-          userName: user.partner_1 || user.partner_2 || "User",
+          userName: user.name || user.partner_1 || "User",
         });
 
         // Emit user offline status
         newSocket.emit("userOffline", {
           userId: user._id,
-          userName: user.partner_1 || user.partner_2 || "User",
+          userName: user.name || user.partner_1  || "User",
         });
       }
 
@@ -816,7 +816,7 @@ const Discussions: React.FC = () => {
       socket.emit("typing", {
         roomId: roomId,
         userId: user._id,
-        userName: user.partner_1 || user.partner_2 || "User",
+        userName: user.name || user.partner_1 || "User",
         isTyping: true,
       });
     }
@@ -856,7 +856,7 @@ const Discussions: React.FC = () => {
         id: clientId,
         roomId: roomId,
         sender: user._id,
-        senderName: user.partner_1 || user.partner_2 || "User",
+        senderName: user.name || user.partner_1 || "User",
         type: "text",
         content: input.trim(),
         timestamp: new Date().toISOString(),
@@ -1020,7 +1020,7 @@ const Discussions: React.FC = () => {
       socket.emit("leaveRoom", {
         roomId: currentRoomId,
         userId: user._id,
-        userName: user.partner_1 || user.partner_2 || "User",
+        userName: user.name || user.partner_1 || "User",
       });
 
       // Join new room
@@ -1028,7 +1028,7 @@ const Discussions: React.FC = () => {
       socket.emit("joinRoom", {
         roomId: newRoomId,
         userId: user._id,
-        userName: user.partner_1 || user.partner_2 || "User",
+        userName: user.name || user.partner_1 || "User",
       });
     }
 
