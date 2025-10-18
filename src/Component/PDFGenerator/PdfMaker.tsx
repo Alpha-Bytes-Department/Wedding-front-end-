@@ -197,7 +197,7 @@ const PdfMaker: React.FC<PdfMakerProps> = ({ eventId }) => {
               font-weight: bold;
             ">ERIE WEDDING OFFICIANTS</p>
             <p style="color: #666; margin: 0 0 2px 0; font-size: 12px;">Company address</p>
-            <p style="color: #666; margin: 0 0 2px 0; font-size: 12px;">City, Country - 00000</p>
+            <p style="color: #666; margin: 0 0 2px 0; font-size: 12px;">123 Love Lane, Erie, Pennsylvania</p>
             <p style="color: #666; margin: 0; font-size: 12px;">TAX ID 00XXXXXI234XOXX</p>
           </div>
 

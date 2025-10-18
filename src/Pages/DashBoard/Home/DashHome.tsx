@@ -337,7 +337,7 @@ const DashHome = () => {
               font-weight: bold;
             ">ERIE WEDDING OFFICIANTS</p>
             <p style="color: #666; margin: 0 0 2px 0; font-size: 12px;">Company address</p>
-            <p style="color: #666; margin: 0 0 2px 0; font-size: 12px;">City, Country - 00000</p>
+            <p style="color: #666; margin: 0 0 2px 0; font-size: 12px;">123 Love Lane, Erie, Pennsylvania</p>
             <p style="color: #666; margin: 0; font-size: 12px;">TAX ID 00XXXXXI234XOXX</p>
           </div>
 
@@ -360,7 +360,9 @@ const DashHome = () => {
             }, ${bill.location.city}, ${bill.location.country} - ${
       bill.location.postal_code
     }</p>
-            <p style="color: #666; margin: 0; font-size: 12px;">+0 (000) 123-4567</p>
+            <p style="color: #666; margin: 0; font-size: 12px;">${
+              bill.contacts
+            }</p>
           </div>
         </div>
 
@@ -1130,7 +1132,7 @@ const DashHome = () => {
                         fontSize: "12px",
                       }}
                     >
-                      City, Country - 00000
+                      123 Love Lane, Erie, Pennsylvania
                     </p>
                     <p
                       style={{
