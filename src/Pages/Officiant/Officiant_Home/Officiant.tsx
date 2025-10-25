@@ -4,19 +4,27 @@ import ContactForm from "../../Home/ContactForm";
 import { useNavigate } from "react-router-dom";
 import { useAxios } from "../../../Component/Providers/useAxios";
 import { useCallback, useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import OfficiantEnroleForm, {
+  type OfficiantFormData,
+} from "./OfficiantEnroleForm";
 
 const Officiant = () => {
   const axios = useAxios();
-  const [officiants, setOfficiants] = useState<Array<{
-    id: string | number;
-    name: string;
-    image: string;
-    role: string;
-    description: string;
-  }>>([]);
+  const [officiants, setOfficiants] = useState<
+    Array<{
+      id: string | number;
+      name: string;
+      image: string;
+      role: string;
+      description: string;
+    }>
+  >([]);
 
   // Track which images have failed to load
-  const [failedImages, setFailedImages] = useState<Set<string | number>>(new Set());
+  const [failedImages, setFailedImages] = useState<Set<string | number>>(
+    new Set()
+  );
 
   const fetchOfficiants = useCallback(async () => {
     try {
@@ -35,12 +43,28 @@ const Officiant = () => {
     }
   }, [axios]);
 
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+    reset,
+  } = useForm<OfficiantFormData>();
+
+  const onsubmit = async (data: OfficiantFormData) => {
+    try {
+      console.log("Form Data:", data);
+      // Add your form submission logic here
+    } catch (error) {
+      console.error("Error submitting form:", error);
+    }
+  };
+
   useEffect(() => {
-     window.scrollTo({
-       top: 0,
-       left: 0,
-       behavior: "smooth",
-     });
+    window.scrollTo({
+      top: 0,
+      left: 0,
+      behavior: "smooth",
+    });
     fetchOfficiants();
   }, [fetchOfficiants]);
 
@@ -50,7 +74,7 @@ const Officiant = () => {
   };
 
   const handleImageError = (officiantId: string | number) => {
-    setFailedImages(prev => new Set(prev).add(officiantId));
+    setFailedImages((prev) => new Set(prev).add(officiantId));
   };
 
   const shouldShowImage = (officiant: any) => {
@@ -130,8 +154,51 @@ const Officiant = () => {
             </div>
           </div>
         ))}
+        <div className="bg-white p-2 group rounded-2xl shadow-xl shadow-[#00000040] border-2 max-w-80 border-primary mx-auto flex flex-col h-full">
+          <div className="flex h-60 justify-center items-center min-h-[160px]">
+            <FaUserTie className="text-gray-400 size-36 " />
+          </div>
+
+          <h2 className="text-text font-secondary text-center font-bold text-2xl py-5">
+            This Could Be You
+          </h2>
+          <p className="text-lg text-center pb-5 text-text">Join the Team</p>
+          <p className="pb-8 text-[16px] text-center text-black-web flex-1">
+            Erie wedding officiants always welcome passionate individuals to
+            join our team.
+          </p>
+
+          <div
+            onClick={() =>
+              (
+                document.getElementById("JoiningForm") as HTMLDialogElement
+              ).showModal()
+            }
+            className="mt-auto text-primary cursor-pointer flex items-center justify-center gap-2 font-secondary font-bold text-[16px] underline"
+          >
+            Join Now{" "}
+          </div>
+        </div>
       </div>
       <ContactForm />
+      <dialog id="JoiningForm" className="modal">
+        <div className="modal-box">
+          <form method="dialog">
+            {/* if there is a button in form, it will close the modal */}
+            <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
+              ✕
+            </button>
+          </form>
+          <OfficiantEnroleForm
+            register={register}
+            handleSubmit={handleSubmit}
+            errors={errors}
+            onsubmit={onsubmit}
+            isSubmitting={isSubmitting}
+            reset={reset}
+          />
+        </div>
+      </dialog>
     </div>
   );
 };
