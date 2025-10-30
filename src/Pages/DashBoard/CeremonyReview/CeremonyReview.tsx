@@ -120,6 +120,19 @@ const CeremonyReview = () => {
     (document.getElementById("ceremony_view_modal") as HTMLDialogElement)?.showModal();
   };
 
+    if (user?.role !== "officiant") {
+      return (
+        <div className="text-center py-20">
+          <h2 className="text-3xl font-primary font-bold mb-4">
+            Access Denied
+          </h2>
+          <p className="text-gray-600">
+            You do not have permission to view this page.
+          </p>
+        </div>
+      );
+    }
+
   return (
     <div className="space-y-6">
       <h1 className="text-3xl font-primary font-bold text-gray-900 mb-8">

@@ -185,11 +185,11 @@ const Settings = () => {
       return;
     }
 
-    // Validate file size (max 2MB)
-    if (file.size > 2 * 1024 * 1024) {
+    // Validate file size (max 1MB)
+    if (file.size > 1 * 1024 * 1024) {
       GlassSwal.error(
         "File too large",
-        "Please upload an image smaller than 2MB."
+        "Please upload an image smaller than 1MB."
       );
       return;
     }

@@ -76,7 +76,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const loginWithProvider = async (provider: any) => {
     try {
       const result: UserCredential = await signInWithPopup(auth, provider);
-      console.log("Firebase user:", result.user);
+      // console.log("Firebase user:", result.user);
       const token = await result.user.getIdToken(); // Firebase ID token
       const email = result.user.email;
       const partner_1 = result.user.displayName; // Get partner_1 from your app's state or user input
@@ -86,7 +86,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
       // send token/email to your backend to register/login & get your own tokens
       const response = await axios.post(
-        "https://www.erieweddingofficiants.com/api/users/social-login",
+        "http://10.10.12.62:5000/api/users/social-login",
+        // "https://www.erieweddingofficiants.com/api/users/social-login",
         {
           email,
           firebaseToken: token,
@@ -96,7 +97,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           profilePicture,
         }
       );
-      console.log("Backend response:", response.data);
+      // console.log("Backend response:", response.data);
       login(response.data); // backend should respond with AuthResponse
     } catch (error) {
       console.error("Social login error:", error);

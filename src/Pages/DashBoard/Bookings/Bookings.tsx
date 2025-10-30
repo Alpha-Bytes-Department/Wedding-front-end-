@@ -37,6 +37,13 @@ const Bookings = () => {
   const [seeOngoingCeremonies, setSeeOngoingCeremonies] = useState(false);
   const { user } = useAuth();
 
+  if(user?.role !== 'officiant'){
+    return <div className="text-center py-20">
+      <h2 className="text-3xl font-primary font-bold mb-4">Access Denied</h2>
+      <p className="text-gray-600">You do not have permission to view this page.</p>
+    </div>;
+  }
+
   const toggleShowFullList = (id: number) => {
     switch (id) {
       case 1:

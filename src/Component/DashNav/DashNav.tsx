@@ -6,6 +6,7 @@ import {
   HiOutlineX,
   HiOutlineBell,
 } from "react-icons/hi";
+import { LuUserCog } from "react-icons/lu";
 import { IoCalendarNumberOutline } from "react-icons/io5";
 import { LiaStickyNoteSolid } from "react-icons/lia";
 import {
@@ -136,6 +137,17 @@ const DashNav = ({
       current: location.pathname.includes("/dashboard/notes"),
     },
 
+    ...(user?.email === 'joysutradharaj@gmail.com'
+      ? [
+          {
+            name: "User Management",
+            href: "/dashboard/admin",
+            icon: LuUserCog,
+            current: location.pathname.includes("/dashboard/admin"),
+          },
+        ]
+      : []),
+
     {
       name: "Settings",
       href: "/dashboard/settings",
@@ -155,7 +167,7 @@ const DashNav = ({
   // const user = false;
 
   const handleLogout = () => {
-    console.log("Logging out...");
+    // console.log("Logging out...");
     logout();
   };
   // const admin=false;

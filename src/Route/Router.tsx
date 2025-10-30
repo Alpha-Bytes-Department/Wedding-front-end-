@@ -20,6 +20,7 @@ import ResetPassword from "../Pages/Verify_Forget/ResetPassword";
 import VerifyUser from "../Pages/Verify_Forget/verifyUser";
 import { PrivateRoute } from "../Component/PrivateRoute/PrivateRoute";
 import Payment from "../Pages/Payment/Payment";
+import UserManagement from "../Pages/DashBoard/UserManagement/UserManagement";
 
 const Router = createBrowserRouter([
   {
@@ -110,6 +111,10 @@ const Router = createBrowserRouter([
         path: "/dashboard/settings",
         element: <Settings />,
       },
+      {
+        path: "/dashboard/admin",
+        element: <UserManagement />,
+      }
     ],
   },
   {

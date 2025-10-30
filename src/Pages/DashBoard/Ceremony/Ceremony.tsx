@@ -467,6 +467,19 @@ const Ceremony = () => {
     { number: 6, title: "Review", active: currentStep >= 6 },
   ];
 
+    if (user?.role !== "user") {
+      return (
+        <div className="text-center py-20">
+          <h2 className="text-3xl font-primary font-bold mb-4">
+            Access Denied
+          </h2>
+          <p className="text-gray-600">
+            You do not have permission to view this page.
+          </p>
+        </div>
+      );
+    }
+
   return (
     <CeremonyProvider>
       <div className=" bg-white  lg:p-8">

@@ -10,8 +10,9 @@ export interface OfficiantFormData {
   contactNo: string;
   email: string;
   language: string;
+  experience: number;
   address: string;
-  experience: string;
+  experience_details: string;
   speciality: string;
   profilePicture: FileList;
   portfolio: FileList;
@@ -112,17 +113,31 @@ const OfficiantEnroleForm = ({
         )}
       </div>
 
+      <div>
+        <input
+          type="number"
+          {...register("experience", { required: "Experience is required" })}
+          placeholder="Years of Experience"
+          className="input input-bordered border-primary w-full focus:outline-primary"
+        />
+        {errors.experience && (
+          <span className="text-red-500 text-sm">
+            {errors.experience.message as string}
+          </span>
+        )}
+      </div>
+
       <div className="form-control">
         <textarea
-          {...register("experience", {
+          {...register("experience_details", {
             required: "Experience details are required",
           })}
           placeholder="Tell us about your experience"
           className="textarea textarea-bordered border-primary w-full focus:outline-primary h-32"
         />
-        {errors.experience && (
+        {errors.experience_details && (
           <span className="text-red-500 text-sm">
-            {errors.experience.message as string}
+            {errors.experience_details.message as string}
           </span>
         )}
       </div>

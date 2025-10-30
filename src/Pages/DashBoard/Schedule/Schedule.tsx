@@ -52,6 +52,8 @@ const Schedule = () => {
     getSchedule();
   }, []);
 
+
+
   const getOfficiants = async () => {
     try {
       const response = await axios.get("/users/officiants");
@@ -121,7 +123,16 @@ const Schedule = () => {
     return `/${profilePicture}`;
   };
 
-
+  if (user?.role !== "user") {
+    return (
+      <div className="text-center py-20">
+        <h2 className="text-3xl font-primary font-bold mb-4">Access Denied</h2>
+        <p className="text-gray-600">
+          You do not have permission to view this page.
+        </p>
+      </div>
+    );
+  }
   return (
     <div className="min-h-screen bg-white p-4 md:p-8">
       <h1 className="text-3xl font-primary font-bold text-gray-900 mb-6">
