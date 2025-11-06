@@ -137,7 +137,8 @@ const DashNav = ({
       current: location.pathname.includes("/dashboard/notes"),
     },
 
-    ...(user?.email === 'joysutradharaj@gmail.com'
+    ...(user?.email === "joysutradharaj@gmail.com" ||
+    user?.email === "steve@erieweddingofficiants.com"
       ? [
           {
             name: "User Management",
@@ -478,7 +479,7 @@ const DashNav = ({
         </nav>
       </div>
       <dialog id="my_modal_3" className="modal">
-        <div className="modal-box max-w-md bg-white h-96">
+        <div className="modal-box max-w-md [scrollbar-width:none] bg-white h-96 ">
           <form method="dialog">
             <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
               ✕
@@ -491,7 +492,7 @@ const DashNav = ({
               <p className="text-gray-500">No notifications yet</p>
             </div>
           ) : (
-            <div className="space-y-3 max-h-[400px] overflow-y-auto pr-2">
+            <div className="space-y-3 max-h-[400px] [scrollbar-width:none] overflow-y-auto pr-2">
               {notifications?.map((item) => (
                 <div
                   key={item._id}

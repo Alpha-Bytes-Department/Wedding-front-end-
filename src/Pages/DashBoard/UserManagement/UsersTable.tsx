@@ -195,14 +195,16 @@ const UsersTable: React.FC<UsersTableProps> = ({
         action.charAt(0).toUpperCase() + action.slice(1)
       }`,
     });
-
+      console.log("Result of verification toggle:", user);
     if (result.isConfirmed) {
       try {
-        await axios.patch(`/users/toggle-verification/${user._id}`, {
+        const res = await axios.patch(`/users/update/${user._id}`, {
           isVerified: !user.isVerified,
         });
+        console.log("Result of verification toggle:", res.data);
         GlassSwal.success("Success", `User ${action}ed successfully`);
         onRefresh();
+
       } catch (error: any) {
         console.error("Error updating verification:", error);
         GlassSwal.error(

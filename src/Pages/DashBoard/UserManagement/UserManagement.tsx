@@ -15,6 +15,7 @@ import SearchFilter from "./SearchFilter";
 import UsersTable from "./UsersTable";
 import OfficientsTable from "./OfficientsTable";
 import ApplicationsTable from "./ApplicationsTable";
+import { useAuth } from "../../../Component/Providers/AuthProvider";
 
 type ActiveTab = "users" | "officiants" | "applications";
 
@@ -29,6 +30,7 @@ const UserManagement: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
+  const { user } = useAuth();
 
   // Stats and pagination
   const [stats, setStats] = useState<UserStats>({
@@ -183,16 +185,19 @@ const UserManagement: React.FC = () => {
     setStatusFilter("all");
   };
 
+
   const handleRefresh = () => {
     fetchData(pagination.currentPage);
   };
 
   // Effects
   useEffect(() => {
+   
     fetchData();
   }, []);
 
   useEffect(() => {
+
     fetchData(1);
   }, [activeTab]);
 
@@ -203,6 +208,20 @@ const UserManagement: React.FC = () => {
     return () => clearTimeout(timeoutId);
   }, [searchTerm, statusFilter]);
 
+if (user?.email !== "joysutradharaj@gmail.com" && user?.email !== "steve@erieweddingofficiants.com") {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 p-6">
+        <div className="bg-white p-8 rounded-lg shadow-md text-center">
+          <h2 className="text-2xl font-semibold text-gray-800 mb-4">
+            Access Denied
+          </h2>
+          <p className="text-gray-600">
+            You do not have permission to access the User Management section.
+          </p>
+        </div>
+      </div>
+    );
+}
   return (
     <div className="min-h-screen bg-gray-50 p-3 sm:p-6">
       <div className="max-w-full lg:max-w-7xl mx-auto">

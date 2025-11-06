@@ -26,7 +26,7 @@ export interface Officiant {
   phone?: string;
   location?: string;
   experience?: number;
-  rate?: number;
+  bookingMoney?: number;
   rating?: number;
   bio?: string;
   certifications?: string[];

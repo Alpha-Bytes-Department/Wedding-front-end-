@@ -12,6 +12,7 @@ import { AiOutlineDoubleLeft, AiOutlineDoubleRight } from "react-icons/ai";
 import { useNavigate, useParams } from "react-router-dom";
 import { useAxios } from "../../../Component/Providers/useAxios";
 import { FaUserTie } from "react-icons/fa6";
+import { FaUserAlt } from "react-icons/fa";
 
 const OfficiantDetail = () => {
   const { officiantId } = useParams<{ officiantId: string }>();
@@ -109,28 +110,27 @@ const OfficiantDetail = () => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-
-    useEffect(() => {
-      if (location.hash === "#client-review") {
-        // Small delay to ensure the component is rendered
-        setTimeout(() => {
-          const element = document.getElementById("client-review");
-          if (element) {
-            element.scrollIntoView({
-              behavior: "smooth",
-              block: "start",
-            });
-          }
-        }, 300); // Slightly longer delay for components to fully render
-      } else {
-        // Scroll to top if no hash
-        window.scrollTo({
-          top: 0,
-          left: 0,
-          behavior: "smooth",
-        });
-      }
-    }, [location]);
+  useEffect(() => {
+    if (location.hash === "#client-review") {
+      // Small delay to ensure the component is rendered
+      setTimeout(() => {
+        const element = document.getElementById("client-review");
+        if (element) {
+          element.scrollIntoView({
+            behavior: "smooth",
+            block: "start",
+          });
+        }
+      }, 300); // Slightly longer delay for components to fully render
+    } else {
+      // Scroll to top if no hash
+      window.scrollTo({
+        top: 0,
+        left: 0,
+        behavior: "smooth",
+      });
+    }
+  }, [location]);
 
   const getSwiperConfig = () => {
     switch (screenSize) {
@@ -146,6 +146,7 @@ const OfficiantDetail = () => {
 
   const prevBtnRef = useRef<HTMLButtonElement>(null);
   const nextBtnRef = useRef<HTMLButtonElement>(null);
+  const swiperRef = useRef<any>(null);
 
   interface BookingPackage {
     id: string;
@@ -153,6 +154,17 @@ const OfficiantDetail = () => {
     price: number;
     features: string[];
   }
+
+  const onNextClick = () => {
+    if (swiperRef.current) {
+      swiperRef.current.slideNext();
+    }
+  };
+  const onPrevClick = () => {
+    if (swiperRef.current) {
+      swiperRef.current.slidePrev();
+    }
+  };
 
   const handleImageError = () => {
     setImageError(true);
@@ -233,11 +245,8 @@ const OfficiantDetail = () => {
               <div className="text-text text-base md:text-lg lg:text-xl font-secondary gap-3 font-normal flex">
                 <p>
                   {(() => {
-                    const createdDate = new Date(officiantDetails.createdAt);
-                    const today = new Date();
-                    const diffYears =
-                      (today.getTime() - createdDate.getTime()) /
-                      (1000 * 60 * 60 * 24 * 365.25);
+                    const diffYears = officiantDetails.experience;
+
                     const years =
                       Math.floor(diffYears) < 1 ? 1 : Math.floor(diffYears);
                     return `${years} year${years > 1 ? "s" : ""} in business`;
@@ -258,41 +267,42 @@ const OfficiantDetail = () => {
       <h1 className="md:pt-5 lg:pt-10 text-xl md:text-2xl lg:text-4xl text-text font-primary font-medium">
         Prices & Packages
       </h1>
-      <div className="flex justify-center">
-        <div className="flex flex-col lg:flex-row gap-5 py-5 lg:py-10">
-          {officiantDetails.bookingPackage.map((pkg: BookingPackage) => (
-            <div
-              key={pkg.id}
-              className="border-2 border-primary rounded-2xl max-w-sm w-full p-5"
-            >
-              <h2 className="lg:text-2xl text-base md:text-lg font-primary font-medium">
-                {pkg.name}
-              </h2>
-              <p className="text-black text-xl font-bold py-2.5">
-                ${pkg.price}
-                <span className="text-xs text-gray-500">Starting price</span>
-              </p>
-              <hr className="border border-primary" />
-              <ul className="list-disc list-inside py-2">
-                <li className="flex gap-2 items-center pb-2">
-                  <CiClock2 size={30} className="text-primary" />{" "}
-                  <span className="text-text font-secondary text:sm md:text-lg">
-                    Contact for event or ceremony
-                  </span>
-                </li>
-                {pkg.features.map((feat: string, idx: number) => (
-                  <li key={idx} className="flex gap-2 items-center pb-2">
-                    <PiCheckLight size={30} className="text-primary" />{" "}
+        <div className=" flex justify-center">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3  gap-5  py-5 lg:py-10">
+            {officiantDetails.bookingPackage.sort((a:any, b:any) => a.price - b.price).map((pkg: BookingPackage) => (
+              <div
+                key={pkg.id}
+                className="border-2 border-primary rounded-2xl max-w-sm w-full p-5"
+              >
+                <h2 className="lg:text-2xl text-base md:text-lg font-primary font-medium">
+                  {pkg.name}
+                </h2>
+                <p className="text-black text-xl font-bold py-2.5">
+                  ${pkg.price}
+                  <span className="text-xs text-gray-500">Starting price</span>
+                </p>
+                <hr className="border border-primary" />
+                <ul className="list-disc list-inside py-2">
+                  <li className="flex gap-2 items-center pb-2">
+                    <CiClock2 size={30} className="text-primary" />{" "}
                     <span className="text-text font-secondary text:sm md:text-lg">
-                      {feat}
+                      Contact for event or ceremony
                     </span>
                   </li>
-                ))}
-              </ul>
-            </div>
-          ))}
+                  {pkg.features.map((feat: string, idx: number) => (
+                    <li key={idx} className="flex gap-2 items-center pb-2">
+                      <PiCheckLight size={30} className="text-primary" />{" "}
+                      <span className="text-text font-secondary text:sm md:text-lg">
+                        {feat}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
         </div>
-      </div>
+      
       <div className="flex gap-2 items-center pb-6">
         <HiOutlineSpeakerphone size={30} className="text-primary" />{" "}
         <span className="text-text font-secondary text:sm md:text-lg">
@@ -326,7 +336,7 @@ const OfficiantDetail = () => {
 
       {/* testimonial carousel */}
 
-      <div className="relative py-10">
+      <div className="relative py-5">
         {testimonials?.length === 0 ? (
           <div className="text-center py-16">
             <p className="text-gray-500 text-lg font-secondary">
@@ -343,20 +353,13 @@ const OfficiantDetail = () => {
                 delay: 4000,
                 disableOnInteraction: false,
               }}
-              navigation={{
-                prevEl: prevBtnRef.current,
-                nextEl: nextBtnRef.current,
-              }}
-              onInit={(swiper) => {
+              onSwiper={(swiper) => {
+                // store swiper instance for programmatic control
                 // @ts-ignore
-                swiper.params.navigation.prevEl = prevBtnRef.current;
-                // @ts-ignore
-                swiper.params.navigation.nextEl = nextBtnRef.current;
-                swiper.navigation.init();
-                swiper.navigation.update();
+                swiperRef.current = swiper;
               }}
               modules={[Navigation, Pagination, Autoplay]}
-              className="testimonial-swiper"
+              className="testimonial-swiper "
             >
               {testimonials.map((testimonial) => (
                 <SwiperSlide key={testimonial.id}>
@@ -382,11 +385,17 @@ const OfficiantDetail = () => {
 
                     <div className="flex gap-3 items-start">
                       <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-primary shadow-md mb-3">
-                        <img
-                          src={testimonial.avatar}
-                          alt={testimonial.name}
-                          className="w-full h-full object-cover"
-                        />
+                        {testimonial.avatar ? (
+                          <img
+                            src={testimonial.avatar}
+                            alt={testimonial.name}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center">
+                            <FaUserAlt size={26} className="text-gray-400" />
+                          </div>
+                        )}
                       </div>
                       <div>
                         <h4 className="font-primary font-bold text-gray-800 text-lg">
@@ -407,6 +416,7 @@ const OfficiantDetail = () => {
               <>
                 <button
                   ref={prevBtnRef}
+                  onClick={onPrevClick}
                   className="absolute left-1/3 lg:left-4 lg:top-1/2 transform -translate-y-1/2 z-10 bg-[#F6EED5] hover:bg-yellow-600 w-12 h-12 rounded-full shadow-lg transition-all duration-300 flex justify-center items-center hover:scale-105"
                   aria-label="Previous"
                 >
@@ -414,6 +424,7 @@ const OfficiantDetail = () => {
                 </button>
                 <button
                   ref={nextBtnRef}
+                  onClick={onNextClick}
                   className="absolute right-1/3 lg:right-4 lg:top-1/2 transform -translate-y-1/2 z-10 bg-[#F6EED5] hover:bg-yellow-600 w-12 h-12 rounded-full shadow-lg transition-all duration-300 flex justify-center items-center hover:scale-105"
                   aria-label="Next"
                 >

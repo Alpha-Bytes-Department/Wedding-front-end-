@@ -149,7 +149,7 @@ const ApplicationsTable: React.FC<ApplicationsTableProps> = ({
     if (result.isConfirmed) {
       try {
         // Backend expects applicationId in params (as :id) and status + userId in body
-        const response = await axios.patch(`/applications/${application._id}`, {
+        const response = await axios.patch(`/applicants/${application._id}`, {
           status: "approved",
           userId: application.userId,
         });

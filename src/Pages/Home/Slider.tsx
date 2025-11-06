@@ -12,12 +12,12 @@ const Slider = () => {
   const texts = [
     {
       description:
-          "With Erie Wedding Officiants, every moment of your ceremony is personalized to reflect your unique love story and personality. Your love, our guidance.",
+        "With Erie Wedding Officiants, every moment of your ceremony is personalized to reflect your unique love story and personality. Your love, our guidance.",
       title: "Stress-Free Ceremony Planning  💍",
     },
     {
       description:
-        "Our experienced officiants work closely with you to craft a ceremony that truly represents your journey together, ensuring every detail is perfect.",
+        "Seamless collaboration between officiants and couples ensures the ceremony reflects the couple’s unique story. Through open communication and shared planning tools, both parties can effortlessly work together on readings, vows, and ceremony flow, fostering trust, reducing stress, and creating a personalized, polished ceremony. ",
       title: "Seamless Collaboration 📜",
     },
     {

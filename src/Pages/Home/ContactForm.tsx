@@ -67,7 +67,7 @@ const onSubmit = async (data: FormData) => {
       <div className=" flex justify-center pt-10 lg:pt-16 flex-col items-center lg:items-start lg:flex-row lg:gap-16 px-10 gap-10">
         <div className=" max-w-md">
           <h2 className="text-3xl font-primary lg:text-[55px] font-bold">
-            Let's talk with us
+            Let's talk 
           </h2>
           <p className="py-5 font-secondary font-normal text-[16px] text-black">
             Questions, comments, or suggestions? Simply fill in the form and

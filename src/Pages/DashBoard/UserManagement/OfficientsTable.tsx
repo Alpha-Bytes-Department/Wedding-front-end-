@@ -43,16 +43,14 @@ const OfficientsTable: React.FC<OfficientsTableProps> = ({
           <p><strong>Phone:</strong> ${officiant.phone || "N/A"}</p>
           <p><strong>Location:</strong> ${officiant.location || "N/A"}</p>
           <p><strong>Experience:</strong> ${officiant.experience || 0} years</p>
-          <p><strong>Rate:</strong> $${officiant.rate || 0}/ceremony</p>
+          <p><strong>Rate:</strong> $${officiant.bookingMoney || 0}/ceremony</p>
           <p><strong>Rating:</strong> ${
             officiant.rating ? `⭐ ${officiant.rating.toFixed(1)}` : "Not rated"
           }</p>
           <p><strong>Status:</strong> ${
             officiant.isVerified ? "✅ Verified" : "⚠️ Unverified"
           }</p>
-          <p><strong>Availability:</strong> ${
-            officiant.availability ? "✅ Available" : "❌ Not Available"
-          }</p>
+          
           <div class="mt-4">
             <strong>Bio:</strong><br/>
             <div class="text-sm text-gray-600 max-h-32 overflow-y-auto bg-gray-50 p-2 rounded mt-1">
@@ -81,59 +79,45 @@ const OfficientsTable: React.FC<OfficientsTableProps> = ({
     const { value: formValues } = await Swal.fire({
       title: "Edit Officiant Information",
       html: `
-        <div class="space-y-4 text-left max-h-96 overflow-y-auto">
+        <div class="space-y-4 text-left max-h-96 [scrollbar-width:none] overflow-y-auto">
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-1">Name</label>
-            <input id="name" class="swal2-input" placeholder="Full Name" value="${
+            <input id="name" class="px-3 focus:outline-none w-full py-2 border border-gray-300 rounded-md" placeholder="Full Name" value="${
               officiant.name || ""
             }">
           </div>
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-1">Phone</label>
-            <input id="phone" class="swal2-input" placeholder="Phone Number" value="${
+            <input id="phone" class="px-3 focus:outline-none w-full py-2 border border-gray-300 rounded-md" placeholder="Phone Number" value="${
               officiant.phone || ""
             }">
           </div>
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-1">Location</label>
-            <input id="location" class="swal2-input" placeholder="Location" value="${
+            <input id="location" class="px-3 focus:outline-none w-full py-2 border border-gray-300 rounded-md" placeholder="Location" value="${
               officiant.location || ""
             }">
           </div>
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-1">Experience (years)</label>
-            <input id="experience" type="number" class="swal2-input" placeholder="Years of experience" value="${
+            <input id="experience" type="number" class="px-3 focus:outline-none w-full py-2 border border-gray-300 rounded-md" placeholder="Years of experience" value="${
               officiant.experience || 0
             }">
           </div>
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-1">Rate ($)</label>
-            <input id="rate" type="number" class="swal2-input" placeholder="Rate per ceremony" value="${
-              officiant.rate || 0
+            <input id="rate" type="number" class="px-3 focus:outline-none w-full py-2 border border-gray-300 rounded-md" placeholder="Rate per ceremony" value="${
+              officiant.bookingMoney || 0
             }">
           </div>
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-1">Bio</label>
-            <textarea id="bio" class="swal2-textarea" placeholder="Biography" rows="4">${
+            <textarea id="bio" class="px-3  focus:outline-none w-full py-2 border border-gray-300 rounded-md" placeholder="Biography" rows="4">${
               officiant.bio || ""
             }</textarea>
           </div>
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Certifications (one per line)</label>
-            <textarea id="certifications" class="swal2-textarea" placeholder="Enter certifications, one per line" rows="3">${
-              officiant.certifications
-                ? officiant.certifications.join("\n")
-                : ""
-            }</textarea>
-          </div>
-          <div class="flex items-center space-x-4">
-            <label class="flex items-center">
-              <input type="checkbox" id="availability" ${
-                officiant.availability ? "checked" : ""
-              }> 
-              <span class="ml-2 text-sm">Available for bookings</span>
-            </label>
-          </div>
+
+          
         </div>
       `,
       focusConfirm: false,
@@ -142,38 +126,47 @@ const OfficientsTable: React.FC<OfficientsTableProps> = ({
       cancelButtonText: "Cancel",
       width: "700px",
       preConfirm: () => {
-        const certText = (
-          document.getElementById("certifications") as HTMLTextAreaElement
-        ).value;
-        const certifications = certText
-          .split("\n")
-          .filter((cert) => cert.trim() !== "");
-
-        return {
-          name: (document.getElementById("name") as HTMLInputElement).value,
-          phone: (document.getElementById("phone") as HTMLInputElement).value,
-          location: (document.getElementById("location") as HTMLInputElement)
-            .value,
-          experience:
-            parseInt(
-              (document.getElementById("experience") as HTMLInputElement).value
-            ) || 0,
-          rate:
-            parseFloat(
-              (document.getElementById("rate") as HTMLInputElement).value
-            ) || 0,
-          bio: (document.getElementById("bio") as HTMLTextAreaElement).value,
-          certifications: certifications,
-          availability: (
-            document.getElementById("availability") as HTMLInputElement
-          ).checked,
+        // Helper to safely get input/textarea values
+        const getVal = (id: string) => {
+          const el = document.getElementById(id) as
+            | HTMLInputElement
+            | HTMLTextAreaElement
+            | null;
+          return el ? (el.value ?? "").toString().trim() : "";
         };
+
+        const payload: any = {};
+        const name = getVal("name");
+        if (name) payload.name = name;
+        const phone = getVal("phone");
+        if (phone) payload.phone = phone;
+        const location = getVal("location");
+        if (location) payload.location = location;
+        const expStr = getVal("experience");
+        if (expStr) {
+          const n = parseInt(expStr, 10);
+          if (!isNaN(n)) payload.experience = n;
+        }
+        const rateStr = getVal("rate");
+        if (rateStr) {
+          const r = parseFloat(rateStr);
+          if (!isNaN(r)) payload.bookingMoney = r;
+        }
+        const bio = getVal("bio");
+        if (bio) payload.bio = bio;
+
+        return payload;
       },
     });
 
     if (formValues) {
       try {
-        await axios.patch(`/officiants/update/${officiant._id}`, formValues);
+        const res = await axios.patch(
+          `/users/update/${officiant._id}`,
+          formValues
+        );
+        console.log("Update response:", res);
+
         GlassSwal.success("Success", "Officiant updated successfully");
         onRefresh();
       } catch (error: any) {
@@ -201,7 +194,7 @@ const OfficientsTable: React.FC<OfficientsTableProps> = ({
 
     if (result.isConfirmed) {
       try {
-        await axios.delete(`/officiants/delete/${officiant._id}`);
+        await axios.delete(`/users/delete-account/${officiant._id}`);
         GlassSwal.success("Deleted", "Officiant deleted successfully");
         onRefresh();
       } catch (error: any) {
@@ -230,7 +223,7 @@ const OfficientsTable: React.FC<OfficientsTableProps> = ({
 
     if (result.isConfirmed) {
       try {
-        await axios.patch(`/officiants/toggle-verification/${officiant._id}`, {
+        await axios.patch(`/users/update/${officiant._id}`, {
           isVerified: !officiant.isVerified,
         });
         GlassSwal.success("Success", `Officiant ${action}ed successfully`);
@@ -244,7 +237,6 @@ const OfficientsTable: React.FC<OfficientsTableProps> = ({
       }
     }
   };
-
 
   if (officiants.length === 0) {
     return (
@@ -325,7 +317,7 @@ const OfficientsTable: React.FC<OfficientsTableProps> = ({
                     {officiant.experience || 0} years
                   </div>
                   <div className="text-sm text-gray-500">
-                    ${officiant.rate || 0}/ceremony
+                    ${officiant.bookingMoney || 0}/ceremony
                   </div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
@@ -348,8 +340,6 @@ const OfficientsTable: React.FC<OfficientsTableProps> = ({
                     >
                       {officiant.isVerified ? "Verified" : "Unverified"}
                     </button>
-                   
-                    
                   </div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
