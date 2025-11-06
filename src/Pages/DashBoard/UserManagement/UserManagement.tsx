@@ -46,7 +46,7 @@ const UserManagement: React.FC = () => {
     currentPage: 1,
     totalPages: 1,
     totalItems: 0,
-    itemsPerPage: 10,
+    itemsPerPage: 5,
   });
 
   // Fetch all data and calculate stats
@@ -145,11 +145,12 @@ const UserManagement: React.FC = () => {
         });
       }
 
-      // Calculate pagination
+      // Calculate pagination (5 items per page)
+      const itemsPerPage = 10;
       const totalItems = data.length;
-      const totalPages = Math.ceil(totalItems / 10);
-      const startIndex = (page - 1) * 10;
-      const endIndex = startIndex + 10;
+      const totalPages = Math.ceil(totalItems / itemsPerPage);
+      const startIndex = (page - 1) * itemsPerPage;
+      const endIndex = startIndex + itemsPerPage;
       const paginatedData = data.slice(startIndex, endIndex);
 
       // Update state with paginated data
@@ -169,7 +170,7 @@ const UserManagement: React.FC = () => {
         currentPage: page,
         totalPages: totalPages || 1,
         totalItems: totalItems,
-        itemsPerPage: 10,
+        itemsPerPage: itemsPerPage,
       });
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -185,19 +186,16 @@ const UserManagement: React.FC = () => {
     setStatusFilter("all");
   };
 
-
   const handleRefresh = () => {
     fetchData(pagination.currentPage);
   };
 
   // Effects
   useEffect(() => {
-   
     fetchData();
   }, []);
 
   useEffect(() => {
-
     fetchData(1);
   }, [activeTab]);
 
@@ -208,7 +206,10 @@ const UserManagement: React.FC = () => {
     return () => clearTimeout(timeoutId);
   }, [searchTerm, statusFilter]);
 
-if (user?.email !== "joysutradharaj@gmail.com" && user?.email !== "steve@erieweddingofficiants.com") {
+  if (
+    user?.email !== "joysutradharaj@gmail.com" &&
+    user?.email !== "steve@erieweddingofficiants.com"
+  ) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50 p-6">
         <div className="bg-white p-8 rounded-lg shadow-md text-center">
@@ -221,7 +222,7 @@ if (user?.email !== "joysutradharaj@gmail.com" && user?.email !== "steve@eriewed
         </div>
       </div>
     );
-}
+  }
   return (
     <div className="min-h-screen bg-gray-50 p-3 sm:p-6">
       <div className="max-w-full lg:max-w-7xl mx-auto">
