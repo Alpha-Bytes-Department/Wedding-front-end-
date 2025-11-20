@@ -302,7 +302,6 @@ const Footer = () => {
             <li className=" text-[16px] text-text font-secondary py-3">
               <a href="tel:+18142017107">Call Us</a>
             </li>
-           
           </ul>
         </div>
       </div>
@@ -318,11 +317,41 @@ const Footer = () => {
               : ""
           }`}
         >
-          <FaFacebook size={24} />
-          <FaInstagram size={24} />
-          <FaXTwitter size={24} />
-          <FaLinkedinIn size={24} />
-          <FaYoutube size={24} />
+          <a
+            href="https://www.facebook.com/profile.php?id=61583542410456"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <FaFacebook size={24} />
+          </a>
+          <a
+            href="https://www.instagram.com/?hl=en"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <FaInstagram size={24} />
+          </a>
+          <a
+            href="https://x.com/erieofficiants"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <FaXTwitter size={24} />
+          </a>
+          <a
+            href="https://www.linkedin.com/in/steven-ferringer-1b0169396/"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <FaLinkedinIn size={24} />
+          </a>
+          <a
+            href=" https://www.youtube.com/channel/UCzFGEXO2FS1Ts-W-5ZBU67w"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <FaYoutube size={24} />
+          </a>
         </div>
       </div>
       {/*=================== Privacy policy modal ===========================  */}
