@@ -13,6 +13,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useAxios } from "../../../Component/Providers/useAxios";
 import { FaUserTie } from "react-icons/fa6";
 import { FaUserAlt } from "react-icons/fa";
+import BookingPackage from "./BookingPackage";
 
 const OfficiantDetail = () => {
   const { officiantId } = useParams<{ officiantId: string }>();
@@ -148,13 +149,6 @@ const OfficiantDetail = () => {
   const nextBtnRef = useRef<HTMLButtonElement>(null);
   const swiperRef = useRef<any>(null);
 
-  interface BookingPackage {
-    id: string;
-    name: string;
-    price: number;
-    features: string[];
-  }
-
   const onNextClick = () => {
     if (swiperRef.current) {
       swiperRef.current.slideNext();
@@ -268,39 +262,7 @@ const OfficiantDetail = () => {
         Prices & Packages
       </h1>
         <div className=" flex justify-center">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3  gap-5  py-5 lg:py-10">
-            {officiantDetails.bookingPackage.sort((a:any, b:any) => a.price - b.price).map((pkg: BookingPackage) => (
-              <div
-                key={pkg.id}
-                className="border-2 border-primary rounded-2xl max-w-sm w-full p-5"
-              >
-                <h2 className="lg:text-2xl text-base md:text-lg font-primary font-medium">
-                  {pkg.name}
-                </h2>
-                <p className="text-black text-xl font-bold py-2.5">
-                  ${pkg.price}
-                  <span className="text-xs text-gray-500">Starting price</span>
-                </p>
-                <hr className="border border-primary" />
-                <ul className="list-disc list-inside py-2">
-                  <li className="flex gap-2 items-center pb-2">
-                    <CiClock2 size={30} className="text-primary" />{" "}
-                    <span className="text-text font-secondary text:sm md:text-lg">
-                      Contact for event or ceremony
-                    </span>
-                  </li>
-                  {pkg.features.map((feat: string, idx: number) => (
-                    <li key={idx} className="flex gap-2 items-center pb-2">
-                      <PiCheckLight size={30} className="text-primary" />{" "}
-                      <span className="text-text font-secondary text:sm md:text-lg">
-                        {feat}
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </div>
+          <BookingPackage />
         </div>
       
       <div className="flex gap-2 items-center pb-6">

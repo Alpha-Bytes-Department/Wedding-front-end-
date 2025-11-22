@@ -1,11 +1,12 @@
-import React from "react";
-import { FaUsers, FaEye, FaEdit, FaTrash } from "react-icons/fa";
+import React, { useState, useMemo } from "react";
+import { FaUsers, FaEye, FaEdit, FaTrash, FaSearch } from "react-icons/fa";
 import Swal from "sweetalert2";
 import GlassSwal from "../../../utils/glassSwal";
 import { useAxios } from "../../../Component/Providers/useAxios";
 import type { User } from "./types";
 import { getProfileImageUrl } from "./types";
 import Pagination from "./Pagination";
+import { showUserDetailsModal } from "./UserDetailsModal";
 
 interface UsersTableProps {
   users: User[];
@@ -26,40 +27,11 @@ const UsersTable: React.FC<UsersTableProps> = ({
   onPageChange,
 }) => {
   const axios = useAxios();
+  const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
 
   const handleView = async (user: User) => {
-    const weddingInfo = user.weddingDate
-      ? `Wedding Date: ${new Date(
-          user.weddingDate
-        ).toLocaleDateString()}<br/>Location: ${user.location || "N/A"}`
-      : "No wedding information available";
-
-    await Swal.fire({
-      title: `${
-        user.name || `${user.partner_1 || ""} & ${user.partner_2 || ""}`.trim()
-      }`,
-      html: `
-        <div class="text-left space-y-2">
-          <p><strong>Email:</strong> ${user.email}</p>
-          <p><strong>Phone:</strong> ${user.phone || "N/A"}</p>
-          <p><strong>Address:</strong> ${user.address || "N/A"}</p>
-          <p><strong>Status:</strong> ${
-            user.isVerified ? "✅ Verified" : "⚠️ Unverified"
-          }</p>
-          <p><strong>Joined:</strong> ${new Date(
-            user.createdAt
-          ).toLocaleDateString()}</p>
-          <div class="mt-4">
-            <strong>Wedding Information:</strong><br/>
-            ${weddingInfo}
-          </div>
-        </div>
-      `,
-      width: "500px",
-      showConfirmButton: true,
-      confirmButtonText: "Close",
-      confirmButtonColor: "#3B82F6",
-    });
+    await showUserDetailsModal(user);
   };
 
   const handleEdit = async (user: User) => {
@@ -182,173 +154,244 @@ const UsersTable: React.FC<UsersTableProps> = ({
     }
   };
 
-  const toggleVerification = async (user: User) => {
-    const action = user.isVerified ? "unverify" : "verify";
-    const result = await Swal.fire({
-      title: `${action.charAt(0).toUpperCase() + action.slice(1)} User?`,
-      text: `Are you sure you want to ${action} ${user.name || user.email}?`,
-      icon: "question",
-      showCancelButton: true,
-      confirmButtonColor: user.isVerified ? "#EF4444" : "#10B981",
-      cancelButtonColor: "#6B7280",
-      confirmButtonText: `Yes, ${
-        action.charAt(0).toUpperCase() + action.slice(1)
-      }`,
-    });
-      console.log("Result of verification toggle:", user);
-    if (result.isConfirmed) {
-      try {
-        const res = await axios.patch(`/users/update/${user._id}`, {
-          isVerified: !user.isVerified,
-        });
-        console.log("Result of verification toggle:", res.data);
-        GlassSwal.success("Success", `User ${action}ed successfully`);
-        onRefresh();
+  // Filter users based on search term and status
+  const filteredUsers = useMemo(() => {
+    let filtered = [...users];
 
-      } catch (error: any) {
-        console.error("Error updating verification:", error);
-        GlassSwal.error(
-          "Error",
-          error.response?.data?.message || "Failed to update verification"
+    // Apply search filter
+    if (searchTerm.trim()) {
+      const searchLower = searchTerm.toLowerCase();
+      filtered = filtered.filter((user) => {
+        return (
+          user.name?.toLowerCase().includes(searchLower) ||
+          user.email?.toLowerCase().includes(searchLower) ||
+          user.contact?.partner_1?.toLowerCase().includes(searchLower) ||
+          user.contact?.partner_2?.toLowerCase().includes(searchLower) ||
+          user.address?.toLowerCase().includes(searchLower) ||
+          user.location?.toLowerCase().includes(searchLower)
         );
-      }
+      });
     }
-  };
 
-  if (users.length === 0) {
-    return (
-      <div className="text-center py-12">
-        <FaUsers className="mx-auto text-gray-400 text-5xl mb-4" />
-        <p className="text-gray-500 text-lg">No users found</p>
-        <p className="text-gray-400 text-sm">
-          Try adjusting your search or filter criteria
-        </p>
-      </div>
-    );
-  }
+    // Apply status filter
+    if (statusFilter !== "all") {
+      filtered = filtered.filter((user) => {
+        if (statusFilter === "no-ceremony") {
+          return !user.event_details || !user.event_details.status;
+        }
+        return user.event_details?.status?.toLowerCase() === statusFilter;
+      });
+    }
+
+    return filtered;
+  }, [users, searchTerm, statusFilter]);
 
   return (
     <div className="bg-white rounded-lg shadow overflow-hidden">
-      <div className="overflow-x-auto">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
-            <tr>
-              <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                User
-              </th>
-              <th className="hidden md:table-cell px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Contact
-              </th>
-              <th className="hidden lg:table-cell px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Wedding Info
-              </th>
-              <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Status
-              </th>
-              <th className="hidden sm:table-cell px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Joined
-              </th>
-              <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Actions
-              </th>
-            </tr>
-          </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
-            {users.map((user) => (
-              <tr key={user._id} className="hover:bg-gray-50">
-                <td className="px-3 sm:px-6 py-4">
-                  <div className="flex items-center">
-                    <div className="flex-shrink-0 h-8 w-8 sm:h-10 sm:w-10">
-                      {user.profilePicture ? (
-                        <img
-                          className="h-8 w-8 sm:h-10 sm:w-10 rounded-full object-cover"
-                          src={getProfileImageUrl(user.profilePicture)}
-                          alt=""
-                        />
-                      ) : (
-                        <div className="h-8 w-8 sm:h-10 sm:w-10 rounded-full bg-gray-300 flex items-center justify-center">
-                          <FaUsers className="text-gray-600 text-xs sm:text-base" />
-                        </div>
-                      )}
-                    </div>
-                    <div className="ml-2 sm:ml-4">
-                      <div className="text-xs sm:text-sm font-medium text-gray-900 truncate max-w-[120px] sm:max-w-none">
-                        {user.name ||
-                          `${user.partner_1 || ""} & ${
-                            user.partner_2 || ""
-                          }`.trim()}
-                      </div>
-                      <div className="text-xs text-gray-500 truncate max-w-[120px] sm:max-w-[200px]">
-                        {user.email}
-                      </div>
-                    </div>
-                  </div>
-                </td>
-                <td className="hidden md:table-cell px-3 sm:px-6 py-4">
-                  <div className="text-xs sm:text-sm text-gray-900">
-                    {user.phone || "N/A"}
-                  </div>
-                  <div className="text-xs text-gray-500 max-w-xs truncate">
-                    {user.address || "N/A"}
-                  </div>
-                </td>
-                <td className="hidden lg:table-cell px-3 sm:px-6 py-4">
-                  <div className="text-xs sm:text-sm text-gray-900">
-                    {user.weddingDate
-                      ? new Date(user.weddingDate).toLocaleDateString()
-                      : "N/A"}
-                  </div>
-                  <div className="text-xs text-gray-500 max-w-xs truncate">
-                    {user.location || "N/A"}
-                  </div>
-                </td>
-                <td className="px-3 sm:px-6 py-4">
-                  <button
-                    onClick={() => toggleVerification(user)}
-                    className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full cursor-pointer hover:opacity-80 ${
-                      user.isVerified
-                        ? "bg-green-100 text-green-800 hover:bg-green-200"
-                        : "bg-yellow-100 text-yellow-800 hover:bg-yellow-200"
-                    }`}
-                  >
-                    {user.isVerified ? "Verified" : "Unverified"}
-                  </button>
-                </td>
-                <td className="hidden sm:table-cell px-3 sm:px-6 py-4 text-xs sm:text-sm text-gray-500">
-                  {new Date(user.createdAt).toLocaleDateString()}
-                </td>
-                <td className="px-3 sm:px-6 py-4 text-right text-xs sm:text-sm font-medium">
-                  <div className="flex space-x-1 sm:space-x-2 justify-end">
-                    <button
-                      onClick={() => handleView(user)}
-                      className="text-indigo-600 hover:text-indigo-900 p-1 sm:p-2 rounded hover:bg-indigo-50"
-                      title="View Details"
-                    >
-                      <FaEye className="text-sm sm:text-base" />
-                    </button>
-                    <button
-                      onClick={() => handleEdit(user)}
-                      className="text-blue-600 hover:text-blue-900 p-1 sm:p-2 rounded hover:bg-blue-50"
-                      title="Edit User"
-                    >
-                      <FaEdit className="text-sm sm:text-base" />
-                    </button>
-                    <button
-                      onClick={() => handleDelete(user)}
-                      className="text-red-600 hover:text-red-900 p-1 sm:p-2 rounded hover:bg-red-50"
-                      title="Delete User"
-                    >
-                      <FaTrash />
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+      {/* Search and Filter Section */}
+      <div className="p-4 bg-gray-50 border-b border-gray-200">
+        <div className="flex flex-col sm:flex-row gap-4">
+          {/* Search Input */}
+          <div className="flex-1 relative">
+            <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+            <input
+              type="text"
+              placeholder="Search by name, email, partners, location..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+            />
+          </div>
+
+          {/* Status Filter */}
+          <div className="sm:w-64">
+            <select
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value)}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+            >
+              <option value="all">All Ceremonies</option>
+              <option value="no-ceremony">No Ceremony</option>
+              <option value="planned">Planned</option>
+              <option value="submitted">Submitted</option>
+              <option value="approved">Approved</option>
+              <option value="completed">Completed</option>
+              <option value="canceled">Canceled</option>
+            </select>
+          </div>
+        </div>
+
+        {/* Results Summary */}
+        {(searchTerm || statusFilter !== "all") && (
+          <div className="mt-3 text-sm text-gray-600">
+            Showing {filteredUsers.length} of {users.length} users
+            {searchTerm && (
+              <button
+                onClick={() => setSearchTerm("")}
+                className="ml-2 text-indigo-600 hover:text-indigo-800"
+              >
+                Clear search
+              </button>
+            )}
+            {statusFilter !== "all" && (
+              <button
+                onClick={() => setStatusFilter("all")}
+                className="ml-2 text-indigo-600 hover:text-indigo-800"
+              >
+                Clear filter
+              </button>
+            )}
+          </div>
+        )}
       </div>
 
-      <Pagination pagination={pagination} onPageChange={onPageChange} />
+      {filteredUsers.length === 0 ? (
+        <div className="text-center py-12">
+          <FaUsers className="mx-auto text-gray-400 text-5xl mb-4" />
+          <p className="text-gray-500 text-lg">No users found</p>
+          <p className="text-gray-400 text-sm">
+            Try adjusting your search or filter criteria
+          </p>
+        </div>
+      ) : (
+        <>
+          <div className="overflow-x-auto">
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    User
+                  </th>
+                  <th className="hidden md:table-cell px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Contact
+                  </th>
+                  <th className="hidden lg:table-cell px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Wedding Info
+                  </th>
+                  <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Ceremony Status
+                  </th>
+                  <th className="hidden sm:table-cell px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Joined
+                  </th>
+                  <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Actions
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
+                {filteredUsers.map((user) => (
+                  <tr key={user._id} className="hover:bg-gray-50">
+                    <td className="px-3 sm:px-6 py-4">
+                      <div className="flex items-center">
+                        <div className="flex-shrink-0 h-8 w-8 sm:h-10 sm:w-10">
+                          {user.profilePicture ? (
+                            <img
+                              className="h-8 w-8 sm:h-10 sm:w-10 rounded-full object-cover"
+                              src={getProfileImageUrl(user.profilePicture)}
+                              alt=""
+                            />
+                          ) : (
+                            <div className="h-8 w-8 sm:h-10 sm:w-10 rounded-full bg-gray-300 flex items-center justify-center">
+                              <FaUsers className="text-gray-600 text-xs sm:text-base" />
+                            </div>
+                          )}
+                        </div>
+                        <div className="ml-2 sm:ml-4">
+                          <div className="text-xs sm:text-sm font-medium text-gray-900 truncate max-w-[120px] sm:max-w-none">
+                            {user.name}
+                          </div>
+                          <div className="text-xs text-gray-500 truncate max-w-[120px] sm:max-w-[200px]">
+                            {user.email}
+                          </div>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="hidden md:table-cell px-3 sm:px-6 py-4">
+                      <div className="text-xs sm:text-sm text-gray-900">
+                        <p>{user.contact?.partner_1 || "N/A"}</p>
+                        <p>{user.contact?.partner_2 || "N/A"}</p>
+                      </div>
+                      <div className="text-xs text-gray-500 max-w-xs truncate">
+                        {user.address || "N/A"}
+                      </div>
+                    </td>
+                    <td className="hidden lg:table-cell px-3 sm:px-6 py-4">
+                      <div className="text-xs sm:text-sm text-gray-900">
+                        {user.event_details
+                          ? <p className=" text-base ">{user.event_details.title}</p>
+                          : "N/A"}
+                      </div>
+                      <div className="text-xs text-gray-500 max-w-xs truncate">
+                        {user.event_details?.location  || "N/A"}
+                      </div>
+                    </td>
+                    <td className="px-3 sm:px-6 py-4 cursor-pointer">
+                      {user.event_details?.status ? (
+                        (() => {
+                          const status = (
+                            user.event_details.status || ""
+                          ).toLowerCase();
+                          const map: Record<string, string> = {
+                            planned: "bg-blue-100 text-blue-800",
+                            submitted: "bg-yellow-100 text-yellow-800",
+                            approved: "bg-indigo-100 text-indigo-800",
+                            completed: "bg-green-100 text-green-800",
+                            canceled: "bg-red-100 text-red-800",
+                          };
+                          const classes =
+                            map[status] ?? "bg-gray-100 text-gray-800";
+                          return (
+                            <p
+                              className={`py-1 px-2 text-center rounded-xl ${classes}`}
+                            >
+                              {user.event_details.status}
+                            </p>
+                          );
+                        })()
+                      ) : (
+                        <p className="text-center px-2 py-1 bg-gray-200 rounded-xl text-slate-400">
+                          No ceremony
+                        </p>
+                      )}
+                    </td>
+                    <td className="hidden sm:table-cell px-3 sm:px-6 py-4 text-xs sm:text-sm text-gray-500">
+                      {new Date(user.createdAt).toLocaleDateString()}
+                    </td>
+                    <td className="px-3 sm:px-6 py-4 text-right text-xs sm:text-sm font-medium">
+                      <div className="flex space-x-1 sm:space-x-2 justify-end">
+                        <button
+                          onClick={() => handleView(user)}
+                          className="text-indigo-600 hover:text-indigo-900 p-1 sm:p-2 rounded hover:bg-indigo-50"
+                          title="View Details"
+                        >
+                          <FaEye className="text-sm sm:text-base" />
+                        </button>
+                        <button
+                          onClick={() => handleEdit(user)}
+                          className="text-blue-600 hover:text-blue-900 p-1 sm:p-2 rounded hover:bg-blue-50"
+                          title="Edit User"
+                        >
+                          <FaEdit className="text-sm sm:text-base" />
+                        </button>
+                        <button
+                          onClick={() => handleDelete(user)}
+                          className="text-red-600 hover:text-red-900 p-1 sm:p-2 rounded hover:bg-red-50"
+                          title="Delete User"
+                        >
+                          <FaTrash />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          <Pagination pagination={pagination} onPageChange={onPageChange} />
+        </>
+      )}
     </div>
   );
 };

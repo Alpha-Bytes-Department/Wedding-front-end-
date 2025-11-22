@@ -11,7 +11,6 @@ import type {
 // Import all the modular components
 import StatsCards from "./StatsCards";
 import TabNavigation from "./TabNavigation";
-import SearchFilter from "./SearchFilter";
 import UsersTable from "./UsersTable";
 import OfficientsTable from "./OfficientsTable";
 import ApplicationsTable from "./ApplicationsTable";
@@ -28,8 +27,6 @@ const UserManagement: React.FC = () => {
   const [officiants, setOfficiants] = useState<Officiant[]>([]);
   const [applications, setApplications] = useState<OfficiantApplication[]>([]);
   const [loading, setLoading] = useState(false);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [statusFilter, setStatusFilter] = useState("all");
   const { user } = useAuth();
 
   // Stats and pagination
@@ -54,6 +51,8 @@ const UserManagement: React.FC = () => {
     try {
       // Fetch all users
       const usersResponse = await axios.get("/users/get-all-users");
+      const eventResponse = await axios.get("/events/officiantAccess/all");
+      // console.log("Event Response:", eventResponse.data.events);
       const allUsers = usersResponse.data.users || [];
 
       // Fetch all applications
@@ -63,7 +62,7 @@ const UserManagement: React.FC = () => {
       // Separate users by role
       const regularUsers = allUsers.filter((u: any) => u.role === "user");
       const officiants = allUsers.filter((u: any) => u.role === "officiant");
-
+      const allEvents = eventResponse.data.events || [];
       // Calculate stats
       const calculatedStats = {
         totalUsers: regularUsers.length,
@@ -80,11 +79,21 @@ const UserManagement: React.FC = () => {
           (a: any) => a.status === "rejected"
         ).length,
       };
+      // Create a hash map for quick event lookup by userId
+      const eventsHash = allEvents.reduce((map: any, event: any) => {
+        map[event.userId] = event;
+        return map;
+      }, {});
 
+      // create a merge of regularUsers and eventsHash on _id and userId
+      const UserDataWithEvents = regularUsers.map((user: User) => {
+        const eventDetails = eventsHash[user._id] || null;
+        return { ...user, event_details: eventDetails };
+      });
       setStats(calculatedStats);
-
+      console.log(UserDataWithEvents);
       // Return data for further processing
-      return { regularUsers, officiants, allApplications };
+      return { regularUsers, UserDataWithEvents, officiants, allApplications };
     } catch (error) {
       console.error("Error fetching all data:", error);
       return { regularUsers: [], officiants: [], allApplications: [] };
@@ -96,7 +105,7 @@ const UserManagement: React.FC = () => {
     try {
       // First fetch all data to calculate stats
       const {
-        regularUsers,
+        UserDataWithEvents,
         officiants: allOfficiants,
         allApplications,
       } = await fetchAllData();
@@ -106,7 +115,7 @@ const UserManagement: React.FC = () => {
       // Select data based on active tab
       switch (activeTab) {
         case "users":
-          data = regularUsers;
+          data = UserDataWithEvents;
           break;
         case "officiants":
           data = allOfficiants;
@@ -116,36 +125,7 @@ const UserManagement: React.FC = () => {
           break;
       }
 
-      // Apply search filter
-      if (searchTerm) {
-        data = data.filter((item: any) => {
-          const searchLower = searchTerm.toLowerCase();
-          return (
-            item.name?.toLowerCase().includes(searchLower) ||
-            item.email?.toLowerCase().includes(searchLower) ||
-            item.partner_1?.toLowerCase().includes(searchLower) ||
-            item.partner_2?.toLowerCase().includes(searchLower)
-          );
-        });
-      }
-
-      // Apply status filter
-      if (statusFilter !== "all") {
-        data = data.filter((item: any) => {
-          if (statusFilter === "verified") return item.isVerified === true;
-          if (statusFilter === "unverified") return item.isVerified === false;
-          if (
-            statusFilter === "pending" ||
-            statusFilter === "approved" ||
-            statusFilter === "rejected"
-          ) {
-            return item.status === statusFilter;
-          }
-          return true;
-        });
-      }
-
-      // Calculate pagination (5 items per page)
+      // Calculate pagination (10 items per page)
       const itemsPerPage = 10;
       const totalItems = data.length;
       const totalPages = Math.ceil(totalItems / itemsPerPage);
@@ -182,8 +162,6 @@ const UserManagement: React.FC = () => {
   // Event handlers
   const handleTabChange = (tab: ActiveTab) => {
     setActiveTab(tab);
-    setSearchTerm("");
-    setStatusFilter("all");
   };
 
   const handleRefresh = () => {
@@ -198,13 +176,6 @@ const UserManagement: React.FC = () => {
   useEffect(() => {
     fetchData(1);
   }, [activeTab]);
-
-  useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      fetchData(1);
-    }, 500);
-    return () => clearTimeout(timeoutId);
-  }, [searchTerm, statusFilter]);
 
   if (
     user?.email !== "joysutradharaj@gmail.com" &&
@@ -241,15 +212,6 @@ const UserManagement: React.FC = () => {
 
         {/* Tab Navigation */}
         <TabNavigation activeTab={activeTab} onTabChange={handleTabChange} />
-
-        {/* Search and Filter */}
-        <SearchFilter
-          searchTerm={searchTerm}
-          onSearchChange={setSearchTerm}
-          filterStatus={statusFilter}
-          onFilterChange={setStatusFilter}
-          activeTab={activeTab}
-        />
 
         {/* Loading */}
         {loading && (
