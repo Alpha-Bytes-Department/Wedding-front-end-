@@ -1,11 +1,28 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/image.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' data: blob: https: http:; connect-src 'self' wss: ws: https: http: *.googleapis.com *.firebase.com *.stripe.com; style-src 'self' 'unsafe-inline' https: fonts.googleapis.com; script-src 'self' 'unsafe-inline' 'unsafe-eval' https: *.googleapis.com *.firebase.com *.stripe.com js.stripe.com apis.google.com; font-src 'self' data: https: fonts.gstatic.com; img-src 'self' data: https: http:;">
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self' 'unsafe-inline' 'unsafe-eval' data: blob: https: http:; connect-src 'self' wss: ws: https: http: *.googleapis.com *.firebase.com *.stripe.com; style-src 'self' 'unsafe-inline' https: fonts.googleapis.com; script-src 'self' 'unsafe-inline' 'unsafe-eval' https: *.googleapis.com *.firebase.com *.stripe.com js.stripe.com apis.google.com; font-src 'self' data: https: fonts.gstatic.com; img-src 'self' data: https: http:;"
+    />
     <title>ERIE WEDDING OFFICIANTS</title>
+
+    <!-- Preconnect to external domains for faster resource loading -->
+    <link rel="preconnect" href="https://images.unsplash.com" crossorigin />
+    <link rel="dns-prefetch" href="https://images.unsplash.com" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+    <!-- Preload critical above-the-fold image (first slider image) -->
+    <link
+      rel="preload"
+      as="image"
+      href="https://images.unsplash.com/photo-1606800052052-a08af7148866?w=300&h=300&fit=crop&crop=center"
+      fetchpriority="high"
+    />
   </head>
   <body>
     <div id="root"></div>

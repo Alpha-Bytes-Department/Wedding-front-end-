@@ -30,15 +30,37 @@ export default defineConfig({
   },
   build: {
     chunkSizeWarningLimit: 500,
+    target: "esnext",
+    minify: "esbuild", // Use esbuild for faster builds (already included in Vite)
+    cssCodeSplit: true, // Split CSS for better caching
+    sourcemap: false, // Disable sourcemaps in production for smaller files
     rollupOptions: {
       output: {
         manualChunks: {
-          vendor: ["react", "react-dom"],
-          router: ["react-router-dom"],
-          ui: ["@heroicons/react", "react-icons"],
-          stripe: ["@stripe/stripe-js", "@stripe/react-stripe-js"],
-          utils: ["axios", "sweetalert2"],
+          // Core React libraries
+          "vendor-react": ["react", "react-dom"],
+          "vendor-router": ["react-router-dom"],
+
+          // UI libraries
+          "vendor-icons": ["@heroicons/react", "react-icons"],
+
+          // Heavy dependencies that should be separate
+          "vendor-firebase": ["firebase/app", "firebase/auth"],
+          "vendor-socket": ["socket.io-client"],
+          "vendor-stripe": ["@stripe/stripe-js", "@stripe/react-stripe-js"],
+          "vendor-swal": ["sweetalert2"],
+
+          // Utilities
+          "vendor-utils": ["axios", "react-hook-form"],
+          "vendor-pdf": ["jspdf", "html2canvas"],
+
+          // Swiper for slider
+          "vendor-swiper": ["swiper"],
         },
+        // Optimize chunk file names for better caching
+        chunkFileNames: "assets/[name]-[hash].js",
+        entryFileNames: "assets/[name]-[hash].js",
+        assetFileNames: "assets/[name]-[hash].[ext]",
       },
     },
   },

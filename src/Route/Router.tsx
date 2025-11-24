@@ -1,26 +1,48 @@
 import { createBrowserRouter } from "react-router-dom";
-import Login from "../Pages/Login/Login";
+import { lazy, Suspense } from "react";
+import RouteLoader from "../Component/Shared/RouteLoader";
+
+// Eager load critical routes (homepage, layout, error)
 import Home from "../Pages/Home/Home";
-import Error from "../Pages/Error/Error";
-import Signup from "../Pages/SignUp/Signup";
 import Layout from "../Layout/Layout";
-import Feature from "../Pages/Feature/Feature";
-import Officiant from "../Pages/Officiant/Officiant_Home/Officiant";
-import OfficiantDetail from "../Pages/Officiant/Officiant_Details/OfficiantDetail";
+import Error from "../Pages/Error/Error";
 import DashBoardOutline from "../DashBoardLayout/DashBoardOutline";
-import Ceremony from "../Pages/DashBoard/Ceremony/Ceremony";
-import DashHome from "../Pages/DashBoard/Home/DashHome";
-import Note from "../Pages/DashBoard/Notes/Note";
-import Discussions from "../Pages/DashBoard/Discussion/Discussions";
-import Schedule from "../Pages/DashBoard/Schedule/Schedule";
-import Settings from "../Pages/DashBoard/Settings/Settings";
-import Bookings from "../Pages/DashBoard/Bookings/Bookings";
-import CeremonyReview from "../Pages/DashBoard/CeremonyReview/CeremonyReview";
-import ResetPassword from "../Pages/Verify_Forget/ResetPassword";
-import VerifyUser from "../Pages/Verify_Forget/verifyUser";
 import { PrivateRoute } from "../Component/PrivateRoute/PrivateRoute";
-import Payment from "../Pages/Payment/Payment";
-import UserManagement from "../Pages/DashBoard/UserManagement/UserManagement";
+
+// Lazy load authentication pages
+const Login = lazy(() => import("../Pages/Login/Login"));
+const Signup = lazy(() => import("../Pages/SignUp/Signup"));
+const ResetPassword = lazy(
+  () => import("../Pages/Verify_Forget/ResetPassword")
+);
+const VerifyUser = lazy(() => import("../Pages/Verify_Forget/verifyUser"));
+
+// Lazy load public pages
+const Feature = lazy(() => import("../Pages/Feature/Feature"));
+const Officiant = lazy(
+  () => import("../Pages/Officiant/Officiant_Home/Officiant")
+);
+const OfficiantDetail = lazy(
+  () => import("../Pages/Officiant/Officiant_Details/OfficiantDetail")
+);
+
+// Lazy load dashboard pages (heavy components)
+const DashHome = lazy(() => import("../Pages/DashBoard/Home/DashHome"));
+const Ceremony = lazy(() => import("../Pages/DashBoard/Ceremony/Ceremony"));
+const Bookings = lazy(() => import("../Pages/DashBoard/Bookings/Bookings"));
+const CeremonyReview = lazy(
+  () => import("../Pages/DashBoard/CeremonyReview/CeremonyReview")
+);
+const Note = lazy(() => import("../Pages/DashBoard/Notes/Note"));
+const Payment = lazy(() => import("../Pages/Payment/Payment"));
+const Discussions = lazy(
+  () => import("../Pages/DashBoard/Discussion/Discussions")
+);
+const Schedule = lazy(() => import("../Pages/DashBoard/Schedule/Schedule"));
+const Settings = lazy(() => import("../Pages/DashBoard/Settings/Settings"));
+const UserManagement = lazy(
+  () => import("../Pages/DashBoard/UserManagement/UserManagement")
+);
 
 const Router = createBrowserRouter([
   {
@@ -34,37 +56,61 @@ const Router = createBrowserRouter([
       },
       {
         path: "/feature",
-        element: <Feature />,
-      },
-      {
-        path: "/feature",
-        element: <Feature />,
+        element: (
+          <Suspense fallback={<RouteLoader />}>
+            <Feature />
+          </Suspense>
+        ),
       },
       {
         path: "/officiant",
-        element: <Officiant />,
+        element: (
+          <Suspense fallback={<RouteLoader />}>
+            <Officiant />
+          </Suspense>
+        ),
       },
       {
         path: "/officiant/:officiantId",
-        element: <OfficiantDetail />,
+        element: (
+          <Suspense fallback={<RouteLoader />}>
+            <OfficiantDetail />
+          </Suspense>
+        ),
       },
     ],
   },
   {
     path: "/reset-password/:token",
-    element: <ResetPassword />,
+    element: (
+      <Suspense fallback={<RouteLoader />}>
+        <ResetPassword />
+      </Suspense>
+    ),
   },
   {
     path: "/verify/:token",
-    element: <VerifyUser />,
+    element: (
+      <Suspense fallback={<RouteLoader />}>
+        <VerifyUser />
+      </Suspense>
+    ),
   },
   {
     path: "/login",
-    element: <Login />,
+    element: (
+      <Suspense fallback={<RouteLoader />}>
+        <Login />
+      </Suspense>
+    ),
   },
   {
     path: "/signup",
-    element: <Signup />,
+    element: (
+      <Suspense fallback={<RouteLoader />}>
+        <Signup />
+      </Suspense>
+    ),
   },
   {
     path: "/dashboard",
@@ -76,45 +122,84 @@ const Router = createBrowserRouter([
     children: [
       {
         path: "/dashboard",
-        element: <DashHome />,
+        element: (
+          <Suspense fallback={<RouteLoader />}>
+            <DashHome />
+          </Suspense>
+        ),
       },
       {
         path: "/dashboard/bookings",
-        element: <Bookings />,
+        element: (
+          <Suspense fallback={<RouteLoader />}>
+            <Bookings />
+          </Suspense>
+        ),
       },
       {
         path: "/dashboard/review",
-        element: <CeremonyReview />,
+        element: (
+          <Suspense fallback={<RouteLoader />}>
+            <CeremonyReview />
+          </Suspense>
+        ),
       },
       {
         path: "/dashboard/notes",
-        element: <Note />,
-      }
-      ,
+        element: (
+          <Suspense fallback={<RouteLoader />}>
+            <Note />
+          </Suspense>
+        ),
+      },
       {
         path: "/dashboard/payment",
-        element: <Payment />,
+        element: (
+          <Suspense fallback={<RouteLoader />}>
+            <Payment />
+          </Suspense>
+        ),
       },
       {
         path: "/dashboard/discussions",
-        element: <Discussions />,
+        element: (
+          <Suspense fallback={<RouteLoader />}>
+            <Discussions />
+          </Suspense>
+        ),
       },
       {
         path: "/dashboard/ceremony",
-        element: <Ceremony />,
+        element: (
+          <Suspense fallback={<RouteLoader />}>
+            <Ceremony />
+          </Suspense>
+        ),
       },
       {
         path: "/dashboard/schedule",
-        element: <Schedule />,
+        element: (
+          <Suspense fallback={<RouteLoader />}>
+            <Schedule />
+          </Suspense>
+        ),
       },
       {
         path: "/dashboard/settings",
-        element: <Settings />,
+        element: (
+          <Suspense fallback={<RouteLoader />}>
+            <Settings />
+          </Suspense>
+        ),
       },
       {
         path: "/dashboard/admin",
-        element: <UserManagement />,
-      }
+        element: (
+          <Suspense fallback={<RouteLoader />}>
+            <UserManagement />
+          </Suspense>
+        ),
+      },
     ],
   },
   {

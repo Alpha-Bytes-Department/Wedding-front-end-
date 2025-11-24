@@ -27,7 +27,6 @@ const Slider = () => {
     },
   ];
 
-
   return (
     <div className="min-h-screen bg-white py-16">
       <h1 className="text-2xl sm:text-3xl font-bold md:text-[55px] px-5  font-primary text-center mb-16">
@@ -38,7 +37,6 @@ const Slider = () => {
       <div className="flex items-center justify-center" id="slidercontainer">
         <div className="w-full max-w-7xl mx-auto px-4 lg:px-8 ">
           <Swiper
-            
             ref={swiperRef}
             modules={[Autoplay, Pagination]}
             spaceBetween={50}
@@ -81,7 +79,10 @@ const Slider = () => {
                         {text.description}
                       </p>
 
-                      <Link to="/dashboard" className="bg-primary group hover:bg-primary/90 text-white px-8 py-3 rounded-full font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg flex items-center gap-2">
+                      <Link
+                        to="/dashboard"
+                        className="bg-primary group hover:bg-primary/90 text-white px-8 py-3 rounded-full font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg flex items-center gap-2"
+                      >
                         Book for consult
                         <svg
                           className="w-4 h-4 group-hover:translate-x-4 transition-transform duration-300"
@@ -109,6 +110,8 @@ const Slider = () => {
                           src="https://images.unsplash.com/photo-1606800052052-a08af7148866?w=300&h=300&fit=crop&crop=center"
                           alt="Wedding rings"
                           className="w-full h-full object-cover"
+                          loading={index === 0 ? "eager" : "lazy"}
+                          fetchPriority={index === 0 ? "high" : "low"}
                         />
                       </div>
 
@@ -118,6 +121,7 @@ const Slider = () => {
                           src="https://images.unsplash.com/photo-1519741497674-611481863552?w=300&h=300&fit=crop&crop=faces"
                           alt="Happy wedding couple"
                           className="w-full h-full object-cover"
+                          loading="lazy"
                         />
                       </div>
 
@@ -127,6 +131,7 @@ const Slider = () => {
                           src="https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=300&h=300&fit=crop&crop=center"
                           alt="Wedding party celebration"
                           className="w-full h-full object-cover"
+                          loading="lazy"
                         />
                       </div>
 
@@ -136,6 +141,7 @@ const Slider = () => {
                           src="https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?w=300&h=300&fit=crop&crop=center"
                           alt="Elegant table setting"
                           className="w-full h-full object-cover"
+                          loading="lazy"
                         />
                       </div>
                     </div>
