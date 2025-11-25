@@ -28,6 +28,8 @@ const Settings = () => {
       partner1Name: user?.partner_1 || "",
       partner2Name: user?.partner_2 || "",
       contact: user?.phone || "",
+      partner1Phone: user?.contact?.partner_1 || "",
+      partner2Phone: user?.contact?.partner_2 || "",
       location: user?.location || " ",
       weddingDate: user?.weddingDate
         ? new Date(user.weddingDate).toISOString().split("T")[0]
@@ -53,6 +55,8 @@ const Settings = () => {
         partner1Name: user.partner_1 || "",
         partner2Name: user.partner_2 || "",
         contact: user.phone || "",
+        partner1Phone: user.contact?.partner_1 || "",
+        partner2Phone: user.contact?.partner_2 || "",
         location: user.location || "",
         weddingDate: user.weddingDate
           ? new Date(user.weddingDate).toISOString().split("T")[0]
@@ -67,15 +71,26 @@ const Settings = () => {
   const onProfileSubmit = async (info: any) => {
     console.log("Profile data:", info);
     try {
-      const response = await axios.patch("/users/update", {
+      const updateData: any = {
         partner_1: info.partner1Name,
         partner_2: info.partner2Name,
+
         phone: info.contact,
         location: info.location,
         weddingDate: info.weddingDate,
         bio: info.officiantBio,
         bookingMoney: info.booking,
-      });
+      };
+
+      // Add contact object for user role
+      if (user?.role === "user") {
+        updateData.contact = {
+          partner_1: info.partner1Phone,
+          partner_2: info.partner2Phone,
+        };
+      }
+
+      const response = await axios.patch("/users/update", updateData);
 
       console.log("Update response:", response.data);
       setUser(response.data.user);
@@ -209,9 +224,6 @@ const Settings = () => {
       });
       console.log("Upload response:", response);
 
-      // Update user data in context
-      // updateUserData(response.data);
-
       if (response.status === 200 || response.status === 201) {
         // Update local state with new image URL
         setProfileImage(response.data.user.profilePicture);
@@ -329,8 +341,104 @@ const Settings = () => {
             </button>
           </div>
           <form onSubmit={profileForm.handleSubmit(onProfileSubmit)}>
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
-              {user?.role === "officiant" ? (
+            {user?.role === "user" ? (
+              // Layout for Users/Clients
+              <div className="space-y-4 mb-6">
+                {/* Account Name and Location in same line */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Account Name
+                    </label>
+                    <input
+                      {...profileForm.register("name")}
+                      type="text"
+                      disabled={!isEditingProfile}
+                      className={`w-full px-4 py-3 border border-primary rounded-lg focus:outline-none    ${
+                        !isEditingProfile ? "bg-gray-50 cursor-not-allowed" : ""
+                      }`}
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Location
+                    </label>
+                    <input
+                      {...profileForm.register("location")}
+                      type="text"
+                      disabled={!isEditingProfile}
+                      className={`w-full px-4 py-3 border border-primary rounded-lg focus:outline-none    ${
+                        !isEditingProfile ? "bg-gray-50 cursor-not-allowed" : ""
+                      }`}
+                    />
+                  </div>
+                </div>
+
+                {/* Partner 1 Name and Phone in same line */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Partner 1 Name
+                    </label>
+                    <input
+                      {...profileForm.register("partner1Name")}
+                      type="text"
+                      disabled={!isEditingProfile}
+                      className={`w-full px-4 py-3 border border-primary rounded-lg focus:outline-none    ${
+                        !isEditingProfile ? "bg-gray-50 cursor-not-allowed" : ""
+                      }`}
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Partner 1 Phone
+                    </label>
+                    <input
+                      {...profileForm.register("partner1Phone")}
+                      type="tel"
+                      disabled={!isEditingProfile}
+                      placeholder="Enter partner 1 phone number"
+                      className={`w-full px-4 py-3 border border-primary rounded-lg focus:outline-none    ${
+                        !isEditingProfile ? "bg-gray-50 cursor-not-allowed" : ""
+                      }`}
+                    />
+                  </div>
+                </div>
+
+                {/* Partner 2 Name and Phone in same line */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Partner 2 Name
+                    </label>
+                    <input
+                      {...profileForm.register("partner2Name")}
+                      type="text"
+                      disabled={!isEditingProfile}
+                      className={`w-full px-4 py-3 border border-primary rounded-lg focus:outline-none    ${
+                        !isEditingProfile ? "bg-gray-50 cursor-not-allowed" : ""
+                      }`}
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Partner 2 Phone
+                    </label>
+                    <input
+                      {...profileForm.register("partner2Phone")}
+                      type="tel"
+                      disabled={!isEditingProfile}
+                      placeholder="Enter partner 2 phone number"
+                      className={`w-full px-4 py-3 border border-primary rounded-lg focus:outline-none    ${
+                        !isEditingProfile ? "bg-gray-50 cursor-not-allowed" : ""
+                      }`}
+                    />
+                  </div>
+                </div>
+              </div>
+            ) : (
+              // Layout for Officiants (unchanged)
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Name
@@ -344,37 +452,6 @@ const Settings = () => {
                     }`}
                   />
                 </div>
-              ) : (
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Partner 1 name
-                  </label>
-                  <input
-                    {...profileForm.register("partner1Name")}
-                    type="text"
-                    disabled={!isEditingProfile}
-                    className={`w-full px-4 py-3 border border-primary rounded-lg focus:outline-none    ${
-                      !isEditingProfile ? "bg-gray-50 cursor-not-allowed" : ""
-                    }`}
-                  />
-                </div>
-              )}
-
-              {user?.role != "officiant" ? (
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Partner 2 name
-                  </label>
-                  <input
-                    {...profileForm.register("partner2Name")}
-                    type="text"
-                    disabled={!isEditingProfile}
-                    className={`w-full px-4 py-3 border border-primary rounded-lg focus:outline-none    ${
-                      !isEditingProfile ? "bg-gray-50 cursor-not-allowed" : ""
-                    }`}
-                  />
-                </div>
-              ) : (
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Booking Price (per event)
@@ -388,36 +465,35 @@ const Settings = () => {
                     }`}
                   />
                 </div>
-              )}
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Contact
-                </label>
-                <input
-                  {...profileForm.register("contact")}
-                  type="tel"
-                  disabled={!isEditingProfile}
-                  className={`w-full px-4 py-3 border border-primary rounded-lg focus:outline-none    ${
-                    !isEditingProfile ? "bg-gray-50 cursor-not-allowed" : ""
-                  }`}
-                />
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Contact
+                  </label>
+                  <input
+                    {...profileForm.register("contact")}
+                    type="tel"
+                    disabled={!isEditingProfile}
+                    className={`w-full px-4 py-3 border border-primary rounded-lg focus:outline-none    ${
+                      !isEditingProfile ? "bg-gray-50 cursor-not-allowed" : ""
+                    }`}
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Location
+                  </label>
+                  <input
+                    {...profileForm.register("location")}
+                    type="text"
+                    disabled={!isEditingProfile}
+                    className={`w-full px-4 py-3 border border-primary rounded-lg focus:outline-none    ${
+                      !isEditingProfile ? "bg-gray-50 cursor-not-allowed" : ""
+                    }`}
+                  />
+                </div>
               </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Location
-                </label>
-                <input
-                  {...profileForm.register("location")}
-                  type="text"
-                  disabled={!isEditingProfile}
-                  className={`w-full px-4 py-3 border border-primary rounded-lg focus:outline-none    ${
-                    !isEditingProfile ? "bg-gray-50 cursor-not-allowed" : ""
-                  }`}
-                />
-              </div>
-            </div>
-            {user?.role === "officiant" ? (
+            )}
+            {user?.role === "officiant" && (
               <div className="mb-6">
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Officiant Bio
@@ -427,21 +503,6 @@ const Settings = () => {
                   disabled={!isEditingProfile}
                   placeholder={user?.bio || "Write something about yourself..."}
                   className={`w-full h-40 px-4 py-3 border border-primary rounded-lg focus:outline-none    ${
-                    !isEditingProfile ? "bg-gray-50 cursor-not-allowed" : ""
-                  }`}
-                />
-              </div>
-            ) : (
-              <div className="mb-6">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Wedding Date
-                </label>
-                <input
-                  {...profileForm.register("weddingDate")}
-                  type="date"
-                  disabled={!isEditingProfile}
-                  placeholder="DD / MM / YYYY"
-                  className={`w-full lg:w-1/2 px-4 py-3 border border-primary rounded-lg focus:outline-none    ${
                     !isEditingProfile ? "bg-gray-50 cursor-not-allowed" : ""
                   }`}
                 />

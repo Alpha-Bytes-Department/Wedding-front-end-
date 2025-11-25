@@ -8,6 +8,7 @@ import GlassSwal from "../../utils/glassSwal";
 import { IoMdCheckmarkCircleOutline } from "react-icons/io";
 import { RiCloseCircleLine } from "react-icons/ri";
 import Logo from "../../Component/DashNav/Logo";
+import authChecker from "../../Component/DashNav/authChecker";
 
 type LoginInputs = {
   email: string;
@@ -20,6 +21,7 @@ type ForgotPasswordInputs = {
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState<boolean>(false);
+  authChecker();
 
   // Main login form
   const {

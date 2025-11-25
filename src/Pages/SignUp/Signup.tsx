@@ -1,10 +1,11 @@
-import { useState } from "react";
+import {  useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import SocialLogin from "../Login/SocialLogin";
 import { useAxios } from "../../Component/Providers/useAxios";
 import { GlassSwal } from "../../utils/glassSwal";
 import Logo from "../../Component/DashNav/Logo";
+import authChecker from "../../Component/DashNav/authChecker";
 
 type Inputs = {
   email: string;
@@ -14,6 +15,7 @@ type Inputs = {
 };
 
 const Signup = () => {
+  authChecker();
   const [loading, setLoading] = useState<boolean>(false);
   const axios = useAxios();
   const navigate = useNavigate();

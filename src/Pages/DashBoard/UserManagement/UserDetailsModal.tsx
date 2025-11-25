@@ -302,11 +302,23 @@ const getUserInfoHTML = (user: User) => `
   <div style="background: #f8fafc; padding: 16px; border-radius: 8px; margin-bottom: 20px;">
     <h4 style="margin: 0 0 12px 0; font-size: 14px; font-weight: 600; color: #475569;">👤 User Information</h4>
     <div style="display: grid; gap: 6px;">
-      <p style="margin: 0; font-size: 13px;"><strong style="color: #64748b;">Email:</strong> <span style="color: #1e293b;">${
-        user.email
+      <p style="margin: 0; font-size: 13px;"><strong style="color: #64748b;">Account Name:</strong> <span style="color: #1e293b;">${
+        user.name || "N/A"
       }</span></p>
-      <p style="margin: 0; font-size: 13px;"><strong style="color: #64748b;">Phone:</strong> <span style="color: #1e293b;">${
-        user.phone || "N/A"
+      <p style="margin: 0; font-size: 13px;"><strong style="color: #64748b;">Partner-1:</strong> <span style="color: #1e293b;">${
+        user.partner_1 || "N/A"
+      }</span></p>
+      <p style="margin: 0; font-size: 13px;"><strong style="color: #64748b;">Partner-2:</strong> <span style="color: #1e293b;">${
+        user.partner_2 || "N/A"
+      }</span></p>
+      <p style="margin: 0; font-size: 13px;"><strong style="color: #64748b;">Email:</strong> <span style="color: #1e293b;">${
+        user.email || "N/A"
+      }</span></p>
+      <p style="margin: 0; font-size: 13px;"><strong style="color: #64748b;">Partner-1 Phone:</strong> <span style="color: #1e293b;">${
+        user.contact?.partner_1 || "N/A"
+      }</span></p>
+      <p style="margin: 0; font-size: 13px;"><strong style="color: #64748b;">Partner-2 Phone:</strong> <span style="color: #1e293b;">${
+        user.contact?.partner_2 || "N/A"
       }</span></p>
       <p style="margin: 0; font-size: 13px;"><strong style="color: #64748b;">Address:</strong> <span style="color: #1e293b;">${
         user.address || "N/A"

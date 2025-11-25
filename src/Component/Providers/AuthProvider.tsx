@@ -5,12 +5,12 @@ import React, {
   useEffect,
   type ReactNode,
 } from "react";
+import { signInWithPopup, signOut, type UserCredential } from "firebase/auth";
 import {
-  signInWithPopup,
-  signOut,
-  type UserCredential,
-} from "firebase/auth";
-import { auth, googleProvider, facebookProvider } from "./../Firebase/firebase.config";
+  auth,
+  googleProvider,
+  facebookProvider,
+} from "./../Firebase/firebase.config";
 import axios from "axios";
 
 interface User {
@@ -24,12 +24,16 @@ interface User {
   location: string;
   partner_1: string;
   partner_2: string;
-  name?:string;
+  name?: string;
   profilePicture: string;
   refreshToken: string;
   role: string;
   bio?: string;
   phone?: string;
+  contact?: {
+    partner_1: string;
+    partner_2: string;
+  };
   updatedAt: string;
   weddingDate: string;
   __v: number;
@@ -60,7 +64,7 @@ interface AuthProviderProps {
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [loading, setLoading] = useState(true);
-  
+
   const [user, setUser] = useState<User | null>(null);
 
   const isAuthenticated = !!user;
@@ -108,7 +112,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const loginWithFacebook = () => loginWithProvider(facebookProvider);
 
   const logout = () => {
-    
     setUser(null);
     localStorage.removeItem("user");
     localStorage.removeItem("accessToken");
@@ -120,7 +123,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   useEffect(() => {
     setLoading(true);
     const storedUser = localStorage.getItem("user");
- 
+
     if (storedUser) {
       setUser(JSON.parse(storedUser));
     }
