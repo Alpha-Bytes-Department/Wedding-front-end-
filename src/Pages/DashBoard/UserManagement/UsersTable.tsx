@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from "react";
-import { FaUsers, FaEye, FaEdit, FaTrash, FaSearch } from "react-icons/fa";
+import { FaUsers, FaEye, FaTrash, FaSearch } from "react-icons/fa";
 import Swal from "sweetalert2";
 import GlassSwal from "../../../utils/glassSwal";
 import { useAxios } from "../../../Component/Providers/useAxios";
@@ -34,95 +34,95 @@ const UsersTable: React.FC<UsersTableProps> = ({
     await showUserDetailsModal(user);
   };
 
-  const handleEdit = async (user: User) => {
-    const { value: formValues } = await Swal.fire({
-      title: "Edit User Information",
-      html: `
-        <div class="space-y-4 text-left">
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Name</label>
-            <input id="name" class="swal2-input" placeholder="Full Name" value="${
-              user.name || ""
-            }">
-          </div>
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Partner 1</label>
-            <input id="partner1" class="swal2-input" placeholder="Partner 1" value="${
-              user.partner_1 || ""
-            }">
-          </div>
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Partner 2</label>
-            <input id="partner2" class="swal2-input" placeholder="Partner 2" value="${
-              user.partner_2 || ""
-            }">
-          </div>
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Phone</label>
-            <input id="phone" class="swal2-input" placeholder="Phone Number" value="${
-              user.phone || ""
-            }">
-          </div>
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Address</label>
-            <input id="address" class="swal2-input" placeholder="Address" value="${
-              user.address || ""
-            }">
-          </div>
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Wedding Date</label>
-            <input id="weddingDate" type="date" class="swal2-input" value="${
-              user.weddingDate
-                ? new Date(user.weddingDate).toISOString().split("T")[0]
-                : ""
-            }">
-          </div>
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Location</label>
-            <input id="location" class="swal2-input" placeholder="Wedding Location" value="${
-              user.location || ""
-            }">
-          </div>
-        </div>
-      `,
-      focusConfirm: false,
-      showCancelButton: true,
-      confirmButtonText: "Update User",
-      cancelButtonText: "Cancel",
-      width: "600px",
-      preConfirm: () => {
-        return {
-          name: (document.getElementById("name") as HTMLInputElement).value,
-          partner_1: (document.getElementById("partner1") as HTMLInputElement)
-            .value,
-          partner_2: (document.getElementById("partner2") as HTMLInputElement)
-            .value,
-          phone: (document.getElementById("phone") as HTMLInputElement).value,
-          address: (document.getElementById("address") as HTMLInputElement)
-            .value,
-          weddingDate: (
-            document.getElementById("weddingDate") as HTMLInputElement
-          ).value,
-          location: (document.getElementById("location") as HTMLInputElement)
-            .value,
-        };
-      },
-    });
+  // const handleEdit = async (user: User) => {
+  //   const { value: formValues } = await Swal.fire({
+  //     title: "Edit User Information",
+  //     html: `
+  //       <div class="space-y-4 text-left">
+  //         <div>
+  //           <label class="block text-sm font-medium text-gray-700 mb-1">Name</label>
+  //           <input id="name" class="swal2-input" placeholder="Full Name" value="${
+  //             user.name || ""
+  //           }">
+  //         </div>
+  //         <div>
+  //           <label class="block text-sm font-medium text-gray-700 mb-1">Partner 1</label>
+  //           <input id="partner1" class="swal2-input" placeholder="Partner 1" value="${
+  //             user.partner_1 || ""
+  //           }">
+  //         </div>
+  //         <div>
+  //           <label class="block text-sm font-medium text-gray-700 mb-1">Partner 2</label>
+  //           <input id="partner2" class="swal2-input" placeholder="Partner 2" value="${
+  //             user.partner_2 || ""
+  //           }">
+  //         </div>
+  //         <div>
+  //           <label class="block text-sm font-medium text-gray-700 mb-1">Phone</label>
+  //           <input id="phone" class="swal2-input" placeholder="Phone Number" value="${
+  //             user.phone || ""
+  //           }">
+  //         </div>
+  //         <div>
+  //           <label class="block text-sm font-medium text-gray-700 mb-1">Address</label>
+  //           <input id="address" class="swal2-input" placeholder="Address" value="${
+  //             user.address || ""
+  //           }">
+  //         </div>
+  //         <div>
+  //           <label class="block text-sm font-medium text-gray-700 mb-1">Wedding Date</label>
+  //           <input id="weddingDate" type="date" class="swal2-input" value="${
+  //             user.weddingDate
+  //               ? new Date(user.weddingDate).toISOString().split("T")[0]
+  //               : ""
+  //           }">
+  //         </div>
+  //         <div>
+  //           <label class="block text-sm font-medium text-gray-700 mb-1">Location</label>
+  //           <input id="location" class="swal2-input" placeholder="Wedding Location" value="${
+  //             user.location || ""
+  //           }">
+  //         </div>
+  //       </div>
+  //     `,
+  //     focusConfirm: false,
+  //     showCancelButton: true,
+  //     confirmButtonText: "Update User",
+  //     cancelButtonText: "Cancel",
+  //     width: "600px",
+  //     preConfirm: () => {
+  //       return {
+  //         name: (document.getElementById("name") as HTMLInputElement).value,
+  //         partner_1: (document.getElementById("partner1") as HTMLInputElement)
+  //           .value,
+  //         partner_2: (document.getElementById("partner2") as HTMLInputElement)
+  //           .value,
+  //         phone: (document.getElementById("phone") as HTMLInputElement).value,
+  //         address: (document.getElementById("address") as HTMLInputElement)
+  //           .value,
+  //         weddingDate: (
+  //           document.getElementById("weddingDate") as HTMLInputElement
+  //         ).value,
+  //         location: (document.getElementById("location") as HTMLInputElement)
+  //           .value,
+  //       };
+  //     },
+  //   });
 
-    if (formValues) {
-      try {
-        await axios.patch(`/users/update/${user._id}`, formValues);
-        GlassSwal.success("Success", "User updated successfully");
-        onRefresh();
-      } catch (error: any) {
-        console.error("Error updating user:", error);
-        GlassSwal.error(
-          "Error",
-          error.response?.data?.message || "Failed to update user"
-        );
-      }
-    }
-  };
+  //   if (formValues) {
+  //     try {
+  //       await axios.patch(`/users/update/${user._id}`, formValues);
+  //       GlassSwal.success("Success", "User updated successfully");
+  //       onRefresh();
+  //     } catch (error: any) {
+  //       console.error("Error updating user:", error);
+  //       GlassSwal.error(
+  //         "Error",
+  //         error.response?.data?.message || "Failed to update user"
+  //       );
+  //     }
+  //   }
+  // };
 
   const handleDelete = async (user: User) => {
     const result = await Swal.fire({
@@ -162,13 +162,19 @@ const UsersTable: React.FC<UsersTableProps> = ({
     if (searchTerm.trim()) {
       const searchLower = searchTerm.toLowerCase();
       filtered = filtered.filter((user) => {
+        // Get first event for searching
+        const firstEvent =
+          user.events && user.events.length > 0 ? user.events[0] : null;
+
         return (
           user.name?.toLowerCase().includes(searchLower) ||
           user.email?.toLowerCase().includes(searchLower) ||
           user.contact?.partner_1?.toLowerCase().includes(searchLower) ||
           user.contact?.partner_2?.toLowerCase().includes(searchLower) ||
           user.address?.toLowerCase().includes(searchLower) ||
-          user.location?.toLowerCase().includes(searchLower)
+          user.location?.toLowerCase().includes(searchLower) ||
+          firstEvent?.title?.toLowerCase().includes(searchLower) ||
+          firstEvent?.location?.toLowerCase().includes(searchLower)
         );
       });
     }
@@ -176,10 +182,13 @@ const UsersTable: React.FC<UsersTableProps> = ({
     // Apply status filter
     if (statusFilter !== "all") {
       filtered = filtered.filter((user) => {
+        const firstEvent =
+          user.events && user.events.length > 0 ? user.events[0] : null;
+
         if (statusFilter === "no-ceremony") {
-          return !user.event_details || !user.event_details.status;
+          return !firstEvent || !firstEvent.status;
         }
-        return user.event_details?.status?.toLowerCase() === statusFilter;
+        return firstEvent?.status?.toLowerCase() === statusFilter;
       });
     }
 
@@ -280,111 +289,121 @@ const UsersTable: React.FC<UsersTableProps> = ({
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {filteredUsers.map((user) => (
-                  <tr key={user._id} className="hover:bg-gray-50">
-                    <td className="px-3 sm:px-6 py-4">
-                      <div className="flex items-center">
-                        <div className="flex-shrink-0 h-8 w-8 sm:h-10 sm:w-10">
-                          {user.profilePicture ? (
-                            <img
-                              className="h-8 w-8 sm:h-10 sm:w-10 rounded-full object-cover"
-                              src={getProfileImageUrl(user.profilePicture)}
-                              alt=""
-                            />
-                          ) : (
-                            <div className="h-8 w-8 sm:h-10 sm:w-10 rounded-full bg-gray-300 flex items-center justify-center">
-                              <FaUsers className="text-gray-600 text-xs sm:text-base" />
+                {filteredUsers.map((user) => {
+                  // Get the first event from the events array
+                  const firstEvent =
+                    user.events && user.events.length > 0
+                      ? user.events[0]
+                      : null;
+
+                  return (
+                    <tr key={user._id} className="hover:bg-gray-50">
+                      <td className="px-3 sm:px-6 py-4">
+                        <div className="flex items-center">
+                          <div className="flex-shrink-0 h-8 w-8 sm:h-10 sm:w-10">
+                            {user.profilePicture ? (
+                              <img
+                                className="h-8 w-8 sm:h-10 sm:w-10 rounded-full object-cover"
+                                src={getProfileImageUrl(user.profilePicture)}
+                                alt=""
+                              />
+                            ) : (
+                              <div className="h-8 w-8 sm:h-10 sm:w-10 rounded-full bg-gray-300 flex items-center justify-center">
+                                <FaUsers className="text-gray-600 text-xs sm:text-base" />
+                              </div>
+                            )}
+                          </div>
+                          <div className="ml-2 sm:ml-4">
+                            <div className="text-xs sm:text-sm font-medium text-gray-900 truncate max-w-[120px] sm:max-w-none">
+                              {user.name}
                             </div>
+                            <div className="text-xs text-gray-500 truncate max-w-[120px] sm:max-w-[200px]">
+                              {user.email}
+                            </div>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="hidden md:table-cell px-3 sm:px-6 py-4">
+                        <div className="text-xs sm:text-sm text-gray-900">
+                          <p>{user.contact?.partner_1 || "N/A"}</p>
+                          <p>{user.contact?.partner_2 || "N/A"}</p>
+                        </div>
+                        <div className="text-xs text-gray-500 max-w-xs truncate">
+                          {user.location || "N/A"}
+                        </div>
+                      </td>
+                      <td className="hidden lg:table-cell px-3 sm:px-6 py-4">
+                        <div className="text-xs sm:text-sm text-gray-900">
+                          {firstEvent ? (
+                            <p className=" text-base ">{firstEvent.title}</p>
+                          ) : (
+                            "N/A"
                           )}
                         </div>
-                        <div className="ml-2 sm:ml-4">
-                          <div className="text-xs sm:text-sm font-medium text-gray-900 truncate max-w-[120px] sm:max-w-none">
-                            {user.name}
-                          </div>
-                          <div className="text-xs text-gray-500 truncate max-w-[120px] sm:max-w-[200px]">
-                            {user.email}
-                          </div>
+                        <div className="text-xs text-gray-500 max-w-xs truncate">
+                          {firstEvent?.location || "N/A"}
                         </div>
-                      </div>
-                    </td>
-                    <td className="hidden md:table-cell px-3 sm:px-6 py-4">
-                      <div className="text-xs sm:text-sm text-gray-900">
-                        <p>{user.contact?.partner_1 || "N/A"}</p>
-                        <p>{user.contact?.partner_2 || "N/A"}</p>
-                      </div>
-                      <div className="text-xs text-gray-500 max-w-xs truncate">
-                        {user.address || "N/A"}
-                      </div>
-                    </td>
-                    <td className="hidden lg:table-cell px-3 sm:px-6 py-4">
-                      <div className="text-xs sm:text-sm text-gray-900">
-                        {user.event_details
-                          ? <p className=" text-base ">{user.event_details.title}</p>
-                          : "N/A"}
-                      </div>
-                      <div className="text-xs text-gray-500 max-w-xs truncate">
-                        {user.event_details?.location  || "N/A"}
-                      </div>
-                    </td>
-                    <td className="px-3 sm:px-6 py-4 cursor-pointer">
-                      {user.event_details?.status ? (
-                        (() => {
-                          const status = (
-                            user.event_details.status || ""
-                          ).toLowerCase();
-                          const map: Record<string, string> = {
-                            planned: "bg-blue-100 text-blue-800",
-                            submitted: "bg-yellow-100 text-yellow-800",
-                            approved: "bg-indigo-100 text-indigo-800",
-                            completed: "bg-green-100 text-green-800",
-                            canceled: "bg-red-100 text-red-800",
-                          };
-                          const classes =
-                            map[status] ?? "bg-gray-100 text-gray-800";
-                          return (
-                            <p
-                              className={`py-1 px-2 text-center rounded-xl ${classes}`}
-                            >
-                              {user.event_details.status}
-                            </p>
-                          );
-                        })()
-                      ) : (
-                        <p className="text-center px-2 py-1 bg-gray-200 rounded-xl text-slate-400">
-                          No ceremony
-                        </p>
-                      )}
-                    </td>
-                    <td className="hidden sm:table-cell px-3 sm:px-6 py-4 text-xs sm:text-sm text-gray-500">
-                      {new Date(user.createdAt).toLocaleDateString()}
-                    </td>
-                    <td className="px-3 sm:px-6 py-4 text-right text-xs sm:text-sm font-medium">
-                      <div className="flex space-x-1 sm:space-x-2 justify-end">
-                        <button
-                          onClick={() => handleView(user)}
-                          className="text-indigo-600 hover:text-indigo-900 p-1 sm:p-2 rounded hover:bg-indigo-50"
-                          title="View Details"
-                        >
-                          <FaEye className="text-sm sm:text-base" />
-                        </button>
-                        <button
+                      </td>
+                      <td className="px-3 sm:px-6 py-4 cursor-pointer">
+                        {firstEvent?.status ? (
+                          (() => {
+                            const status = (
+                              firstEvent.status || ""
+                            ).toLowerCase();
+                            const map: Record<string, string> = {
+                              planned: "bg-blue-100 text-blue-800",
+                              submitted: "bg-yellow-100 text-yellow-800",
+                              approved: "bg-indigo-100 text-indigo-800",
+                              completed: "bg-green-100 text-green-800",
+                              canceled: "bg-red-100 text-red-800",
+                            };
+                            const classes =
+                              map[status] ?? "bg-gray-100 text-gray-800";
+                            return (
+                              <p
+                                className={`py-1 px-2 text-center rounded-xl ${classes}`}
+                              >
+                                {firstEvent.status}
+                              </p>
+                            );
+                          })()
+                        ) : (
+                          <p className="text-center px-2 py-1 bg-gray-200 rounded-xl text-slate-400">
+                            No ceremony
+                          </p>
+                        )}
+                      </td>
+                      <td className="hidden sm:table-cell px-3 sm:px-6 py-4 text-xs sm:text-sm text-gray-500">
+                        {new Date(user.createdAt).toLocaleDateString()}
+                      </td>
+                      <td className="px-3 sm:px-6 py-4 text-right text-xs sm:text-sm font-medium">
+                        <div className="flex space-x-1 sm:space-x-2 justify-end">
+                          <button
+                            onClick={() => handleView(user)}
+                            className="text-indigo-600 hover:text-indigo-900 p-1 sm:p-2 rounded hover:bg-indigo-50"
+                            title="View Details"
+                          >
+                            <FaEye className="text-sm sm:text-base" />
+                          </button>
+                          {/* <button
                           onClick={() => handleEdit(user)}
                           className="text-blue-600 hover:text-blue-900 p-1 sm:p-2 rounded hover:bg-blue-50"
                           title="Edit User"
                         >
                           <FaEdit className="text-sm sm:text-base" />
-                        </button>
-                        <button
-                          onClick={() => handleDelete(user)}
-                          className="text-red-600 hover:text-red-900 p-1 sm:p-2 rounded hover:bg-red-50"
-                          title="Delete User"
-                        >
-                          <FaTrash />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
+                        </button> */}
+                          <button
+                            onClick={() => handleDelete(user)}
+                            className="text-red-600 hover:text-red-900 p-1 sm:p-2 rounded hover:bg-red-50"
+                            title="Delete User"
+                          >
+                            <FaTrash />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>

@@ -321,7 +321,7 @@ const getUserInfoHTML = (user: User) => `
         user.contact?.partner_2 || "N/A"
       }</span></p>
       <p style="margin: 0; font-size: 13px;"><strong style="color: #64748b;">Address:</strong> <span style="color: #1e293b;">${
-        user.address || "N/A"
+        user.location || "N/A"
       }</span></p>
       <p style="margin: 0; font-size: 13px;"><strong style="color: #64748b;">Account Status:</strong> ${
         user.isVerified
@@ -354,8 +354,20 @@ const getWeddingInfoHTML = (event: any) => {
 
 // Main exported function to show user details modal
 export const showUserDetailsModal = async (user: User) => {
-  const event = user.event_details;
+  // Get the first event from events array (new structure) or fallback to event_details (old structure)
+  const event =
+    user.events && user.events.length > 0 ? user.events[0] : user.event_details;
   const weddingInfo = getWeddingInfoHTML(event);
+
+  // If user has multiple events, show a note
+  const multipleEventsNote =
+    user.events && user.events.length > 1
+      ? `<div style="background: #fef3c7; padding: 12px; border-radius: 8px; margin-bottom: 16px; border-left: 4px solid #f59e0b;">
+        <p style="margin: 0; font-size: 13px; color: #92400e;">
+          <strong>ℹ️ Note:</strong> This user has ${user.events.length} events. Showing the first event below.
+        </p>
+      </div>`
+      : "";
 
   await Swal.fire({
     title: `${
@@ -364,6 +376,7 @@ export const showUserDetailsModal = async (user: User) => {
     html: `
       <div style="text-align: left;">
         ${getUserInfoHTML(user)}
+        ${multipleEventsNote}
         <h4 style="margin: 0 0 12px 0; font-size: 15px; font-weight: 700; color: #1e293b;">💒 Wedding Ceremony Details</h4>
         ${weddingInfo}
       </div>

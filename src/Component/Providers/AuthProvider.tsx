@@ -20,6 +20,7 @@ interface User {
   createdAt: string;
   email: string;
   isVerified: boolean;
+  AgreementAccepted: boolean;
   languages: string[];
   location: string;
   partner_1: string;

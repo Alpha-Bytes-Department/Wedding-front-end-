@@ -1086,7 +1086,7 @@ const ReviewStep = ({ watch, setValue }: ReviewStepProps) => {
                 {watch("location") || "Location not specified"}
               </div>
             </div>
-            <div>
+            {/* <div>
               <span className="font-medium text-gray-700 block mb-2">
                 Select Officiant:
               </span>
@@ -1140,7 +1140,7 @@ const ReviewStep = ({ watch, setValue }: ReviewStepProps) => {
                   </div>
                 </div>
               )}
-            </div>
+            </div> */}
           </div>
         </div>
       </div>

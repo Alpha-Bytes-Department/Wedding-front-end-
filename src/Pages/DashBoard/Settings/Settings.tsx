@@ -19,7 +19,7 @@ const Settings = () => {
   );
 
   const [privacy, setPrivacy] = useState({
-    allowFileDownloads: true,
+    availability : true,
   });
 
   // ======================Profile section default values======================
@@ -74,9 +74,10 @@ const Settings = () => {
       const updateData: any = {
         partner_1: info.partner1Name,
         partner_2: info.partner2Name,
-
+        name: info.name,
         phone: info.contact,
         location: info.location,
+        // contact:{partner_1: info.partner1Phone, partner_2: info.partner2Phone},
         weddingDate: info.weddingDate,
         bio: info.officiantBio,
         bookingMoney: info.booking,
@@ -138,12 +139,12 @@ const Settings = () => {
     console.log("Privacy:", info);
     try {
       const response = await axios.patch("/users/update", {
-        allowDownload: info.allowFileDownloads,
+        availability: privacy.availability,
       });
       console.log("Privacy update response:", response.data);
       GlassSwal.success(
-        "Privacy Settings Updated",
-        "Your privacy settings have been successfully updated."
+        "Availability Status updated",
+        "Your availability status is set to available."
       );
     } catch (error: any) {
       console.error("Error updating privacy settings:", error);
@@ -346,6 +347,7 @@ const Settings = () => {
               <div className="space-y-4 mb-6">
                 {/* Account Name and Location in same line */}
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                  {/* Account name */}
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       Account Name
@@ -359,6 +361,7 @@ const Settings = () => {
                       }`}
                     />
                   </div>
+                  {/* User address */}
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       Location
@@ -437,7 +440,7 @@ const Settings = () => {
                 </div>
               </div>
             ) : (
-              // Layout for Officiants (unchanged)
+              // Layout for Officiants
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -662,45 +665,59 @@ const Settings = () => {
         </div>
 
         {/* Privacy and Danger Zone */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="flex flex-col lg:flex-row gap-6">
           {/* Privacy Section */}
-          <div className="bg-white rounded-2xl shadow-md border border-primary p-6">
-            <h2 className="text-2xl font-primary font-bold text-gray-900 mb-6">
-              Privacy
-            </h2>
-            <div className="space-y-4 mb-6">
-              <div className="flex items-start justify-between">
-                <div className="flex-1">
-                  <span className="text-gray-700 block">
-                    Allow file downloads for officiant
-                  </span>
+          {user?.role === "officiant" && (
+            <div className="bg-white rounded-2xl w-full shadow-md border border-primary p-6">
+              <h2 className="text-2xl font-primary font-bold text-gray-900 mb-6">
+                Your Availability
+              </h2>
+              <div className="space-y-4 mb-6">
+                <div className="flex items-start justify-between">
+                  <div className="flex-1">
+                    <span className="text-gray-700 block">
+                      Adjust your availability as an officiant
+                    </span>
+                    <p className=" pt-5">
+                      Current status :{" "}
+                      {privacy.availability ? (
+                        <span className="py-1 px-2 rounded-full bg-amber-100 duration-500 ease-in text-amber-800 ml-6">
+                          Available
+                        </span>
+                      ) : (
+                        <span className="py-1 px-3 rounded-full bg-gray-100 duration-500 ease-in text-slate-500 ml-6">
+                          Not available
+                        </span>
+                      )}
+                    </p>
+                  </div>
+                  <label className="relative inline-flex items-center cursor-pointer ml-4">
+                    <input
+                      type="checkbox"
+                      checked={privacy.availability}
+                      onChange={(e) =>
+                        setPrivacy({
+                          ...privacy,
+                          availability: e.target.checked,
+                        })
+                      }
+                      className="sr-only peer"
+                    />
+                    <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none   rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                  </label>
                 </div>
-                <label className="relative inline-flex items-center cursor-pointer ml-4">
-                  <input
-                    type="checkbox"
-                    checked={privacy.allowFileDownloads}
-                    onChange={(e) =>
-                      setPrivacy({
-                        ...privacy,
-                        allowFileDownloads: e.target.checked,
-                      })
-                    }
-                    className="sr-only peer"
-                  />
-                  <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none   rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
-                </label>
               </div>
+              <button
+                onClick={onPrivacySave}
+                className="px-6 py-2 bg-primary text-white rounded-lg font-medium hover:bg-primary/90 transition-colors"
+              >
+                Save Privacy Settings
+              </button>
             </div>
-            <button
-              onClick={onPrivacySave}
-              className="px-6 py-2 bg-primary text-white rounded-lg font-medium hover:bg-primary/90 transition-colors"
-            >
-              Save Privacy Settings
-            </button>
-          </div>
+          )}
 
           {/* Danger Zone Section */}
-          <div className="bg-white rounded-2xl shadow-md border border-red-300 p-6">
+          <div className="bg-white rounded-2xl shadow-md w-full border border-red-300 p-6">
             <h2 className="text-2xl font-primary font-bold text-gray-900 mb-6">
               Danger Zone
             </h2>

@@ -8,6 +8,7 @@ import Layout from "../Layout/Layout";
 import Error from "../Pages/Error/Error";
 import DashBoardOutline from "../DashBoardLayout/DashBoardOutline";
 import { PrivateRoute } from "../Component/PrivateRoute/PrivateRoute";
+import { CeremonyProvider } from "../Pages/DashBoard/Ceremony/contexts/CeremonyContext";
 
 // Lazy load authentication pages
 const Login = lazy(() => import("../Pages/Login/Login"));
@@ -26,7 +27,7 @@ const OfficiantDetail = lazy(
   () => import("../Pages/Officiant/Officiant_Details/OfficiantDetail")
 );
 
-// Lazy load dashboard pages (heavy components)
+// Lazy load dashboard pages 
 const DashHome = lazy(() => import("../Pages/DashBoard/Home/DashHome"));
 const Ceremony = lazy(() => import("../Pages/DashBoard/Ceremony/Ceremony"));
 const Bookings = lazy(() => import("../Pages/DashBoard/Bookings/Bookings"));
@@ -172,7 +173,9 @@ const Router = createBrowserRouter([
         path: "/dashboard/ceremony",
         element: (
           <Suspense fallback={<RouteLoader />}>
-            <Ceremony />
+            <CeremonyProvider>
+              <Ceremony />
+            </CeremonyProvider>
           </Suspense>
         ),
       },

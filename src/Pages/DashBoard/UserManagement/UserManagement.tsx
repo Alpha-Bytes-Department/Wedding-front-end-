@@ -52,7 +52,6 @@ const UserManagement: React.FC = () => {
       // Fetch all users
       const usersResponse = await axios.get("/users/get-all-users");
       const eventResponse = await axios.get("/events/officiantAccess/all");
-      // console.log("Event Response:", eventResponse.data.events);
       const allUsers = usersResponse.data.users || [];
 
       // Fetch all applications
@@ -79,24 +78,69 @@ const UserManagement: React.FC = () => {
           (a: any) => a.status === "rejected"
         ).length,
       };
-      // Create a hash map for quick event lookup by userId
-      const eventsHash = allEvents.reduce((map: any, event: any) => {
-        map[event.userId] = event;
+
+      //  Sort all events by creation time in ascending order
+      allEvents.sort(
+        (a: any, b: any) =>
+          new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+      );
+
+      //  Create a hash map for users with empty events array
+      const userMap = regularUsers.reduce((map: any, user: User) => {
+        map[user._id] = { ...user, events: [] };
         return map;
       }, {});
+      // Create a hash map for officiants with empty events array
+      const officiantsHashMap = officiants.reduce(
+        (map: any, officiant: Officiant) => {
+          map[officiant._id] = { ...officiant, events: [] };
+          return map;
+        },
+        {}
+      );
 
-      // create a merge of regularUsers and eventsHash on _id and userId
-      const UserDataWithEvents = regularUsers.map((user: User) => {
-        const eventDetails = eventsHash[user._id] || null;
-        return { ...user, event_details: eventDetails };
+      //  Assign events to the corresponding user based on userId
+      allEvents.forEach((event: any) => {
+        if (userMap[event.userId]) {
+          userMap[event.userId].events.push(event);
+        }
+        if (officiantsHashMap[event.officiantId]) {
+          officiantsHashMap[event.officiantId].events.push(event);
+        }
       });
+
+      // Convert userMap to an array and handle users with no events
+      const UserDataWithEvents = Object.values(userMap).map((user: any) => ({
+        ...user,
+        events: user.events.length > 0 ? user.events : [],
+      }));
+
+      // Convert officiants map to array with events
+      const OfficiantsDataWithEvents = Object.values(officiantsHashMap).map(
+        (officiant: any) => ({
+          ...officiant,
+          events: officiant.events.length > 0 ? officiant.events : [],
+        })
+      );
+
+      console.log("officiantsHashMap:", OfficiantsDataWithEvents);
+
       setStats(calculatedStats);
-      console.log(UserDataWithEvents);
-      // Return data for further processing
-      return { regularUsers, UserDataWithEvents, officiants, allApplications };
+
+      return {
+        regularUsers,
+        UserDataWithEvents,
+        OfficiantsDataWithEvents,
+        allApplications,
+      };
     } catch (error) {
       console.error("Error fetching all data:", error);
-      return { regularUsers: [], officiants: [], allApplications: [] };
+      return {
+        regularUsers: [],
+        UserDataWithEvents: [],
+        OfficiantsDataWithEvents: [],
+        allApplications: [],
+      };
     }
   };
 
@@ -104,24 +148,21 @@ const UserManagement: React.FC = () => {
     setLoading(true);
     try {
       // First fetch all data to calculate stats
-      const {
-        UserDataWithEvents,
-        officiants: allOfficiants,
-        allApplications,
-      } = await fetchAllData();
+      const { UserDataWithEvents, OfficiantsDataWithEvents, allApplications } =
+        await fetchAllData();
 
       let data: any[] = [];
 
       // Select data based on active tab
       switch (activeTab) {
         case "users":
-          data = UserDataWithEvents;
+          data = UserDataWithEvents ?? [];
           break;
         case "officiants":
-          data = allOfficiants;
+          data = OfficiantsDataWithEvents ?? [];
           break;
         case "applications":
-          data = allApplications;
+          data = allApplications ?? [];
           break;
       }
 
@@ -195,7 +236,7 @@ const UserManagement: React.FC = () => {
     );
   }
   return (
-    <div className="min-h-screen bg-gray-50 p-3 sm:p-6">
+    <div className="min-h-screen bg-gray-50 p-3">
       <div className="max-w-full lg:max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-6 sm:mb-8">

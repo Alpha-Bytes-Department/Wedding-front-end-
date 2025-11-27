@@ -28,7 +28,7 @@ const NavigationButtons = ({
   };
 
   return (
-    <div>
+    <div >
       <div className="flex justify-between mt-8">
         <div>
           {currentStep > 1 && (

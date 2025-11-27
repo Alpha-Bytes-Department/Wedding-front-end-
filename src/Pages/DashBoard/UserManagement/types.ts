@@ -2,15 +2,16 @@
 export interface User {
   _id: string;
   name: string;
-  partner_1?:  string ;
-  partner_2?:  string ;
+  partner_1?: string;
+  partner_2?: string;
   email: string;
   role: string;
   contact?: {
-    partner_1: String,
-    partner_2: String,
+    partner_1: String;
+    partner_2: String;
   };
-  event_details?: any;
+  events?: any[]; // Array of events
+  event_details?: any; // Deprecated: kept for backward compatibility
   phone?: string;
   address?: string;
   weddingDate?: string;
@@ -33,6 +34,7 @@ export interface Officiant {
   experience?: number;
   bookingMoney?: number;
   rating?: number;
+  events?: any[]; // Array of events
   bio?: string;
   certifications?: string[];
   availability: boolean;

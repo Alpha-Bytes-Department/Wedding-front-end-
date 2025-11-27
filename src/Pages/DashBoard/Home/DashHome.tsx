@@ -617,7 +617,7 @@ const DashHome = () => {
     <div className="space-y-6">
       <div className="flex flex-col lg:flex-row gap-6 lg:gap-10">
         {/* Dashboard Header */}
-        <div className="bg-white w-full lg:w-5/7 shadow-xl rounded-2xl border border-primary py-14 flex flex-col text-center items-center justify-between">
+        <div className="bg-white lg:px-4 w-full lg:w-5/7 shadow-xl rounded-2xl border border-primary py-14 flex flex-col text-center items-center justify-between">
           <div>
             <h1 className="text-2xl lg:text-4xl font-semibold font-primary text-gray-900 mb-2">
               Dashboard Home
@@ -632,10 +632,10 @@ const DashHome = () => {
           </div>
 
           {user?.role === "officiant" ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-4 md:gap-x-10 font-secondary mt-5">
-              <div className="border flex flex-col py-2 px-4 rounded-md border-gray-200">
-                <p>New bookings</p>{" "}
-                <p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-4 md:gap-x-10 font-secondary mt-5 w-full px-4 sm:px-0">
+              <div className="border flex flex-col py-3 px-4 rounded-md border-gray-200 hover:border-primary transition-colors">
+                <p className="text-sm text-gray-600 mb-1">New bookings</p>
+                <p className="text-2xl font-bold text-primary">
                   {
                     newBookings.filter(
                       (booking) => booking.approvedStatus === "pending"
@@ -643,9 +643,11 @@ const DashHome = () => {
                   }
                 </p>
               </div>
-              <div className="border flex flex-col py-2 px-4 rounded-md border-gray-200">
-                <p>Total Clients served</p>{" "}
-                <p>
+              <div className="border flex flex-col py-3 px-4 rounded-md border-gray-200 hover:border-primary transition-colors">
+                <p className="text-sm text-gray-600 mb-1">
+                  Total Clients served
+                </p>
+                <p className="text-2xl font-bold text-green-600">
                   {
                     ceremony.filter(
                       (ceremony) =>
@@ -655,9 +657,9 @@ const DashHome = () => {
                   }
                 </p>
               </div>
-              <div className="border flex flex-col py-2 px-4 rounded-md border-gray-200">
-                <p>Ongoing Clients</p>
-                <p>
+              <div className="border flex flex-col py-3 px-4 rounded-md border-gray-200 hover:border-primary transition-colors">
+                <p className="text-sm text-gray-600 mb-1">Ongoing Clients</p>
+                <p className="text-2xl font-bold text-blue-600">
                   {
                     ceremony.filter(
                       (ceremony) =>
@@ -667,9 +669,11 @@ const DashHome = () => {
                   }
                 </p>
               </div>
-              <div className="border flex flex-col py-2 px-4 rounded-md border-gray-200">
-                <p>Confirmed this week</p>{" "}
-                <p>
+              <div className="border flex flex-col py-3 px-4 rounded-md border-gray-200 hover:border-primary transition-colors">
+                <p className="text-sm text-gray-600 mb-1">
+                  Confirmed this week
+                </p>
+                <p className="text-2xl font-bold text-indigo-600">
                   {
                     newBookings.filter((booking) => {
                       const sevenDaysAgo = new Date();
@@ -708,13 +712,13 @@ const DashHome = () => {
         </div>
 
         {/* Notifications */}
-        <div className="bg-white w-full lg:w-2/7 shadow-xl rounded-2xl flex flex-col items-center justify-center border border-primary p-6 ">
+        <div className="bg-white w-full lg:w-2/7 shadow-xl rounded-2xl flex flex-col border border-primary p-4 sm:p-6">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-2xl lg:text-4xl font-primary font-semibold text-gray-900">
+            <h2 className="text-xl sm:text-2xl lg:text-3xl font-primary font-semibold text-gray-900">
               Notifications
             </h2>
           </div>
-          <div className="space-y-3 lg:py-4 p-2 max-h-60 py-5 overflow-y-auto">
+          <div className="space-y-3 lg:py-4 p-2 max-h-48 sm:max-h-60 lg:max-h-72 overflow-y-auto">
             {notifications.length === 0 ? (
               <p className="text-gray-500 text-sm">
                 No notifications available.
@@ -723,12 +727,12 @@ const DashHome = () => {
               notifications.map((notification) => (
                 <div
                   key={notification._id}
-                  className="flex items-center space-x-3 p-3 rounded-2xl border border-primary"
+                  className="flex items-start sm:items-center space-x-2 sm:space-x-3 p-2 sm:p-3 rounded-2xl border border-primary"
                 >
-                  <span className="bg-[#D4AF371A] text-primary border border-primary px-2 py-1 rounded-2xl text-xs font-secondary font-semibold">
+                  <span className="bg-[#D4AF371A] text-primary border border-primary px-2 py-1 rounded-2xl text-xs font-secondary font-semibold whitespace-nowrap">
                     {notification.type}
                   </span>
-                  <p className="text-sm text-gray-700">
+                  <p className="text-xs sm:text-sm text-gray-700 break-words">
                     {notification.message}
                   </p>
                 </div>
@@ -737,20 +741,20 @@ const DashHome = () => {
           </div>
         </div>
       </div>
-      <p className="border-b-amber-300 border-b-2 text-center text-lg py-2 italic rounded-full shadow-lg">
-        💒 Dear valued Client , the new version is up comming soon. Stay tuned
-        for exciting new features and improvements!
+      <p className="border-b-amber-300 border-b-2 text-center text-sm sm:text-base lg:text-lg py-2 px-4 italic rounded-full shadow-lg">
+        💒 Dear valued Client, the new version is coming soon. Stay tuned for
+        exciting new features and improvements!
       </p>
       {/* Past Ceremonies */}
-      <div className="bg-white rounded-2xl border border-primary shadow-xl p-6 ">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-2xl lg:text-4xl font-primary text-start font-semibold text-gray-900">
+      <div className="bg-white rounded-2xl border border-primary shadow-xl p-4 sm:p-6">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 gap-2">
+          <h2 className="text-xl sm:text-2xl lg:text-3xl xl:text-4xl font-primary text-start font-semibold text-gray-900">
             Past Ceremonies
           </h2>
           {ceremonies.length > 3 && (
             <button
               onClick={toggleShowAll}
-              className="text-yellow-600 font-Secondary hover:text-yellow-700 font-medium"
+              className="text-yellow-600 font-secondary hover:text-yellow-700 font-medium text-sm sm:text-base"
             >
               {showingAll ? "Show Less" : "Show All"}
             </button>
@@ -758,8 +762,8 @@ const DashHome = () => {
         </div>
 
         <div
-          className={`space-y-4 px-3 ${
-            showingAll ? "lg:max-h-80 overflow-y-auto" : ""
+          className={`space-y-4 ${
+            showingAll ? "max-h-96 lg:max-h-[500px] overflow-y-auto" : ""
           }`}
         >
           {ceremonies.length > 0 ? (
@@ -767,34 +771,36 @@ const DashHome = () => {
               (ceremony) => (
                 <div
                   key={ceremony.id}
-                  className="flex items-start gap-6 flex-col lg:flex-row justify-between p-4 border lg:items-center border-primary rounded-2xl"
+                  className="flex flex-col lg:flex-row items-start lg:items-center justify-between p-3 sm:p-4 border border-primary rounded-2xl gap-4"
                 >
-                  <div>
-                    <h3 className="font-medium text-gray-900 text-xl lg:text-2xl font-primary">
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-medium text-gray-900 text-lg sm:text-xl lg:text-2xl font-primary truncate">
                       {ceremony.name}
                     </h3>
-                    <p className="text-base text-gray-500 font-secondary">
+                    <p className="text-sm sm:text-base text-gray-500 font-secondary">
                       {ceremony.date} • Officiant: {ceremony.officiant}
                     </p>
                   </div>
-                  <div className="flex justify-center flex-col space-y-3 lg:flex-row items-center space-x-2">
+                  <div className="flex flex-col sm:flex-row w-full lg:w-auto items-stretch sm:items-center gap-2 sm:gap-2">
                     {checkingBills ? (
-                      <div className="flex items-center space-x-2 text-gray-500">
-                        <span className="text-sm">Checking data...</span>
+                      <div className="flex items-center justify-center space-x-2 text-gray-500 py-2">
+                        <span className="text-xs sm:text-sm">
+                          Checking data...
+                        </span>
                         <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary"></div>
                       </div>
                     ) : billAvailability[ceremony.id] === false ? (
-                      <div className="flex flex-col space-y-2 items-center">
-                        <div className="flex items-center space-x-2">
+                      <div className="flex flex-col space-y-2">
+                        <div className="flex flex-col sm:flex-row gap-2">
                           <button
                             disabled
-                            className="px-4 py-1 lg:py-2 text-sm border border-gray-300 rounded-2xl bg-gray-100 text-gray-400 cursor-not-allowed"
+                            className="px-4 py-2 text-xs sm:text-sm border border-gray-300 rounded-2xl bg-gray-100 text-gray-400 cursor-not-allowed"
                           >
                             View
                           </button>
                           <button
                             disabled
-                            className="px-4 py-1 lg:py-2 text-sm border border-gray-300 rounded-2xl bg-gray-100 text-gray-400 cursor-not-allowed"
+                            className="px-4 py-2 text-xs sm:text-sm border border-gray-300 rounded-2xl bg-gray-100 text-gray-400 cursor-not-allowed"
                           >
                             Download PDF
                           </button>
@@ -804,10 +810,10 @@ const DashHome = () => {
                         </p>
                       </div>
                     ) : (
-                      <div className={`flex items-center space-x-2`}>
+                      <div className="flex flex-col sm:flex-row gap-2">
                         <button
                           onClick={() => costInvoice(ceremony.id)}
-                          className="px-4 py-1 cursor-pointer lg:py-2 text-sm border border-primary rounded-2xl hover:bg-gray-50"
+                          className="px-4 py-2 cursor-pointer text-xs sm:text-sm border border-primary rounded-2xl hover:bg-gray-50 transition-colors"
                         >
                           View
                         </button>
@@ -815,7 +821,7 @@ const DashHome = () => {
                         <button
                           onClick={() => handleEventCardDownload(ceremony.id)}
                           disabled={isDownloading}
-                          className="px-4 cursor-pointer py-1 lg:py-2 text-sm bg-primary border border-primary rounded-2xl text-white hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed"
+                          className="px-4 cursor-pointer py-2 text-xs sm:text-sm bg-primary border border-primary rounded-2xl text-white hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                         >
                           {isDownloading ? "Downloading..." : "Download PDF"}
                         </button>
@@ -826,14 +832,14 @@ const DashHome = () => {
               )
             )
           ) : (
-            <div className="w-full py-10 flex flex-col items-center justify-center text-center space-y-4">
+            <div className="w-full py-10 px-4 flex flex-col items-center justify-center text-center space-y-4">
               <svg
-                width="88"
-                height="88"
+                width="64"
+                height="64"
                 viewBox="0 0 24 24"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
-                className="text-yellow-500"
+                className="text-yellow-500 sm:w-20 sm:h-20 lg:w-22 lg:h-22"
                 aria-hidden="true"
                 role="img"
               >
@@ -857,22 +863,22 @@ const DashHome = () => {
                 <circle cx="15.5" cy="15.5" r="1.25" fill="currentColor" />
               </svg>
 
-              <h3 className="text-lg lg:text-xl font-semibold text-gray-900">
+              <h3 className="text-base sm:text-lg lg:text-xl font-semibold text-gray-900">
                 No past ceremonies found
               </h3>
 
               {user?.role === "user" && (
-                <p className="text-sm text-gray-500 max-w-prose">
+                <p className="text-xs sm:text-sm text-gray-500 max-w-prose px-2">
                   You don't have any completed ceremonies yet. Create your first
                   ceremony or continue editing an existing draft to get started.
                 </p>
               )}
 
               {user?.role === "user" && (
-                <div className="flex flex-col sm:flex-row gap-3 mt-2">
+                <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 mt-2">
                   <Link
                     to="/dashboard/ceremony"
-                    className="inline-flex items-center justify-center px-4 py-2 bg-primary text-white rounded-2xl font-medium hover:bg-primary/90"
+                    className="inline-flex items-center justify-center px-3 sm:px-4 py-2 text-sm sm:text-base bg-primary text-white rounded-2xl font-medium hover:bg-primary/90"
                   >
                     Start a new ceremony
                   </Link>
@@ -883,7 +889,7 @@ const DashHome = () => {
                         state: { tab: "draft" },
                       })
                     }
-                    className="inline-flex items-center justify-center px-4 py-2 border border-primary text-gray-700 bg-white rounded-2xl font-medium hover:bg-gray-50"
+                    className="inline-flex items-center justify-center px-3 sm:px-4 py-2 text-sm sm:text-base border border-primary text-gray-700 bg-white rounded-2xl font-medium hover:bg-gray-50"
                   >
                     Continue Editing Drafts
                   </button>
@@ -896,24 +902,28 @@ const DashHome = () => {
 
       {/* Invoice Modal */}
       <dialog id="my_modal_4" className="modal">
-        <div className="modal-box max-w-4xl">
+        <div className="modal-box w-11/12 max-w-5xl max-h-[90vh] overflow-y-auto">
           <form method="dialog">
-            <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
+            <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2 z-10">
               ✕
             </button>
           </form>
 
           {error ? (
-            <div className="text-red-500 text-center py-4">{error}</div>
+            <div className="text-red-500 text-center py-4 text-sm sm:text-base">
+              {error}
+            </div>
           ) : activeBill ? (
-            <div className="space-y-4">
+            <div className="space-y-3 sm:space-y-4">
               {/* Modal Header */}
-              <div className="text-center border-b pb-4">
-                <h2 className="text-2xl font-bold text-gray-900">Invoice</h2>
+              <div className="text-center border-b pb-3 sm:pb-4">
+                <h2 className="text-xl sm:text-2xl font-bold text-gray-900">
+                  Invoice
+                </h2>
                 <button
                   onClick={() => downloadPDF()}
                   disabled={isDownloading}
-                  className="mt-2 bg-primary text-white px-6 py-2 rounded-lg hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="mt-2 bg-primary text-white px-4 sm:px-6 py-2 text-sm sm:text-base rounded-lg hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {isDownloading ? "Generating PDF..." : "Download PDF"}
                 </button>
@@ -923,7 +933,7 @@ const DashHome = () => {
               <div
                 style={{
                   backgroundColor: "white",
-                  padding: "40px",
+                  padding: "20px",
                   minHeight: "800px",
                   fontFamily: "Arial, sans-serif",
                   position: "relative",

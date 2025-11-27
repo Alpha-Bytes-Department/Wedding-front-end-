@@ -16,7 +16,7 @@ interface OfficiantProfile {
   specialization: string;
   profilePicture: string;
   role: string;
-  allowDownload: boolean;
+  availability: boolean;
   isVerified: boolean;
   bookingMoney: number;
   languages: string[];
@@ -153,11 +153,12 @@ const Schedule = () => {
               </div>
               <select
                 {...register("officiant")}
-                className="w-full border border-primary rounded-lg px-4 py-2 focus:outline-none"
+                className="w-full border border-primary cursor-pointer rounded-lg px-4 py-2 focus:outline-none"
               >
                 <option value="">Select Officiant</option>
                 {officiants.map((o) => (
                   <option
+                    disabled={!o.availability}
                     key={o._id}
                     value={JSON.stringify({
                       id: o._id,
@@ -211,22 +212,25 @@ const Schedule = () => {
               <div className="space-y-2 overflow-y-scroll max-h-60">
                 {officiants.map((o) => (
                   <div
-                    key={o._id}
+                    key={o?._id}
                     className="flex items-center gap-3 border border-primary rounded-lg px-3 py-2"
                   >
                     <img
-                      src={getProfileImageUrl(o.profilePicture)}
-                      alt={o.name}
+                      src={getProfileImageUrl(o?.profilePicture)}
+                      alt={o?.name}
                       className="w-10 h-10 rounded-full object-cover"
                     />
                     <div className="flex-1 min-w-0">
-                      <div className="font-medium text-gray-900 truncate">
-                        {o.name}
+                      <div className="font-medium flex  justify-between text-gray-900 truncate">
+                        <p>{o?.name}</p>
+                        <p className={`px-2 py-1 text-xs font-bold italic rounded-full ${o?.availability ? "bg-yellow-200 text-green-600 border border-green-300" : "bg-gray-100 text-slate-500 border border-red-300"}`}>
+                          {o?.availability ? "Available" : "Unavailable"}
+                        </p>
                       </div>
                       <div className="text-xs text-gray-500 truncate">
-                        {o.specialization},{" "}
+                        {o?.specialization},{" "}
                         {(() => {
-                          const d = new Date(o.createdAt);
+                          const d = new Date(o?.createdAt);
                           if (Number.isNaN(d.getTime()))
                             return "1 year of experience";
                           const years = Math.floor(
@@ -239,7 +243,7 @@ const Schedule = () => {
                         })()}
                       </div>
                       <div className="text-xs text-gray-500 truncate">
-                        {o.languages.join(", ")}
+                        {o?.languages.join(", ")}
                       </div>
                     </div>
                   </div>

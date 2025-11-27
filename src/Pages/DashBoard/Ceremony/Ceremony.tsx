@@ -16,13 +16,14 @@ import { useLocation } from "react-router-dom";
 import { useAuth } from "../../../Component/Providers/AuthProvider";
 import { useCeremonyApi } from "./hooks/useCeremonyApi";
 import { GlassSwal } from "../../../utils/glassSwal";
-import { CeremonyProvider } from "./contexts/CeremonyContext";
+import { CeremonyProvider, useCeremonyContext } from "./contexts/CeremonyContext";
 
 const Ceremony = () => {
   const location = useLocation();
   const { user } = useAuth();
   const ceremonyApi = useCeremonyApi();
-
+  const profileComplete= user?.name && user?.partner_1 && user?.partner_2&&user?.contact?.partner_1&& user?.contact?.partner_2&& user?.location;
+  const {groomName, brideName}=useCeremonyContext();
   const [activeTab, setActiveTab] = useState<"new" | "draft" | "my">("new");
   const [loading, setLoading] = useState(false);
 
@@ -260,6 +261,7 @@ const Ceremony = () => {
 
         const ceremonyData = {
           ...data,
+          title: groomName + " & " + brideName + " Ceremony",
           status: "submitted" as const,
         };
 
@@ -459,7 +461,7 @@ const Ceremony = () => {
   };
 
   const steps = [
-    { number: 1, title: "Type", active: currentStep >= 1 },
+    { number: 1, title: "Description", active: currentStep >= 1 },
     { number: 2, title: "Greetings", active: currentStep >= 2 },
     { number: 3, title: "Vows", active: currentStep >= 3 },
     { number: 4, title: "Rituals", active: currentStep >= 4 },
@@ -575,19 +577,39 @@ const Ceremony = () => {
                 )}
 
                 {/* Navigation Buttons */}
-                <NavigationButtons
-                  currentStep={currentStep}
-                  maxStep={6}
-                  onPrevStep={handlePrevStep}
-                  onNextStep={handleNextStep}
-                  onSaveDraft={() => handleSubmit(saveDraft)()}
-                  onSubmit={() => handleSubmit(onSubmit)()}
-                  isLoading={loading}
-                  isEditing={!!editingCeremony}
-                  validateForSubmission={() =>
-                    validateFormForSubmission(getCurrentFormValues())
-                  }
-                />
+                {!profileComplete ? (
+                  <div className="flex items-center gap-5 justify-center text-center py-1">
+                    🚨⚠️
+                    <p className="italic font-bold">
+                      Profile Incomplete!! <br /> Please Complete Your Profile
+                      to proceed.
+                    </p>
+                    🚨⚠️
+                  </div>
+                ) : user?.AgreementAccepted ? (
+                  <div className="flex items-center gap-5 justify-center text-center py-1">
+                    🚨⚠️
+                    <p className="italic font-bold">
+                      Agreement Required!! <br /> Please Complete the Agreement
+                      to proceed.
+                    </p>
+                    🚨⚠️
+                  </div>
+                ) : (
+                  <NavigationButtons
+                    currentStep={currentStep}
+                    maxStep={6}
+                    onPrevStep={handlePrevStep}
+                    onNextStep={handleNextStep}
+                    onSaveDraft={() => handleSubmit(saveDraft)()}
+                    onSubmit={() => handleSubmit(onSubmit)()}
+                    isLoading={loading}
+                    isEditing={!!editingCeremony}
+                    validateForSubmission={() =>
+                      validateFormForSubmission(getCurrentFormValues())
+                    }
+                  />
+                )}
               </form>
             </div>
           )}

@@ -350,7 +350,7 @@ const GreetingsStep = ({
   onSelectDropdown,
 }: GreetingsStepProps) => {
   const [selectedModal, setSelectedModal] = useState<string | null>(null);
-  const { groomName, brideName, setGroomName, setBrideName } =
+  const { groomName, brideName } =
     useCeremonyContext();
 
   const openModal = (optionId: string) => {
@@ -407,45 +407,14 @@ const GreetingsStep = ({
       .replace(/{groom_name}/g, groomNameVal || "Groom's Name");
   };
 
-  const handleNameChange = (field: "groom" | "bride", value: string) => {
-    if (field === "groom") {
-      setGroomName(value);
-    } else {
-      setBrideName(value);
-    }
-  };
+  
 
   return (
     <div className="space-y-6">
       {/* Names Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div>
-          <label className="block text-lg font-semibold text-gray-900 mb-3">
-            Groom's Name
-          </label>
-          <input
-            {...register("groomName", {
-              onChange: (e) => handleNameChange("groom", e.target.value),
-            })}
-            type="text"
-            placeholder="Enter groom's name"
-            className="w-full px-4 py-3 border border-primary rounded-lg focus:outline-none"
-          />
-        </div>
-        <div>
-          <label className="block text-lg font-semibold text-gray-900 mb-3">
-            Bride's Name
-          </label>
-          <input
-            {...register("brideName", {
-              onChange: (e) => handleNameChange("bride", e.target.value),
-            })}
-            type="text"
-            placeholder="Enter bride's name"
-            className="w-full px-4 py-3 border border-primary rounded-lg focus:outline-none"
-          />
-        </div>
-      </div>
+      {/* <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        
+      </div> */}
 
       {/* Language Selection */}
       <div>
@@ -456,7 +425,7 @@ const GreetingsStep = ({
           name="language"
           options={[
             "English",
-            "French",
+            "spanish",
           ]}
           value={watch("language") || ""}
           placeholder="Select language"
