@@ -246,10 +246,7 @@ const DashHome = () => {
           </div>
         </div>
       </div>
-      <p className="border-b-amber-300 border-b-2 text-center text-sm sm:text-base lg:text-lg py-2 px-4 italic rounded-full shadow-lg">
-        💒 Dear valued Client, the new version is coming soon. Stay tuned for
-        exciting new features and improvements!
-      </p>
+      
       {/* Past Ceremonies */}
       <div className="bg-white rounded-2xl border border-primary shadow-xl p-4 sm:p-6">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 gap-2">
