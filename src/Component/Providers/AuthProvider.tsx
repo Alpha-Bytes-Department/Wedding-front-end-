@@ -91,8 +91,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
       // send token/email to your backend to register/login & get your own tokens
       const response = await axios.post(
-        "http://10.10.12.62:5000/api/users/social-login",
-        // "https://www.erieweddingofficiants.com/api/users/social-login",
+        // "http://10.10.12.62:5000/api/users/social-login",
+        "https://www.erieweddingofficiants.com/api/users/social-login",
         {
           email,
           firebaseToken: token,
