@@ -589,7 +589,7 @@ const Ceremony = () => {
 
           {/* Loading indicator */}
           {loading && (
-            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="fixed inset-0 bg-[#2b252586] bg-opacity-50 flex items-center justify-center z-50">
               <div className="bg-white p-6 rounded-lg shadow-lg">
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
                 <p className="mt-2 text-center">Processing...</p>

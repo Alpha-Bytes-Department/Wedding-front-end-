@@ -6,6 +6,7 @@ import { GlassSwal } from "../../../utils/glassSwal";
 interface Event {
   _id: string;
   title: string;
+  price?: number;
   description: string;
   eventDate?: string;
   eventTime?: string;
@@ -54,7 +55,8 @@ const EventManagement = () => {
   const fetchEvents = async () => {
     try {
       setLoading(true);
-      const response = await axiosSecure.get("/event/officiantAccess/all");
+      const response = await axiosSecure.get("/events/officiantAccess/all");
+      console.log("Fetched events:", response.data);
       setEvents(response.data.events || []);
     } catch (error: any) {
       console.error("Error fetching events:", error);
@@ -69,17 +71,26 @@ const EventManagement = () => {
 
   const fetchOfficiants = async () => {
     try {
-      const response = await axiosSecure.get("/user/officiants");
-      setOfficiants(response.data || []);
+      const response = await axiosSecure.get("/users/officiants");
+      console.log("Fetched officiants:", response.data.officiants);
+      setOfficiants(response.data.officiants || []);
     } catch (error: any) {
       console.error("Error fetching officiants:", error);
     }
   };
 
   const handleAssignOfficiant = async (
+    status: string,
     eventId: string,
     officiantId: string
   ) => {
+    if (status === "completed" || status === "canceled") {
+      await GlassSwal.error(
+        "Invalid Action",
+        "Cannot assign an officiant to a completed or canceled event."
+      );
+      return;
+    }
     const selectedOfficiant = officiants.find((o) => o._id === officiantId);
     if (!selectedOfficiant) return;
 
@@ -100,7 +111,7 @@ const EventManagement = () => {
 
     try {
       setLoading(true);
-      await axiosSecure.post(`/event/assign-officiant/${eventId}`, {
+      await axiosSecure.post(`/events/assign-officiant/${eventId}`, {
         officiantId: selectedOfficiant._id,
         officiantName: selectedOfficiant.name,
       });
@@ -248,6 +259,9 @@ const EventManagement = () => {
                       Event Details
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
+                      Value
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
                       Date & Location
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
@@ -265,7 +279,7 @@ const EventManagement = () => {
                   {filteredEvents.map((event) => (
                     <tr key={event._id} className="hover:bg-gray-50">
                       <td className="px-6 py-4">
-                        <div>
+                        <div className="space-y-1">
                           <p className="font-semibold text-gray-900">
                             {event.title}
                           </p>
@@ -279,6 +293,7 @@ const EventManagement = () => {
                           </p>
                         </div>
                       </td>
+                      <td>{event?.price ? `$${event.price}` : "N/A"}</td>
                       <td className="px-6 py-4">
                         <div className="text-sm">
                           {event.eventDate && (
@@ -329,7 +344,11 @@ const EventManagement = () => {
                         ) : (
                           <select
                             onChange={(e) =>
-                              handleAssignOfficiant(event._id, e.target.value)
+                              handleAssignOfficiant(
+                                event.status,
+                                event._id,
+                                e.target.value
+                              )
                             }
                             defaultValue=""
                             className="text-sm px-3 py-1 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
@@ -369,88 +388,258 @@ const EventManagement = () => {
 
       {/* Event Details Modal */}
       {selectedEvent && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-            <div className="bg-gradient-to-r from-orange-400 to-yellow-400 px-6 py-4 flex justify-between items-center">
+        <div className="fixed inset-0 bg-[#2b2525b0] bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl shadow-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="bg-gradient-to-r from-orange-400 to-yellow-400 px-6 py-4 flex justify-between items-center sticky top-0 z-10">
               <h2 className="text-2xl font-bold text-white">Event Details</h2>
               <button
                 onClick={() => setSelectedEvent(null)}
-                className="text-white hover:text-gray-200 text-2xl"
+                className="text-white hover:text-gray-200 text-2xl font-bold"
               >
                 ×
               </button>
             </div>
-            <div className="p-6 space-y-4">
-              <div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">
+            <div className="p-6 space-y-6">
+              {/* Title and Description */}
+              <div className="bg-gradient-to-r from-orange-50 to-yellow-50 p-4 rounded-lg">
+                <h3 className="text-xl font-bold text-gray-900 mb-2">
                   {selectedEvent.title}
                 </h3>
-                <p className="text-gray-600">{selectedEvent.description}</p>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                {selectedEvent.groomName && (
-                  <div>
-                    <p className="text-sm text-gray-500">Groom</p>
-                    <p className="font-medium">{selectedEvent.groomName}</p>
-                  </div>
-                )}
-                {selectedEvent.brideName && (
-                  <div>
-                    <p className="text-sm text-gray-500">Bride</p>
-                    <p className="font-medium">{selectedEvent.brideName}</p>
-                  </div>
-                )}
-                {selectedEvent.eventDate && (
-                  <div>
-                    <p className="text-sm text-gray-500">Event Date</p>
-                    <p className="font-medium">
-                      {new Date(selectedEvent.eventDate).toLocaleDateString()}
-                    </p>
-                  </div>
-                )}
-                {selectedEvent.eventTime && (
-                  <div>
-                    <p className="text-sm text-gray-500">Event Time</p>
-                    <p className="font-medium">
-                      {new Date(selectedEvent.eventTime).toLocaleTimeString()}
-                    </p>
-                  </div>
-                )}
-                {selectedEvent.location && (
-                  <div>
-                    <p className="text-sm text-gray-500">Location</p>
-                    <p className="font-medium">{selectedEvent.location}</p>
-                  </div>
-                )}
-                {selectedEvent.rehearsalDate && (
-                  <div>
-                    <p className="text-sm text-gray-500">Rehearsal Date</p>
-                    <p className="font-medium">
-                      {new Date(
-                        selectedEvent.rehearsalDate
-                      ).toLocaleDateString()}
-                    </p>
-                  </div>
-                )}
-                <div>
-                  <p className="text-sm text-gray-500">Status</p>
-                  <p className="font-medium capitalize">
-                    {selectedEvent.status}
+                {selectedEvent.description && (
+                  <p className="text-gray-700 leading-relaxed">
+                    {selectedEvent.description}
                   </p>
-                </div>
-                {selectedEvent.officiantName && (
-                  <div>
-                    <p className="text-sm text-gray-500">Assigned Officiant</p>
-                    <p className="font-medium">{selectedEvent.officiantName}</p>
-                  </div>
                 )}
               </div>
 
+              {/* Couple Information */}
+              {(selectedEvent.groomName || selectedEvent.brideName) && (
+                <div className="border-t pt-4">
+                  <h4 className="text-lg font-semibold text-gray-900 mb-3">
+                    👰🤵 Couple Information
+                  </h4>
+                  <div className="grid grid-cols-2 gap-4">
+                    {selectedEvent.groomName && (
+                      <div className="bg-blue-50 p-3 rounded-lg">
+                        <p className="text-sm text-gray-600 mb-1">Groom</p>
+                        <p className="font-semibold text-gray-900">
+                          {selectedEvent.groomName}
+                        </p>
+                      </div>
+                    )}
+                    {selectedEvent.brideName && (
+                      <div className="bg-pink-50 p-3 rounded-lg">
+                        <p className="text-sm text-gray-600 mb-1">Bride</p>
+                        <p className="font-semibold text-gray-900">
+                          {selectedEvent.brideName}
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* Event Schedule */}
+              {(selectedEvent.eventDate ||
+                selectedEvent.eventTime ||
+                selectedEvent.rehearsalDate) && (
+                <div className="border-t pt-4">
+                  <h4 className="text-lg font-semibold text-gray-900 mb-3">
+                    📅 Schedule
+                  </h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {selectedEvent.eventDate && (
+                      <div className="flex items-center space-x-3 bg-gray-50 p-3 rounded-lg">
+                        <span className="text-2xl">📅</span>
+                        <div>
+                          <p className="text-sm text-gray-600">Event Date</p>
+                          <p className="font-semibold text-gray-900">
+                            {new Date(
+                              selectedEvent.eventDate
+                            ).toLocaleDateString("en-US", {
+                              weekday: "long",
+                              year: "numeric",
+                              month: "long",
+                              day: "numeric",
+                            })}
+                          </p>
+                        </div>
+                      </div>
+                    )}
+                    {selectedEvent.eventTime && (
+                      <div className="flex items-center space-x-3 bg-gray-50 p-3 rounded-lg">
+                        <span className="text-2xl">🕒</span>
+                        <div>
+                          <p className="text-sm text-gray-600">Event Time</p>
+                          <p className="font-semibold text-gray-900">
+                            {new Date(
+                              selectedEvent.eventTime
+                            ).toLocaleTimeString("en-US", {
+                              hour: "2-digit",
+                              minute: "2-digit",
+                              hour12: true,
+                            })}
+                          </p>
+                        </div>
+                      </div>
+                    )}
+                    {selectedEvent.rehearsalDate && (
+                      <div className="flex items-center space-x-3 bg-gray-50 p-3 rounded-lg">
+                        <span className="text-2xl">🎭</span>
+                        <div>
+                          <p className="text-sm text-gray-600">
+                            Rehearsal Date
+                          </p>
+                          <p className="font-semibold text-gray-900">
+                            {new Date(
+                              selectedEvent.rehearsalDate
+                            ).toLocaleDateString("en-US", {
+                              weekday: "long",
+                              year: "numeric",
+                              month: "long",
+                              day: "numeric",
+                            })}
+                          </p>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* Location */}
+              {selectedEvent.location && (
+                <div className="border-t pt-4">
+                  <h4 className="text-lg font-semibold text-gray-900 mb-3">
+                    📍 Location
+                  </h4>
+                  <div className="bg-green-50 p-4 rounded-lg">
+                    <p className="font-medium text-gray-900">
+                      {selectedEvent.location}
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              {/* Officiant Information */}
+              <div className="border-t pt-4">
+                <h4 className="text-lg font-semibold text-gray-900 mb-3">
+                  👔 Officiant
+                </h4>
+                <div
+                  className={`p-4 rounded-lg ${
+                    selectedEvent.officiantName ? "bg-green-50" : "bg-yellow-50"
+                  }`}
+                >
+                  {selectedEvent.officiantName ? (
+                    <div className="flex items-center space-x-2">
+                      <span className="text-green-600 text-xl">✓</span>
+                      <p className="font-semibold text-gray-900">
+                        {selectedEvent.officiantName}
+                      </p>
+                      {selectedEvent.officiantId && (
+                        <span className="text-xs text-gray-500">
+                          (ID: {selectedEvent.officiantId})
+                        </span>
+                      )}
+                    </div>
+                  ) : (
+                    <div className="flex items-center space-x-2">
+                      <span className="text-yellow-600 text-xl">⚠️</span>
+                      <p className="text-gray-700">No officiant assigned yet</p>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Status and Financial */}
+              <div className="border-t pt-4">
+                <h4 className="text-lg font-semibold text-gray-900 mb-3">
+                  💼 Event Status & Details
+                </h4>
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                  <div className="bg-gray-50 p-3 rounded-lg">
+                    <p className="text-sm text-gray-600 mb-1">Status</p>
+                    <span
+                      className={`px-3 py-1 inline-flex text-sm font-semibold rounded-full ${
+                        selectedEvent.status === "completed"
+                          ? "bg-green-100 text-green-800"
+                          : selectedEvent.status === "approved"
+                          ? "bg-blue-100 text-blue-800"
+                          : selectedEvent.status === "submitted"
+                          ? "bg-yellow-100 text-yellow-800"
+                          : selectedEvent.status === "canceled"
+                          ? "bg-red-100 text-red-800"
+                          : "bg-gray-100 text-gray-800"
+                      }`}
+                    >
+                      {selectedEvent.status}
+                    </span>
+                  </div>
+                  {selectedEvent.price !== undefined && (
+                    <div className="bg-gray-50 p-3 rounded-lg">
+                      <p className="text-sm text-gray-600 mb-1">Price</p>
+                      <p className="text-xl font-bold text-green-600">
+                        ${selectedEvent.price}
+                      </p>
+                    </div>
+                  )}
+                  {selectedEvent.createdAt && (
+                    <div className="bg-gray-50 p-3 rounded-lg">
+                      <p className="text-sm text-gray-600 mb-1">Created On</p>
+                      <p className="font-semibold text-gray-900 text-sm">
+                        {new Date(selectedEvent.createdAt).toLocaleDateString(
+                          "en-US",
+                          {
+                            month: "short",
+                            day: "numeric",
+                            year: "numeric",
+                          }
+                        )}
+                      </p>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* IDs Section */}
+              <div className="border-t pt-4">
+                <h4 className="text-lg font-semibold text-gray-900 mb-3">
+                  🔑 Reference IDs
+                </h4>
+                <div className="space-y-2 bg-gray-50 p-4 rounded-lg">
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-gray-600">Event ID:</span>
+                    <code className="text-xs bg-white px-2 py-1 rounded border font-mono">
+                      {selectedEvent._id}
+                    </code>
+                  </div>
+                  {selectedEvent.userId && (
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-gray-600">User ID:</span>
+                      <code className="text-xs bg-white px-2 py-1 rounded border font-mono">
+                        {selectedEvent.userId}
+                      </code>
+                    </div>
+                  )}
+                  {selectedEvent.officiantId && (
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-gray-600">
+                        Officiant ID:
+                      </span>
+                      <code className="text-xs bg-white px-2 py-1 rounded border font-mono">
+                        {selectedEvent.officiantId}
+                      </code>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Close Button */}
               <div className="pt-4 border-t">
                 <button
                   onClick={() => setSelectedEvent(null)}
-                  className="w-full bg-gradient-to-r from-orange-400 to-yellow-400 text-white px-6 py-2 rounded-lg hover:from-orange-500 hover:to-yellow-500 transition-all"
+                  className="w-full bg-gradient-to-r from-orange-400 to-yellow-400 text-white px-6 py-3 rounded-lg hover:from-orange-500 hover:to-yellow-500 transition-all font-semibold shadow-lg"
                 >
                   Close
                 </button>
