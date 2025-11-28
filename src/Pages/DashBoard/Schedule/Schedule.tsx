@@ -52,8 +52,6 @@ const Schedule = () => {
     getSchedule();
   }, []);
 
-
-
   const getOfficiants = async () => {
     try {
       const response = await axios.get("/users/officiants");
@@ -98,7 +96,6 @@ const Schedule = () => {
         : "",
       officiantId: data.officiant ? JSON.parse(data.officiant).id : "",
       message: data.note || "",
-      
     };
     console.log(scheduledData);
     try {
@@ -113,7 +110,7 @@ const Schedule = () => {
 
     // reset();
   };
-  const getProfileImageUrl = (profilePicture:string) => {
+  const getProfileImageUrl = (profilePicture: string) => {
     if (!profilePicture) return "";
     // Check if it's already a complete URL
     if (profilePicture.startsWith("http")) {
@@ -223,7 +220,13 @@ const Schedule = () => {
                     <div className="flex-1 min-w-0">
                       <div className="font-medium flex  justify-between text-gray-900 truncate">
                         <p>{o?.name}</p>
-                        <p className={`px-2 py-1 text-xs font-bold italic rounded-full ${o?.availability ? "bg-yellow-200 text-green-600 border border-green-300" : "bg-gray-100 text-slate-500 border border-red-300"}`}>
+                        <p
+                          className={`px-2 py-1 text-xs font-bold italic rounded-full ${
+                            o?.availability
+                              ? "bg-yellow-200 text-green-600 border border-green-300"
+                              : "bg-gray-100 text-slate-500 border border-red-300"
+                          }`}
+                        >
                           {o?.availability ? "Available" : "Unavailable"}
                         </p>
                       </div>
@@ -297,6 +300,14 @@ const Schedule = () => {
                   <span className="px-3 py-1 text-xs rounded-full border bg-white text-yellow-700 border-yellow-400">
                     {m.status}
                   </span>
+                  {m.status === "approved" && (
+                    <button
+                      onClick={() => navigate(`/dashboard/agreement/${m._id}`)}
+                      className="bg-gradient-to-r from-orange-400 to-yellow-400 text-white px-5 py-2 rounded-lg font-medium hover:from-orange-500 hover:to-yellow-500 transition-all"
+                    >
+                      View Agreement
+                    </button>
+                  )}
                   <button
                     onClick={() => navigate(`/dashboard/discussions`)}
                     className="bg-primary text-white px-5 py-2 rounded-lg font-medium hover:bg-primary/90 transition-colors"

@@ -40,21 +40,43 @@ const Note = () => {
   //  ============ gathering all users ================
   const getUsers = useCallback(async () => {
     try {
-      const response = await axios.get(`/schedule/get-officiant/${user?._id}`);
-      const userids = response.data
-        .filter(
-          (event: Ceremony, index: number, array: Ceremony[]) =>
-            array.findIndex((e) => e.fromUserId === event.fromUserId) === index
-        )
-        .map((event: Ceremony) => ({
-          fromUserName: event.fromUserName,
-          fromUserId: event.fromUserId,
+      // Get users from schedules
+      const scheduleResponse = await axios.get(
+        `/schedule/get-officiant/${user?._id}`
+      );
+      const scheduleUsers = scheduleResponse.data.map((event: Ceremony) => ({
+        fromUserName: event.fromUserName,
+        fromUserId: event.fromUserId,
+      }));
+
+      // Get users from events where this officiant is assigned
+      const eventsResponse = await axios.get(
+        `/events/by-role/${user?._id}/officiant`
+      );
+      const eventUsers = eventsResponse.data.events
+        .filter((event: any) => event.userId) // Only events with a userId
+        .map((event: any) => ({
+          fromUserName:
+            event.groomName && event.brideName
+              ? `${event.groomName} & ${event.brideName}`
+              : event.title || "Unknown User",
+          fromUserId: event.userId,
         }));
-      console.log("officiant data:", response.data);
-      setUsers(userids);
-      console.log("users in the system:", userids);
+
+      // Combine both arrays and remove duplicates based on fromUserId
+      const combinedUsers = [...scheduleUsers, ...eventUsers];
+      const uniqueUsers = combinedUsers.filter(
+        (user, index, array) =>
+          array.findIndex((u) => u.fromUserId === user.fromUserId) === index
+      );
+
+      console.log("Schedule users:", scheduleUsers);
+      console.log("Event users:", eventUsers);
+      console.log("Combined unique users:", uniqueUsers);
+
+      setUsers(uniqueUsers);
     } catch (error) {
-      console.log(error);
+      console.log("Error fetching users:", error);
     }
   }, [axios, user?._id]);
 
@@ -66,7 +88,7 @@ const Note = () => {
         name: officiant.name,
         id: officiant._id,
       }));
-      
+
       console.log("officiant data:", response.data);
       setOfficiants(officiants);
       console.log("officiants in the system:", officiants);
@@ -94,10 +116,6 @@ const Note = () => {
   }, [axios, user?._id]);
 
   useEffect(() => {
-
-
-
-    
     getUsers();
     getOfficiants();
     getNotes();
@@ -124,9 +142,10 @@ const Note = () => {
     };
     console.log(officiantNoteData);
     console.log(usersNoteData);
-    const noteData = user?.role === "officiant" ? officiantNoteData : usersNoteData;
+    const noteData =
+      user?.role === "officiant" ? officiantNoteData : usersNoteData;
     try {
-      const response = await axios.post('/notes/create', noteData);
+      const response = await axios.post("/notes/create", noteData);
       console.log(response);
       (document.getElementById("my_modal_4") as HTMLDialogElement).close();
       getNotes();
@@ -242,7 +261,7 @@ const Note = () => {
         </button>
       </div>
       <dialog id="my_modal_4" className="modal">
-        <div className="modal-box">
+        <div className="modal-box bg-white">
           <form method="dialog">
             {/* if there is a button in form, it will close the modal */}
             <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
@@ -252,50 +271,57 @@ const Note = () => {
           <h3 className="font-bold text-center text-lg">Create a note</h3>
           <div>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 mt-4">
-            {user?.role==="officiant"?<div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Select a Client
-              </label>
-              <select
-                {...register("client", { required: "client is required" })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
-              >
-                <option value="">Select a client</option>
-                
-                {users.map((u) => (
-                  <option key={u.fromUserId} value={u.fromUserId}>
-                    {u.fromUserName}
-                  </option>
-                ))}
-                {users.length===0 && <option value="">Sorry , you have no bookings.</option>}
-              </select>
-              {errors.client && (
-                <p className="text-red-500 text-sm mt-1">
-                  {errors.client.message as string}
-                </p>
+              {user?.role === "officiant" ? (
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Select a Client
+                  </label>
+                  <select
+                    {...register("client", { required: "client is required" })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                  >
+                    <option value="">Select a client</option>
+
+                    {users.map((u) => (
+                      <option key={u.fromUserId} value={u.fromUserId}>
+                        {u.fromUserName}
+                      </option>
+                    ))}
+                    {users.length === 0 && (
+                      <option value="">Sorry , you have no bookings.</option>
+                    )}
+                  </select>
+                  {errors.client && (
+                    <p className="text-red-500 text-sm mt-1">
+                      {errors.client.message as string}
+                    </p>
+                  )}
+                </div>
+              ) : (
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Select an Officiant
+                  </label>
+                  <select
+                    {...register("officiant", {
+                      required: "Officiant is required",
+                    })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                  >
+                    <option value="">Select an officiant</option>
+                    {officiants.map((u) => (
+                      <option key={u.id} value={u.id}>
+                        {u.name}
+                      </option>
+                    ))}
+                  </select>
+                  {errors.officiant && (
+                    <p className="text-red-500 text-sm mt-1">
+                      {errors.officiant.message as string}
+                    </p>
+                  )}
+                </div>
               )}
-            </div>:
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Select an Officiant
-              </label>
-              <select
-                {...register("officiant", { required: "Officiant is required" })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
-              >
-                <option value="">Select an officiant</option>
-                {officiants.map((u) => (
-                  <option key={u.id} value={u.id}>
-                    {u.name}
-                  </option>
-                ))}
-              </select>
-              {errors.officiant && (
-                <p className="text-red-500 text-sm mt-1">
-                  {errors.officiant.message as string}
-                </p>
-              )}
-            </div>}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Title

@@ -137,6 +137,18 @@ const DashNav = ({
       current: location.pathname.includes("/dashboard/notes"),
     },
 
+    // Bills - Only for clients (not officiants)
+    ...(user?.role !== "officiant"
+      ? [
+          {
+            name: "Bills",
+            href: "/dashboard/bills",
+            icon: GoRead,
+            current: location.pathname.includes("/dashboard/bills"),
+          },
+        ]
+      : []),
+
     ...(user?.email === "joysutradharaj@gmail.com" ||
     user?.email === "steve@erieweddingofficiants.com"
       ? [
@@ -145,6 +157,12 @@ const DashNav = ({
             href: "/dashboard/admin",
             icon: LuUserCog,
             current: location.pathname.includes("/dashboard/admin"),
+          },
+          {
+            name: "Event Management",
+            href: "/dashboard/event-management",
+            icon: IoCalendarNumberOutline,
+            current: location.pathname.includes("/dashboard/event-management"),
           },
         ]
       : []),

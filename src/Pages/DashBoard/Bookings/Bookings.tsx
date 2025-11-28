@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react";
 import { useAxios } from "../../../Component/Providers/useAxios";
 import { useAuth } from "../../../Component/Providers/AuthProvider";
-// import { useNavigate } from "react-router-dom";
-import PdfMaker from "../../../Component/PDFGenerator/PdfMaker";
+import { useNavigate } from "react-router-dom";
 import GlassSwal from "../../../utils/glassSwal";
 // import { get } from "http";
 
@@ -14,10 +13,13 @@ interface Booking {
   fromUserImage: string;
   scheduleDate: string;
   officiantName: string;
+  eventId?: string;
+  price?: number;
   message?: string;
 }
 
 interface Ceremony {
+  price: number;
   _id: string;
   title: string;
   eventDate: string;
@@ -36,12 +38,17 @@ const Bookings = () => {
   const [seeFullCeremonies, setSeeFullCeremonies] = useState(false);
   const [seeOngoingCeremonies, setSeeOngoingCeremonies] = useState(false);
   const { user } = useAuth();
+  const navigate = useNavigate();
 
-  if(user?.role !== 'officiant'){
-    return <div className="text-center py-20">
-      <h2 className="text-3xl font-primary font-bold mb-4">Access Denied</h2>
-      <p className="text-gray-600">You do not have permission to view this page.</p>
-    </div>;
+  if (user?.role !== "officiant") {
+    return (
+      <div className="text-center py-20">
+        <h2 className="text-3xl font-primary font-bold mb-4">Access Denied</h2>
+        <p className="text-gray-600">
+          You do not have permission to view this page.
+        </p>
+      </div>
+    );
   }
 
   const toggleShowFullList = (id: number) => {
@@ -57,7 +64,6 @@ const Bookings = () => {
         break;
     }
   };
-  // const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const axios = useAxios();
   const fetchBookings = async () => {
@@ -74,13 +80,13 @@ const Bookings = () => {
           (booking: Booking) => booking.approvedStatus === "approved"
         )
       );
-      console.log('Bookings:', response.data);
+      console.log("Bookings:", response.data);
       //console.log(response.data);
     } catch (error) {
       console.error("Error fetching bookings:", error);
     } finally {
       setLoading(false);
-    } 
+    }
   };
   const getCeremonies = async () => {
     setLoading(true);
@@ -91,8 +97,8 @@ const Bookings = () => {
         (event: any) =>
           event.status === "completed" && event.officiantId === user?._id
       );
-      console.log('Response Data:', response.data.events);
-      
+      console.log("Response Data:", response.data.events);
+
       const ongoing = response.data.events.filter(
         (event: any) =>
           event.status == "approved" && event.officiantId === user?._id
@@ -101,7 +107,7 @@ const Bookings = () => {
       setCompletedCeremonies(completed);
 
       //console.log('Completed Ceremonies:', completed);
-      console.log('Ongoing Ceremonies:', ongoing);
+      console.log("Ongoing Ceremonies:", ongoing);
     } catch (error) {
       console.error("Error fetching completed ceremonies:", error);
     } finally {
@@ -120,7 +126,7 @@ const Bookings = () => {
           approvedStatus,
         });
         await GlassSwal.success("Booking updated successfully", "success");
-        console.log('Booking updated:', response.data);
+        console.log("Booking updated:", response.data);
       }
       fetchBookings(); // Refresh the bookings list
     } catch (error) {
@@ -152,7 +158,7 @@ const Bookings = () => {
     return `/${profilePicture}`;
   };
 
-  const getImage=(id:string)=>{
+  const getImage = (id: string) => {
     const event = ongoingCeremonies.find(
       (event: any) => event.fromUserId === id
     );
@@ -209,6 +215,16 @@ const Bookings = () => {
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
+                      <button
+                        onClick={() =>
+                          navigate(
+                            `/dashboard/officiant-agreement?userId=${m.fromUserId}`
+                          )
+                        }
+                        className="bg-gradient-to-r from-orange-400 to-yellow-400 text-white text-sm px-5 py-2 rounded-lg font-medium hover:from-orange-500 hover:to-yellow-500 transition-all"
+                      >
+                        Manage Agreement
+                      </button>
                       <button className="bg-[#AF4B4B4D] text-[#3b1919] text-sm px-5 py-2 rounded-lg font-medium hover:bg-primary/90 transition-colors">
                         Review the event
                       </button>
@@ -306,12 +322,16 @@ const Bookings = () => {
                         </div>
                       </div>
                       <div className="flex items-center gap-2">
-                        {/* <button
-                          onClick={() => navigate("/dashboard/discussions")}
-                          className="bg-[#D4AF371A] text-[#91c21f] border-1 border-primary text-sm px-5 py-2 rounded-lg font-medium hover:bg-primary/90 hover:text-white transition-colors"
+                        <button
+                          onClick={() =>
+                            navigate(
+                              `/dashboard/officiant-agreement?userId=${m.fromUserId}`
+                            )
+                          }
+                          className="bg-gradient-to-r from-orange-400 to-yellow-400 text-white text-sm px-5 py-2 rounded-lg font-medium hover:from-orange-500 hover:to-yellow-500 transition-all"
                         >
-                          Go Chat
-                        </button> */}
+                          Manage Agreement
+                        </button>
                       </div>
                     </div>
                   ))
@@ -336,12 +356,16 @@ const Bookings = () => {
                         </div>
                       </div>
                       <div className="flex items-center gap-2">
-                        {/* <button
-                          onClick={() => navigate("/dashboard/discussions")}
-                          className="bg-[#D4AF371A] text-[#91c21f] border-1 border-primary text-sm px-5 py-2 rounded-lg font-medium hover:bg-primary/90 hover:text-white transition-colors"
+                        <button
+                          onClick={() =>
+                            navigate(
+                              `/dashboard/officiant-agreement?userId=${m.fromUserId}`
+                            )
+                          }
+                          className="bg-gradient-to-r from-orange-400 to-yellow-400 text-white text-sm px-5 py-2 rounded-lg font-medium hover:from-orange-500 hover:to-yellow-500 transition-all"
                         >
-                          Go Chat
-                        </button> */}
+                          Manage Agreement
+                        </button>
                       </div>
                     </div>
                   ))
@@ -373,26 +397,27 @@ const Bookings = () => {
                   completedCeremonies.map((m) => (
                     <div
                       key={m._id}
-                      className="flex flex-col md:flex-row gap-5 items-center justify-between border border-primary rounded-lg px-4 py-3"
+                      className="flex  flex-col md:flex-row gap-5 items-center justify-between border border-primary rounded-lg px-4 py-3"
                     >
-                      <div>
-                        <div className="font-medium flex gap-2 items-center text-gray-900">
+                      <div className="font-medium flex gap-2 items-center text-gray-900">
+                        {getImage(m.userId) ? (
                           <img
                             src={getImage(m.userId)}
                             className="size-12 rounded-full"
                             alt=""
                           />
-                          {m.title}
-                        </div>
-                        <div className="text-sm text-gray-500">
-                          {new Date(m.eventDate).toLocaleDateString("en-GB")} ·
-                          Officiant: {m.officiantName}
-                        </div>
+                        ) : (
+                          <div className="size-12 rounded-full bg-amber-700 flex items-center justify-center text-white font-bold">
+                            {m.title.charAt(0).toUpperCase()}
+                          </div>
+                        )}
+
+                        {m.title}
                       </div>
-                      <div className="flex items-center gap-2">
-                        <PdfMaker eventId={m._id} />
-                        {/* <button className="bg-[#D4AF371A] border-1 border-primary text-primary text-sm px-5 py-2 rounded-lg font-medium hover:bg-primary/90 transition-colors">
-                        </button> */}
+                      <p className="font-bold py-1 px-3 rounded-full border-amber-500 border-2">value : ${m.price}</p>
+                      <div className="text-sm text-gray-500">
+                        {new Date(m.eventDate).toLocaleDateString("en-GB")} ·
+                        Officiant: {m.officiantName}
                       </div>
                     </div>
                   ))
@@ -402,22 +427,24 @@ const Bookings = () => {
                       key={m._id}
                       className="flex  flex-col md:flex-row gap-5 items-center justify-between border border-primary rounded-lg px-4 py-3"
                     >
-                      <div>
-                        <div className="font-medium flex gap-2 items-center text-gray-900">
+                      <div className="font-medium flex gap-2 items-center text-gray-900">
+                        {getImage(m.userId) ? (
                           <img
                             src={getImage(m.userId)}
                             className="size-12 rounded-full"
                             alt=""
                           />
-                          {m.title}
-                        </div>
-                        <div className="text-sm text-gray-500">
-                          {new Date(m.eventDate).toLocaleDateString("en-GB")} ·
-                          Officiant: {m.officiantName}
-                        </div>
+                        ) : (
+                          <div className="size-12 rounded-full bg-amber-700 flex items-center justify-center text-white font-bold">
+                            {m.title.charAt(0).toUpperCase()}
+                          </div>
+                        )}
+
+                        {m.title}
                       </div>
-                      <div className="flex items-center gap-2">
-                        <PdfMaker eventId={m._id} />
+                      <div className="text-sm text-gray-500">
+                        {new Date(m.eventDate).toLocaleDateString("en-GB")} ·
+                        Officiant: {m.officiantName}
                       </div>
                     </div>
                   ))

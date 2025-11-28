@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import axios from "axios";
 import type { CeremonyFormData, CeremonyData } from "./types";
 import TabNavigation from "./components/TabNavigation";
 import StepIndicator from "./components/StepIndicator";
@@ -16,14 +17,23 @@ import { useLocation } from "react-router-dom";
 import { useAuth } from "../../../Component/Providers/AuthProvider";
 import { useCeremonyApi } from "./hooks/useCeremonyApi";
 import { GlassSwal } from "../../../utils/glassSwal";
-import { CeremonyProvider, useCeremonyContext } from "./contexts/CeremonyContext";
+import {
+  CeremonyProvider,
+  useCeremonyContext,
+} from "./contexts/CeremonyContext";
 
 const Ceremony = () => {
   const location = useLocation();
-  const { user } = useAuth();
+  const { user, setUser } = useAuth();
   const ceremonyApi = useCeremonyApi();
-  const profileComplete= user?.name && user?.partner_1 && user?.partner_2&&user?.contact?.partner_1&& user?.contact?.partner_2&& user?.location;
-  const {groomName, brideName}=useCeremonyContext();
+  const profileComplete =
+    user?.name &&
+    user?.partner_1 &&
+    user?.partner_2 &&
+    user?.contact?.partner_1 &&
+    user?.contact?.partner_2 &&
+    user?.location;
+  const { groomName, brideName } = useCeremonyContext();
   const [activeTab, setActiveTab] = useState<"new" | "draft" | "my">("new");
   const [loading, setLoading] = useState(false);
 
@@ -52,6 +62,7 @@ const Ceremony = () => {
   useEffect(() => {
     if (user?._id) {
       fetchUserCeremonies();
+      fetchUserAgreement();
     }
   }, [user?._id]);
 
@@ -86,6 +97,32 @@ const Ceremony = () => {
     }
   };
 
+  const fetchUserAgreement = async () => {
+    if (!user?._id) return;
+
+    try {
+      console.log("Fetching user agreement to get officiantId...");
+      const response = await axios.get(`/agreements/user/${user._id}`);
+      const agreement = response.data.agreement;
+
+      if (agreement?.officiantId) {
+        console.log(
+          "Setting officiantId from agreement:",
+          agreement.officiantId
+        );
+        setValue("officiantId", agreement.officiantId);
+        if (agreement.officiantName) {
+          setValue("officiantName", agreement.officiantName);
+        }
+      } else {
+        console.warn("No agreement or officiantId found for user");
+      }
+    } catch (error: any) {
+      console.error("Error fetching agreement:", error);
+      // Don't show error to user - agreement might not exist yet
+    }
+  };
+
   const {
     register,
     handleSubmit,
@@ -95,7 +132,6 @@ const Ceremony = () => {
   } = useForm<CeremonyFormData>({
     defaultValues: {
       title: "",
-      ceremonyType: "Classic",
       description: "",
       // Greetings step defaults
       groomName: "",
@@ -189,7 +225,6 @@ const Ceremony = () => {
     // Reset form to defaults
     setValue("title", "");
     setValue("description", "");
-    setValue("ceremonyType", "Classic");
     setValue("eventDate", "");
     setValue("eventTime", "");
     setValue("location", "");
@@ -207,7 +242,6 @@ const Ceremony = () => {
     return {
       title: watch("title"),
       description: watch("description"),
-      ceremonyType: watch("ceremonyType"),
       eventDate: watch("eventDate"),
       eventTime: watch("eventTime"),
       location: watch("location"),
@@ -222,9 +256,7 @@ const Ceremony = () => {
     const missingFields: string[] = [];
 
     // Required fields for submission
-    if (!data.title?.trim()) missingFields.push("Title");
     if (!data.description?.trim()) missingFields.push("Description");
-    if (!data.ceremonyType?.trim()) missingFields.push("Ceremony Type");
     if (!data.eventDate?.trim()) missingFields.push("Event Date");
     if (!data.eventTime?.trim()) missingFields.push("Event Time");
     if (!data.location?.trim()) missingFields.push("Location");
@@ -252,6 +284,10 @@ const Ceremony = () => {
     try {
       setLoading(true);
 
+      // Get names from form data or context
+      const groom = data.groomName || groomName;
+      const bride = data.brideName || brideName;
+
       if (editingCeremony) {
         // Update existing ceremony and change status to completed
         const ceremonyId = editingCeremony._id || editingCeremony.id;
@@ -261,9 +297,17 @@ const Ceremony = () => {
 
         const ceremonyData = {
           ...data,
-          title: groomName + " & " + brideName + " Ceremony",
+          title: `${groom} & ${bride} Ceremony`,
+          groomName: groom,
+          brideName: bride,
           status: "submitted" as const,
         };
+
+        console.log("Updating ceremony with data:", {
+          ceremonyId,
+          officiantId: ceremonyData.officiantId,
+          status: ceremonyData.status,
+        });
 
         const updatedCeremony = await ceremonyApi.updateCeremony(
           ceremonyId,
@@ -278,14 +322,33 @@ const Ceremony = () => {
         );
         setCeremonies([...ceremonies, updatedCeremony]);
 
-        await GlassSwal.success("Success", "Ceremony completed successfully!");
+        // Reset AgreementAccepted in user context
+        if (user) {
+          const updatedUser = { ...user, AgreementAccepted: false };
+          setUser(updatedUser);
+          localStorage.setItem("user", JSON.stringify(updatedUser));
+        }
+
+        await GlassSwal.success(
+          "Ceremony Submitted!",
+          "Your ceremony has been submitted to the officiant. You'll need to complete a new agreement for future ceremonies."
+        );
         setEditingCeremony(null);
       } else {
         // Create new ceremony with submitted status
         const ceremonyData = {
           ...data,
+          title: `${groom} & ${bride} Ceremony`,
+          groomName: groom,
+          brideName: bride,
           status: "submitted" as const,
         };
+
+        console.log("Creating new ceremony with data:", {
+          userId: user._id,
+          officiantId: ceremonyData.officiantId,
+          status: ceremonyData.status,
+        });
 
         const newCeremony = await ceremonyApi.createCeremony(
           ceremonyData,
@@ -293,7 +356,18 @@ const Ceremony = () => {
         );
 
         setCeremonies([...ceremonies, newCeremony]);
-        await GlassSwal.success("Success", "Ceremony created successfully!");
+
+        // Reset AgreementAccepted in user context
+        if (user) {
+          const updatedUser = { ...user, AgreementAccepted: false };
+          setUser(updatedUser);
+          localStorage.setItem("user", JSON.stringify(updatedUser));
+        }
+
+        await GlassSwal.success(
+          "Ceremony Submitted!",
+          "Your ceremony has been submitted to the officiant. You'll need to complete a new agreement for future ceremonies."
+        );
       }
 
       setActiveTab("my");
@@ -315,8 +389,23 @@ const Ceremony = () => {
       return;
     }
 
+    // Get names from form data or context
+    const groom = data.groomName || groomName;
+    const bride = data.brideName || brideName;
+
+    if (!groom || !bride) {
+      await GlassSwal.error(
+        "Missing Information",
+        "Please provide both groom and bride names before saving a draft."
+      );
+      return;
+    }
+
     try {
       setLoading(true);
+
+      // Automatically generate title from the names
+      const draftTitle = `${groom} & ${bride}'s Wedding Ceremony`;
 
       if (editingCeremony) {
         // Update existing ceremony
@@ -325,9 +414,17 @@ const Ceremony = () => {
           throw new Error("No ceremony ID found for update");
         }
 
+        const draftData = {
+          ...data,
+          title: draftTitle,
+          groomName: groom,
+          brideName: bride,
+          description: data.description || "Draft in progress",
+        };
+
         const updatedCeremony = await ceremonyApi.updateCeremony(
           ceremonyId,
-          data
+          draftData
         );
 
         // Update the drafts list
@@ -344,6 +441,10 @@ const Ceremony = () => {
         // Create new ceremony with planned status (draft)
         const draftData = {
           ...data,
+          title: draftTitle,
+          groomName: groom,
+          brideName: bride,
+          description: data.description || "Draft in progress",
           status: "planned" as const,
         };
 
@@ -404,7 +505,6 @@ const Ceremony = () => {
     const formData: CeremonyFormData = {
       title: draft.title || "",
       description: draft.description || "",
-      ceremonyType: draft.ceremonyType || "Classic",
       eventDate: formatDateForInput(draft.eventDate),
       eventTime: formatTimeForInput(draft.eventTime),
       location: draft.location || "",
@@ -469,18 +569,16 @@ const Ceremony = () => {
     { number: 6, title: "Review", active: currentStep >= 6 },
   ];
 
-    if (user?.role !== "user") {
-      return (
-        <div className="text-center py-20">
-          <h2 className="text-3xl font-primary font-bold mb-4">
-            Access Denied
-          </h2>
-          <p className="text-gray-600">
-            You do not have permission to view this page.
-          </p>
-        </div>
-      );
-    }
+  if (user?.role !== "user") {
+    return (
+      <div className="text-center py-20">
+        <h2 className="text-3xl font-primary font-bold mb-4">Access Denied</h2>
+        <p className="text-gray-600">
+          You do not have permission to view this page.
+        </p>
+      </div>
+    );
+  }
 
   return (
     <CeremonyProvider>
@@ -491,7 +589,7 @@ const Ceremony = () => {
 
           {/* Loading indicator */}
           {loading && (
-            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="fixed inset-0 bg-[#2b252586] bg-opacity-50 flex items-center justify-center z-50">
               <div className="bg-white p-6 rounded-lg shadow-lg">
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
                 <p className="mt-2 text-center">Processing...</p>
@@ -586,14 +684,14 @@ const Ceremony = () => {
                     </p>
                     🚨⚠️
                   </div>
-                ) : user?.AgreementAccepted ? (
+                ) : !user?.AgreementAccepted ? (
                   <div className="flex items-center gap-5 justify-center text-center py-1">
-                    🚨⚠️
+                    🤝📜
                     <p className="italic font-bold">
                       Agreement Required!! <br /> Please Complete the Agreement
                       to proceed.
                     </p>
-                    🚨⚠️
+                    📜🤝
                   </div>
                 ) : (
                   <NavigationButtons

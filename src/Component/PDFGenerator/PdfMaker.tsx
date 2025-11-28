@@ -21,7 +21,9 @@ interface IBill {
   officiantName: string;
   officiantId: string;
   cost: number;
-  eventId: string;
+  travelFee?: number;
+  eventId?: string; // Optional - for legacy event-based bookings
+  agreementId?: string; // Optional - for agreement-based payments
   amount: number;
   status?: "paid" | "unpaid";
   issuedAt?: Date;
@@ -267,6 +269,31 @@ const PdfMaker: React.FC<PdfMakerProps> = ({ eventId }) => {
             )}</div>
           </div>
 
+          ${
+            bill.travelFee && bill.travelFee > 0
+              ? `<!-- Travel Fee Row -->
+          <div style="display: flex; margin-bottom: 12px;">
+            <div style="width: 50%;">
+              <p style="
+                margin: 0 0 4px 0;
+                font-size: 14px;
+                font-weight: bold;
+                color: #000;
+              ">Travel Fee</p>
+              <p style="margin: 0; font-size: 12px; color: #666;">
+                Transportation to ceremony location
+              </p>
+            </div>
+            <div style="width: 15%; font-size: 14px; text-align: center;">1</div>
+            <div style="width: 15%; font-size: 14px; text-align: right;">${formatCurrency(
+              bill.travelFee
+            )}</div>
+            <div style="width: 20%; font-size: 14px; text-align: right;">${formatCurrency(
+              bill.travelFee
+            )}</div>
+          </div>`
+              : ""
+          }
           
         </div>
 
@@ -283,11 +310,21 @@ const PdfMaker: React.FC<PdfMakerProps> = ({ eventId }) => {
             padding-top: 12px;
           ">
             <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
-              <span style="font-size: 14px; color: #666;">Subtotal</span>
+              <span style="font-size: 14px; color: #666;">Ceremony Fee</span>
               <span style="font-size: 14px; color: #000;">${formatCurrency(
                 bill.cost
               )}</span>
             </div>
+            ${
+              bill.travelFee && bill.travelFee > 0
+                ? `<div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+              <span style="font-size: 14px; color: #666;">Travel Fee</span>
+              <span style="font-size: 14px; color: #000;">${formatCurrency(
+                bill.travelFee
+              )}</span>
+            </div>`
+                : ""
+            }
             <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
               <span style="font-size: 14px; color: #666;">Tax (0%)</span>
               <span style="font-size: 14px; color: #000;">$0.00</span>
@@ -301,7 +338,7 @@ const PdfMaker: React.FC<PdfMakerProps> = ({ eventId }) => {
             ">
               <span style="font-size: 16px; font-weight: bold; color: #000;">Total</span>
               <span style="font-size: 16px; font-weight: bold; color: #000;">${formatCurrency(
-                bill.cost
+                bill.amount
               )}</span>
             </div>
             <div style="
@@ -310,9 +347,11 @@ const PdfMaker: React.FC<PdfMakerProps> = ({ eventId }) => {
               padding-bottom: 8px;
             ">
               <div style="display: flex; justify-content: space-between;">
-                <span style="font-size: 14px; font-weight: bold; color: #D4AF37;">Amount due</span>
+                <span style="font-size: 14px; font-weight: bold; color: #D4AF37;">Amount ${
+                  bill.status === "paid" ? "Paid" : "Due"
+                }</span>
                 <span style="font-size: 18px; font-weight: bold; color: #D4AF37;">
-                  US$ ${bill.cost.toFixed(2)}
+                  US$ ${bill.amount.toFixed(2)}
                 </span>
               </div>
             </div>
@@ -335,8 +374,24 @@ const PdfMaker: React.FC<PdfMakerProps> = ({ eventId }) => {
             <p style="margin: 0 0 4px 0; font-weight: bold;">Officiant: ${
               bill.officiantName
             }</p>
-            <p style="margin: 0;">Event ID: ${bill.eventId}</p>
+            <p style="margin: 0;">${
+              bill.agreementId
+                ? `Agreement ID: ${bill.agreementId}`
+                : bill.eventId
+                ? `Event ID: ${bill.eventId}`
+                : ""
+            }</p>
           </div>
+          ${
+            bill.status === "paid" && bill.transactionId
+              ? `<div style="margin-top: 12px;">
+            <p style="margin: 0; font-weight: bold; color: #10B981;">PAID</p>
+            <p style="margin: 0; font-size: 11px;">Payment Date: ${formatDate(
+              bill.paidAt
+            )}</p>
+          </div>`
+              : ""
+          }
         </div>
       </div>
     `;

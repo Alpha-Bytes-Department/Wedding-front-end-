@@ -57,7 +57,6 @@ const MyCeremonyTab = ({
       pdf.setFont("helvetica", "normal");
       
       const basicInfo = [
-        `Ceremony Type: ${ceremony.ceremonyType || 'Not specified'}`,
         `Language: ${ceremony.language || 'Not specified'}`,
         `Event Date: ${ceremony.eventDate ? new Date(ceremony.eventDate).toLocaleDateString() : 'Not specified'}`,
         `Event Time: ${ceremony.eventTime ? new Date(ceremony.eventTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'Not specified'}`,
@@ -292,10 +291,7 @@ const MyCeremonyTab = ({
                   Basic Information
                 </h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                  <div>
-                    <p className="text-sm text-gray-500">Ceremony Type</p>
-                    <p className="font-semibold">{selectedCeremony.ceremonyType || "—"}</p>
-                  </div>
+                  
                   <div>
                     <p className="text-sm text-gray-500">Language</p>
                     <p className="font-semibold">{selectedCeremony.language || "—"}</p>

@@ -7,40 +7,26 @@ import {
   useElements,
 } from "@stripe/react-stripe-js";
 import { useAxios } from "../../Component/Providers/useAxios";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import GlassSwal from "../../utils/glassSwal";
 
 // Initialize Stripe
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
 
-type searchParams = {
-  eventId: string;
-  officiantId: string;
-  officiantName: string;
-  clientId: string;
-  clientName: string;
-  eventName: string;
-  price: string;
-};
-
-interface EventData {
-  title: string;
-  description: string;
-  ceremonyType: string;
-  vowsType: string;
-  language: string;
-  vowDescription: string;
-  rituals: string;
-  musicCues: string;
-  ritualsDescription: string;
-  eventDate: Date;
-  eventTime: Date;
-  rehearsalDate: Date;
-  location: string;
-  status: string;
+interface AgreementData {
+  _id: string;
   userId: string;
   officiantId: string;
-  officiantName: string;
+  officiantName?: string;
+  eventDate?: Date;
+  partner1Name?: string;
+  partner2Name?: string;
+  location?: string;
+  price?: number;
+  travelFee?: number;
+  status: string;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 interface BillData {
@@ -52,7 +38,8 @@ interface BillData {
   officiantName: string;
   officiantId: string;
   cost: number;
-  eventId: string;
+  travelFee?: number;
+  agreementId: string;
   amount: number;
   status: string;
   issuedAt?: Date;
@@ -70,12 +57,12 @@ interface BillData {
 }
 
 const CheckoutForm = ({
-  eventData,
+  agreementData,
   billData,
   setBillData,
   price,
 }: {
-  eventData: EventData;
+  agreementData: AgreementData;
   billData: BillData;
   setBillData: React.Dispatch<React.SetStateAction<BillData>>;
   price: number;
@@ -83,6 +70,7 @@ const CheckoutForm = ({
   const stripe = useStripe();
   const elements = useElements();
   const axios = useAxios();
+  const navigate = useNavigate();
 
   const [clientSecret, setClientSecret] = useState("");
   const [processing, setProcessing] = useState(false);
@@ -90,7 +78,7 @@ const CheckoutForm = ({
 
   const [error, setError] = useState("");
   const [paymentMethod, setPaymentMethod] = useState("");
-  const [transactionId, setTransactionId] = useState<String>("");
+  const [transactionId, setTransactionId] = useState<string>("");
   const [billingDetails, setBillingDetails] = useState({
     name: "",
     email: "",
@@ -106,7 +94,7 @@ const CheckoutForm = ({
   useEffect(() => {
     axios
       .post("/marketing/create-checkout-session", {
-        Price: price, // Send Price as your backend expects
+        Price: price,
       })
       .then((res) => {
         setClientSecret(res.data.clientSecret);
@@ -210,27 +198,20 @@ const CheckoutForm = ({
         // Send the complete bill data to backend
         const updatedBill = await axios.post(`/bills/create`, updatedBillData);
         if (updatedBill.status === 200 || updatedBill.status === 201) {
+          // Mark payment as completed in agreement
+          await axios.patch(
+            `/agreements/payment-completed/${agreementData._id}`
+          );
+
           GlassSwal.fire({
             title: "Success!",
-            text: "Bill created successfully! You can download the invoice in dashboard",
+            text: "Payment completed successfully! Your agreement is now finalized.",
             icon: "success",
+            confirmButtonText: "View Agreement",
+          }).then(() => {
+            navigate(`/dashboard/agreement/${agreementData._id}`);
           });
         }
-
-        // Console log after successful payment
-        console.log(
-          "Payment completed successfully! Bill data updated:",
-          updatedBillData,
-          "Payment Details:",
-          {
-            transactionId: paymentIntent.id,
-            billingName: billingDetails.name,
-            billingMail: billingDetails.email,
-            contacts: billingDetails.phone,
-            location: billingDetails.address,
-            paidAt: new Date(),
-          }
-        );
 
         // Get payment method details from paymentIntent
         const paymentMethod = paymentIntent.payment_method;
@@ -270,7 +251,7 @@ const CheckoutForm = ({
           Payment Successful! 🎉
         </h3>
         <p className="text-gray-600 mb-6">
-          Your event booking has been confirmed and payment processed
+          Your wedding ceremony agreement payment has been processed
           successfully.
         </p>
 
@@ -280,10 +261,20 @@ const CheckoutForm = ({
           </h4>
           <div className="space-y-2 text-sm">
             <p className="text-yellow-700">
-              Event: <span className="font-medium">{eventData.title}</span>
+              Ceremony:{" "}
+              <span className="font-medium">
+                {agreementData.partner1Name} & {agreementData.partner2Name}
+              </span>
             </p>
             <p className="text-yellow-700">
-              Amount Paid: <span className="font-bold">${price}</span>
+              Officiant:{" "}
+              <span className="font-medium">
+                {agreementData.officiantName || "Erie Wedding Officiants"}
+              </span>
+            </p>
+            <p className="text-yellow-700">
+              Amount Paid:{" "}
+              <span className="font-bold">${price.toFixed(2)}</span>
             </p>
             <p className="text-yellow-700">
               Payment Method:{" "}
@@ -297,10 +288,17 @@ const CheckoutForm = ({
             </p>
           </div>
         </div>
+
+        <button
+          onClick={() => navigate(`/dashboard/agreement/${agreementData._id}`)}
+          className="bg-gradient-to-r from-orange-500 to-yellow-600 text-white px-6 py-3 rounded-lg font-semibold hover:from-orange-600 hover:to-yellow-700"
+        >
+          View Agreement
+        </button>
       </div>
     );
   }
-  console.log("Rendering payment form. Current bill data:", billData);
+
   return (
     <div className="space-y-6">
       {/* Client Information */}
@@ -319,7 +317,7 @@ const CheckoutForm = ({
               d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
             />
           </svg>
-          Client Information
+          Billing Information
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
@@ -387,6 +385,19 @@ const CheckoutForm = ({
               onChange={handleInputChange}
               className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               placeholder="123 Main Street"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Postal Code
+            </label>
+            <input
+              type="text"
+              name="address.postal_code"
+              value={billingDetails.address.postal_code}
+              onChange={handleInputChange}
+              className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              placeholder="10001"
             />
           </div>
         </div>
@@ -470,17 +481,19 @@ const CheckoutForm = ({
               d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
             />
           </svg>
-          Bill Summary
+          Payment Summary
         </h3>
         <div className="space-y-3">
           <div className="flex justify-between text-gray-600">
-            <span>Event Service Fee</span>
-            <span>${price}</span>
+            <span>Ceremony Fee</span>
+            <span>${billData.cost.toFixed(2)}</span>
           </div>
-          {/* <div className="flex justify-between text-gray-600">
-            <span>Platform Fee</span>
-            <span>${(price - billData.cost).toFixed(2)}</span>
-          </div> */}
+          {billData.travelFee && billData.travelFee > 0 && (
+            <div className="flex justify-between text-gray-600">
+              <span>Travel Fee</span>
+              <span>${billData.travelFee.toFixed(2)}</span>
+            </div>
+          )}
           <div className="flex justify-between text-gray-600">
             <span>Processing Fee</span>
             <span>Included</span>
@@ -488,7 +501,7 @@ const CheckoutForm = ({
           <div className="border-t pt-3">
             <div className="flex justify-between text-xl font-bold text-gray-900">
               <span>Total Amount</span>
-              <span>${price}</span>
+              <span>${billData.amount.toFixed(2)}</span>
             </div>
           </div>
         </div>
@@ -544,7 +557,7 @@ const CheckoutForm = ({
                 d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
               />
             </svg>
-            Secure Payment - ${price}
+            Secure Payment - ${price.toFixed(2)}
           </>
         )}
       </button>
@@ -578,74 +591,75 @@ const CheckoutForm = ({
   );
 };
 
-const PaymentPage = () => {
+const AgreementPayment = () => {
   const axios = useAxios();
+  const navigate = useNavigate();
   const [billData, setBillData] = useState<BillData>({} as BillData);
   const { search } = useLocation();
   const searchParams = new URLSearchParams(search);
-  const [eventData, setEvent] = useState<EventData>({} as EventData);
-  const {
-    eventId,
-    officiantId,
-    officiantName,
-    clientId,
-    clientName,
-    eventName,
-    price,
-  }: searchParams = {
-    eventId: searchParams.get("eventId") || "",
-    officiantId: searchParams.get("officiantId") || "",
-    officiantName: searchParams.get("officiantName") || "",
-    clientId: searchParams.get("clientId") || "",
-    clientName: searchParams.get("clientName") || "",
-    eventName: searchParams.get("eventName") || "",
-    price: searchParams.get("price") || "",
-  };
-  console.log(
-    eventId,
-    officiantId,
-    officiantName,
-    clientId,
-    clientName,
-    eventName,
-    price
+  const [agreementData, setAgreementData] = useState<AgreementData>(
+    {} as AgreementData
   );
+  const [loading, setLoading] = useState(true);
+
+  // Get all parameters from URL
+  const agreementId = searchParams.get("agreementId") || "";
+  const amount = searchParams.get("amount") || "";
+  const price = searchParams.get("price") || "";
+  const travelFee = searchParams.get("travelFee") || "0";
+  const partner1Name = searchParams.get("partner1Name") || "";
+  const partner2Name = searchParams.get("partner2Name") || "";
+  const officiantName = searchParams.get("officiantName") || "";
+  const eventDate = searchParams.get("eventDate") || "";
+  const userId = searchParams.get("userId") || "";
+  const officiantId = searchParams.get("officiantId") || "";
+
   useEffect(() => {
     const initializePaymentData = async () => {
       try {
-        const event = await axios.get(`/events/${eventId}`);
-        console.log("Event data:", event.data.event);
-        setEvent(event.data.event);
+        setLoading(true);
 
-        // Set bill data after getting event data
+        // Fetch agreement data
+        const agreementResponse = await axios.get(`/agreements/user/${userId}`);
+        const agreement = agreementResponse.data.agreement;
+        setAgreementData(agreement);
+
+        // Set bill data based on agreement
+        const ceremonyPrice = parseFloat(price) || 0;
+        const travelFeeAmount = parseFloat(travelFee) || 0;
+        const totalAmount = ceremonyPrice + travelFeeAmount;
+
         setBillData({
-          userId: clientId,
-          userName: clientName,
-          eventType: event.data.event.ceremonyType || "Wedding",
-          eventDate: event.data.event.eventDate,
-          eventName: event.data.event.title,
+          userId: userId,
+          userName: `${partner1Name} & ${partner2Name}`,
+          eventType: "Wedding Ceremony",
+          eventDate: new Date(eventDate),
+          eventName: `Wedding of ${partner1Name} & ${partner2Name}`,
           officiantName: officiantName,
           officiantId: officiantId,
-          cost: parseInt(price),
-          eventId: eventId,
-          amount: parseInt(price),
+          cost: ceremonyPrice,
+          travelFee: travelFeeAmount,
+          agreementId: agreementId,
+          amount: totalAmount,
           status: "unpaid",
+          issuedAt: new Date(),
         });
 
-        console.log("=========================");
+        setLoading(false);
       } catch (error) {
-        console.error("Error fetching payment data:", error);
+        console.error("Error fetching agreement data:", error);
+        GlassSwal.error("Error", "Failed to load payment information");
+        setLoading(false);
       }
     };
 
-    if (eventId) {
+    if (agreementId && userId) {
       initializePaymentData();
     }
-  }, [eventId, clientId, clientName, officiantName, officiantId, price]);
+  }, [agreementId, userId]);
 
-  // Mock bill data based on BillSchema
-
-  const formatDate = (date: Date) => {
+  const formatDate = (date?: Date | string) => {
+    if (!date) return "Not Set";
     return new Date(date).toLocaleDateString("en-US", {
       weekday: "long",
       year: "numeric",
@@ -654,28 +668,69 @@ const PaymentPage = () => {
     });
   };
 
-  const formatTime = (date: Date) => {
-    return new Date(date).toLocaleTimeString("en-US", {
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-  };
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
+
+  if (!agreementData._id) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen p-6">
+        <div className="text-center">
+          <h2 className="text-2xl font-bold text-gray-800 mb-4">
+            Agreement Not Found
+          </h2>
+          <p className="text-gray-600 mb-6">
+            Unable to load payment information. Please try again.
+          </p>
+          <button
+            onClick={() => navigate(`/dashboard/agreement/${agreementId}`)}
+            className="bg-primary text-white px-6 py-2 rounded-lg hover:bg-primary/90"
+          >
+            Go to Agreement
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-yellow-50 via-white to-orange-50 py-8">
       <div className="max-w-6xl mx-auto px-4">
         {/* Header */}
         <div className="text-center mb-8">
+          <button
+            onClick={() => navigate(`/dashboard/agreement/${agreementId}`)}
+            className="text-gray-600 hover:text-gray-800 font-medium mb-4 inline-flex items-center"
+          >
+            <svg
+              className="w-5 h-5 mr-2"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M10 19l-7-7m0 0l7-7m-7 7h18"
+              />
+            </svg>
+            Back to Agreement
+          </button>
           <h1 className="text-4xl font-bold text-gray-900 mb-2">
-            Event Payment
+            Ceremony Payment
           </h1>
           <p className="text-gray-600">
-            Complete your event booking payment securely
+            Complete your wedding ceremony agreement payment securely
           </p>
         </div>
 
         <div className="grid lg:grid-cols-5 gap-8">
-          {/* Event Details - Left Side */}
+          {/* Agreement Details - Left Side */}
           <div className="lg:col-span-2">
             <div className="bg-white rounded-2xl shadow-lg p-6 sticky top-8">
               <h2 className="text-xl font-semibold text-gray-900 mb-6 flex items-center">
@@ -689,74 +744,29 @@ const PaymentPage = () => {
                     strokeLinecap="round"
                     strokeLinejoin="round"
                     strokeWidth={2}
-                    d="M8 7V3a1 1 0 011-1h6a1 1 0 011 1v4h3a2 2 0 012 2v6a2 2 0 01-2 2H8a2 2 0 01-2-2V9a2 2 0 012-2h3z"
+                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
                   />
                 </svg>
-                Event Details
+                Agreement Details
               </h2>
 
-              {/* Event Information */}
+              {/* Agreement Information */}
               <div className="space-y-4 mb-6">
                 <div className="p-4 bg-gradient-to-r from-yellow-50 to-orange-50 rounded-lg border border-yellow-200">
                   <h3 className="font-semibold text-gray-900 mb-2">
-                    {eventData.title}
+                    {agreementData.partner1Name} & {agreementData.partner2Name}
                   </h3>
                   <p className="text-sm text-gray-600 mb-3">
-                    {eventData.description}
+                    Wedding Ceremony Service Agreement
                   </p>
 
-                  <div className="grid grid-cols-2 gap-3 text-xs">
+                  <div className="grid grid-cols-1 gap-3 text-xs">
                     <div className="bg-white p-2 rounded">
-                      <span className="text-gray-500">Type:</span>
-                      <p className="font-medium">{eventData.ceremonyType}</p>
-                    </div>
-                    <div className="bg-white p-2 rounded">
-                      <span className="text-gray-500">Language:</span>
-                      <p className="font-medium">{eventData.language}</p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Date & Time */}
-                <div className="bg-orange-50 rounded-lg p-4 border border-orange-200">
-                  <h4 className="font-semibold text-orange-900 mb-3 flex items-center">
-                    <svg
-                      className="w-4 h-4 mr-2"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M8 7V3a1 1 0 011-1h6a1 1 0 011 1v4h3a2 2 0 012 2v6a2 2 0 01-2 2H8a2 2 0 01-2-2V9a2 2 0 012-2h3z"
-                      />
-                    </svg>
-                    Schedule
-                  </h4>
-                  <div className="space-y-2 text-sm">
-                    <div>
-                      <span className="text-gray-600">Event Date:</span>
-                      <p className="font-medium text-orange-800">
-                        {formatDate(eventData.eventDate)}
+                      <span className="text-gray-500">Ceremony Date:</span>
+                      <p className="font-medium">
+                        {formatDate(agreementData.eventDate)}
                       </p>
                     </div>
-                    <div>
-                      <span className="text-gray-600">Time:</span>
-                      <p className="font-medium text-orange-800">
-                        {formatTime(eventData.eventTime)}
-                      </p>
-                    </div>
-                    {eventData.rehearsalDate && (
-                      <div>
-                        <span className="text-gray-600">Rehearsal:</span>
-                        <p className="font-medium text-orange-800">
-                          {formatDate(eventData.rehearsalDate)} at{" "}
-                          {formatTime(eventData.rehearsalDate)}
-                        </p>
-                      </div>
-                    )}
                   </div>
                 </div>
 
@@ -785,7 +795,7 @@ const PaymentPage = () => {
                     Venue
                   </h4>
                   <p className="text-yellow-800 font-medium">
-                    {eventData.location}
+                    {agreementData.location}
                   </p>
                 </div>
 
@@ -808,45 +818,57 @@ const PaymentPage = () => {
                     Officiant
                   </h4>
                   <p className="text-orange-800 font-medium">
-                    {eventData.officiantName}
+                    {agreementData.officiantName || "Erie Wedding Officiants"}
                   </p>
                 </div>
 
-                {/* Special Features */}
-                {(eventData.rituals || eventData.musicCues) && (
-                  <div className="bg-yellow-50 rounded-lg p-4 border border-yellow-200">
-                    <h4 className="font-semibold text-yellow-900 mb-2 flex items-center">
-                      <svg
-                        className="w-4 h-4 mr-2"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"
-                        />
-                      </svg>
-                      Special Features
-                    </h4>
-                    <div className="space-y-1 text-sm text-yellow-800">
-                      {eventData.rituals && (
-                        <p>
-                          <span className="font-medium">Rituals:</span>{" "}
-                          {eventData.rituals}
-                        </p>
-                      )}
-                      {eventData.musicCues && (
-                        <p>
-                          <span className="font-medium">Music:</span>{" "}
-                          {eventData.musicCues}
-                        </p>
-                      )}
+                {/* Payment Breakdown */}
+                <div className="bg-blue-50 rounded-lg p-4 border border-blue-200">
+                  <h4 className="font-semibold text-blue-900 mb-3 flex items-center">
+                    <svg
+                      className="w-4 h-4 mr-2"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                      />
+                    </svg>
+                    Payment Breakdown
+                  </h4>
+                  <div className="space-y-2 text-sm">
+                    <div className="flex justify-between">
+                      <span className="text-blue-800">Ceremony Fee:</span>
+                      <span className="font-medium">
+                        ${(agreementData.price || 0).toFixed(2)}
+                      </span>
+                    </div>
+                    {agreementData.travelFee && agreementData.travelFee > 0 && (
+                      <div className="flex justify-between">
+                        <span className="text-blue-800">Travel Fee:</span>
+                        <span className="font-medium">
+                          ${agreementData.travelFee.toFixed(2)}
+                        </span>
+                      </div>
+                    )}
+                    <div className="border-t border-blue-200 pt-2 flex justify-between">
+                      <span className="text-blue-900 font-semibold">
+                        Total:
+                      </span>
+                      <span className="font-bold text-blue-900">
+                        $
+                        {(
+                          (agreementData.price || 0) +
+                          (agreementData.travelFee || 0)
+                        ).toFixed(2)}
+                      </span>
                     </div>
                   </div>
-                )}
+                </div>
               </div>
             </div>
           </div>
@@ -856,10 +878,10 @@ const PaymentPage = () => {
             <div className="bg-white rounded-2xl shadow-lg p-8">
               <Elements stripe={stripePromise}>
                 <CheckoutForm
-                  eventData={eventData}
+                  agreementData={agreementData}
                   setBillData={setBillData}
                   billData={billData}
-                  price={parseInt(price)}
+                  price={parseFloat(amount)}
                 />
               </Elements>
             </div>
@@ -885,4 +907,4 @@ const PaymentPage = () => {
   );
 };
 
-export default PaymentPage;
+export default AgreementPayment;
