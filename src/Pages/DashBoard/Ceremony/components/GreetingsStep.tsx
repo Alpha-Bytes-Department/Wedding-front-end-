@@ -343,7 +343,7 @@ const invocationOptions: GreetingOption[] = [
 ];
 
 const GreetingsStep = ({
-  register,
+  
   watch,
   openDropdowns,
   onToggleDropdown,
