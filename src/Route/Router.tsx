@@ -27,7 +27,7 @@ const OfficiantDetail = lazy(
   () => import("../Pages/Officiant/Officiant_Details/OfficiantDetail")
 );
 
-// Lazy load dashboard pages 
+// Lazy load dashboard pages
 const DashHome = lazy(() => import("../Pages/DashBoard/Home/DashHome"));
 const Ceremony = lazy(() => import("../Pages/DashBoard/Ceremony/Ceremony"));
 const Bookings = lazy(() => import("../Pages/DashBoard/Bookings/Bookings"));
@@ -35,7 +35,7 @@ const CeremonyReview = lazy(
   () => import("../Pages/DashBoard/CeremonyReview/CeremonyReview")
 );
 const Note = lazy(() => import("../Pages/DashBoard/Notes/Note"));
-const Payment = lazy(() => import("../Pages/Payment/Payment"));
+const Payment = lazy(() => import("../Pages/Payment/AgreementPayment"));
 const Discussions = lazy(
   () => import("../Pages/DashBoard/Discussion/Discussions")
 );
@@ -43,6 +43,14 @@ const Schedule = lazy(() => import("../Pages/DashBoard/Schedule/Schedule"));
 const Settings = lazy(() => import("../Pages/DashBoard/Settings/Settings"));
 const UserManagement = lazy(
   () => import("../Pages/DashBoard/UserManagement/UserManagement")
+);
+const Agreement = lazy(() => import("../Pages/DashBoard/Agreement/Agreement"));
+const OfficiantAgreement = lazy(
+  () => import("../Pages/DashBoard/Agreement/OfficiantAgreement")
+);
+const Bills = lazy(() => import("../Pages/DashBoard/Bills/Bills"));
+const EventManagement = lazy(
+  () => import("../Pages/DashBoard/EventManagement/EventManagement")
 );
 
 const Router = createBrowserRouter([
@@ -200,6 +208,38 @@ const Router = createBrowserRouter([
         element: (
           <Suspense fallback={<RouteLoader />}>
             <UserManagement />
+          </Suspense>
+        ),
+      },
+      {
+        path: "/dashboard/agreement/:eventId",
+        element: (
+          <Suspense fallback={<RouteLoader />}>
+            <Agreement />
+          </Suspense>
+        ),
+      },
+      {
+        path: "/dashboard/bills",
+        element: (
+          <Suspense fallback={<RouteLoader />}>
+            <Bills />
+          </Suspense>
+        ),
+      },
+      {
+        path: "/dashboard/officiant-agreement",
+        element: (
+          <Suspense fallback={<RouteLoader />}>
+            <OfficiantAgreement />
+          </Suspense>
+        ),
+      },
+      {
+        path: "/dashboard/event-management",
+        element: (
+          <Suspense fallback={<RouteLoader />}>
+            <EventManagement />
           </Suspense>
         ),
       },

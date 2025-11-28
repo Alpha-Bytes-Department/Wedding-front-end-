@@ -1,25 +1,13 @@
-import { useEffect, useState } from "react";
+import {  useState } from "react";
 import type { CeremonyFormData } from "../types";
 import { useCeremonyContext } from "../contexts/CeremonyContext";
-import { useAxios } from "../../../../Component/Providers/useAxios";
-import { useAuth } from "../../../../Component/Providers/AuthProvider";
 
 interface ReviewStepProps {
   watch: (name: keyof CeremonyFormData) => string;
   setValue: (name: keyof CeremonyFormData, value: string) => void;
 }
 
-interface Officiant {
-  id: string;
-  name: string;
-  profilePicture: string;
-}
 
-interface ScheduleResponse {
-  officiantId: string;
-  officiantName: string;
-  officiantImage?: string;
-}
 
 // Option mappings for displaying labels instead of IDs
 const getOptionLabel = (optionId: string, category: string): string => {
@@ -359,7 +347,7 @@ const getOptionContent = (
   return contentMappings[category]?.[optionId] || "Content not available";
 };
 
-const ReviewStep = ({ watch, setValue }: ReviewStepProps) => {
+const ReviewStep = ({ watch }: ReviewStepProps) => {
   const [selectedModal, setSelectedModal] = useState<{
     category: string;
     optionId: string;
@@ -376,24 +364,7 @@ const ReviewStep = ({ watch, setValue }: ReviewStepProps) => {
     setSelectedModal(null);
   };
 
-  const axios=useAxios()
-  const {user}=useAuth()
-  const [officiant, setOfficiant] = useState<Officiant[]>([])
-  useEffect(() => {
-    const getOfficiants = async () => {
-      const response = await axios.get(`/schedule/get/${user?._id}`)
-      console.log('Available officiant: ', response.data)
-      const officiantList: Officiant[] = response.data.map((officiant: ScheduleResponse) => ({
-        id: officiant.officiantId,
 
-        name: officiant.officiantName,
-        profilePicture: officiant.officiantImage
-      }))
-      console.log('Formatted officiant list: ', officiantList)
-      setOfficiant(officiantList)
-    }
-    getOfficiants()
-  }, [user?._id, axios])
 
   // Helper function to format date for display
   const formatDate = (dateString: string) => {
@@ -452,22 +423,7 @@ const ReviewStep = ({ watch, setValue }: ReviewStepProps) => {
           Basic Information
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="space-y-3">
-            <div>
-              <span className="font-medium text-gray-700 block">Title:</span>
-              <span className="text-gray-900 bg-white px-3 py-2 rounded border border-primary block">
-                {watch("title") || "Not specified"}
-              </span>
-            </div>
-            <div>
-              <span className="font-medium text-gray-700 block">
-                Ceremony Type:
-              </span>
-              <span className="text-gray-900 bg-white px-3 py-2 rounded border border-primary block">
-                {watch("ceremonyType") || "Not specified"}
-              </span>
-            </div>
-          </div>
+          
           <div>
             <span className="font-medium text-gray-700 block">
               Description:

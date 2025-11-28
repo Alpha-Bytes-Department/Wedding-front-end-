@@ -3,6 +3,7 @@ import type {
   FieldErrors,
   UseFormWatch,
 } from "react-hook-form";
+import { useState } from "react";
 import type { CeremonyFormData } from "../types";
 
 interface ScheduleStepProps {
@@ -13,6 +14,7 @@ interface ScheduleStepProps {
 
 const ScheduleStep = ({ register, errors, watch }: ScheduleStepProps) => {
   const eventDate = watch("eventDate");
+  const [needsRehearsal, setNeedsRehearsal] = useState(false);
 
   return (
     <div className="space-y-6">
@@ -65,18 +67,33 @@ const ScheduleStep = ({ register, errors, watch }: ScheduleStepProps) => {
             </p>
           )}
         </div>
-        <div>
-          <label className="block text-lg font-semibold text-gray-900 mb-3">
-            Rehearsal Date
+        <div className="col-span-1 lg:col-span-2">
+          <label className="flex items-center gap-3 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={needsRehearsal}
+              onChange={(e) => setNeedsRehearsal(e.target.checked)}
+              className="w-5 h-5 text-primary border-2 border-primary rounded focus:ring-2 focus:ring-primary focus:ring-offset-0"
+            />
+            <span className="text-lg font-semibold text-gray-900">
+              Do you need a rehearsal?
+            </span>
           </label>
-          <input
-            min={new Date().toISOString().split("T")[0]}
-            max={eventDate || undefined}
-            {...register("rehearsalDate")}
-            type="date"
-            className="w-full px-4 py-3 border border-primary rounded-lg focus:outline-none  "
-          />
         </div>
+        {needsRehearsal && (
+          <div>
+            <label className="block text-lg font-semibold text-gray-900 mb-3">
+              Rehearsal Date
+            </label>
+            <input
+              min={new Date().toISOString().split("T")[0]}
+              max={eventDate || undefined}
+              {...register("rehearsalDate")}
+              type="date"
+              className="w-full px-4 py-3 border border-primary rounded-lg focus:outline-none  "
+            />
+          </div>
+        )}
       </div>
     </div>
   );

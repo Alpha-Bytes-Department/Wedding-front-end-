@@ -41,9 +41,7 @@ const DraftTab = ({
                 <h3 className="text-lg sm:text-xl font-primary font-semibold text-gray-900 mb-2 break-words">
                   {draft.title || "Untitled Ceremony"}
                 </h3>
-                <p className="text-sm sm:text-base font-secondary text-gray-600 mb-2">
-                  Type: {draft.ceremonyType}
-                </p>
+                
                 <p className="text-sm sm:text-base font-secondary font-semibold text-gray-600 mb-4">
                   Last updated:{" "}
                   <span className="font-thin">

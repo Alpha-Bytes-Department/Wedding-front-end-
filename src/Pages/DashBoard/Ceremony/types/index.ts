@@ -1,7 +1,6 @@
 export interface CeremonyFormData {
   title: string;
   description: string;
-  ceremonyType: string; // Changed from 'type' to match backend
   // Greetings step fields
   groomName?: string;
   brideName?: string;
@@ -35,7 +34,13 @@ export interface CeremonyFormData {
   rehearsalDate?: string; // Changed from 'rehearsal' to match backend
   officiantId?: string;
   officiantName?: string;
-  status?: "draft" | "planned" | "submitted" | "completed" | "approved" | "canceled";
+  status?:
+    | "draft"
+    | "planned"
+    | "submitted"
+    | "completed"
+    | "approved"
+    | "canceled";
 }
 
 export interface CeremonyData extends CeremonyFormData {
