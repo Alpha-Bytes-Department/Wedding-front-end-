@@ -16,6 +16,8 @@ interface AgreementData {
   price?: number;
   travelFee?: number;
   status: string;
+  isUsedForCeremony?: boolean;
+  ceremonySubmittedAt?: Date;
   partner1Signature?: string;
   partner2Signature?: string;
   officiantSignature?: string;
@@ -45,26 +47,99 @@ const Agreement: React.FC = () => {
     }
   }, [user?._id]);
 
+  // Refresh agreement data when component becomes visible (user returns to page)
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (!document.hidden && user?._id) {
+        console.log("Page became visible, refreshing agreement data...");
+        fetchAgreement();
+      }
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
+  }, [user?._id]);
+
   // Update user's AgreementAccepted status when agreement is completed
   useEffect(() => {
-    if (
-      agreement?.status === "officiant_signed" &&
-      user &&
-      !user.AgreementAccepted
-    ) {
-      // Update user context
-      const updatedUser = { ...user, AgreementAccepted: true };
-      setUser(updatedUser);
-      // Update localStorage
-      localStorage.setItem("user", JSON.stringify(updatedUser));
+    const updateUserAgreementStatus = async () => {
+      console.log("useEffect triggered with:", {
+        agreementStatus: agreement?.status,
+        isUsedForCeremony: agreement?.isUsedForCeremony,
+        userAgreementAccepted: user?.AgreementAccepted,
+      });
 
-      // Show success message
-      GlassSwal.success(
-        "Agreement Complete!",
-        "You can now access the Ceremony Builder to create your ceremony."
-      );
+      if (
+        agreement?.status === "officiant_signed" &&
+        user &&
+        !user.AgreementAccepted
+      ) {
+        console.log("Agreement officiant_signed - updating user status");
+        try {
+          // Fetch fresh user data from database to verify AgreementAccepted status
+          const response = await axios.get("/users/get-user");
+
+          const dbUser = response.data.user;
+          console.log("Fetched user from DB:", dbUser);
+
+          // Check if database confirms AgreementAccepted is true
+          if (dbUser.AgreementAccepted) {
+            // Update user context with database value
+            const updatedUser = { ...user, AgreementAccepted: true };
+            setUser(updatedUser);
+            // Update localStorage
+            localStorage.setItem("user", JSON.stringify(updatedUser));
+
+            // Show success message
+            GlassSwal.success(
+              "Agreement Complete!",
+              "You can now access the Ceremony Builder to create your ceremony."
+            );
+          }
+        } catch (error) {
+          console.error("Error fetching user agreement status:", error);
+          // Even if fetch fails, we can trust the agreement status
+          // since backend sets it when officiant signs
+          const updatedUser = { ...user, AgreementAccepted: true };
+          setUser(updatedUser);
+          localStorage.setItem("user", JSON.stringify(updatedUser));
+
+          GlassSwal.success(
+            "Agreement Complete!",
+            "You can now access the Ceremony Builder to create your ceremony."
+          );
+        }
+      }
+
+      // Show warning if agreement was used for ceremony
+      if (
+        agreement?.isUsedForCeremony &&
+        agreement?.status === "used" &&
+        user &&
+        !user.AgreementAccepted
+      ) {
+        console.log("Agreement is used - showing warning");
+        GlassSwal.fire({
+          title: "Agreement Already Used",
+          text: "This agreement was used to submit a ceremony. You need a new agreement to create another ceremony.",
+          icon: "info",
+          confirmButtonText: "I Understand",
+          confirmButtonColor: "#f97316",
+        });
+      }
+    };
+
+    if (agreement && user) {
+      updateUserAgreementStatus();
     }
-  }, [agreement?.status, user?.AgreementAccepted]);
+  }, [
+    agreement?.status,
+    agreement?.isUsedForCeremony,
+    user?.AgreementAccepted,
+  ]);
 
   const fetchAgreement = async () => {
     if (!user?._id) return;
@@ -72,7 +147,31 @@ const Agreement: React.FC = () => {
     try {
       setLoading(true);
       const response = await axios.get(`/agreements/user/${user._id}`);
+      console.log("Fetched agreement:", response.data.agreement);
       setAgreement(response.data.agreement);
+
+      // Also refresh user data to get latest AgreementAccepted status
+      try {
+        const userResponse = await axios.get("/users/get-user");
+        const dbUser = userResponse.data.user;
+        console.log("Refreshed user data:", {
+          AgreementAccepted: dbUser.AgreementAccepted,
+        });
+
+        if (user.AgreementAccepted !== dbUser.AgreementAccepted) {
+          console.log(
+            "User AgreementAccepted status changed, updating context"
+          );
+          const updatedUser = {
+            ...user,
+            AgreementAccepted: dbUser.AgreementAccepted,
+          };
+          setUser(updatedUser);
+          localStorage.setItem("user", JSON.stringify(updatedUser));
+        }
+      } catch (userError) {
+        console.error("Error refreshing user data:", userError);
+      }
     } catch (error: any) {
       console.error("Error fetching agreement:", error);
       if (error.response?.status === 404) {
@@ -227,6 +326,16 @@ const Agreement: React.FC = () => {
   const isSigned =
     agreement.status !== "pending" && agreement.status !== "officiant_filled";
 
+  console.log("Agreement status:", agreement.status);
+  console.log("Status checks:", {
+    canSign,
+    isPending,
+    isPaymentRequested,
+    isPaymentCompleted,
+    isSigned,
+    isUsedForCeremony: agreement.isUsedForCeremony,
+  });
+
   const handlePayNow = () => {
     // Redirect to payment page with agreement details
     const totalAmount = (agreement.price || 0) + (agreement.travelFee || 0);
@@ -247,7 +356,7 @@ const Agreement: React.FC = () => {
         `officiantId=${agreement.officiantId}`
     );
   };
-
+ console.log("agreement data:", agreement);
   return (
     <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto">
@@ -282,6 +391,70 @@ const Agreement: React.FC = () => {
             </span>
           </p>
         </div>
+
+        {/* Agreement Used Alert - Show when ceremony was submitted */}
+        {agreement.isUsedForCeremony && agreement.status === "used" && (
+          <div className="bg-orange-50 border-2 border-orange-400 rounded-lg p-6 mb-6">
+            <div className="flex items-start">
+              <svg
+                className="w-6 h-6 text-orange-600 mt-0.5 mr-3 flex-shrink-0"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                  clipRule="evenodd"
+                />
+              </svg>
+              <div className="flex-1">
+                <h3 className="text-lg font-bold text-orange-900">
+                  Agreement Already Used
+                </h3>
+                <p className="text-sm text-orange-800 mt-2">
+                  This agreement was used to submit a ceremony on{" "}
+                  <span className="font-semibold">
+                    {agreement.ceremonySubmittedAt
+                      ? formatDate(agreement.ceremonySubmittedAt)
+                      : "a previous date"}
+                  </span>
+                  .
+                </p>
+                <p className="text-sm text-orange-800 mt-2">
+                  <strong>To create another ceremony, you need to:</strong>
+                </p>
+                <ul className="list-disc list-inside text-sm text-orange-800 mt-2 space-y-1 ml-4">
+                  <li>Contact your officiant to create a new agreement</li>
+                  <li>Complete the new agreement process (sign & pay)</li>
+                  <li>
+                    Then you'll be able to access the Ceremony Builder again
+                  </li>
+                </ul>
+                <div className="mt-4">
+                  <button
+                    onClick={() => navigate("/dashboard/officiants")}
+                    className="bg-orange-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-orange-700 transition-colors inline-flex items-center"
+                  >
+                    <svg
+                      className="w-4 h-4 mr-2"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M12 4v16m8-8H4"
+                      />
+                    </svg>
+                    Contact Officiant for New Agreement
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Status Alert */}
         {isPending && (
@@ -402,6 +575,76 @@ const Agreement: React.FC = () => {
             </div>
           </div>
         )}
+
+        {/* Agreement Completed - Ready to Create Ceremony */}
+        {agreement.status === "officiant_signed" &&
+          !agreement.isUsedForCeremony && (
+            <div className="bg-green-50 border-2 border-green-400 rounded-lg p-6 mb-6">
+              <div className="flex items-start">
+                <svg
+                  className="w-6 h-6 text-green-600 mt-0.5 mr-3 flex-shrink-0"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+                <div className="flex-1">
+                  <h3 className="text-lg font-bold text-green-900">
+                    🎉 Agreement Complete!
+                  </h3>
+                  <p className="text-sm text-green-800 mt-2">
+                    Your agreement has been fully signed and completed. You can
+                    now access the <strong>Ceremony Builder</strong> to create
+                    your personalized wedding ceremony.
+                  </p>
+                  <div className="mt-4 flex gap-3">
+                    <button
+                      onClick={() => navigate("/dashboard/ceremony")}
+                      className="bg-green-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-green-700 transition-colors inline-flex items-center"
+                    >
+                      <svg
+                        className="w-5 h-5 mr-2"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M12 4v16m8-8H4"
+                        />
+                      </svg>
+                      Create Your Ceremony
+                    </button>
+                    <button
+                      onClick={() => navigate("/dashboard/bills")}
+                      className="bg-white border-2 border-green-600 text-green-700 px-6 py-3 rounded-lg font-semibold hover:bg-green-50 transition-colors inline-flex items-center"
+                    >
+                      <svg
+                        className="w-5 h-5 mr-2"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                        />
+                      </svg>
+                      View Invoice
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
 
         {/* Agreement Document */}
         <div className="bg-white shadow-lg rounded-lg overflow-hidden">

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import axios from "axios";
 import type { CeremonyFormData, CeremonyData } from "./types";
 import TabNavigation from "./components/TabNavigation";
 import StepIndicator from "./components/StepIndicator";
@@ -61,6 +62,7 @@ const Ceremony = () => {
   useEffect(() => {
     if (user?._id) {
       fetchUserCeremonies();
+      fetchUserAgreement();
     }
   }, [user?._id]);
 
@@ -92,6 +94,32 @@ const Ceremony = () => {
       );
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchUserAgreement = async () => {
+    if (!user?._id) return;
+
+    try {
+      console.log("Fetching user agreement to get officiantId...");
+      const response = await axios.get(`/agreements/user/${user._id}`);
+      const agreement = response.data.agreement;
+
+      if (agreement?.officiantId) {
+        console.log(
+          "Setting officiantId from agreement:",
+          agreement.officiantId
+        );
+        setValue("officiantId", agreement.officiantId);
+        if (agreement.officiantName) {
+          setValue("officiantName", agreement.officiantName);
+        }
+      } else {
+        console.warn("No agreement or officiantId found for user");
+      }
+    } catch (error: any) {
+      console.error("Error fetching agreement:", error);
+      // Don't show error to user - agreement might not exist yet
     }
   };
 
@@ -275,6 +303,12 @@ const Ceremony = () => {
           status: "submitted" as const,
         };
 
+        console.log("Updating ceremony with data:", {
+          ceremonyId,
+          officiantId: ceremonyData.officiantId,
+          status: ceremonyData.status,
+        });
+
         const updatedCeremony = await ceremonyApi.updateCeremony(
           ceremonyId,
           ceremonyData
@@ -309,6 +343,12 @@ const Ceremony = () => {
           brideName: bride,
           status: "submitted" as const,
         };
+
+        console.log("Creating new ceremony with data:", {
+          userId: user._id,
+          officiantId: ceremonyData.officiantId,
+          status: ceremonyData.status,
+        });
 
         const newCeremony = await ceremonyApi.createCeremony(
           ceremonyData,
