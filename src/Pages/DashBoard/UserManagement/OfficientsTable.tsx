@@ -11,7 +11,7 @@ import Swal from "sweetalert2";
 import GlassSwal from "../../../utils/glassSwal";
 import { useAxios } from "../../../Component/Providers/useAxios";
 import type { Officiant } from "./types";
-import { getProfileImageUrl } from "./types";
+// import { getProfileImageUrl } from "./types";
 import Pagination from "./Pagination";
 import Avatar from "../../../Component/Shared/Avatar";
 

@@ -4,7 +4,7 @@ import Swal from "sweetalert2";
 import GlassSwal from "../../../utils/glassSwal";
 import { useAxios } from "../../../Component/Providers/useAxios";
 import type { User } from "./types";
-import { getProfileImageUrl } from "./types";
+// import { getProfileImageUrl } from "./types";
 import Pagination from "./Pagination";
 import { showUserDetailsModal } from "./UserDetailsModal";
 import Avatar from "../../../Component/Shared/Avatar";

@@ -75,7 +75,7 @@ const Avatar = ({
 
   return (
     <div
-      className={`${sizeClasses[size]} rounded-full flex items-center justify-center overflow-hidden ${className}`}
+      className={`${sizeClasses[size]} rounded-full flex items-center justify-center overflow-hidden relative ${className}`}
     >
       {shouldShowImage ? (
         <>
