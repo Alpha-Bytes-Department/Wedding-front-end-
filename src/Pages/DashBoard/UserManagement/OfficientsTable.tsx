@@ -13,6 +13,7 @@ import { useAxios } from "../../../Component/Providers/useAxios";
 import type { Officiant } from "./types";
 import { getProfileImageUrl } from "./types";
 import Pagination from "./Pagination";
+import Avatar from "../../../Component/Shared/Avatar";
 
 interface OfficientsTableProps {
   officiants: Officiant[];
@@ -507,18 +508,12 @@ const OfficientsTable: React.FC<OfficientsTableProps> = ({
                   {/* Officiant info */}
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex items-center">
-                      <div className="flex-shrink-0 h-10 w-10">
-                        {officiant.profilePicture ? (
-                          <img
-                            className="h-10 w-10 rounded-full object-cover"
-                            src={getProfileImageUrl(officiant.profilePicture)}
-                            alt=""
-                          />
-                        ) : (
-                          <div className="h-10 w-10 rounded-full bg-gray-300 flex items-center justify-center">
-                            <FaUser className="text-gray-600" />
-                          </div>
-                        )}
+                      <div className="flex-shrink-0">
+                        <Avatar
+                          src={officiant.profilePicture}
+                          name={officiant.name || officiant.email}
+                          size="md"
+                        />
                       </div>
                       <div className="ml-4">
                         <div className="text-sm font-medium text-gray-900">

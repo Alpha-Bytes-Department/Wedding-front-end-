@@ -6,6 +6,7 @@ import { GlassSwal } from "../../../utils/glassSwal";
 import { useAuth } from "../../../Component/Providers/AuthProvider";
 import { useAxios } from "../../../Component/Providers/useAxios";
 import { useNavigate } from "react-router-dom";
+import Avatar from "../../../Component/Shared/Avatar";
 
 const Settings = () => {
   const [isEditingProfile, setIsEditingProfile] = useState(false);
@@ -166,23 +167,13 @@ const Settings = () => {
       );
     }
 
-    if (profileImage) {
-      return (
-        <img
-          src={profileImage}
-          alt="Profile"
-          className="w-full h-full object-cover rounded-full"
-        />
-      );
-    }
-
-    // Default placeholder
     return (
-      <div className="w-full h-full flex items-center justify-center text-white">
-        <span className="text-2xl font-bold">
-          {user?.partner_1?.charAt(0) || "U"}
-        </span>
-      </div>
+      <Avatar
+        src={profileImage}
+        name={user?.name || user?.partner_1 || user?.email}
+        size="xl"
+        className="w-full h-full"
+      />
     );
   };
 

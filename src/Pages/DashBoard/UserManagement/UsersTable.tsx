@@ -7,6 +7,7 @@ import type { User } from "./types";
 import { getProfileImageUrl } from "./types";
 import Pagination from "./Pagination";
 import { showUserDetailsModal } from "./UserDetailsModal";
+import Avatar from "../../../Component/Shared/Avatar";
 
 interface UsersTableProps {
   users: User[];
@@ -404,18 +405,12 @@ const UsersTable: React.FC<UsersTableProps> = ({
                     <tr key={user._id} className="hover:bg-gray-50">
                       <td className="px-3 sm:px-6 py-4">
                         <div className="flex items-center">
-                          <div className="flex-shrink-0 h-8 w-8 sm:h-10 sm:w-10">
-                            {user.profilePicture ? (
-                              <img
-                                className="h-8 w-8 sm:h-10 sm:w-10 rounded-full object-cover"
-                                src={getProfileImageUrl(user.profilePicture)}
-                                alt=""
-                              />
-                            ) : (
-                              <div className="h-8 w-8 sm:h-10 sm:w-10 rounded-full bg-gray-300 flex items-center justify-center">
-                                <FaUsers className="text-gray-600 text-xs sm:text-base" />
-                              </div>
-                            )}
+                          <div className="flex-shrink-0">
+                            <Avatar
+                              src={user.profilePicture}
+                              name={user.name || user.partner_1 || user.email}
+                              size="md"
+                            />
                           </div>
                           <div className="ml-2 sm:ml-4">
                             <div className="text-xs sm:text-sm font-medium text-gray-900 truncate max-w-[120px] sm:max-w-none">

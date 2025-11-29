@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useState } from "react";
-import { FaUserAlt } from "react-icons/fa";
 import {
   HiOutlineCog,
   HiOutlineMenu,
@@ -20,6 +19,7 @@ import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../Providers/AuthProvider";
 import { useAxios } from "../Providers/useAxios";
 import { GoRead } from "react-icons/go";
+import Avatar from "../Shared/Avatar";
 
 type Notification = {
   _id: string;
@@ -244,17 +244,12 @@ const DashNav = ({
               className="flex gap-4 items-center cursor-pointer hover:bg-gray-50 p-2 rounded-lg transition-colors"
             >
               {/* User Avatar */}
-              <div className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center border-2 border-primary">
-                {user ? (
-                  <img
-                    src={user.profilePicture}
-                    alt="User Avatar"
-                    className="w-full h-full object-cover rounded-full"
-                  />
-                ) : (
-                  <FaUserAlt size={20} />
-                )}
-              </div>
+              <Avatar
+                src={user?.profilePicture}
+                name={user?.name || user?.partner_1 || user?.email}
+                size="sm"
+                className="border-2 border-primary"
+              />
               <div className="text-sm font-medium text-gray-900 hidden sm:block">
                 {user?.name || user?.email}
               </div>
@@ -325,17 +320,12 @@ const DashNav = ({
               className="flex gap-4 items-center cursor-pointer  rounded-lg transition-colors"
             >
               {/* User Avatar */}
-              <div className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center border-2 border-primary">
-                {user ? (
-                  <img
-                    src={user.profilePicture}
-                    alt="User Avatar"
-                    className="w-full h-full object-cover rounded-full"
-                  />
-                ) : (
-                  <FaUserAlt size={20} />
-                )}
-              </div>
+              <Avatar
+                src={user?.profilePicture}
+                name={user?.name || user?.partner_1 || user?.email}
+                size="sm"
+                className="border-2 border-primary"
+              />
               <div className="text-sm font-medium text-gray-900">
                 {user?.name || user?.email}
               </div>
