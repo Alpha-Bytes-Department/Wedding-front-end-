@@ -1,5 +1,5 @@
-import React, { useState, useMemo } from "react";
-import { FaUsers, FaEye, FaTrash, FaSearch } from "react-icons/fa";
+import React, { useState, useMemo, useEffect } from "react";
+import { FaUsers, FaEye, FaTrash, FaSearch, FaEdit } from "react-icons/fa";
 import Swal from "sweetalert2";
 import GlassSwal from "../../../utils/glassSwal";
 import { useAxios } from "../../../Component/Providers/useAxios";
@@ -29,6 +29,107 @@ const UsersTable: React.FC<UsersTableProps> = ({
   const axios = useAxios();
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
+  const [officiants, setOfficiants] = useState<any[]>([]);
+
+  // Fetch officiants on mount
+  useEffect(() => {
+    const fetchOfficiants = async () => {
+      try {
+        const response = await axios.get("/users/officiants");
+        setOfficiants(response.data.officiants || []);
+      } catch (error) {
+        console.error("Error fetching officiants:", error);
+      }
+    };
+    fetchOfficiants();
+  }, [axios]);
+
+  const handleAssignOfficiant = async (user: User) => {
+    // Validate user has accepted agreement
+    if (!user.AgreementAccepted) {
+      await GlassSwal.error(
+        "Cannot Assign",
+        "User must have an accepted agreement before assigning an officiant."
+      );
+      return;
+    }
+
+    const officiantOptions = officiants
+      .map(
+        (off) =>
+          `<option value="${off._id}" ${!off.availability ? "disabled" : ""}>${
+            off.name
+          }${!off.availability ? " (Unavailable)" : ""}</option>`
+      )
+      .join("");
+
+    const { value: formValues } = await Swal.fire({
+      title: "Assign Officiant",
+      html: `
+        <div class="text-left space-y-4">
+          <p class="text-sm text-gray-600 mb-4">
+            Assigning officiant to: <strong>${user.name || user.email}</strong>
+          </p>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">
+              Select Officiant
+            </label>
+            <select id="officiantId" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+              <option value="">Choose an officiant...</option>
+              ${officiantOptions}
+            </select>
+          </div>
+          ${
+            user.currentOfficiant?.officiantName
+              ? `
+            <div class="bg-yellow-50 border border-yellow-200 rounded p-3 text-sm">
+              <strong>Current Officiant:</strong> ${
+                user.currentOfficiant.officiantName
+              }
+              <br/>
+              <span class="text-gray-600">Assigned: ${new Date(
+                user.currentOfficiant.assignedAt!
+              ).toLocaleDateString()}</span>
+            </div>
+          `
+              : ""
+          }
+        </div>
+      `,
+      showCancelButton: true,
+      confirmButtonText: "Assign Officiant",
+      cancelButtonText: "Cancel",
+      width: "500px",
+      preConfirm: () => {
+        const officiantId = (
+          document.getElementById("officiantId") as HTMLSelectElement
+        ).value;
+        if (!officiantId) {
+          Swal.showValidationMessage("Please select an officiant");
+          return false;
+        }
+        const selectedOfficiant = officiants.find((o) => o._id === officiantId);
+        return {
+          officiantId,
+          officiantName: selectedOfficiant?.name,
+        };
+      },
+    });
+
+    if (formValues) {
+      try {
+        await axios.post(`/users/assign-officiant/${user._id}`, formValues);
+        await GlassSwal.success("Success", "Officiant assigned successfully!");
+        onRefresh();
+      } catch (error: any) {
+        console.error("Error assigning officiant:", error);
+        await GlassSwal.error(
+          "Error",
+          error.response?.data?.error || "Failed to assign officiant"
+        );
+      }
+    }
+  };
 
   const handleView = async (user: User) => {
     await showUserDetailsModal(user);
@@ -278,6 +379,9 @@ const UsersTable: React.FC<UsersTableProps> = ({
                     Wedding Info
                   </th>
                   <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Assigned Officiant
+                  </th>
+                  <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Ceremony Status
                   </th>
                   <th className="hidden sm:table-cell px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -343,6 +447,48 @@ const UsersTable: React.FC<UsersTableProps> = ({
                         <div className="text-xs text-gray-500 max-w-xs truncate">
                           {firstEvent?.location || "N/A"}
                         </div>
+                      </td>
+                      <td className="px-3 sm:px-6 py-4">
+                        {user.currentOfficiant?.officiantName ? (
+                          <div className="flex items-center justify-between gap-2">
+                            <div className="flex-1">
+                              <div className="flex items-center gap-2">
+                                <span className="text-green-600 text-sm">
+                                  ✓
+                                </span>
+                                <span className="text-sm font-medium text-gray-900">
+                                  {user.currentOfficiant.officiantName}
+                                </span>
+                              </div>
+                              <p className="text-xs text-gray-500 mt-1">
+                                Assigned:{" "}
+                                {new Date(
+                                  user.currentOfficiant.assignedAt!
+                                ).toLocaleDateString()}
+                              </p>
+                            </div>
+                            {user.AgreementAccepted && (
+                              <button
+                                onClick={() => handleAssignOfficiant(user)}
+                                className="text-blue-600 hover:text-blue-900 p-1 rounded hover:bg-blue-50"
+                                title="Change Officiant"
+                              >
+                                <FaEdit className="text-sm" />
+                              </button>
+                            )}
+                          </div>
+                        ) : user.AgreementAccepted ? (
+                          <button
+                            onClick={() => handleAssignOfficiant(user)}
+                            className="text-sm px-3 py-1 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
+                          >
+                            Assign Officiant
+                          </button>
+                        ) : (
+                          <span className="text-xs text-gray-400 italic">
+                            No agreement
+                          </span>
+                        )}
                       </td>
                       <td className="px-3 sm:px-6 py-4 cursor-pointer">
                         {firstEvent?.status ? (

@@ -19,7 +19,7 @@ const Settings = () => {
   );
 
   const [privacy, setPrivacy] = useState({
-    availability : true,
+    availability: true,
   });
 
   // ======================Profile section default values======================
@@ -228,6 +228,7 @@ const Settings = () => {
       if (response.status === 200 || response.status === 201) {
         // Update local state with new image URL
         setProfileImage(response.data.user.profilePicture);
+        setUser(response.data.user); // Update global user context
         localStorage.setItem("user", JSON.stringify(response.data.user));
 
         GlassSwal.success(

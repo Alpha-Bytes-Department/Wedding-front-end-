@@ -382,6 +382,25 @@ const OfficientsTable: React.FC<OfficientsTableProps> = ({
     });
   }, [officiants, sortField, sortOrder]);
 
+  // Calculate max revenue for progress bars
+  const maxTotalRevenue = useMemo(() => {
+    return Math.max(
+      ...sortedOfficiants.map(
+        (off) => calculateFinancials(off.events || []).totalRevenue
+      ),
+      1
+    );
+  }, [sortedOfficiants]);
+
+  const maxCurrentRevenue = useMemo(() => {
+    return Math.max(
+      ...sortedOfficiants.map(
+        (off) => calculateFinancials(off.events || []).currentBookingsValue
+      ),
+      1
+    );
+  }, [sortedOfficiants]);
+
   if (officiants.length === 0) {
     return (
       <div className="text-center py-12">
@@ -531,19 +550,43 @@ const OfficientsTable: React.FC<OfficientsTableProps> = ({
                   </td>
                   {/* total revenue */}
                   <td className="px-6 py-4 text-center whitespace-nowrap">
-                    <div className="text-sm font-semibold text-green-700">
-                      ${totalRevenue.toLocaleString()}
+                    <div className="space-y-1">
+                      <div className="text-sm font-semibold text-green-700">
+                        ${totalRevenue.toLocaleString()}
+                      </div>
+                      <div className="w-full bg-gray-200 rounded-full h-2">
+                        <div
+                          className="bg-green-600 h-2 rounded-full transition-all duration-300"
+                          style={{
+                            width: `${(totalRevenue / maxTotalRevenue) * 100}%`,
+                          }}
+                        ></div>
+                      </div>
+                      <div className="text-xs text-gray-500">
+                        from completed
+                      </div>
                     </div>
-                    <div className="text-xs text-gray-500">from completed</div>
                   </td>
                   {/* current bookings */}
                   <td className="px-6 py-4 text-center whitespace-nowrap">
-                    <div className="text-sm font-semibold text-blue-700">
-                      ${currentBookingsValue.toLocaleString()}
-                    </div>
-                    <div className="text-xs text-gray-500">
-                      {currentBookings.length} event
-                      {currentBookings.length !== 1 ? "s" : ""}
+                    <div className="space-y-1">
+                      <div className="text-sm font-semibold text-blue-700">
+                        ${currentBookingsValue.toLocaleString()}
+                      </div>
+                      <div className="w-full bg-gray-200 rounded-full h-2">
+                        <div
+                          className="bg-blue-600 h-2 rounded-full transition-all duration-300"
+                          style={{
+                            width: `${
+                              (currentBookingsValue / maxCurrentRevenue) * 100
+                            }%`,
+                          }}
+                        ></div>
+                      </div>
+                      <div className="text-xs text-gray-500">
+                        {currentBookings.length} event
+                        {currentBookings.length !== 1 ? "s" : ""}
+                      </div>
                     </div>
                   </td>
 
