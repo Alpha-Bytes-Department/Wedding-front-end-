@@ -3,7 +3,7 @@ import { useAxios } from "../../../Component/Providers/useAxios";
 import { useEffect, useState } from "react";
 import { useAuth } from "../../../Component/Providers/AuthProvider";
 import GlassSwal from "../../../utils/glassSwal";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 interface OfficiantProfile {
   _id: string;
   name: string;
@@ -45,6 +45,17 @@ const Schedule = () => {
   const [schedule, setSchedule] = useState<scheduleEvent[]>([]);
   const navigate = useNavigate();
   const [officiants, setOfficiants] = useState<OfficiantProfile[]>([]);
+  const profileComplete =
+    user?.name &&
+    user?.partner_1 &&
+    user?.partner_2 &&
+    user?.contact?.partner_1 &&
+    user?.contact?.partner_2 &&
+    user?.location &&
+    user?.weddingDate &&
+    user?.needRehearsal !== null &&
+    (user?.needRehearsal === false ||
+      (user?.needRehearsal === true && user?.rehearsalDate));
 
   useEffect(() => {
     getOfficiants();
@@ -137,71 +148,109 @@ const Schedule = () => {
       </h1>
 
       {/* Book Officiant */}
+
       <form
         onSubmit={handleSubmit(onSubmit)}
         className="bg-white rounded-2xl  border border-primary p-6 mb-8 shadow-xl"
       >
-        <div className="flex flex-col md:flex-row md:gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 md:gap-8">
           {/* Left */}
-          <div className="flex-1 space-y-4">
-            <div>
-              <div className="flex justify-between items-center mb-1">
-                <label className="block font-medium">Select Officiant</label>
+          {profileComplete ? (
+            <div className="flex-1 space-y-4">
+              <div>
+                <div className="flex justify-between items-center mb-1">
+                  <label className="block font-medium">Select Officiant</label>
+                </div>
+                <select
+                  {...register("officiant")}
+                  className="w-full border border-primary cursor-pointer rounded-lg px-4 py-2 focus:outline-none"
+                >
+                  <option value="">Select Officiant</option>
+                  {officiants.map((o) => (
+                    <option
+                      disabled={!o.availability}
+                      key={o._id}
+                      value={JSON.stringify({
+                        id: o._id,
+                        name: o.name,
+                        profilePicture: o.profilePicture,
+                      })}
+                    >
+                      {o.name}
+                    </option>
+                  ))}
+                </select>
               </div>
-              <select
-                {...register("officiant")}
-                className="w-full border border-primary cursor-pointer rounded-lg px-4 py-2 focus:outline-none"
-              >
-                <option value="">Select Officiant</option>
-                {officiants.map((o) => (
-                  <option
-                    disabled={!o.availability}
-                    key={o._id}
-                    value={JSON.stringify({
-                      id: o._id,
-                      name: o.name,
-                      profilePicture: o.profilePicture,
+              <div className="flex gap-4 flex-col md:flex-row">
+                <div className="flex-1">
+                  <label className="block font-medium mb-1">Date</label>
+                  <input
+                    type="date"
+                    min={new Date().toISOString().split("T")[0]}
+                    {...register("date", {
+                      required: "Meeting date is required",
                     })}
-                  >
-                    {o.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div className="flex gap-4 flex-col md:flex-row">
-              <div className="flex-1">
-                <label className="block font-medium mb-1">Date</label>
-                <input
-                  type="date"
-                  min={new Date().toISOString().split("T")[0]}
-                  {...register("date", {
-                    required: "Meeting date is required",
-                  })}
-                  className="w-full border border-primary rounded-lg px-4 py-2 focus:outline-none"
-                />
+                    className="w-full border border-primary rounded-lg px-4 py-2 focus:outline-none"
+                  />
+                </div>
+                <div className="flex-1">
+                  <label className="block font-medium mb-1">Time</label>
+                  <input
+                    type="time"
+                    {...register("time", {
+                      required: "Meeting time is required",
+                    })}
+                    className="w-full border border-primary rounded-lg px-4 py-2 focus:outline-none"
+                  />
+                </div>
               </div>
-              <div className="flex-1">
-                <label className="block font-medium mb-1">Time</label>
-                <input
-                  type="time"
-                  {...register("time", {
-                    required: "Meeting time is required",
-                  })}
-                  className="w-full border border-primary rounded-lg px-4 py-2 focus:outline-none"
+              <div>
+                <label className="block font-medium mb-1">
+                  Note to Officiant
+                </label>
+                <textarea
+                  {...register("note")}
+                  className="w-full border border-primary rounded-lg px-4 py-2 focus:outline-none min-h-[48px]"
+                  placeholder="Share any notes, description or template"
                 />
               </div>
             </div>
+          ) : (
             <div>
-              <label className="block font-medium mb-1">
-                Note to Officiant
-              </label>
-              <textarea
-                {...register("note")}
-                className="w-full border border-primary rounded-lg px-4 py-2 focus:outline-none min-h-[48px]"
-                placeholder="Share any notes, description or template"
-              />
+              <div className="flex items-start  gap-3 p-4 bg-amber-50 border border-amber-200 rounded-lg">
+                <svg
+                  className="w-6 h-6 text-amber-600 flex-shrink-0 mt-0.5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                  />
+                </svg>
+                <div className="flex-1">
+                  <h3 className="font-semibold text-amber-900 mb-1">
+                    Profile Incomplete
+                  </h3>
+                  <p className="text-sm text-amber-800">
+                    Please complete your profile before booking an officiant. Make sure to
+                    fill in all required details including location, wedding date, and
+                    rehearsal information.
+                  </p>
+                  <Link
+                    to="/dashboard/settings"
+                    className="mt-3 text-sm font-medium text-amber-700 cursor-pointer hover:text-amber-900 underline"
+                  >
+                    Complete Profile →
+                  </Link>
+                </div>
+              </div>
             </div>
-          </div>
+          )}
+
           {/* Right */}
           <div className="flex-1 space-y-4 mt-8 md:mt-0">
             <div>
@@ -257,8 +306,9 @@ const Schedule = () => {
         </div>
         <div className="flex justify-end mt-6">
           <button
+            disabled={!profileComplete}
             type="submit"
-            className="bg-primary text-white px-6 py-2 rounded-lg font-medium shadow hover:bg-primary/90 transition-colors"
+            className="bg-amber-500 disabled:bg-gray-400 disabled:opacity-30 text-white px-6 py-2 rounded-lg font-medium shadow hover:bg-primary/90 transition-colors"
           >
             Confirm Booking
           </button>

@@ -18,6 +18,9 @@ interface User {
   bookingMoney: number;
   bookingPackage: any[];
   createdAt: string;
+  rehearsalDate?: string;
+  needRehearsal?: boolean;
+  // Deprecated: kept for backward compatibility
   email: string;
   isVerified: boolean;
   AgreementAccepted: boolean;

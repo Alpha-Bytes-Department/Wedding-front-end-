@@ -8,7 +8,6 @@ import TypeStep from "./components/TypeStep";
 import GreetingsStep from "./components/GreetingsStep";
 import VowsStep from "./components/VowsStep";
 import RitualsStep from "./components/RitualsStep";
-import ScheduleStep from "./components/ScheduleStep";
 import ReviewStep from "./components/ReviewStep";
 import NavigationButtons from "./components/NavigationButtons";
 import DraftTab from "./components/DraftTab";
@@ -32,7 +31,9 @@ const Ceremony = () => {
     user?.partner_2 &&
     user?.contact?.partner_1 &&
     user?.contact?.partner_2 &&
-    user?.location;
+    user?.location && user?.weddingDate && user?.needRehearsal !== null&& (user?.needRehearsal=== false || (user?.needRehearsal=== true && user?.rehearsalDate));
+
+    console.log("Profile Complete:", profileComplete);
   const { groomName, brideName } = useCeremonyContext();
   const [activeTab, setActiveTab] = useState<"new" | "draft" | "my">("new");
   const [loading, setLoading] = useState(false);
@@ -565,8 +566,7 @@ const Ceremony = () => {
     { number: 2, title: "Greetings", active: currentStep >= 2 },
     { number: 3, title: "Vows", active: currentStep >= 3 },
     { number: 4, title: "Rituals", active: currentStep >= 4 },
-    { number: 5, title: "Schedule", active: currentStep >= 5 },
-    { number: 6, title: "Review", active: currentStep >= 6 },
+    { number: 5, title: "Review", active: currentStep >= 5 },
   ];
 
   if (user?.role !== "user") {
@@ -660,17 +660,8 @@ const Ceremony = () => {
                   />
                 )}
 
-                {/* Step 5: Schedule */}
+                {/* Step 5: Review */}
                 {currentStep === 5 && (
-                  <ScheduleStep
-                    register={register}
-                    errors={errors}
-                    watch={watch}
-                  />
-                )}
-
-                {/* Step 6: Review */}
-                {currentStep === 6 && (
                   <ReviewStep watch={watch} setValue={setValue} />
                 )}
 
@@ -696,7 +687,7 @@ const Ceremony = () => {
                 ) : (
                   <NavigationButtons
                     currentStep={currentStep}
-                    maxStep={6}
+                    maxStep={5}
                     onPrevStep={handlePrevStep}
                     onNextStep={handleNextStep}
                     onSaveDraft={() => handleSubmit(saveDraft)()}

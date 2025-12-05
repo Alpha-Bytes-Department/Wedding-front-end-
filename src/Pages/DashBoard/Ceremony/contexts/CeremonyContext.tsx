@@ -6,6 +6,8 @@ interface CeremonyContextData {
   brideName: string;
   setGroomName: (name: string) => void;
   setBrideName: (name: string) => void;
+  isReversed: boolean;
+  setIsReversed: (reversed: boolean) => void;
 }
 
 const CeremonyContext = createContext<CeremonyContextData | undefined>(
@@ -21,12 +23,15 @@ export const CeremonyProvider: React.FC<CeremonyProviderProps> = ({
 }) => {
   const [groomName, setGroomName] = useState<string>("");
   const [brideName, setBrideName] = useState<string>("");
+  const [isReversed, setIsReversed] = useState<boolean>(false);
 
   const value = {
     groomName,
     brideName,
     setGroomName,
     setBrideName,
+    isReversed,
+    setIsReversed,
   };
 
   return (

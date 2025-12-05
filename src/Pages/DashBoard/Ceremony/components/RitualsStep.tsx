@@ -3,6 +3,7 @@ import type { UseFormRegister } from "react-hook-form";
 import type { CeremonyFormData } from "../types";
 import CustomDropdown from "./CustomDropdown";
 import { useCeremonyContext } from "../contexts/CeremonyContext";
+import { FaExchangeAlt } from "react-icons/fa";
 
 interface RitualsStepProps {
   register: UseFormRegister<CeremonyFormData>;
@@ -289,7 +290,8 @@ const kissOptions: RitualOption[] = [
   {
     id: "kiss2",
     label: "Modern Kiss",
-    content: "May your first act as a married couple be one of love. You may now kiss each other for the first time as husband and wife!",
+    content:
+      "May your first act as a married couple be one of love. You may now kiss each other for the first time as husband and wife!",
   },
   {
     id: "kiss3",
@@ -331,6 +333,33 @@ const RitualsStep = ({
   const [selectedModal, setSelectedModal] = useState<string | null>(null);
   const { groomName, brideName } = useCeremonyContext();
 
+  // Individual toggle states
+  const [ritualReversed, setRitualReversed] = useState(false);
+  const [closingReversed, setClosingReversed] = useState(false);
+  const [pronouncingReversed, setPronouncingReversed] = useState(false);
+  const [kissReversed, setKissReversed] = useState(false);
+
+  const currentBrideName = brideName || "Bride";
+  const currentGroomName = groomName || "Groom";
+
+  // Get names based on toggle states
+  const getRitualNames = () =>
+    ritualReversed
+      ? { first: currentGroomName, second: currentBrideName }
+      : { first: currentBrideName, second: currentGroomName };
+  const getClosingNames = () =>
+    closingReversed
+      ? { first: currentGroomName, second: currentBrideName }
+      : { first: currentBrideName, second: currentGroomName };
+  const getPronouncingNames = () =>
+    pronouncingReversed
+      ? { first: currentGroomName, second: currentBrideName }
+      : { first: currentBrideName, second: currentGroomName };
+  const getKissNames = () =>
+    kissReversed
+      ? { first: currentGroomName, second: currentBrideName }
+      : { first: currentBrideName, second: currentGroomName };
+
   const openModal = (optionId: string) => {
     setSelectedModal(optionId);
   };
@@ -368,15 +397,15 @@ const RitualsStep = ({
         options = introductionOptions;
         break;
     }
-    
-    const option = options.find(opt => opt.id === optionId);
+
+    const option = options.find((opt) => opt.id === optionId);
     if (option) {
       const currentBrideName = brideName || "Bride's Name";
       const currentGroomName = groomName || "Groom's Name";
       const content = option.content
         .replace(/{bride_name}/g, currentBrideName)
         .replace(/{groom_name}/g, currentGroomName);
-      
+
       // Use setValue for proper React Hook Form integration
       setValue(fieldName as keyof CeremonyFormData, content);
       onSelectDropdown(fieldName, content);
@@ -433,14 +462,11 @@ const RitualsStep = ({
     <div className="space-y-6">
       {/* Ritual Selection */}
       <div>
-        <label className="block text-lg font-semibold text-gray-900 mb-3">
+        <label className="block text-sm font-medium text-gray-700 mb-3">
           Ritual Selection
         </label>
         {/* Hidden input for form registration */}
-        <input
-          type="hidden"
-          {...register("ritualsSelection")}
-        />
+        <input type="hidden" {...register("ritualsSelection")} />
         <CustomDropdown
           name="ritualsSelection"
           options={ritualTypes}
@@ -455,15 +481,31 @@ const RitualsStep = ({
       {/* Ritual Options - Only show if a ritual is selected */}
       {currentRitual && currentRitualOptions.length > 0 && (
         <div>
-          <label className="block text-lg font-semibold text-gray-900 mb-3">
-            {currentRitual} Options
-          </label>
+          <div className="flex items-center justify-between mb-3">
+            <label className="block text-sm font-medium text-gray-700">
+              {currentRitual} for {getRitualNames().first} &{" "}
+              {getRitualNames().second}
+            </label>
+            {currentGroomName &&
+              currentBrideName &&
+              currentGroomName !== "Groom" &&
+              currentBrideName !== "Bride" && (
+                <button
+                  type="button"
+                  onClick={() => setRitualReversed(!ritualReversed)}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-primary bg-white border border-primary rounded-md hover:bg-primary hover:text-white transition-colors"
+                  title={`Switch to ${
+                    ritualReversed ? currentBrideName : currentGroomName
+                  } & ${ritualReversed ? currentGroomName : currentBrideName}`}
+                >
+                  <FaExchangeAlt className="text-xs" />
+                  <span>Switch</span>
+                </button>
+              )}
+          </div>
           <div className="space-y-3">
             {/* Hidden input for form registration */}
-            <input
-              type="hidden"
-              {...register("ritualsOption")}
-            />
+            <input type="hidden" {...register("ritualsOption")} />
             <CustomDropdown
               name="ritualsOption"
               options={currentRitualOptions.map((opt) => opt.label)}
@@ -498,7 +540,7 @@ const RitualsStep = ({
                   onClick={() => openModal(option.id)}
                   className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors text-sm"
                 >
-                   {option.label}
+                  {option.label}
                 </button>
               ))}
             </div>
@@ -508,15 +550,31 @@ const RitualsStep = ({
 
       {/* Closing Statement */}
       <div>
-        <label className="block text-lg font-semibold text-gray-900 mb-3">
-          Closing Statement
-        </label>
+        <div className="flex items-center justify-between mb-3">
+          <label className="block text-sm font-medium text-gray-700">
+            Closing Statement for {getClosingNames().first} &{" "}
+            {getClosingNames().second}
+          </label>
+          {currentGroomName &&
+            currentBrideName &&
+            currentGroomName !== "Groom" &&
+            currentBrideName !== "Bride" && (
+              <button
+                type="button"
+                onClick={() => setClosingReversed(!closingReversed)}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-primary bg-white border border-primary rounded-md hover:bg-primary hover:text-white transition-colors"
+                title={`Switch to ${
+                  closingReversed ? currentBrideName : currentGroomName
+                } & ${closingReversed ? currentGroomName : currentBrideName}`}
+              >
+                <FaExchangeAlt className="text-xs" />
+                <span>Switch</span>
+              </button>
+            )}
+        </div>
         <div className="space-y-3">
           {/* Hidden input for form registration */}
-          <input
-            type="hidden"
-            {...register("closingStatement")}
-          />
+          <input type="hidden" {...register("closingStatement")} />
           <CustomDropdown
             name="closingStatement"
             options={closingOptions.map((opt) => opt.label)}
@@ -549,7 +607,7 @@ const RitualsStep = ({
                 onClick={() => openModal(option.id)}
                 className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors text-sm"
               >
-                 {option.label}
+                {option.label}
               </button>
             ))}
           </div>
@@ -558,15 +616,33 @@ const RitualsStep = ({
 
       {/* Pronouncing */}
       <div>
-        <label className="block text-lg font-semibold text-gray-900 mb-3">
-          Pronouncing
-        </label>
+        <div className="flex items-center justify-between mb-3">
+          <label className="block text-sm font-medium text-gray-700">
+            Pronouncing {getPronouncingNames().first} &{" "}
+            {getPronouncingNames().second}
+          </label>
+          {currentGroomName &&
+            currentBrideName &&
+            currentGroomName !== "Groom" &&
+            currentBrideName !== "Bride" && (
+              <button
+                type="button"
+                onClick={() => setPronouncingReversed(!pronouncingReversed)}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-primary bg-white border border-primary rounded-md hover:bg-primary hover:text-white transition-colors"
+                title={`Switch to ${
+                  pronouncingReversed ? currentBrideName : currentGroomName
+                } & ${
+                  pronouncingReversed ? currentGroomName : currentBrideName
+                }`}
+              >
+                <FaExchangeAlt className="text-xs" />
+                <span>Switch</span>
+              </button>
+            )}
+        </div>
         <div className="space-y-3">
           {/* Hidden input for form registration */}
-          <input
-            type="hidden"
-            {...register("pronouncing")}
-          />
+          <input type="hidden" {...register("pronouncing")} />
           <CustomDropdown
             name="pronouncing"
             options={pronouncingOptions.map((opt) => opt.label)}
@@ -601,7 +677,7 @@ const RitualsStep = ({
                 onClick={() => openModal(option.id)}
                 className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors text-sm"
               >
-                 {option.label}
+                {option.label}
               </button>
             ))}
           </div>
@@ -610,15 +686,30 @@ const RitualsStep = ({
 
       {/* Kiss */}
       <div>
-        <label className="block text-lg font-semibold text-gray-900 mb-3">
-          Kiss
-        </label>
+        <div className="flex items-center justify-between mb-3">
+          <label className="block text-sm font-medium text-gray-700">
+            Kiss between {getKissNames().first} & {getKissNames().second}
+          </label>
+          {currentGroomName &&
+            currentBrideName &&
+            currentGroomName !== "Groom" &&
+            currentBrideName !== "Bride" && (
+              <button
+                type="button"
+                onClick={() => setKissReversed(!kissReversed)}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-primary bg-white border border-primary rounded-md hover:bg-primary hover:text-white transition-colors"
+                title={`Switch to ${
+                  kissReversed ? currentBrideName : currentGroomName
+                } & ${kissReversed ? currentGroomName : currentBrideName}`}
+              >
+                <FaExchangeAlt className="text-xs" />
+                <span>Switch</span>
+              </button>
+            )}
+        </div>
         <div className="space-y-3">
           {/* Hidden input for form registration */}
-          <input
-            type="hidden"
-            {...register("kiss")}
-          />
+          <input type="hidden" {...register("kiss")} />
           <CustomDropdown
             name="kiss"
             options={kissOptions.map((opt) => opt.label)}
@@ -651,7 +742,7 @@ const RitualsStep = ({
                 onClick={() => openModal(option.id)}
                 className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors text-sm"
               >
-                 {option.label}
+                {option.label}
               </button>
             ))}
           </div>
@@ -665,10 +756,7 @@ const RitualsStep = ({
         </label>
         <div className="space-y-3">
           {/* Hidden input for form registration */}
-          <input
-            type="hidden"
-            {...register("introductionOfCouple")}
-          />
+          <input type="hidden" {...register("introductionOfCouple")} />
           <CustomDropdown
             name="introductionOfCouple"
             options={introductionOptions.map((opt) => opt.label)}
@@ -703,7 +791,7 @@ const RitualsStep = ({
                 onClick={() => openModal(option.id)}
                 className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors text-sm"
               >
-                 {option.label}
+                {option.label}
               </button>
             ))}
           </div>
@@ -811,7 +899,9 @@ const RitualsStep = ({
                         currentGroomName
                       );
                     } else if (
-                      wineCeremonyOptions.find((opt) => opt.id === selectedModal)
+                      wineCeremonyOptions.find(
+                        (opt) => opt.id === selectedModal
+                      )
                     ) {
                       return getOptionContent(
                         wineCeremonyOptions,
@@ -829,7 +919,9 @@ const RitualsStep = ({
                         currentGroomName
                       );
                     } else if (
-                      treePlantingOptions.find((opt) => opt.id === selectedModal)
+                      treePlantingOptions.find(
+                        (opt) => opt.id === selectedModal
+                      )
                     ) {
                       return getOptionContent(
                         treePlantingOptions,
@@ -838,7 +930,9 @@ const RitualsStep = ({
                         currentGroomName
                       );
                     } else if (
-                      stoneCeremonyOptions.find((opt) => opt.id === selectedModal)
+                      stoneCeremonyOptions.find(
+                        (opt) => opt.id === selectedModal
+                      )
                     ) {
                       return getOptionContent(
                         stoneCeremonyOptions,
@@ -847,7 +941,9 @@ const RitualsStep = ({
                         currentGroomName
                       );
                     } else if (
-                      oathingStoneOptions.find((opt) => opt.id === selectedModal)
+                      oathingStoneOptions.find(
+                        (opt) => opt.id === selectedModal
+                      )
                     ) {
                       return getOptionContent(
                         oathingStoneOptions,
@@ -856,7 +952,9 @@ const RitualsStep = ({
                         currentGroomName
                       );
                     } else if (
-                      cordOfThreeStrandsOptions.find((opt) => opt.id === selectedModal)
+                      cordOfThreeStrandsOptions.find(
+                        (opt) => opt.id === selectedModal
+                      )
                     ) {
                       return getOptionContent(
                         cordOfThreeStrandsOptions,
@@ -925,14 +1023,30 @@ const RitualsStep = ({
                       roseCeremonyOptions.find(
                         (opt) => opt.id === selectedModal
                       ) ||
-                      unityCandleOptions.find((opt) => opt.id === selectedModal) ||
-                      handfastingOptions.find((opt) => opt.id === selectedModal) ||
-                      wineCeremonyOptions.find((opt) => opt.id === selectedModal) ||
-                      ringWarmingOptions.find((opt) => opt.id === selectedModal) ||
-                      treePlantingOptions.find((opt) => opt.id === selectedModal) ||
-                      stoneCeremonyOptions.find((opt) => opt.id === selectedModal) ||
-                      oathingStoneOptions.find((opt) => opt.id === selectedModal) ||
-                      cordOfThreeStrandsOptions.find((opt) => opt.id === selectedModal)
+                      unityCandleOptions.find(
+                        (opt) => opt.id === selectedModal
+                      ) ||
+                      handfastingOptions.find(
+                        (opt) => opt.id === selectedModal
+                      ) ||
+                      wineCeremonyOptions.find(
+                        (opt) => opt.id === selectedModal
+                      ) ||
+                      ringWarmingOptions.find(
+                        (opt) => opt.id === selectedModal
+                      ) ||
+                      treePlantingOptions.find(
+                        (opt) => opt.id === selectedModal
+                      ) ||
+                      stoneCeremonyOptions.find(
+                        (opt) => opt.id === selectedModal
+                      ) ||
+                      oathingStoneOptions.find(
+                        (opt) => opt.id === selectedModal
+                      ) ||
+                      cordOfThreeStrandsOptions.find(
+                        (opt) => opt.id === selectedModal
+                      )
                     ) {
                       handleSelection("ritualsOption", selectedModal);
                     } else if (

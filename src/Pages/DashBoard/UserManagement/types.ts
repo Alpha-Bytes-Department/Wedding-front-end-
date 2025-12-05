@@ -14,6 +14,8 @@ export interface User {
   event_details?: any; // Deprecated: kept for backward compatibility
   phone?: string;
   address?: string;
+  needRehearsal?: boolean;
+  rehearsalDate?: string;
   weddingDate?: string;
   location?: string;
   profilePicture?: string;

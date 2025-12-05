@@ -3,6 +3,7 @@ import type { UseFormRegister } from "react-hook-form";
 import type { CeremonyFormData } from "../types";
 import CustomDropdown from "./CustomDropdown";
 import { useCeremonyContext } from "../contexts/CeremonyContext";
+import { FaExchangeAlt } from "react-icons/fa";
 
 interface GreetingsStepProps {
   register: UseFormRegister<CeremonyFormData>;
@@ -58,12 +59,11 @@ const greetingOptions: GreetingOption[] = [
   {
     id: "option7",
     label: "Option 7",
-    content:
-      "Welcome, family, friends and loved ones.",
+    content: "Welcome, family, friends and loved ones.",
   },
   {
     id: "option8",
-    label: "Option 8", 
+    label: "Option 8",
     content:
       "We gather here today to celebrate the wedding of {groom_name} and {bride_name}. You have come from near and far to share in this formal commitment they make to one another, to offer your love and support to this union, and to allow them to start their married life together surrounded by the people dearest and most important to them.",
   },
@@ -107,40 +107,46 @@ const greetingOptions: GreetingOption[] = [
     id: "option15",
     label: "Option 15",
     content:
-      "We, who have gathered in this circle, are now privileged to witness and to participate in a ceremony celebrating the public acknowledgment of a love which {groom_name} and {bride_name} have for each other, knowing that by our presence here with them, we are saying that they, together, are loved by many others. We have come to surround them as they stand before us in this center, where now {groom_name} and {bride_name} in essence say, \"Welcome to our marriage! Welcome to the Celebration!\"",
-  }
+      'We, who have gathered in this circle, are now privileged to witness and to participate in a ceremony celebrating the public acknowledgment of a love which {groom_name} and {bride_name} have for each other, knowing that by our presence here with them, we are saying that they, together, are loved by many others. We have come to surround them as they stand before us in this center, where now {groom_name} and {bride_name} in essence say, "Welcome to our marriage! Welcome to the Celebration!"',
+  },
 ];
 
 const presentationOptions: GreetingOption[] = [
   {
     id: "presentation1",
     label: "Independent Bride",
-    content: "{bride_name} walks herself down the aisle, symbolizing her independence and choice to enter this marriage.",
+    content:
+      "{bride_name} walks herself down the aisle, symbolizing her independence and choice to enter this marriage.",
   },
   {
-    id: "presentation2", 
+    id: "presentation2",
     label: "Together Walk",
-    content: "{bride_name} and {groom_name} walk down the aisle together, showing their equal partnership from the very beginning.",
+    content:
+      "{bride_name} and {groom_name} walk down the aisle together, showing their equal partnership from the very beginning.",
   },
   {
     id: "presentation3",
     label: "Family Escort",
-    content: "{bride_name} is lovingly escorted down the aisle by a family member who supports her in this joyous decision.",
+    content:
+      "{bride_name} is lovingly escorted down the aisle by a family member who supports her in this joyous decision.",
   },
   {
     id: "presentation4",
-    label: "Dual Family Presentation", 
-    content: "Both {bride_name} and {groom_name} are presented by their families to each other, symbolizing the joining of two families in support of this union.",
+    label: "Dual Family Presentation",
+    content:
+      "Both {bride_name} and {groom_name} are presented by their families to each other, symbolizing the joining of two families in support of this union.",
   },
   {
     id: "presentation5",
     label: "Meeting at the Altar",
-    content: "{bride_name} and {groom_name} walk themselves to the altar where they pause to honor their parents with an exchange of gratitude, respect, and thanks for their love and support.",
+    content:
+      "{bride_name} and {groom_name} walk themselves to the altar where they pause to honor their parents with an exchange of gratitude, respect, and thanks for their love and support.",
   },
   {
     id: "presentation6",
-    label: "Traditional with Modern Acknowledgment", 
-    content: "{bride_name} is walked down the aisle by her father in the traditional manner, and {groom_name} acknowledges this honor with gratitude and respect as he welcomes his bride.",
+    label: "Traditional with Modern Acknowledgment",
+    content:
+      "{bride_name} is walked down the aisle by her father in the traditional manner, and {groom_name} acknowledges this honor with gratitude and respect as he welcomes his bride.",
   },
 ];
 
@@ -148,8 +154,7 @@ const questionOptions: GreetingOption[] = [
   {
     id: "question1",
     label: "Option 1",
-    content:
-      "Who has the honor of presenting this bride today?",
+    content: "Who has the honor of presenting this bride today?",
   },
   {
     id: "question2",
@@ -160,20 +165,17 @@ const questionOptions: GreetingOption[] = [
   {
     id: "question3",
     label: "Option 3",
-    content:
-      "Who gives this woman to be married to this man?",
+    content: "Who gives this woman to be married to this man?",
   },
   {
     id: "question4",
     label: "Option 4",
-    content:
-      "Who stands with this woman to represent her family?",
+    content: "Who stands with this woman to represent her family?",
   },
   {
     id: "question5",
     label: "Option 5",
-    content:
-      "Who presents this bride on this happy day of her life?",
+    content: "Who presents this bride on this happy day of her life?",
   },
   {
     id: "question6",
@@ -196,7 +198,7 @@ const responseOptions: GreetingOption[] = [
     content: "I do.",
   },
   {
-    id: "response2", 
+    id: "response2",
     label: "Both Parents",
     content: "Her mother and I do.",
   },
@@ -212,18 +214,20 @@ const responseOptions: GreetingOption[] = [
   },
   {
     id: "response5",
-    label: "Parents' Blessing", 
+    label: "Parents' Blessing",
     content: "She gives herself freely, with our love and blessing.",
   },
   {
     id: "response6",
     label: "Mother & Father",
-    content: "She gives herself freely, with her mother's and my love and blessing.",
+    content:
+      "She gives herself freely, with her mother's and my love and blessing.",
   },
   {
     id: "response7",
     label: "Family Support",
-    content: "She gives herself freely, with the love and support of her family and friends.",
+    content:
+      "She gives herself freely, with the love and support of her family and friends.",
   },
   {
     id: "response8",
@@ -266,13 +270,13 @@ const invocationOptions: GreetingOption[] = [
     id: "invocation5",
     label: "May You Always",
     content:
-      "May you always need one another, not so much to fill the emptiness as to help each other know your fullness. May you want one another, but not out of lack. May you embrace one another, but not encircle one another. May you succeed in all important ways with each other, and not fail in the little graces. Look for things to praise, often say \"I love you,\" and take no notice of small faults. May you have happiness, and may you find it in making one another happy. May you have love, and may you find it in loving one another.",
+      'May you always need one another, not so much to fill the emptiness as to help each other know your fullness. May you want one another, but not out of lack. May you embrace one another, but not encircle one another. May you succeed in all important ways with each other, and not fail in the little graces. Look for things to praise, often say "I love you," and take no notice of small faults. May you have happiness, and may you find it in making one another happy. May you have love, and may you find it in loving one another.',
   },
   {
     id: "invocation6",
     label: "Marriage Blessings",
     content:
-      "May your marriage bring you all the exquisite excitements a marriage should bring, and may life grant you patience, tolerance, and understanding. May you always need one another, but not out of lack. May you embrace one another, but not encircle one another. May you succeed in all important ways with each other, and not fail in the little graces. Look for things to praise, often say \"I love you,\" and take no notice of small faults. May you enthusiastically enter into the mystery that is the awareness of one another's presence—a bond that is as warm and near when you are side by side as when you are separated by time and circumstances. May you have happiness, and may you find it in making one another happy. May you have love, and may you find it in loving one another.",
+      'May your marriage bring you all the exquisite excitements a marriage should bring, and may life grant you patience, tolerance, and understanding. May you always need one another, but not out of lack. May you embrace one another, but not encircle one another. May you succeed in all important ways with each other, and not fail in the little graces. Look for things to praise, often say "I love you," and take no notice of small faults. May you enthusiastically enter into the mystery that is the awareness of one another\'s presence—a bond that is as warm and near when you are side by side as when you are separated by time and circumstances. May you have happiness, and may you find it in making one another happy. May you have love, and may you find it in loving one another.',
   },
   {
     id: "invocation7",
@@ -284,7 +288,7 @@ const invocationOptions: GreetingOption[] = [
     id: "invocation8",
     label: "Supreme Sharing",
     content:
-      "Marriage is a supreme sharing, perhaps the greatest and most challenging adventure in the most intimate of human relationships. It is the joyful uniting of a man and a woman whose care and affection and understanding have flowered into a deep and abiding love. Those who take its sacred vows have their lives blended together into one, as the waters of two rivers are joined when they come together to form an even greater one. A true spiritual marriage is an act of metamorphosis, a profound mystery of creation and rebirth, as two become one. It is not a giving up or loss of oneself, but rather a giving over of oneself to something greater-a transformation of self in which each one can say, \"I am no longer only I but also we.\" It is a process in which each can be challenged to discover new possibilities in themselves and each other. In such a marriage, the wedding ceremony is the gateway into this mystery. For the lives the two of you have lived up until this moment are, in some sense, now truly completed and over. Together you now live within the creation of something wholly new and transcendent, something which has never existed before-your miraculous marriage-an expression that is at once public and private, precious, sacred, and truly unique to the two of you. In this act, you open yourselves to a fuller experience and expression of the great, vast miracle of love. No ceremony can create your marriage. Only you can do that-through love, patience, dedication, perseverance-through talking and listening and trying to understand-through helping and supporting and believing in each other-through learning to forgive, learning to respect and appreciate your differences, and learning to make the important things matter and to let go of the rest. What this ceremony can do is to witness and affirm the choice you have made to begin a new life today as husband and wife.",
+      'Marriage is a supreme sharing, perhaps the greatest and most challenging adventure in the most intimate of human relationships. It is the joyful uniting of a man and a woman whose care and affection and understanding have flowered into a deep and abiding love. Those who take its sacred vows have their lives blended together into one, as the waters of two rivers are joined when they come together to form an even greater one. A true spiritual marriage is an act of metamorphosis, a profound mystery of creation and rebirth, as two become one. It is not a giving up or loss of oneself, but rather a giving over of oneself to something greater-a transformation of self in which each one can say, "I am no longer only I but also we." It is a process in which each can be challenged to discover new possibilities in themselves and each other. In such a marriage, the wedding ceremony is the gateway into this mystery. For the lives the two of you have lived up until this moment are, in some sense, now truly completed and over. Together you now live within the creation of something wholly new and transcendent, something which has never existed before-your miraculous marriage-an expression that is at once public and private, precious, sacred, and truly unique to the two of you. In this act, you open yourselves to a fuller experience and expression of the great, vast miracle of love. No ceremony can create your marriage. Only you can do that-through love, patience, dedication, perseverance-through talking and listening and trying to understand-through helping and supporting and believing in each other-through learning to forgive, learning to respect and appreciate your differences, and learning to make the important things matter and to let go of the rest. What this ceremony can do is to witness and affirm the choice you have made to begin a new life today as husband and wife.',
   },
   {
     id: "invocation9",
@@ -343,15 +347,26 @@ const invocationOptions: GreetingOption[] = [
 ];
 
 const GreetingsStep = ({
-  
   watch,
   openDropdowns,
   onToggleDropdown,
   onSelectDropdown,
 }: GreetingsStepProps) => {
   const [selectedModal, setSelectedModal] = useState<string | null>(null);
-  const { groomName, brideName } =
-    useCeremonyContext();
+  const { groomName, brideName } = useCeremonyContext();
+
+  // Local state for individual field toggles
+  const [presentationReversed, setPresentationReversed] = useState(false);
+  const [questionReversed, setQuestionReversed] = useState(false);
+
+  const currentBrideName = brideName || "Bride";
+  const currentGroomName = groomName || "Groom";
+
+  // Get presentation names based on toggle
+  const getPresentationName = () =>
+    presentationReversed ? currentGroomName : currentBrideName;
+  const getQuestionName = () =>
+    questionReversed ? currentGroomName : currentBrideName;
 
   const openModal = (optionId: string) => {
     setSelectedModal(optionId);
@@ -381,8 +396,8 @@ const GreetingsStep = ({
         options = invocationOptions;
         break;
     }
-    
-    const option = options.find(opt => opt.id === optionId);
+
+    const option = options.find((opt) => opt.id === optionId);
     if (option) {
       const currentBrideName = brideName || "Bride's Name";
       const currentGroomName = groomName || "Groom's Name";
@@ -407,8 +422,6 @@ const GreetingsStep = ({
       .replace(/{groom_name}/g, groomNameVal || "Groom's Name");
   };
 
-  
-
   return (
     <div className="space-y-6">
       {/* Names Section */}
@@ -423,10 +436,7 @@ const GreetingsStep = ({
         </label>
         <CustomDropdown
           name="language"
-          options={[
-            "English",
-            "spanish",
-          ]}
+          options={["English", "spanish"]}
           value={watch("language") || ""}
           placeholder="Select language"
           isOpen={openDropdowns.language || false}
@@ -486,9 +496,27 @@ const GreetingsStep = ({
       <div className="grid grid-cols-1 gap-6">
         {/* Presentation of Bride */}
         <div>
-          <label className="block text-lg font-semibold text-gray-900 mb-3">
-            Presentation of Bride
-          </label>
+          <div className="flex items-center justify-between mb-3">
+            <label className="block text-sm font-medium text-gray-700">
+              Presentation of {getPresentationName()}
+            </label>
+            {currentGroomName &&
+              currentBrideName &&
+              currentGroomName !== "Groom" &&
+              currentBrideName !== "Bride" && (
+                <button
+                  type="button"
+                  onClick={() => setPresentationReversed(!presentationReversed)}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-primary bg-white border border-primary rounded-md hover:bg-primary hover:text-white transition-colors"
+                  title={`Switch to ${
+                    presentationReversed ? currentBrideName : currentGroomName
+                  }`}
+                >
+                  <FaExchangeAlt className="text-xs" />
+                  <span>Switch</span>
+                </button>
+              )}
+          </div>
           <div className="space-y-3">
             <CustomDropdown
               name="presentationOfBride"
@@ -531,11 +559,29 @@ const GreetingsStep = ({
           </div>
         </div>
 
-        {/* Question for Presentation */}
+        {/* Question for Presentation of Bride */}
         <div>
-          <label className="block text-lg font-semibold text-gray-900 mb-3">
-            Question for Presentation of Bride
-          </label>
+          <div className="flex items-center justify-between mb-3">
+            <label className="block text-sm font-medium text-gray-700">
+              Question for Presentation of {getQuestionName()}
+            </label>
+            {currentGroomName &&
+              currentBrideName &&
+              currentGroomName !== "Groom" &&
+              currentBrideName !== "Bride" && (
+                <button
+                  type="button"
+                  onClick={() => setQuestionReversed(!questionReversed)}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-primary bg-white border border-primary rounded-md hover:bg-primary hover:text-white transition-colors"
+                  title={`Switch to ${
+                    questionReversed ? currentBrideName : currentGroomName
+                  }`}
+                >
+                  <FaExchangeAlt className="text-xs" />
+                  <span>Switch</span>
+                </button>
+              )}
+          </div>
           <div className="space-y-3">
             <CustomDropdown
               name="questionForPresentation"
@@ -572,7 +618,7 @@ const GreetingsStep = ({
                   onClick={() => setSelectedModal(option.id)}
                   className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors text-sm"
                 >
-                   {option.label}
+                  {option.label}
                 </button>
               ))}
             </div>
@@ -619,7 +665,7 @@ const GreetingsStep = ({
                   onClick={() => setSelectedModal(option.id)}
                   className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors text-sm"
                 >
-                   {option.label}
+                  {option.label}
                 </button>
               ))}
             </div>
@@ -666,7 +712,7 @@ const GreetingsStep = ({
                   onClick={() => setSelectedModal(option.id)}
                   className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors text-sm"
                 >
-                   {option.label}
+                  {option.label}
                 </button>
               ))}
             </div>
