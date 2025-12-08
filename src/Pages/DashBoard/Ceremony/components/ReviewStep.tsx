@@ -1,4 +1,4 @@
-import {  useState } from "react";
+import { useState } from "react";
 import type { CeremonyFormData } from "../types";
 import { useCeremonyContext } from "../contexts/CeremonyContext";
 
@@ -6,8 +6,6 @@ interface ReviewStepProps {
   watch: (name: keyof CeremonyFormData) => string;
   setValue: (name: keyof CeremonyFormData, value: string) => void;
 }
-
-
 
 // Option mappings for displaying labels instead of IDs
 const getOptionLabel = (optionId: string, category: string): string => {
@@ -134,40 +132,40 @@ const getOptionLabel = (optionId: string, category: string): string => {
 const getOptionContent = (
   optionId: string,
   category: string,
-  groomName: string,
-  brideName: string
+  partner1Name: string,
+  partner2Name: string
 ): string => {
   const contentMappings: { [key: string]: { [key: string]: string } } = {
     greetingSpeech: {
       greeting1: `We are gathered here today to witness and celebrate the union of ${
-        groomName || "Groom's Name"
+        partner1Name || "Partner 1's Name"
       } and ${
-        brideName || "Bride's Name"
+        partner2Name || "Partner 2's Name"
       }. Today, they will make a commitment to each other that will last a lifetime.`,
       greeting2: `Welcome everyone! We're here to celebrate the love between ${
-        groomName || "Groom's Name"
+        partner1Name || "Partner 1's Name"
       } and ${
-        brideName || "Bride's Name"
+        partner2Name || "Partner 2's Name"
       } as they begin their journey together as husband and wife.`,
       greeting3: `Dear family and friends, thank you for gathering here today to witness ${
-        groomName || "Groom's Name"
+        partner1Name || "Partner 1's Name"
       } and ${
-        brideName || "Bride's Name"
+        partner2Name || "Partner 2's Name"
       } as they exchange vows and begin their new life together.`,
     },
     presentationOfBride: {
       presentation1: `Who gives this woman to be married to this man?`,
       presentation2: `Who supports ${
-        brideName || "Bride's Name"
-      } in her marriage to ${groomName || "Groom's Name"}?`,
+        partner2Name || "Partner 2's Name"
+      } in her marriage to ${partner1Name || "Partner 1's Name"}?`,
       presentation3: `${
-        brideName || "Bride's Name"
+        partner2Name || "Partner 2's Name"
       }, who walks with you today and gives you their blessing?`,
     },
     questionForPresentation: {
       question1: `Do you give your blessing to this union?`,
-      question2: `Do you support ${groomName || "Groom's Name"} and ${
-        brideName || "Bride's Name"
+      question2: `Do you support ${partner1Name || "Partner 1's Name"} and ${
+        partner2Name || "Partner 2's Name"
       } in their marriage?`,
       question3: `Will you continue to love and support this couple?`,
     },
@@ -178,64 +176,64 @@ const getOptionContent = (
     },
     invocation: {
       invocation1: `Let us pray. Heavenly Father, we ask for your blessing on ${
-        groomName || "Groom's Name"
+        partner1Name || "Partner 1's Name"
       } and ${
-        brideName || "Bride's Name"
+        partner2Name || "Partner 2's Name"
       } as they unite in marriage. Guide them in love and happiness. Amen.`,
       invocation2: `We invoke the presence of love and commitment as ${
-        groomName || "Groom's Name"
-      } and ${brideName || "Bride's Name"} join their lives together.`,
+        partner1Name || "Partner 1's Name"
+      } and ${partner2Name || "Partner 2's Name"} join their lives together.`,
       invocation3: `May the love that has brought ${
-        groomName || "Groom's Name"
+        partner1Name || "Partner 1's Name"
       } and ${
-        brideName || "Bride's Name"
+        partner2Name || "Partner 2's Name"
       } together continue to grow and flourish throughout their married life.`,
     },
     // Vows content mappings
     chargeToGroomAndBride: {
-      charge1: `${groomName || "Groom's Name"} and ${
-        brideName || "Bride's Name"
+      charge1: `${partner1Name || "Partner 1's Name"} and ${
+        partner2Name || "Partner 2's Name"
       }, you have come here today to be united in marriage. This is a sacred commitment that should not be entered into lightly.`,
-      charge2: `Today, ${groomName || "Groom's Name"} and ${
-        brideName || "Bride's Name"
+      charge2: `Today, ${partner1Name || "Partner 1's Name"} and ${
+        partner2Name || "Partner 2's Name"
       }, you are choosing to bind your lives together in marriage. This is a beautiful commitment built on love, trust, and mutual respect.`,
-      charge3: `${groomName || "Groom's Name"} and ${
-        brideName || "Bride's Name"
+      charge3: `${partner1Name || "Partner 1's Name"} and ${
+        partner2Name || "Partner 2's Name"
       }, marriage is a partnership of two people who love each other and choose to walk through life together.`,
     },
     pledge: {
-      pledge1: `Do you, ${groomName || "Groom's Name"}, take ${
-        brideName || "Bride's Name"
+      pledge1: `Do you, ${partner1Name || "Partner 1's Name"}, take ${
+        partner2Name || "Partner 2's Name"
       } to be your wife, to love and to cherish, in sickness and in health, for richer or poorer, for better or worse, for as long as you both shall live?`,
       pledge2: `${
-        groomName || "Groom's Name"
+        partner1Name || "Partner 1's Name"
       }, do you promise to love, honor, and respect ${
-        brideName || "Bride's Name"
+        partner2Name || "Partner 2's Name"
       } as your partner in marriage?`,
-      pledge3: `${groomName || "Groom's Name"}, will you take ${
-        brideName || "Bride's Name"
+      pledge3: `${partner1Name || "Partner 1's Name"}, will you take ${
+        partner2Name || "Partner 2's Name"
       } as your wife and promise to stand by her through all of life's joys and challenges?`,
     },
     introductionToExchangeOfVows: {
-      intro_vows1: `${groomName || "Groom's Name"} and ${
-        brideName || "Bride's Name"
+      intro_vows1: `${partner1Name || "Partner 1's Name"} and ${
+        partner2Name || "Partner 2's Name"
       } will now exchange the vows they have written for each other.`,
-      intro_vows2: `Now, ${groomName || "Groom's Name"} and ${
-        brideName || "Bride's Name"
+      intro_vows2: `Now, ${partner1Name || "Partner 1's Name"} and ${
+        partner2Name || "Partner 2's Name"
       } would like to share their personal promises to each other.`,
-      intro_vows3: `At this time, ${groomName || "Groom's Name"} and ${
-        brideName || "Bride's Name"
+      intro_vows3: `At this time, ${partner1Name || "Partner 1's Name"} and ${
+        partner2Name || "Partner 2's Name"
       } will speak the words that come from their hearts.`,
     },
     vows: {
-      vows1: `I, ${groomName || "Groom's Name"}, take you, ${
-        brideName || "Bride's Name"
+      vows1: `I, ${partner1Name || "Partner 1's Name"}, take you, ${
+        partner2Name || "Partner 2's Name"
       }, to be my wife. I promise to love you, honor you, and cherish you for all the days of my life.`,
       vows2: `${
-        brideName || "Bride's Name"
+        partner2Name || "Partner 2's Name"
       }, I choose you to be my partner in life. I promise to support you, encourage you, and love you unconditionally.`,
       vows3: `Today I give myself to you, ${
-        brideName || "Bride's Name"
+        partner2Name || "Partner 2's Name"
       }. I promise to be your faithful companion and to build our dreams together.`,
     },
     readings: {
@@ -245,12 +243,12 @@ const getOptionContent = (
     },
     introductionToExchangeOfRings: {
       intro_rings1: `The wedding rings are an outward and visible sign of an inward and spiritual bond which unites two hearts in endless love.`,
-      intro_rings2: `${groomName || "Groom's Name"} and ${
-        brideName || "Bride's Name"
+      intro_rings2: `${partner1Name || "Partner 1's Name"} and ${
+        partner2Name || "Partner 2's Name"
       } will now exchange rings as a symbol of their eternal commitment.`,
       intro_rings3: `These rings represent the unbroken circle of love. ${
-        groomName || "Groom's Name"
-      } and ${brideName || "Bride's Name"}, please exchange your rings.`,
+        partner1Name || "Partner 1's Name"
+      } and ${partner2Name || "Partner 2's Name"}, please exchange your rings.`,
     },
     blessingsOfRings: {
       blessing1: `May these rings be blessed as the symbol of this affectionate unity. Let them remind you always of the vows you have taken here today.`,
@@ -259,60 +257,60 @@ const getOptionContent = (
     },
     exchangeOfRingsGroom: {
       exchange_groom1: `${
-        brideName || "Bride's Name"
+        partner2Name || "Partner 2's Name"
       }, I give you this ring as a symbol of my love and commitment to you. Wear it as a reminder of the vows we have spoken today.`,
       exchange_groom2: `With this ring, I thee wed. ${
-        brideName || "Bride's Name"
+        partner2Name || "Partner 2's Name"
       }, this ring represents my promise to love and honor you always.`,
       exchange_groom3: `${
-        brideName || "Bride's Name"
+        partner2Name || "Partner 2's Name"
       }, this ring is a circle, representing our eternal love. I place it on your finger as a symbol of my devotion to you.`,
     },
     exchangeOfRingsBride: {
       exchange_bride1: `${
-        groomName || "Groom's Name"
+        partner1Name || "Partner 1's Name"
       }, I give you this ring as a symbol of my love and commitment to you. Wear it as a reminder of the vows we have spoken today.`,
       exchange_bride2: `With this ring, I thee wed. ${
-        groomName || "Groom's Name"
+        partner1Name || "Partner 1's Name"
       }, this ring represents my promise to love and honor you always.`,
       exchange_bride3: `${
-        groomName || "Groom's Name"
+        partner1Name || "Partner 1's Name"
       }, this ring is a circle, representing our eternal love. I place it on your finger as a symbol of my devotion to you.`,
     },
     prayerOnTheNewUnion: {
       prayer1: `Lord, we ask your blessing upon ${
-        groomName || "Groom's Name"
+        partner1Name || "Partner 1's Name"
       } and ${
-        brideName || "Bride's Name"
+        partner2Name || "Partner 2's Name"
       } as they begin their married life together. Guide them in love and grant them happiness all their days.`,
-      prayer2: `May ${groomName || "Groom's Name"} and ${
-        brideName || "Bride's Name"
+      prayer2: `May ${partner1Name || "Partner 1's Name"} and ${
+        partner2Name || "Partner 2's Name"
       } be blessed with love, joy, and peace in their marriage. May they always find strength in each other.`,
-      prayer3: `We pray for ${groomName || "Groom's Name"} and ${
-        brideName || "Bride's Name"
+      prayer3: `We pray for ${partner1Name || "Partner 1's Name"} and ${
+        partner2Name || "Partner 2's Name"
       }, that their love may continue to grow stronger each day and that they may find joy in their journey together.`,
     },
     ritualsOption: {
-      sand1: `${groomName || "Groom's Name"} and ${
-        brideName || "Bride's Name"
+      sand1: `${partner1Name || "Partner 1's Name"} and ${
+        partner2Name || "Partner 2's Name"
       }, today you are making a life-long commitment to share the rest of your lives with each other. Your relationship is symbolized through the pouring of these two individual containers of sand.`,
-      sand2: `${groomName || "Groom's Name"} and ${
-        brideName || "Bride's Name"
+      sand2: `${partner1Name || "Partner 1's Name"} and ${
+        partner2Name || "Partner 2's Name"
       }, the two separate bottles of sand represent your lives until this moment; individual and unique. As you now combine your sand together, your lives also join together as one.`,
-      sand3: `${groomName || "Groom's Name"} and ${
-        brideName || "Bride's Name"
+      sand3: `${partner1Name || "Partner 1's Name"} and ${
+        partner2Name || "Partner 2's Name"
       }, today you are making a life-long commitment to share the rest of your lives with each other. Your relationship is symbolized through the pouring of these two individual containers of sand.`,
     },
     closingStatement: {
       closing1:
         "May your marriage be filled with love, laughter, and happiness. May you always find in each other your best friend and your greatest love.",
       closing2: `May the love that has brought ${
-        groomName || "Groom's Name"
+        partner1Name || "Partner 1's Name"
       } and ${
-        brideName || "Bride's Name"
+        partner2Name || "Partner 2's Name"
       } together continue to grow and flourish throughout their married life.`,
-      closing3: `${groomName || "Groom's Name"} and ${
-        brideName || "Bride's Name"
+      closing3: `${partner1Name || "Partner 1's Name"} and ${
+        partner2Name || "Partner 2's Name"
       }, as you begin this wonderful journey together, remember that love is not just a feeling, but a choice you make each day.`,
     },
     pronouncing: {
@@ -320,27 +318,27 @@ const getOptionContent = (
         "By the power vested in me, I now pronounce you husband and wife. What God has joined together, let no one separate.",
       pronounce2:
         "By the authority vested in me, and in the presence of your family and friends, I now pronounce you married. You are now husband and wife.",
-      pronounce3: `${groomName || "Groom's Name"} and ${
-        brideName || "Bride's Name"
+      pronounce3: `${partner1Name || "Partner 1's Name"} and ${
+        partner2Name || "Partner 2's Name"
       }, having pledged your love and commitment to each other before these witnesses, I am delighted to pronounce you husband and wife.`,
     },
     kiss: {
       kiss1: "You may now kiss your bride!",
       kiss2: "You may now kiss each other as married partners!",
-      kiss3: `${groomName || "Groom's Name"}, you may now kiss ${
-        brideName || "Bride's Name"
+      kiss3: `${partner1Name || "Partner 1's Name"}, you may now kiss ${
+        partner2Name || "Partner 2's Name"
       }, your wife!`,
     },
     introductionOfCouple: {
       intro1: `Ladies and gentlemen, it is my great pleasure to present to you for the first time as a married couple, Mr. and Mrs. ${
-        groomName || "Groom's Name"
-      } ${brideName || "Bride's Name"}!`,
+        partner1Name || "Partner 1's Name"
+      } ${partner2Name || "Partner 2's Name"}!`,
       intro2: `Family and friends, please join me in celebrating the newly married couple, ${
-        groomName || "Groom's Name"
-      } and ${brideName || "Bride's Name"}!`,
+        partner1Name || "Partner 1's Name"
+      } and ${partner2Name || "Partner 2's Name"}!`,
       intro3: `Everyone, please give a warm welcome to the happy couple, ${
-        groomName || "Groom's Name"
-      } and ${brideName || "Bride's Name"}!`,
+        partner1Name || "Partner 1's Name"
+      } and ${partner2Name || "Partner 2's Name"}!`,
     },
   };
 
@@ -352,7 +350,7 @@ const ReviewStep = ({ watch }: ReviewStepProps) => {
     category: string;
     optionId: string;
   } | null>(null);
-  const { groomName, brideName } = useCeremonyContext();
+  const { partner1Name, partner2Name } = useCeremonyContext();
 
   const openModal = (category: string, optionId: string) => {
     if (optionId && optionId !== "Not specified") {
@@ -363,8 +361,6 @@ const ReviewStep = ({ watch }: ReviewStepProps) => {
   const closeModal = () => {
     setSelectedModal(null);
   };
-
-
 
   // Helper function to format date for display
   const formatDate = (dateString: string) => {
@@ -399,9 +395,6 @@ const ReviewStep = ({ watch }: ReviewStepProps) => {
     }
   };
 
-  
-
-
   return (
     <div className="space-y-8">
       <div className="text-center">
@@ -423,7 +416,6 @@ const ReviewStep = ({ watch }: ReviewStepProps) => {
           Basic Information
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          
           <div>
             <span className="font-medium text-gray-700 block">
               Description:
@@ -447,7 +439,7 @@ const ReviewStep = ({ watch }: ReviewStepProps) => {
           <div className="space-y-3">
             <div>
               <span className="font-medium text-gray-700 block">
-                Groom's Name:
+                Partner 1's Name:
               </span>
               <span className="text-gray-900 bg-white px-3 py-2 rounded border border-primary block">
                 {watch("groomName") || "Not specified"}
@@ -455,7 +447,7 @@ const ReviewStep = ({ watch }: ReviewStepProps) => {
             </div>
             <div>
               <span className="font-medium text-gray-700 block">
-                Bride's Name:
+                Partner 2's Name:
               </span>
               <span className="text-gray-900 bg-white px-3 py-2 rounded border border-primary block">
                 {watch("brideName") || "Not specified"}
@@ -613,7 +605,7 @@ const ReviewStep = ({ watch }: ReviewStepProps) => {
           <div className="space-y-3">
             <div>
               <span className="font-medium text-gray-700 block">
-                Charge to Groom and Bride:
+                Charge to Partner 1 and Partner 2:
               </span>
               <div className="flex items-center gap-2">
                 <span className="text-gray-900 bg-white px-3 py-2 rounded border border-primary flex-1">
@@ -776,7 +768,7 @@ const ReviewStep = ({ watch }: ReviewStepProps) => {
             </div>
             <div>
               <span className="font-medium text-gray-700 block">
-                Exchange of Rings - Groom:
+                Exchange of Rings - Partner 1:
               </span>
               <div className="flex items-center gap-2">
                 <span className="text-gray-900 bg-white px-3 py-2 rounded border border-primary flex-1">
@@ -804,7 +796,7 @@ const ReviewStep = ({ watch }: ReviewStepProps) => {
             </div>
             <div>
               <span className="font-medium text-gray-700 block">
-                Exchange of Rings - Bride:
+                Exchange of Rings - Partner 2:
               </span>
               <div className="flex items-center gap-2">
                 <span className="text-gray-900 bg-white px-3 py-2 rounded border border-primary flex-1">
@@ -1173,8 +1165,8 @@ const ReviewStep = ({ watch }: ReviewStepProps) => {
                   {getOptionContent(
                     selectedModal.optionId,
                     selectedModal.category,
-                    watch("groomName") || groomName || "Groom's Name",
-                    watch("brideName") || brideName || "Bride's Name"
+                    watch("groomName") || partner1Name || "Partner 1's Name",
+                    watch("brideName") || partner2Name || "Partner 2's Name"
                   )}
                 </p>
               </div>

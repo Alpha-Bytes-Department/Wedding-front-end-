@@ -75,13 +75,13 @@ const getCoupleInfoHTML = (event: any) => `
     </h4>
     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
       <div style="background: rgba(255,255,255,0.6); padding: 12px; border-radius: 8px;">
-        <span style="font-size: 11px; color: #78350f; text-transform: uppercase; font-weight: 600;">Groom</span>
+        <span style="font-size: 11px; color: #78350f; text-transform: uppercase; font-weight: 600;">Partner 1</span>
         <div style="font-weight: 700; color: #1f2937; font-size: 15px; margin-top: 4px;">${
           event.groomName || "N/A"
         }</div>
       </div>
       <div style="background: rgba(255,255,255,0.6); padding: 12px; border-radius: 8px;">
-        <span style="font-size: 11px; color: #78350f; text-transform: uppercase; font-weight: 600;">Bride</span>
+        <span style="font-size: 11px; color: #78350f; text-transform: uppercase; font-weight: 600;">Partner 2</span>
         <div style="font-weight: 700; color: #1f2937; font-size: 15px; margin-top: 4px;">${
           event.brideName || "N/A"
         }</div>
@@ -204,7 +204,7 @@ const getVowsCommitmentsHTML = (event: any) => {
       </h4>
       <div style="background: rgba(255,255,255,0.7); padding: 14px; border-radius: 8px;">
         ${renderField(
-          "Charge to Groom and Bride",
+          "Charge to Partner 1 and Partner 2",
           event.chargeToGroomAndBride,
           true
         )}
@@ -243,12 +243,12 @@ const getRingExchangeHTML = (event: any) => {
         )}
         ${renderField("Blessings of Rings", event.blessingsOfRings, true)}
         ${renderField(
-          "Exchange of Rings - Groom",
+          "Exchange of Rings - Partner 1",
           event.exchangeOfRingsGroom,
           true
         )}
         ${renderField(
-          "Exchange of Rings - Bride",
+          "Exchange of Rings - Partner 2",
           event.exchangeOfRingsBride,
           true
         )}

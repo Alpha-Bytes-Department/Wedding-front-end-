@@ -15,41 +15,41 @@ interface TypeStepProps {
 }
 
 const TypeStep = ({ register }: TypeStepProps) => {
-  const { setGroomName, setBrideName } = useCeremonyContext();
+  const { setPartner1Name, setPartner2Name } = useCeremonyContext();
   const { user } = useAuth();
-  const [selectedGroom, setSelectedGroom] = useState<string>("");
-  const [selectedBride, setSelectedBride] = useState<string>("");
+  const [selectedPartner1, setSelectedPartner1] = useState<string>("");
+  const [selectedPartner2, setSelectedPartner2] = useState<string>("");
 
   const partner1 = user?.partner_1 || "Partner 1";
   const partner2 = user?.partner_2 || "Partner 2";
 
   useEffect(() => {
     // Set default values on mount
-    if (!selectedGroom && !selectedBride) {
-      setSelectedGroom(partner1);
-      setSelectedBride(partner2);
-      setGroomName(partner1);
-      setBrideName(partner2);
+    if (!selectedPartner1 && !selectedPartner2) {
+      setSelectedPartner1(partner1);
+      setSelectedPartner2(partner2);
+      setPartner1Name(partner1);
+      setPartner2Name(partner2);
     }
   }, [partner1, partner2]);
 
-  const handleGroomChange = (value: string) => {
-    setSelectedGroom(value);
-    setGroomName(value);
-    // Automatically set bride to the other partner
+  const handlePartner1Change = (value: string) => {
+    setSelectedPartner1(value);
+    setPartner1Name(value);
+    // Automatically set partner 2 to the other partner
     const otherPartner = value === partner1 ? partner2 : partner1;
-    setSelectedBride(otherPartner);
-    setBrideName(otherPartner);
+    setSelectedPartner2(otherPartner);
+    setPartner2Name(otherPartner);
   };
 
   const handleTogglePartners = () => {
-    // Swap groom and bride
-    const tempGroom = selectedGroom;
-    const tempBride = selectedBride;
-    setSelectedGroom(tempBride);
-    setSelectedBride(tempGroom);
-    setGroomName(tempBride);
-    setBrideName(tempGroom);
+    // Swap partner 1 and partner 2
+    const temp1 = selectedPartner1;
+    const temp2 = selectedPartner2;
+    setSelectedPartner1(temp2);
+    setSelectedPartner2(temp1);
+    setPartner1Name(temp2);
+    setPartner2Name(temp1);
   };
 
   return (
@@ -57,14 +57,14 @@ const TypeStep = ({ register }: TypeStepProps) => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-end">
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            Who is the Groom?
+            Select Partner 1
           </label>
           <select
             {...register("groomName", {
-              required: "Please select who is the groom",
+              required: "Please select Partner 1",
             })}
-            value={selectedGroom}
-            onChange={(e) => handleGroomChange(e.target.value)}
+            value={selectedPartner1}
+            onChange={(e) => handlePartner1Change(e.target.value)}
             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent bg-white"
           >
             <option value="">Select partner...</option>
@@ -74,13 +74,13 @@ const TypeStep = ({ register }: TypeStepProps) => {
         </div>
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            Who is the Bride?
+            Partner 2
           </label>
           <div className="relative">
             <input
               {...register("brideName")}
               type="text"
-              value={selectedBride}
+              value={selectedPartner2}
               readOnly
               className="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-50 cursor-not-allowed text-gray-600"
             />
@@ -92,7 +92,7 @@ const TypeStep = ({ register }: TypeStepProps) => {
       </div>
 
       {/* Toggle Button */}
-      {selectedGroom && selectedBride && (
+      {selectedPartner1 && selectedPartner2 && (
         <div className="flex justify-center">
           <button
             type="button"
@@ -106,14 +106,14 @@ const TypeStep = ({ register }: TypeStepProps) => {
       )}
 
       {/* Display Current Selection */}
-      {selectedGroom && selectedBride && (
+      {selectedPartner1 && selectedPartner2 && (
         <div className="bg-amber-50 border border-primary/20 rounded-lg p-4">
           <p className="text-sm text-gray-700">
-            <span className="font-medium text-primary">Groom:</span>{" "}
-            {selectedGroom}
+            <span className="font-medium text-primary">Partner 1:</span>{" "}
+            {selectedPartner1}
             <span className="mx-2 text-gray-400">•</span>
-            <span className="font-medium text-primary">Bride:</span>{" "}
-            {selectedBride}
+            <span className="font-medium text-primary">Partner 2:</span>{" "}
+            {selectedPartner2}
           </p>
         </div>
       )}

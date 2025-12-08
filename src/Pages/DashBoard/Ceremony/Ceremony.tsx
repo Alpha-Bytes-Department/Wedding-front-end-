@@ -31,10 +31,14 @@ const Ceremony = () => {
     user?.partner_2 &&
     user?.contact?.partner_1 &&
     user?.contact?.partner_2 &&
-    user?.location && user?.weddingDate && user?.needRehearsal !== null&& (user?.needRehearsal=== false || (user?.needRehearsal=== true && user?.rehearsalDate));
+    user?.location &&
+    user?.weddingDate &&
+    user?.needRehearsal !== null &&
+    (user?.needRehearsal === false ||
+      (user?.needRehearsal === true && user?.rehearsalDate));
 
-    console.log("Profile Complete:", profileComplete);
-  const { groomName, brideName } = useCeremonyContext();
+  console.log("Profile Complete:", profileComplete);
+  const { partner1Name, partner2Name } = useCeremonyContext();
   const [activeTab, setActiveTab] = useState<"new" | "draft" | "my">("new");
   const [loading, setLoading] = useState(false);
 
@@ -286,8 +290,8 @@ const Ceremony = () => {
       setLoading(true);
 
       // Get names from form data or context
-      const groom = data.groomName || groomName;
-      const bride = data.brideName || brideName;
+      const partner1 = data.groomName || partner1Name;
+      const partner2 = data.brideName || partner2Name;
 
       if (editingCeremony) {
         // Update existing ceremony and change status to completed
@@ -298,9 +302,9 @@ const Ceremony = () => {
 
         const ceremonyData = {
           ...data,
-          title: `${groom} & ${bride} Ceremony`,
-          groomName: groom,
-          brideName: bride,
+          title: `${partner1} & ${partner2} Ceremony`,
+          groomName: partner1,
+          brideName: partner2,
           status: "submitted" as const,
         };
 
@@ -339,9 +343,9 @@ const Ceremony = () => {
         // Create new ceremony with submitted status
         const ceremonyData = {
           ...data,
-          title: `${groom} & ${bride} Ceremony`,
-          groomName: groom,
-          brideName: bride,
+          title: `${partner1} & ${partner2} Ceremony`,
+          groomName: partner1,
+          brideName: partner2,
           status: "submitted" as const,
         };
 
@@ -391,13 +395,13 @@ const Ceremony = () => {
     }
 
     // Get names from form data or context
-    const groom = data.groomName || groomName;
-    const bride = data.brideName || brideName;
+    const partner1 = data.groomName || partner1Name;
+    const partner2 = data.brideName || partner2Name;
 
-    if (!groom || !bride) {
+    if (!partner1 || !partner2) {
       await GlassSwal.error(
         "Missing Information",
-        "Please provide both groom and bride names before saving a draft."
+        "Please provide both partner names before saving a draft."
       );
       return;
     }
@@ -406,7 +410,7 @@ const Ceremony = () => {
       setLoading(true);
 
       // Automatically generate title from the names
-      const draftTitle = `${groom} & ${bride}'s Wedding Ceremony`;
+      const draftTitle = `${partner1} & ${partner2}'s Wedding Ceremony`;
 
       if (editingCeremony) {
         // Update existing ceremony
@@ -418,8 +422,8 @@ const Ceremony = () => {
         const draftData = {
           ...data,
           title: draftTitle,
-          groomName: groom,
-          brideName: bride,
+          groomName: partner1,
+          brideName: partner2,
           description: data.description || "Draft in progress",
         };
 
@@ -443,8 +447,8 @@ const Ceremony = () => {
         const draftData = {
           ...data,
           title: draftTitle,
-          groomName: groom,
-          brideName: bride,
+          groomName: partner1,
+          brideName: partner2,
           description: data.description || "Draft in progress",
           status: "planned" as const,
         };

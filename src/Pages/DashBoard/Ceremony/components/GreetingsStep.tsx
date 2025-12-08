@@ -353,20 +353,20 @@ const GreetingsStep = ({
   onSelectDropdown,
 }: GreetingsStepProps) => {
   const [selectedModal, setSelectedModal] = useState<string | null>(null);
-  const { groomName, brideName } = useCeremonyContext();
+  const { partner1Name, partner2Name } = useCeremonyContext();
 
   // Local state for individual field toggles
   const [presentationReversed, setPresentationReversed] = useState(false);
   const [questionReversed, setQuestionReversed] = useState(false);
 
-  const currentBrideName = brideName || "Bride";
-  const currentGroomName = groomName || "Groom";
+  const currentPartner2Name = partner2Name || "Partner 2";
+  const currentPartner1Name = partner1Name || "Partner 1";
 
   // Get presentation names based on toggle
   const getPresentationName = () =>
-    presentationReversed ? currentGroomName : currentBrideName;
+    presentationReversed ? currentPartner1Name : currentPartner2Name;
   const getQuestionName = () =>
-    questionReversed ? currentGroomName : currentBrideName;
+    questionReversed ? currentPartner1Name : currentPartner2Name;
 
   const openModal = (optionId: string) => {
     setSelectedModal(optionId);
@@ -399,11 +399,11 @@ const GreetingsStep = ({
 
     const option = options.find((opt) => opt.id === optionId);
     if (option) {
-      const currentBrideName = brideName || "Bride's Name";
-      const currentGroomName = groomName || "Groom's Name";
+      const currentPartner2Name = partner2Name || "Partner 2's Name";
+      const currentPartner1Name = partner1Name || "Partner 1's Name";
       const content = option.content
-        .replace(/{bride_name}/g, currentBrideName)
-        .replace(/{groom_name}/g, currentGroomName);
+        .replace(/{bride_name}/g, currentPartner2Name)
+        .replace(/{groom_name}/g, currentPartner1Name);
       onSelectDropdown(fieldName, content);
     }
   };
@@ -411,15 +411,15 @@ const GreetingsStep = ({
   const getOptionContent = (
     options: GreetingOption[],
     optionId: string,
-    brideNameVal: string,
-    groomNameVal: string
+    partner2NameVal: string,
+    partner1NameVal: string
   ) => {
     const option = options.find((opt) => opt.id === optionId);
     if (!option) return "";
 
     return option.content
-      .replace(/{bride_name}/g, brideNameVal || "Bride's Name")
-      .replace(/{groom_name}/g, groomNameVal || "Groom's Name");
+      .replace(/{bride_name}/g, partner2NameVal || "Partner 2's Name")
+      .replace(/{groom_name}/g, partner1NameVal || "Partner 1's Name");
   };
 
   return (
@@ -457,12 +457,12 @@ const GreetingsStep = ({
             value={(() => {
               const currentContent = watch("greetingSpeech");
               if (!currentContent) return "";
-              const currentBrideName = brideName || "Bride's Name";
-              const currentGroomName = groomName || "Groom's Name";
+              const currentPartner2Name = partner2Name || "Partner 2's Name";
+              const currentPartner1Name = partner1Name || "Partner 1's Name";
               const currentOption = greetingOptions.find((opt) => {
                 const optionContent = opt.content
-                  .replace(/{bride_name}/g, currentBrideName)
-                  .replace(/{groom_name}/g, currentGroomName);
+                  .replace(/{bride_name}/g, currentPartner2Name)
+                  .replace(/{groom_name}/g, currentPartner1Name);
                 return optionContent === currentContent;
               });
               return currentOption?.label || "";
@@ -500,16 +500,18 @@ const GreetingsStep = ({
             <label className="block text-sm font-medium text-gray-700">
               Presentation of {getPresentationName()}
             </label>
-            {currentGroomName &&
-              currentBrideName &&
-              currentGroomName !== "Groom" &&
-              currentBrideName !== "Bride" && (
+            {currentPartner1Name &&
+              currentPartner2Name &&
+              currentPartner1Name !== "Partner 1" &&
+              currentPartner2Name !== "Partner 2" && (
                 <button
                   type="button"
                   onClick={() => setPresentationReversed(!presentationReversed)}
                   className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-primary bg-white border border-primary rounded-md hover:bg-primary hover:text-white transition-colors"
                   title={`Switch to ${
-                    presentationReversed ? currentBrideName : currentGroomName
+                    presentationReversed
+                      ? currentPartner2Name
+                      : currentPartner1Name
                   }`}
                 >
                   <FaExchangeAlt className="text-xs" />
@@ -524,12 +526,12 @@ const GreetingsStep = ({
               value={(() => {
                 const currentContent = watch("presentationOfBride");
                 if (!currentContent) return "";
-                const currentBrideName = brideName || "Bride's Name";
-                const currentGroomName = groomName || "Groom's Name";
+                const currentPartner2Name = partner2Name || "Partner 2's Name";
+                const currentPartner1Name = partner1Name || "Partner 1's Name";
                 const currentOption = presentationOptions.find((opt) => {
                   const optionContent = opt.content
-                    .replace(/{bride_name}/g, currentBrideName)
-                    .replace(/{groom_name}/g, currentGroomName);
+                    .replace(/{bride_name}/g, currentPartner2Name)
+                    .replace(/{groom_name}/g, currentPartner1Name);
                   return optionContent === currentContent;
                 });
                 return currentOption?.label || "";
@@ -565,16 +567,16 @@ const GreetingsStep = ({
             <label className="block text-sm font-medium text-gray-700">
               Question for Presentation of {getQuestionName()}
             </label>
-            {currentGroomName &&
-              currentBrideName &&
-              currentGroomName !== "Groom" &&
-              currentBrideName !== "Bride" && (
+            {currentPartner1Name &&
+              currentPartner2Name &&
+              currentPartner1Name !== "Partner 1" &&
+              currentPartner2Name !== "Partner 2" && (
                 <button
                   type="button"
                   onClick={() => setQuestionReversed(!questionReversed)}
                   className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-primary bg-white border border-primary rounded-md hover:bg-primary hover:text-white transition-colors"
                   title={`Switch to ${
-                    questionReversed ? currentBrideName : currentGroomName
+                    questionReversed ? currentPartner2Name : currentPartner1Name
                   }`}
                 >
                   <FaExchangeAlt className="text-xs" />
@@ -589,12 +591,12 @@ const GreetingsStep = ({
               value={(() => {
                 const currentContent = watch("questionForPresentation");
                 if (!currentContent) return "";
-                const currentBrideName = brideName || "Bride's Name";
-                const currentGroomName = groomName || "Groom's Name";
+                const currentPartner2Name = partner2Name || "Partner 2's Name";
+                const currentPartner1Name = partner1Name || "Partner 1's Name";
                 const currentOption = questionOptions.find((opt) => {
                   const optionContent = opt.content
-                    .replace(/{bride_name}/g, currentBrideName)
-                    .replace(/{groom_name}/g, currentGroomName);
+                    .replace(/{bride_name}/g, currentPartner2Name)
+                    .replace(/{groom_name}/g, currentPartner1Name);
                   return optionContent === currentContent;
                 });
                 return currentOption?.label || "";
@@ -637,12 +639,12 @@ const GreetingsStep = ({
               value={(() => {
                 const currentContent = watch("responseToQuestion");
                 if (!currentContent) return "";
-                const currentBrideName = brideName || "Bride's Name";
-                const currentGroomName = groomName || "Groom's Name";
+                const currentPartner2Name = partner2Name || "Partner 2's Name";
+                const currentPartner1Name = partner1Name || "Partner 1's Name";
                 const currentOption = responseOptions.find((opt) => {
                   const optionContent = opt.content
-                    .replace(/{bride_name}/g, currentBrideName)
-                    .replace(/{groom_name}/g, currentGroomName);
+                    .replace(/{bride_name}/g, currentPartner2Name)
+                    .replace(/{groom_name}/g, currentPartner1Name);
                   return optionContent === currentContent;
                 });
                 return currentOption?.label || "";
@@ -684,12 +686,12 @@ const GreetingsStep = ({
               value={(() => {
                 const currentContent = watch("invocation");
                 if (!currentContent) return "";
-                const currentBrideName = brideName || "Bride's Name";
-                const currentGroomName = groomName || "Groom's Name";
+                const currentPartner2Name = partner2Name || "Partner 2's Name";
+                const currentPartner1Name = partner1Name || "Partner 1's Name";
                 const currentOption = invocationOptions.find((opt) => {
                   const optionContent = opt.content
-                    .replace(/{bride_name}/g, currentBrideName)
-                    .replace(/{groom_name}/g, currentGroomName);
+                    .replace(/{bride_name}/g, currentPartner2Name)
+                    .replace(/{groom_name}/g, currentPartner1Name);
                   return optionContent === currentContent;
                 });
                 return currentOption?.label || "";
@@ -765,10 +767,10 @@ const GreetingsStep = ({
               <div className="bg-gray-50 p-4 rounded-lg">
                 <p className="text-gray-800 leading-relaxed">
                   {(() => {
-                    const currentBrideName =
-                      watch("brideName") || brideName || "";
-                    const currentGroomName =
-                      watch("groomName") || groomName || "";
+                    const currentPartner2Name =
+                      watch("partner2Name") || partner2Name || "";
+                    const currentPartner1Name =
+                      watch("partner1Name") || partner1Name || "";
 
                     // Check which option type this is
                     if (
@@ -777,8 +779,8 @@ const GreetingsStep = ({
                       return getOptionContent(
                         greetingOptions,
                         selectedModal,
-                        currentBrideName,
-                        currentGroomName
+                        currentPartner2Name,
+                        currentPartner1Name
                       );
                     } else if (
                       presentationOptions.find(
@@ -788,8 +790,8 @@ const GreetingsStep = ({
                       return getOptionContent(
                         presentationOptions,
                         selectedModal,
-                        currentBrideName,
-                        currentGroomName
+                        currentPartner2Name,
+                        currentPartner1Name
                       );
                     } else if (
                       questionOptions.find((opt) => opt.id === selectedModal)
@@ -797,8 +799,8 @@ const GreetingsStep = ({
                       return getOptionContent(
                         questionOptions,
                         selectedModal,
-                        currentBrideName,
-                        currentGroomName
+                        currentPartner2Name,
+                        currentPartner1Name
                       );
                     } else if (
                       responseOptions.find((opt) => opt.id === selectedModal)
@@ -806,8 +808,8 @@ const GreetingsStep = ({
                       return getOptionContent(
                         responseOptions,
                         selectedModal,
-                        currentBrideName,
-                        currentGroomName
+                        currentPartner2Name,
+                        currentPartner1Name
                       );
                     } else if (
                       invocationOptions.find((opt) => opt.id === selectedModal)
@@ -815,8 +817,8 @@ const GreetingsStep = ({
                       return getOptionContent(
                         invocationOptions,
                         selectedModal,
-                        currentBrideName,
-                        currentGroomName
+                        currentPartner2Name,
+                        currentPartner1Name
                       );
                     }
                     return "";

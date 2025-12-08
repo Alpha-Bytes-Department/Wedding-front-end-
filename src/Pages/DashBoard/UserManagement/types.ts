@@ -25,6 +25,12 @@ export interface User {
   specialization?: string;
   languages?: string[];
   bio?: string;
+  AgreementAccepted?: boolean;
+  currentOfficiant?: {
+    officiantId: string | null;
+    officiantName: string | null;
+    assignedAt: string | null;
+  };
 }
 
 export interface Officiant {
