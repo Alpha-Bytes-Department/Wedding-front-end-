@@ -1,4 +1,8 @@
-import type { UseFormRegister, FieldErrors } from "react-hook-form";
+import type {
+  UseFormRegister,
+  FieldErrors,
+  UseFormSetValue,
+} from "react-hook-form";
 import type { CeremonyFormData } from "../types";
 import { useCeremonyContext } from "../contexts/CeremonyContext";
 import { useAuth } from "../../../../Component/Providers/AuthProvider";
@@ -9,12 +13,13 @@ interface TypeStepProps {
   register: UseFormRegister<CeremonyFormData>;
   errors: FieldErrors<CeremonyFormData>;
   watch: (name: keyof CeremonyFormData) => string;
+  setValue: UseFormSetValue<CeremonyFormData>;
   openDropdowns: { [key: string]: boolean };
   onToggleDropdown: (name: string) => void;
   onSelectDropdown: (name: string, value: string) => void;
 }
 
-const TypeStep = ({ register }: TypeStepProps) => {
+const TypeStep = ({ register, setValue }: TypeStepProps) => {
   const { setPartner1Name, setPartner2Name } = useCeremonyContext();
   const { user } = useAuth();
   const [selectedPartner1, setSelectedPartner1] = useState<string>("");
@@ -30,8 +35,11 @@ const TypeStep = ({ register }: TypeStepProps) => {
       setSelectedPartner2(partner2);
       setPartner1Name(partner1);
       setPartner2Name(partner2);
+      // Also update form values
+      setValue("groomName", partner1);
+      setValue("brideName", partner2);
     }
-  }, [partner1, partner2]);
+  }, [partner1, partner2, setValue]);
 
   const handlePartner1Change = (value: string) => {
     setSelectedPartner1(value);
@@ -40,6 +48,9 @@ const TypeStep = ({ register }: TypeStepProps) => {
     const otherPartner = value === partner1 ? partner2 : partner1;
     setSelectedPartner2(otherPartner);
     setPartner2Name(otherPartner);
+    // Update form values
+    setValue("groomName", value);
+    setValue("brideName", otherPartner);
   };
 
   const handleTogglePartners = () => {
@@ -50,6 +61,9 @@ const TypeStep = ({ register }: TypeStepProps) => {
     setSelectedPartner2(temp1);
     setPartner1Name(temp2);
     setPartner2Name(temp1);
+    // Update form values
+    setValue("groomName", temp2);
+    setValue("brideName", temp1);
   };
 
   return (

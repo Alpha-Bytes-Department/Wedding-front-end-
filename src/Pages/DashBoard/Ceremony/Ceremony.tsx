@@ -624,6 +624,7 @@ const Ceremony = () => {
                     register={register}
                     errors={errors}
                     watch={watch}
+                    setValue={setValue}
                     openDropdowns={openDropdowns}
                     onToggleDropdown={toggleDropdown}
                     onSelectDropdown={handleDropdownSelect}
