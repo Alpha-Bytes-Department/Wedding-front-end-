@@ -768,9 +768,9 @@ const GreetingsStep = ({
                 <p className="text-gray-800 leading-relaxed">
                   {(() => {
                     const currentPartner2Name =
-                      watch("partner2Name") || partner2Name || "";
+                      watch("brideName") || partner2Name || "";
                     const currentPartner1Name =
-                      watch("partner1Name") || partner1Name || "";
+                      watch("groomName") || partner1Name || "";
 
                     // Check which option type this is
                     if (
