@@ -3,6 +3,7 @@ import type { CeremonyFormData } from "../types";
 import type { UseFormRegister } from "react-hook-form";
 import CustomDropdown from "./CustomDropdown";
 import { useCeremonyContext } from "../contexts/CeremonyContext";
+import { FaExchangeAlt } from "react-icons/fa";
 
 interface VowsStepProps {
   register: UseFormRegister<CeremonyFormData>;
@@ -126,7 +127,7 @@ const vowIntroOptions: VowOption[] = [
     id: "vowIntro5",
     label: "Journey of Love",
     content:
-      "You have known each other for years, through the first glance of acquaintance to this moment of commitment. At some moment, you decided to marry. From that moment of yes to this moment of yes, indeed, you have been making promises and agreements in an informal way. All those conversations that were held riding in a car or over a meal or during long walks – all those sentences that began with \"When we're married\" and continued with \"I will\" and \"you will\" and \"we will\" – those late-night talks that included \"someday\" and \"somehow\" and \"maybe\" – and all those promises that are unspoken matters of the heart. Just two people working out what they want, what they believe, what they hope for each other. All these common things, and more, are the real process of a wedding. The symbolic vows that you are about to make are a way of saying to one another, \"You know all those things we've promised and hoped and dreamed – well, I meant it all, every word.\" Look at one another and remember this moment in time. Before this moment you have been many things to one another – acquaintance, friend, companion, lover, dancing partner, and even teacher, for you have learned much from one another in these last few years. You have learned that good company and friendship count for more than wealth, good looks or position. And you've learned that marriage is a maze into which we wander – a maze that is best traveled through with a great companion. Now you shall say a few words that take you across a threshold of life, and things will never quite be the same between you. For after these vows, you shall say to the world, {groom_name} is my husband, {bride_name} is my wife.",
+      'You have known each other for years, through the first glance of acquaintance to this moment of commitment. At some moment, you decided to marry. From that moment of yes to this moment of yes, indeed, you have been making promises and agreements in an informal way. All those conversations that were held riding in a car or over a meal or during long walks – all those sentences that began with "When we\'re married" and continued with "I will" and "you will" and "we will" – those late-night talks that included "someday" and "somehow" and "maybe" – and all those promises that are unspoken matters of the heart. Just two people working out what they want, what they believe, what they hope for each other. All these common things, and more, are the real process of a wedding. The symbolic vows that you are about to make are a way of saying to one another, "You know all those things we\'ve promised and hoped and dreamed – well, I meant it all, every word." Look at one another and remember this moment in time. Before this moment you have been many things to one another – acquaintance, friend, companion, lover, dancing partner, and even teacher, for you have learned much from one another in these last few years. You have learned that good company and friendship count for more than wealth, good looks or position. And you\'ve learned that marriage is a maze into which we wander – a maze that is best traveled through with a great companion. Now you shall say a few words that take you across a threshold of life, and things will never quite be the same between you. For after these vows, you shall say to the world, {groom_name} is my husband, {bride_name} is my wife.',
   },
   {
     id: "vowIntro6",
@@ -168,7 +169,7 @@ const vowIntroOptions: VowOption[] = [
     id: "vowIntro12",
     label: "Holy Union",
     content:
-      "A Holy Union between two people is a beautiful thing indeed. Something to be thankful for and something to never take for granted. Each morning when you awaken, give thanks for the gift that you have been given in each other and for your willingness to receive it. A Holy Union is a sacred trust given to you by God. God says, \"Here. Here is my beloved child, and I am entrusting YOU with their care. I am entrusting you to love them, honor them, support them, cherish them, and hold their hand through thick and thin as I cannot do in human form except through you. You are being asked to serve in this capacity because you are willing, and able, and desiring of it.\" Let it always remind you that God answers all prayers eventually.",
+      'A Holy Union between two people is a beautiful thing indeed. Something to be thankful for and something to never take for granted. Each morning when you awaken, give thanks for the gift that you have been given in each other and for your willingness to receive it. A Holy Union is a sacred trust given to you by God. God says, "Here. Here is my beloved child, and I am entrusting YOU with their care. I am entrusting you to love them, honor them, support them, cherish them, and hold their hand through thick and thin as I cannot do in human form except through you. You are being asked to serve in this capacity because you are willing, and able, and desiring of it." Let it always remind you that God answers all prayers eventually.',
   },
   {
     id: "vowIntro13",
@@ -366,7 +367,7 @@ const readingOptions: VowOption[] = [
     id: "reading4",
     label: "Union by Fulghum",
     content:
-      "You have known each other from the first glance of acquaintance to this point of commitment. At some point, you decided to marry. From that moment of yes, to this moment of yes, indeed, you have been making commitments in an informal way. All of those conversations that were held in a car, or over a meal, or during long walks – all those conversations that began with, \"When we're married\", and continued with \"I will\" and \"you will\" and \"we will\" – all those late night talks that included \"someday\" and \"somehow\" and \"maybe\" – and all those promises that are unspoken matters of the heart. All these common things, and more, are the real process of a wedding. The symbolic vows that you are about to make are a way of saying to one another, \"You know all those things that we've promised, and hoped, and dreamed – well, I meant it all, every word.\"",
+      'You have known each other from the first glance of acquaintance to this point of commitment. At some point, you decided to marry. From that moment of yes, to this moment of yes, indeed, you have been making commitments in an informal way. All of those conversations that were held in a car, or over a meal, or during long walks – all those conversations that began with, "When we\'re married", and continued with "I will" and "you will" and "we will" – all those late night talks that included "someday" and "somehow" and "maybe" – and all those promises that are unspoken matters of the heart. All these common things, and more, are the real process of a wedding. The symbolic vows that you are about to make are a way of saying to one another, "You know all those things that we\'ve promised, and hoped, and dreamed – well, I meant it all, every word."',
   },
   {
     id: "reading5",
@@ -384,7 +385,7 @@ const readingOptions: VowOption[] = [
     id: "reading7",
     label: "Good Marriage",
     content:
-      "A good marriage must be created. In marriage the \"little\" things are the big things. It is never being too old to hold hands. It is remembering to say, \"I love you\" at least once a day. It is never going to sleep angry. It is having a mutual sense of values, and common objectives. It is standing together and facing the world. It is forming a circle that gathers in the whole family. It is speaking words of appreciation, and demonstrating gratitude in thoughtful ways. It is having the capacity to forgive and forget. It is giving each other an atmosphere in which each can grow.",
+      'A good marriage must be created. In marriage the "little" things are the big things. It is never being too old to hold hands. It is remembering to say, "I love you" at least once a day. It is never going to sleep angry. It is having a mutual sense of values, and common objectives. It is standing together and facing the world. It is forming a circle that gathers in the whole family. It is speaking words of appreciation, and demonstrating gratitude in thoughtful ways. It is having the capacity to forgive and forget. It is giving each other an atmosphere in which each can grow.',
   },
   {
     id: "reading8",
@@ -480,7 +481,7 @@ const readingOptions: VowOption[] = [
     id: "reading23",
     label: "Genesis Creation",
     content:
-      "The LORD God said, \"It is not good for the man to be alone. I will make a helper suitable for him.\" So the LORD God caused the man to fall into a deep sleep; and while he was sleeping, he took one of the man's ribs and closed up the place with flesh. Then the LORD God made a woman from the rib he had taken out of the man, and he brought her to the man. The man said, \"This is now bone of my bones and flesh of my flesh.\" For this reason a man will leave his father and mother and be united to his wife, and they will become one flesh.",
+      'The LORD God said, "It is not good for the man to be alone. I will make a helper suitable for him." So the LORD God caused the man to fall into a deep sleep; and while he was sleeping, he took one of the man\'s ribs and closed up the place with flesh. Then the LORD God made a woman from the rib he had taken out of the man, and he brought her to the man. The man said, "This is now bone of my bones and flesh of my flesh." For this reason a man will leave his father and mother and be united to his wife, and they will become one flesh.',
   },
   {
     id: "reading24",
@@ -651,7 +652,7 @@ const ringIntroOptions: VowOption[] = [
     id: "ringIntro25",
     label: "Vessel of Words",
     content:
-      "At this time will you take out the rings you have for each other. {groom_name} and {bride_name}, you have just made promises of love and devotion to each other. These rings are symbols of the vows you have just spoken. Words are intangible and difficult to hold onto, so the ring becomes a vessel which will hold the words you have given to one another. The words of \"loving and cherishing,\" \"for better and for worse,\" \"honor and respecting,\" are now encased in the ring. It is a physical way to hold on to the promises made to you. When you first put on a new ring it feels unnatural. You feel the weight and you hear it clank against objects. It's a foreign object on your hand. But then there is a shift that happens. You become comfortable with the ring. It begins to mold your finger and feel comfortable until the day it just becomes a part of your hand. The ring is no longer a piece of jewelry that you wear. It becomes an extension of your hand. So this ring that embodies your vows…your promises eventually becomes an extension of your hand. In other words, you become your ring….you become your vows. At first, the ring is a symbol of the vows you have made…it contains them, but during that change when the ring begins to mold to your finger, you become the ring, because you begin to embody the vows. Instead of the ring being only a symbol of the promise \"to love and cherish\" you become the love and you display the action of one who cherishes. You are no longer holding onto promises of sticking around through better and worse, but you begin to live it out….You hold on…you work through. You take on the process of honoring and respecting that you said you would. As you place the rings on each other's finger, the ring is a symbol, a promise, that one day…many days…many years… you will fulfill.",
+      'At this time will you take out the rings you have for each other. {groom_name} and {bride_name}, you have just made promises of love and devotion to each other. These rings are symbols of the vows you have just spoken. Words are intangible and difficult to hold onto, so the ring becomes a vessel which will hold the words you have given to one another. The words of "loving and cherishing," "for better and for worse," "honor and respecting," are now encased in the ring. It is a physical way to hold on to the promises made to you. When you first put on a new ring it feels unnatural. You feel the weight and you hear it clank against objects. It\'s a foreign object on your hand. But then there is a shift that happens. You become comfortable with the ring. It begins to mold your finger and feel comfortable until the day it just becomes a part of your hand. The ring is no longer a piece of jewelry that you wear. It becomes an extension of your hand. So this ring that embodies your vows…your promises eventually becomes an extension of your hand. In other words, you become your ring….you become your vows. At first, the ring is a symbol of the vows you have made…it contains them, but during that change when the ring begins to mold to your finger, you become the ring, because you begin to embody the vows. Instead of the ring being only a symbol of the promise "to love and cherish" you become the love and you display the action of one who cherishes. You are no longer holding onto promises of sticking around through better and worse, but you begin to live it out….You hold on…you work through. You take on the process of honoring and respecting that you said you would. As you place the rings on each other\'s finger, the ring is a symbol, a promise, that one day…many days…many years… you will fulfill.',
   },
   {
     id: "ringIntro26",
@@ -896,7 +897,49 @@ const VowsStep = ({
   onSelectDropdown,
 }: VowsStepProps) => {
   const [selectedModal, setSelectedModal] = useState<string | null>(null);
-  const { groomName, brideName } = useCeremonyContext();
+  const { partner1Name, partner2Name } = useCeremonyContext();
+
+  // Individual toggle states for each field
+  const [chargeReversed, setChargeReversed] = useState(false);
+  const [pledgeReversed, setPledgeReversed] = useState(false);
+  const [vowIntroReversed, setVowIntroReversed] = useState(false);
+  const [vowReversed, setVowReversed] = useState(false);
+  const [ringIntroReversed, setRingIntroReversed] = useState(false);
+  const [ringBlessingReversed, setRingBlessingReversed] = useState(false);
+  const [prayerReversed, setPrayerReversed] = useState(false);
+
+  const currentPartner2Name = partner2Name || "Partner 2";
+  const currentPartner1Name = partner1Name || "Partner 1";
+
+  // Get names based on each field's toggle state
+  const getChargeNames = () =>
+    chargeReversed
+      ? { first: currentPartner1Name, second: currentPartner2Name }
+      : { first: currentPartner2Name, second: currentPartner1Name };
+  const getPledgeNames = () =>
+    pledgeReversed
+      ? { first: currentPartner1Name, second: currentPartner2Name }
+      : { first: currentPartner2Name, second: currentPartner1Name };
+  const getVowIntroNames = () =>
+    vowIntroReversed
+      ? { first: currentPartner1Name, second: currentPartner2Name }
+      : { first: currentPartner2Name, second: currentPartner1Name };
+  const getVowNames = () =>
+    vowReversed
+      ? { first: currentPartner1Name, second: currentPartner2Name }
+      : { first: currentPartner2Name, second: currentPartner1Name };
+  const getRingIntroNames = () =>
+    ringIntroReversed
+      ? { first: currentPartner1Name, second: currentPartner2Name }
+      : { first: currentPartner2Name, second: currentPartner1Name };
+  const getRingBlessingNames = () =>
+    ringBlessingReversed
+      ? { first: currentPartner1Name, second: currentPartner2Name }
+      : { first: currentPartner2Name, second: currentPartner1Name };
+  const getPrayerNames = () =>
+    prayerReversed
+      ? { first: currentPartner1Name, second: currentPartner2Name }
+      : { first: currentPartner2Name, second: currentPartner1Name };
 
   const openModal = (optionId: string) => {
     setSelectedModal(optionId);
@@ -941,14 +984,14 @@ const VowsStep = ({
         options = prayerOptions;
         break;
     }
-    
-    const option = options.find(opt => opt.id === optionId);
+
+    const option = options.find((opt) => opt.id === optionId);
     if (option) {
-      const currentBrideName = brideName || "Bride's Name";
-      const currentGroomName = groomName || "Groom's Name";
+      const currentPartner2Name = partner2Name || "Partner 2's Name";
+      const currentPartner1Name = partner1Name || "Partner 1's Name";
       const content = option.content
-        .replace(/{bride_name}/g, currentBrideName)
-        .replace(/{groom_name}/g, currentGroomName);
+        .replace(/{bride_name}/g, currentPartner2Name)
+        .replace(/{groom_name}/g, currentPartner1Name);
       onSelectDropdown(fieldName, content);
     }
   };
@@ -956,24 +999,44 @@ const VowsStep = ({
   const getOptionContent = (
     options: VowOption[],
     optionId: string,
-    brideNameVal: string,
-    groomNameVal: string
+    partner2NameVal: string,
+    partner1NameVal: string
   ) => {
     const option = options.find((opt) => opt.id === optionId);
     if (!option) return "";
 
     return option.content
-      .replace(/{bride_name}/g, brideNameVal || "Bride's Name")
-      .replace(/{groom_name}/g, groomNameVal || "Groom's Name");
+      .replace(/{bride_name}/g, partner2NameVal || "Partner 2's Name")
+      .replace(/{groom_name}/g, partner1NameVal || "Partner 1's Name");
   };
 
   return (
     <div className="space-y-6">
       {/* Charge to Groom and Bride */}
       <div>
-        <label className="block text-lg font-semibold text-gray-900 mb-3">
-          Charge to Groom and Bride
-        </label>
+        <div className="flex items-center justify-between mb-3">
+          <label className="block text-sm font-medium text-gray-700">
+            Charge to {getChargeNames().first} and {getChargeNames().second}
+          </label>
+          {currentPartner1Name &&
+            currentPartner2Name &&
+            currentPartner1Name !== "Partner 1" &&
+            currentPartner2Name !== "Partner 2" && (
+              <button
+                type="button"
+                onClick={() => setChargeReversed(!chargeReversed)}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-primary bg-white border border-primary rounded-md hover:bg-primary hover:text-white transition-colors"
+                title={`Switch to ${
+                  chargeReversed ? currentPartner2Name : currentPartner1Name
+                } and ${
+                  chargeReversed ? currentPartner1Name : currentPartner2Name
+                }`}
+              >
+                <FaExchangeAlt className="text-xs" />
+                <span>Switch</span>
+              </button>
+            )}
+        </div>
         <div className="space-y-3">
           <CustomDropdown
             name="chargeToGroomAndBride"
@@ -981,12 +1044,12 @@ const VowsStep = ({
             value={(() => {
               const currentContent = watch("chargeToGroomAndBride");
               if (!currentContent) return "";
-              const currentBrideName = brideName || "Bride's Name";
-              const currentGroomName = groomName || "Groom's Name";
+              const currentPartner2Name = partner2Name || "Partner 2's Name";
+              const currentPartner1Name = partner1Name || "Partner 1's Name";
               const currentOption = chargeOptions.find((opt) => {
                 const optionContent = opt.content
-                  .replace(/{bride_name}/g, currentBrideName)
-                  .replace(/{groom_name}/g, currentGroomName);
+                  .replace(/{bride_name}/g, currentPartner2Name)
+                  .replace(/{groom_name}/g, currentPartner1Name);
                 return optionContent === currentContent;
               });
               return currentOption?.label || "";
@@ -1007,7 +1070,7 @@ const VowsStep = ({
                 onClick={() => openModal(option.id)}
                 className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors text-sm"
               >
-                 {option.label}
+                {option.label}
               </button>
             ))}
           </div>
@@ -1016,9 +1079,29 @@ const VowsStep = ({
 
       {/* Pledge */}
       <div>
-        <label className="block text-lg font-semibold text-gray-900 mb-3">
-          Pledge
-        </label>
+        <div className="flex items-center justify-between mb-3">
+          <label className="block text-sm font-medium text-gray-700">
+            Pledge from {getPledgeNames().first} and {getPledgeNames().second}
+          </label>
+          {currentPartner1Name &&
+            currentPartner2Name &&
+            currentPartner1Name !== "Partner 1" &&
+            currentPartner2Name !== "Partner 2" && (
+              <button
+                type="button"
+                onClick={() => setPledgeReversed(!pledgeReversed)}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-primary bg-white border border-primary rounded-md hover:bg-primary hover:text-white transition-colors"
+                title={`Switch to ${
+                  pledgeReversed ? currentPartner2Name : currentPartner1Name
+                } and ${
+                  pledgeReversed ? currentPartner1Name : currentPartner2Name
+                }`}
+              >
+                <FaExchangeAlt className="text-xs" />
+                <span>Switch</span>
+              </button>
+            )}
+        </div>
         <div className="space-y-3">
           <CustomDropdown
             name="pledge"
@@ -1026,12 +1109,12 @@ const VowsStep = ({
             value={(() => {
               const currentContent = watch("pledge");
               if (!currentContent) return "";
-              const currentBrideName = brideName || "Bride's Name";
-              const currentGroomName = groomName || "Groom's Name";
+              const currentPartner2Name = partner2Name || "Partner 2's Name";
+              const currentPartner1Name = partner1Name || "Partner 1's Name";
               const currentOption = pledgeOptions.find((opt) => {
                 const optionContent = opt.content
-                  .replace(/{bride_name}/g, currentBrideName)
-                  .replace(/{groom_name}/g, currentGroomName);
+                  .replace(/{bride_name}/g, currentPartner2Name)
+                  .replace(/{groom_name}/g, currentPartner1Name);
                 return optionContent === currentContent;
               });
               return currentOption?.label || "";
@@ -1052,7 +1135,7 @@ const VowsStep = ({
                 onClick={() => openModal(option.id)}
                 className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors text-sm"
               >
-                 {option.label}
+                {option.label}
               </button>
             ))}
           </div>
@@ -1061,9 +1144,30 @@ const VowsStep = ({
 
       {/* Introduction to Exchange of Vows */}
       <div>
-        <label className="block text-lg font-semibold text-gray-900 mb-3">
-          Introduction to Exchange of Vows
-        </label>
+        <div className="flex items-center justify-between mb-3">
+          <label className="block text-sm font-medium text-gray-700">
+            Introduction to Exchange of Vows ({getVowIntroNames().first} &{" "}
+            {getVowIntroNames().second})
+          </label>
+          {currentPartner1Name &&
+            currentPartner2Name &&
+            currentPartner1Name !== "Partner 1" &&
+            currentPartner2Name !== "Partner 2" && (
+              <button
+                type="button"
+                onClick={() => setVowIntroReversed(!vowIntroReversed)}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-primary bg-white border border-primary rounded-md hover:bg-primary hover:text-white transition-colors"
+                title={`Switch to ${
+                  vowIntroReversed ? currentPartner2Name : currentPartner1Name
+                } & ${
+                  vowIntroReversed ? currentPartner1Name : currentPartner2Name
+                }`}
+              >
+                <FaExchangeAlt className="text-xs" />
+                <span>Switch</span>
+              </button>
+            )}
+        </div>
         <div className="space-y-3">
           <CustomDropdown
             name="introductionToExchangeOfVows"
@@ -1071,12 +1175,12 @@ const VowsStep = ({
             value={(() => {
               const currentContent = watch("introductionToExchangeOfVows");
               if (!currentContent) return "";
-              const currentBrideName = brideName || "Bride's Name";
-              const currentGroomName = groomName || "Groom's Name";
+              const currentPartner2Name = partner2Name || "Partner 2's Name";
+              const currentPartner1Name = partner1Name || "Partner 1's Name";
               const currentOption = vowIntroOptions.find((opt) => {
                 const optionContent = opt.content
-                  .replace(/{bride_name}/g, currentBrideName)
-                  .replace(/{groom_name}/g, currentGroomName);
+                  .replace(/{bride_name}/g, currentPartner2Name)
+                  .replace(/{groom_name}/g, currentPartner1Name);
                 return optionContent === currentContent;
               });
               return currentOption?.label || "";
@@ -1098,7 +1202,7 @@ const VowsStep = ({
                 onClick={() => openModal(option.id)}
                 className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors text-sm"
               >
-                 {option.label}
+                {option.label}
               </button>
             ))}
           </div>
@@ -1107,9 +1211,29 @@ const VowsStep = ({
 
       {/* Vows */}
       <div>
-        <label className="block text-lg font-semibold text-gray-900 mb-3">
-          Vows
-        </label>
+        <div className="flex items-center justify-between mb-3">
+          <label className="block text-sm font-medium text-gray-700">
+            Vows from {getVowNames().first} to {getVowNames().second}
+          </label>
+          {currentPartner1Name &&
+            currentPartner2Name &&
+            currentPartner1Name !== "Partner 1" &&
+            currentPartner2Name !== "Partner 2" && (
+              <button
+                type="button"
+                onClick={() => setVowReversed(!vowReversed)}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-primary bg-white border border-primary rounded-md hover:bg-primary hover:text-white transition-colors"
+                title={`Switch to ${
+                  vowReversed ? currentPartner2Name : currentPartner1Name
+                } to ${
+                  vowReversed ? currentPartner1Name : currentPartner2Name
+                }`}
+              >
+                <FaExchangeAlt className="text-xs" />
+                <span>Switch</span>
+              </button>
+            )}
+        </div>
         <div className="space-y-3">
           <CustomDropdown
             name="vows"
@@ -1117,12 +1241,12 @@ const VowsStep = ({
             value={(() => {
               const currentContent = watch("vows");
               if (!currentContent) return "";
-              const currentBrideName = brideName || "Bride's Name";
-              const currentGroomName = groomName || "Groom's Name";
+              const currentPartner2Name = partner2Name || "Partner 2's Name";
+              const currentPartner1Name = partner1Name || "Partner 1's Name";
               const currentOption = vowOptions.find((opt) => {
                 const optionContent = opt.content
-                  .replace(/{bride_name}/g, currentBrideName)
-                  .replace(/{groom_name}/g, currentGroomName);
+                  .replace(/{bride_name}/g, currentPartner2Name)
+                  .replace(/{groom_name}/g, currentPartner1Name);
                 return optionContent === currentContent;
               });
               return currentOption?.label || "";
@@ -1143,7 +1267,7 @@ const VowsStep = ({
                 onClick={() => openModal(option.id)}
                 className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors text-sm"
               >
-                 {option.label}
+                {option.label}
               </button>
             ))}
           </div>
@@ -1152,8 +1276,8 @@ const VowsStep = ({
 
       {/* Readings */}
       <div>
-        <label className="block text-lg font-semibold text-gray-900 mb-3">
-          Readings
+        <label className="block text-sm font-medium text-gray-700 mb-3">
+          Readings (Optional)
         </label>
         <div className="space-y-3">
           <CustomDropdown
@@ -1162,12 +1286,12 @@ const VowsStep = ({
             value={(() => {
               const currentContent = watch("readings");
               if (!currentContent) return "";
-              const currentBrideName = brideName || "Bride's Name";
-              const currentGroomName = groomName || "Groom's Name";
+              const currentPartner2Name = partner2Name || "Partner 2's Name";
+              const currentPartner1Name = partner1Name || "Partner 1's Name";
               const currentOption = readingOptions.find((opt) => {
                 const optionContent = opt.content
-                  .replace(/{bride_name}/g, currentBrideName)
-                  .replace(/{groom_name}/g, currentGroomName);
+                  .replace(/{bride_name}/g, currentPartner2Name)
+                  .replace(/{groom_name}/g, currentPartner1Name);
                 return optionContent === currentContent;
               });
               return currentOption?.label || "";
@@ -1188,7 +1312,7 @@ const VowsStep = ({
                 onClick={() => openModal(option.id)}
                 className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors text-sm"
               >
-                 {option.label}
+                {option.label}
               </button>
             ))}
           </div>
@@ -1197,9 +1321,30 @@ const VowsStep = ({
 
       {/* Introduction to Exchange of Rings */}
       <div>
-        <label className="block text-lg font-semibold text-gray-900 mb-3">
-          Introduction to Exchange of Rings
-        </label>
+        <div className="flex items-center justify-between mb-3">
+          <label className="block text-sm font-medium text-gray-700">
+            Introduction to Exchange of Rings ({getRingIntroNames().first} &{" "}
+            {getRingIntroNames().second})
+          </label>
+          {currentPartner1Name &&
+            currentPartner2Name &&
+            currentPartner1Name !== "Partner 1" &&
+            currentPartner2Name !== "Partner 2" && (
+              <button
+                type="button"
+                onClick={() => setRingIntroReversed(!ringIntroReversed)}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-primary bg-white border border-primary rounded-md hover:bg-primary hover:text-white transition-colors"
+                title={`Switch to ${
+                  ringIntroReversed ? currentPartner2Name : currentPartner1Name
+                } & ${
+                  ringIntroReversed ? currentPartner1Name : currentPartner2Name
+                }`}
+              >
+                <FaExchangeAlt className="text-xs" />
+                <span>Switch</span>
+              </button>
+            )}
+        </div>
         <div className="space-y-3">
           <CustomDropdown
             name="introductionToExchangeOfRings"
@@ -1207,12 +1352,12 @@ const VowsStep = ({
             value={(() => {
               const currentContent = watch("introductionToExchangeOfRings");
               if (!currentContent) return "";
-              const currentBrideName = brideName || "Bride's Name";
-              const currentGroomName = groomName || "Groom's Name";
+              const currentPartner2Name = partner2Name || "Partner 2's Name";
+              const currentPartner1Name = partner1Name || "Partner 1's Name";
               const currentOption = ringIntroOptions.find((opt) => {
                 const optionContent = opt.content
-                  .replace(/{bride_name}/g, currentBrideName)
-                  .replace(/{groom_name}/g, currentGroomName);
+                  .replace(/{bride_name}/g, currentPartner2Name)
+                  .replace(/{groom_name}/g, currentPartner1Name);
                 return optionContent === currentContent;
               });
               return currentOption?.label || "";
@@ -1236,7 +1381,7 @@ const VowsStep = ({
                 onClick={() => openModal(option.id)}
                 className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors text-sm"
               >
-                 {option.label}
+                {option.label}
               </button>
             ))}
           </div>
@@ -1245,9 +1390,34 @@ const VowsStep = ({
 
       {/* Blessings of Rings */}
       <div>
-        <label className="block text-lg font-semibold text-gray-900 mb-3">
-          Blessings of Rings
-        </label>
+        <div className="flex items-center justify-between mb-3">
+          <label className="block text-sm font-medium text-gray-700">
+            Blessings of Rings for {getRingBlessingNames().first} &{" "}
+            {getRingBlessingNames().second}
+          </label>
+          {currentPartner1Name &&
+            currentPartner2Name &&
+            currentPartner1Name !== "Partner 1" &&
+            currentPartner2Name !== "Partner 2" && (
+              <button
+                type="button"
+                onClick={() => setRingBlessingReversed(!ringBlessingReversed)}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-primary bg-white border border-primary rounded-md hover:bg-primary hover:text-white transition-colors"
+                title={`Switch to ${
+                  ringBlessingReversed
+                    ? currentPartner2Name
+                    : currentPartner1Name
+                } & ${
+                  ringBlessingReversed
+                    ? currentPartner1Name
+                    : currentPartner2Name
+                }`}
+              >
+                <FaExchangeAlt className="text-xs" />
+                <span>Switch</span>
+              </button>
+            )}
+        </div>
         <div className="space-y-3">
           <CustomDropdown
             name="blessingsOfRings"
@@ -1255,12 +1425,12 @@ const VowsStep = ({
             value={(() => {
               const currentContent = watch("blessingsOfRings");
               if (!currentContent) return "";
-              const currentBrideName = brideName || "Bride's Name";
-              const currentGroomName = groomName || "Groom's Name";
+              const currentPartner2Name = partner2Name || "Partner 2's Name";
+              const currentPartner1Name = partner1Name || "Partner 1's Name";
               const currentOption = ringBlessingOptions.find((opt) => {
                 const optionContent = opt.content
-                  .replace(/{bride_name}/g, currentBrideName)
-                  .replace(/{groom_name}/g, currentGroomName);
+                  .replace(/{bride_name}/g, currentPartner2Name)
+                  .replace(/{groom_name}/g, currentPartner1Name);
                 return optionContent === currentContent;
               });
               return currentOption?.label || "";
@@ -1283,7 +1453,7 @@ const VowsStep = ({
                 onClick={() => openModal(option.id)}
                 className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors text-sm"
               >
-                 {option.label}
+                {option.label}
               </button>
             ))}
           </div>
@@ -1292,8 +1462,8 @@ const VowsStep = ({
 
       {/* Exchange of Rings - Groom */}
       <div>
-        <label className="block text-lg font-semibold text-gray-900 mb-3">
-          Exchange of Rings - Groom to Bride
+        <label className="block text-sm font-medium text-gray-700 mb-3">
+          Exchange of Rings - {currentPartner1Name} to {currentPartner2Name}
         </label>
         <div className="space-y-3">
           <CustomDropdown
@@ -1302,12 +1472,12 @@ const VowsStep = ({
             value={(() => {
               const currentContent = watch("exchangeOfRingsGroom");
               if (!currentContent) return "";
-              const currentBrideName = brideName || "Bride's Name";
-              const currentGroomName = groomName || "Groom's Name";
+              const currentPartner2Name = partner2Name || "Partner 2's Name";
+              const currentPartner1Name = partner1Name || "Partner 1's Name";
               const currentOption = ringExchangeGroomOptions.find((opt) => {
                 const optionContent = opt.content
-                  .replace(/{bride_name}/g, currentBrideName)
-                  .replace(/{groom_name}/g, currentGroomName);
+                  .replace(/{bride_name}/g, currentPartner2Name)
+                  .replace(/{groom_name}/g, currentPartner1Name);
                 return optionContent === currentContent;
               });
               return currentOption?.label || "";
@@ -1330,7 +1500,7 @@ const VowsStep = ({
                 onClick={() => openModal(option.id)}
                 className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors text-sm"
               >
-                 {option.label}
+                {option.label}
               </button>
             ))}
           </div>
@@ -1339,8 +1509,8 @@ const VowsStep = ({
 
       {/* Exchange of Rings - Bride */}
       <div>
-        <label className="block text-lg font-semibold text-gray-900 mb-3">
-          Exchange of Rings - Bride to Groom
+        <label className="block text-sm font-medium text-gray-700 mb-3">
+          Exchange of Rings - {currentPartner2Name} to {currentPartner1Name}
         </label>
         <div className="space-y-3">
           <CustomDropdown
@@ -1349,12 +1519,12 @@ const VowsStep = ({
             value={(() => {
               const currentContent = watch("exchangeOfRingsBride");
               if (!currentContent) return "";
-              const currentBrideName = brideName || "Bride's Name";
-              const currentGroomName = groomName || "Groom's Name";
+              const currentPartner2Name = partner2Name || "Partner 2's Name";
+              const currentPartner1Name = partner1Name || "Partner 1's Name";
               const currentOption = ringExchangeBrideOptions.find((opt) => {
                 const optionContent = opt.content
-                  .replace(/{bride_name}/g, currentBrideName)
-                  .replace(/{groom_name}/g, currentGroomName);
+                  .replace(/{bride_name}/g, currentPartner2Name)
+                  .replace(/{groom_name}/g, currentPartner1Name);
                 return optionContent === currentContent;
               });
               return currentOption?.label || "";
@@ -1377,7 +1547,7 @@ const VowsStep = ({
                 onClick={() => openModal(option.id)}
                 className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors text-sm"
               >
-                 {option.label}
+                {option.label}
               </button>
             ))}
           </div>
@@ -1386,9 +1556,30 @@ const VowsStep = ({
 
       {/* Prayer on the New Union */}
       <div>
-        <label className="block text-lg font-semibold text-gray-900 mb-3">
-          Prayer on the New Union
-        </label>
+        <div className="flex items-center justify-between mb-3">
+          <label className="block text-sm font-medium text-gray-700">
+            Prayer for {getPrayerNames().first} & {getPrayerNames().second}'s
+            Union
+          </label>
+          {currentPartner1Name &&
+            currentPartner2Name &&
+            currentPartner1Name !== "Partner 1" &&
+            currentPartner2Name !== "Partner 2" && (
+              <button
+                type="button"
+                onClick={() => setPrayerReversed(!prayerReversed)}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-primary bg-white border border-primary rounded-md hover:bg-primary hover:text-white transition-colors"
+                title={`Switch to ${
+                  prayerReversed ? currentPartner2Name : currentPartner1Name
+                } & ${
+                  prayerReversed ? currentPartner1Name : currentPartner2Name
+                }`}
+              >
+                <FaExchangeAlt className="text-xs" />
+                <span>Switch</span>
+              </button>
+            )}
+        </div>
         <div className="space-y-3">
           <CustomDropdown
             name="prayerOnTheNewUnion"
@@ -1396,12 +1587,12 @@ const VowsStep = ({
             value={(() => {
               const currentContent = watch("prayerOnTheNewUnion");
               if (!currentContent) return "";
-              const currentBrideName = brideName || "Bride's Name";
-              const currentGroomName = groomName || "Groom's Name";
+              const currentPartner2Name = partner2Name || "Partner 2's Name";
+              const currentPartner1Name = partner1Name || "Partner 1's Name";
               const currentOption = prayerOptions.find((opt) => {
                 const optionContent = opt.content
-                  .replace(/{bride_name}/g, currentBrideName)
-                  .replace(/{groom_name}/g, currentGroomName);
+                  .replace(/{bride_name}/g, currentPartner2Name)
+                  .replace(/{groom_name}/g, currentPartner1Name);
                 return optionContent === currentContent;
               });
               return currentOption?.label || "";
@@ -1422,7 +1613,7 @@ const VowsStep = ({
                 onClick={() => openModal(option.id)}
                 className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors text-sm"
               >
-                 {option.label}
+                {option.label}
               </button>
             ))}
           </div>
@@ -1479,18 +1670,18 @@ const VowsStep = ({
               <div className="bg-gray-50 p-4 rounded-lg">
                 <p className="text-gray-800 leading-relaxed">
                   {(() => {
-                    const currentBrideName =
-                      watch("brideName") || brideName || "";
-                    const currentGroomName =
-                      watch("groomName") || groomName || "";
+                    const currentPartner2Name =
+                      watch("partner2Name") || partner2Name || "";
+                    const currentPartner1Name =
+                      watch("partner1Name") || partner1Name || "";
 
                     // Check which option type this is and get content
                     if (chargeOptions.find((opt) => opt.id === selectedModal)) {
                       return getOptionContent(
                         chargeOptions,
                         selectedModal,
-                        currentBrideName,
-                        currentGroomName
+                        currentPartner2Name,
+                        currentPartner1Name
                       );
                     } else if (
                       pledgeOptions.find((opt) => opt.id === selectedModal)
@@ -1498,8 +1689,8 @@ const VowsStep = ({
                       return getOptionContent(
                         pledgeOptions,
                         selectedModal,
-                        currentBrideName,
-                        currentGroomName
+                        currentPartner2Name,
+                        currentPartner1Name
                       );
                     } else if (
                       vowIntroOptions.find((opt) => opt.id === selectedModal)
@@ -1507,8 +1698,8 @@ const VowsStep = ({
                       return getOptionContent(
                         vowIntroOptions,
                         selectedModal,
-                        currentBrideName,
-                        currentGroomName
+                        currentPartner2Name,
+                        currentPartner1Name
                       );
                     } else if (
                       vowOptions.find((opt) => opt.id === selectedModal)
@@ -1516,8 +1707,8 @@ const VowsStep = ({
                       return getOptionContent(
                         vowOptions,
                         selectedModal,
-                        currentBrideName,
-                        currentGroomName
+                        currentPartner2Name,
+                        currentPartner1Name
                       );
                     } else if (
                       readingOptions.find((opt) => opt.id === selectedModal)
@@ -1525,8 +1716,8 @@ const VowsStep = ({
                       return getOptionContent(
                         readingOptions,
                         selectedModal,
-                        currentBrideName,
-                        currentGroomName
+                        currentPartner2Name,
+                        currentPartner1Name
                       );
                     } else if (
                       ringIntroOptions.find((opt) => opt.id === selectedModal)
@@ -1534,8 +1725,8 @@ const VowsStep = ({
                       return getOptionContent(
                         ringIntroOptions,
                         selectedModal,
-                        currentBrideName,
-                        currentGroomName
+                        currentPartner2Name,
+                        currentPartner1Name
                       );
                     } else if (
                       ringBlessingOptions.find(
@@ -1545,8 +1736,8 @@ const VowsStep = ({
                       return getOptionContent(
                         ringBlessingOptions,
                         selectedModal,
-                        currentBrideName,
-                        currentGroomName
+                        currentPartner2Name,
+                        currentPartner1Name
                       );
                     } else if (
                       ringExchangeGroomOptions.find(
@@ -1556,8 +1747,8 @@ const VowsStep = ({
                       return getOptionContent(
                         ringExchangeGroomOptions,
                         selectedModal,
-                        currentBrideName,
-                        currentGroomName
+                        currentPartner2Name,
+                        currentPartner1Name
                       );
                     } else if (
                       ringExchangeBrideOptions.find(
@@ -1567,8 +1758,8 @@ const VowsStep = ({
                       return getOptionContent(
                         ringExchangeBrideOptions,
                         selectedModal,
-                        currentBrideName,
-                        currentGroomName
+                        currentPartner2Name,
+                        currentPartner1Name
                       );
                     } else if (
                       prayerOptions.find((opt) => opt.id === selectedModal)
@@ -1576,8 +1767,8 @@ const VowsStep = ({
                       return getOptionContent(
                         prayerOptions,
                         selectedModal,
-                        currentBrideName,
-                        currentGroomName
+                        currentPartner2Name,
+                        currentPartner1Name
                       );
                     }
                     return "";

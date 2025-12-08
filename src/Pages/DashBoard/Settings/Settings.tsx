@@ -38,6 +38,15 @@ const Settings = () => {
       officiantBio: user?.bio || "",
       booking: user?.bookingMoney || 0,
       name: user?.name || "",
+      needRehearsal:
+        user?.needRehearsal === true
+          ? true
+          : user?.needRehearsal === false
+          ? false
+          : null,
+      rehearsalDate: user?.rehearsalDate
+        ? new Date(user.rehearsalDate).toISOString().split("T")[0]
+        : "",
     },
   });
 
@@ -65,12 +74,31 @@ const Settings = () => {
         officiantBio: user.bio || "",
         booking: user.bookingMoney || 0,
         name: user.name || "",
+        needRehearsal:
+          user.needRehearsal === true
+            ? true
+            : user.needRehearsal === false
+            ? false
+            : null,
+        rehearsalDate: user.rehearsalDate
+          ? new Date(user.rehearsalDate).toISOString().split("T")[0]
+          : "",
       });
     }
   }, [user, profileForm]);
 
   const onProfileSubmit = async (info: any) => {
     console.log("Profile data:", info);
+
+    // Validate rehearsal date if rehearsal is needed
+    if (info.needRehearsal === true && !info.rehearsalDate) {
+      GlassSwal.error(
+        "Rehearsal Date Required",
+        "Please select a rehearsal date since you have indicated that rehearsal is needed."
+      );
+      return;
+    }
+
     try {
       const updateData: any = {
         partner_1: info.partner1Name,
@@ -78,10 +106,17 @@ const Settings = () => {
         name: info.name,
         phone: info.contact,
         location: info.location,
-        // contact:{partner_1: info.partner1Phone, partner_2: info.partner2Phone},
         weddingDate: info.weddingDate,
         bio: info.officiantBio,
         bookingMoney: info.booking,
+        needRehearsal:
+          info.needRehearsal === true
+            ? true
+            : info.needRehearsal === false
+            ? false
+            : null,
+        rehearsalDate:
+          info.needRehearsal && info.rehearsalDate ? info.rehearsalDate : null,
       };
 
       // Add contact object for user role
@@ -429,6 +464,67 @@ const Settings = () => {
                       }`}
                     />
                   </div>
+                </div>
+
+                {/* Wedding Date */}
+                <div className="space-y-3 flex flex-col lg:flex-row lg:items-center justify-around">
+                  <div className="">
+                    <label className="block text-sm  font-medium text-gray-700 mb-2">
+                      Wedding Date
+                    </label>
+                    <input
+                      {...profileForm.register("weddingDate")}
+                      type="date"
+                      disabled={!isEditingProfile}
+                      className={`w-full lg:w-96 px-4 py-3 border border-primary rounded-lg focus:outline-none    ${
+                        !isEditingProfile ? "bg-gray-50 cursor-not-allowed" : ""
+                      }`}
+                    />
+                  </div>
+
+                  {/* Rehearsal Section */}
+
+                  <div className="flex items-center gap-3">
+                    <input
+                      {...profileForm.register("needRehearsal")}
+                      type="checkbox"
+                      id="needRehearsal"
+                      disabled={!isEditingProfile}
+                      className={`w-5 h-5 text-primary border-primary rounded focus:ring-primary ${
+                        !isEditingProfile
+                          ? "cursor-not-allowed"
+                          : "cursor-pointer"
+                      }`}
+                    />
+                    <label
+                      htmlFor="needRehearsal"
+                      className={`text-sm font-medium text-gray-700 ${
+                        !isEditingProfile
+                          ? "cursor-not-allowed"
+                          : "cursor-pointer"
+                      }`}
+                    >
+                      Need Rehearsal?
+                    </label>
+                  </div>
+
+                  {profileForm.watch("needRehearsal") && (
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Rehearsal Date
+                      </label>
+                      <input
+                        {...profileForm.register("rehearsalDate")}
+                        type="date"
+                        disabled={!isEditingProfile}
+                        className={`w-full lg:w-96 px-4 py-3 border border-primary rounded-lg focus:outline-none    ${
+                          !isEditingProfile
+                            ? "bg-gray-50 cursor-not-allowed"
+                            : ""
+                        }`}
+                      />
+                    </div>
+                  )}
                 </div>
               </div>
             ) : (

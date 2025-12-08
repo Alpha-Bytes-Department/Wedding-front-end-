@@ -3,6 +3,7 @@ import type { UseFormRegister } from "react-hook-form";
 import type { CeremonyFormData } from "../types";
 import CustomDropdown from "./CustomDropdown";
 import { useCeremonyContext } from "../contexts/CeremonyContext";
+import { FaExchangeAlt } from "react-icons/fa";
 
 interface RitualsStepProps {
   register: UseFormRegister<CeremonyFormData>;
@@ -289,7 +290,8 @@ const kissOptions: RitualOption[] = [
   {
     id: "kiss2",
     label: "Modern Kiss",
-    content: "May your first act as a married couple be one of love. You may now kiss each other for the first time as husband and wife!",
+    content:
+      "May your first act as a married couple be one of love. You may now kiss each other for the first time as husband and wife!",
   },
   {
     id: "kiss3",
@@ -329,7 +331,34 @@ const RitualsStep = ({
   onSelectDropdown,
 }: RitualsStepProps) => {
   const [selectedModal, setSelectedModal] = useState<string | null>(null);
-  const { groomName, brideName } = useCeremonyContext();
+  const { partner1Name, partner2Name } = useCeremonyContext();
+
+  // Individual toggle states
+  const [ritualReversed, setRitualReversed] = useState(false);
+  const [closingReversed, setClosingReversed] = useState(false);
+  const [pronouncingReversed, setPronouncingReversed] = useState(false);
+  const [kissReversed, setKissReversed] = useState(false);
+
+  const currentPartner2Name = partner2Name || "Partner 2";
+  const currentPartner1Name = partner1Name || "Partner 1";
+
+  // Get names based on toggle states
+  const getRitualNames = () =>
+    ritualReversed
+      ? { first: currentPartner1Name, second: currentPartner2Name }
+      : { first: currentPartner2Name, second: currentPartner1Name };
+  const getClosingNames = () =>
+    closingReversed
+      ? { first: currentPartner1Name, second: currentPartner2Name }
+      : { first: currentPartner2Name, second: currentPartner1Name };
+  const getPronouncingNames = () =>
+    pronouncingReversed
+      ? { first: currentPartner1Name, second: currentPartner2Name }
+      : { first: currentPartner2Name, second: currentPartner1Name };
+  const getKissNames = () =>
+    kissReversed
+      ? { first: currentPartner1Name, second: currentPartner2Name }
+      : { first: currentPartner2Name, second: currentPartner1Name };
 
   const openModal = (optionId: string) => {
     setSelectedModal(optionId);
@@ -368,15 +397,15 @@ const RitualsStep = ({
         options = introductionOptions;
         break;
     }
-    
-    const option = options.find(opt => opt.id === optionId);
+
+    const option = options.find((opt) => opt.id === optionId);
     if (option) {
-      const currentBrideName = brideName || "Bride's Name";
-      const currentGroomName = groomName || "Groom's Name";
+      const currentPartner2Name = partner2Name || "Partner 2's Name";
+      const currentPartner1Name = partner1Name || "Partner 1's Name";
       const content = option.content
-        .replace(/{bride_name}/g, currentBrideName)
-        .replace(/{groom_name}/g, currentGroomName);
-      
+        .replace(/{bride_name}/g, currentPartner2Name)
+        .replace(/{groom_name}/g, currentPartner1Name);
+
       // Use setValue for proper React Hook Form integration
       setValue(fieldName as keyof CeremonyFormData, content);
       onSelectDropdown(fieldName, content);
@@ -386,15 +415,15 @@ const RitualsStep = ({
   const getOptionContent = (
     options: RitualOption[],
     optionId: string,
-    brideNameVal: string,
-    groomNameVal: string
+    partner2NameVal: string,
+    partner1NameVal: string
   ) => {
     const option = options.find((opt) => opt.id === optionId);
     if (!option) return "";
 
     return option.content
-      .replace(/{bride_name}/g, brideNameVal || "Bride's Name")
-      .replace(/{groom_name}/g, groomNameVal || "Groom's Name");
+      .replace(/{bride_name}/g, partner2NameVal || "Partner 2's Name")
+      .replace(/{groom_name}/g, partner1NameVal || "Partner 1's Name");
   };
 
   // Get the current ritual selection to determine which options to show
@@ -433,14 +462,11 @@ const RitualsStep = ({
     <div className="space-y-6">
       {/* Ritual Selection */}
       <div>
-        <label className="block text-lg font-semibold text-gray-900 mb-3">
+        <label className="block text-sm font-medium text-gray-700 mb-3">
           Ritual Selection
         </label>
         {/* Hidden input for form registration */}
-        <input
-          type="hidden"
-          {...register("ritualsSelection")}
-        />
+        <input type="hidden" {...register("ritualsSelection")} />
         <CustomDropdown
           name="ritualsSelection"
           options={ritualTypes}
@@ -455,27 +481,45 @@ const RitualsStep = ({
       {/* Ritual Options - Only show if a ritual is selected */}
       {currentRitual && currentRitualOptions.length > 0 && (
         <div>
-          <label className="block text-lg font-semibold text-gray-900 mb-3">
-            {currentRitual} Options
-          </label>
+          <div className="flex items-center justify-between mb-3">
+            <label className="block text-sm font-medium text-gray-700">
+              {currentRitual} for {getRitualNames().first} &{" "}
+              {getRitualNames().second}
+            </label>
+            {currentPartner1Name &&
+              currentPartner2Name &&
+              currentPartner1Name !== "Partner 1" &&
+              currentPartner2Name !== "Partner 2" && (
+                <button
+                  type="button"
+                  onClick={() => setRitualReversed(!ritualReversed)}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-primary bg-white border border-primary rounded-md hover:bg-primary hover:text-white transition-colors"
+                  title={`Switch to ${
+                    ritualReversed ? currentPartner2Name : currentPartner1Name
+                  } & ${
+                    ritualReversed ? currentPartner1Name : currentPartner2Name
+                  }`}
+                >
+                  <FaExchangeAlt className="text-xs" />
+                  <span>Switch</span>
+                </button>
+              )}
+          </div>
           <div className="space-y-3">
             {/* Hidden input for form registration */}
-            <input
-              type="hidden"
-              {...register("ritualsOption")}
-            />
+            <input type="hidden" {...register("ritualsOption")} />
             <CustomDropdown
               name="ritualsOption"
               options={currentRitualOptions.map((opt) => opt.label)}
               value={(() => {
                 const currentContent = watch("ritualsOption");
                 if (!currentContent) return "";
-                const currentBrideName = brideName || "Bride's Name";
-                const currentGroomName = groomName || "Groom's Name";
+                const currentPartner2Name = partner2Name || "Partner 2's Name";
+                const currentPartner1Name = partner1Name || "Partner 1's Name";
                 const currentOption = currentRitualOptions.find((opt) => {
                   const optionContent = opt.content
-                    .replace(/{bride_name}/g, currentBrideName)
-                    .replace(/{groom_name}/g, currentGroomName);
+                    .replace(/{bride_name}/g, currentPartner2Name)
+                    .replace(/{groom_name}/g, currentPartner1Name);
                   return optionContent === currentContent;
                 });
                 return currentOption?.label || "";
@@ -498,7 +542,7 @@ const RitualsStep = ({
                   onClick={() => openModal(option.id)}
                   className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors text-sm"
                 >
-                   {option.label}
+                  {option.label}
                 </button>
               ))}
             </div>
@@ -508,27 +552,45 @@ const RitualsStep = ({
 
       {/* Closing Statement */}
       <div>
-        <label className="block text-lg font-semibold text-gray-900 mb-3">
-          Closing Statement
-        </label>
+        <div className="flex items-center justify-between mb-3">
+          <label className="block text-sm font-medium text-gray-700">
+            Closing Statement for {getClosingNames().first} &{" "}
+            {getClosingNames().second}
+          </label>
+          {currentPartner1Name &&
+            currentPartner2Name &&
+            currentPartner1Name !== "Partner 1" &&
+            currentPartner2Name !== "Partner 2" && (
+              <button
+                type="button"
+                onClick={() => setClosingReversed(!closingReversed)}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-primary bg-white border border-primary rounded-md hover:bg-primary hover:text-white transition-colors"
+                title={`Switch to ${
+                  closingReversed ? currentPartner2Name : currentPartner1Name
+                } & ${
+                  closingReversed ? currentPartner1Name : currentPartner2Name
+                }`}
+              >
+                <FaExchangeAlt className="text-xs" />
+                <span>Switch</span>
+              </button>
+            )}
+        </div>
         <div className="space-y-3">
           {/* Hidden input for form registration */}
-          <input
-            type="hidden"
-            {...register("closingStatement")}
-          />
+          <input type="hidden" {...register("closingStatement")} />
           <CustomDropdown
             name="closingStatement"
             options={closingOptions.map((opt) => opt.label)}
             value={(() => {
               const currentContent = watch("closingStatement");
               if (!currentContent) return "";
-              const currentBrideName = brideName || "Bride's Name";
-              const currentGroomName = groomName || "Groom's Name";
+              const currentPartner2Name = partner2Name || "Partner 2's Name";
+              const currentPartner1Name = partner1Name || "Partner 1's Name";
               const currentOption = closingOptions.find((opt) => {
                 const optionContent = opt.content
-                  .replace(/{bride_name}/g, currentBrideName)
-                  .replace(/{groom_name}/g, currentGroomName);
+                  .replace(/{bride_name}/g, currentPartner2Name)
+                  .replace(/{groom_name}/g, currentPartner1Name);
                 return optionContent === currentContent;
               });
               return currentOption?.label || "";
@@ -549,7 +611,7 @@ const RitualsStep = ({
                 onClick={() => openModal(option.id)}
                 className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors text-sm"
               >
-                 {option.label}
+                {option.label}
               </button>
             ))}
           </div>
@@ -558,27 +620,49 @@ const RitualsStep = ({
 
       {/* Pronouncing */}
       <div>
-        <label className="block text-lg font-semibold text-gray-900 mb-3">
-          Pronouncing
-        </label>
+        <div className="flex items-center justify-between mb-3">
+          <label className="block text-sm font-medium text-gray-700">
+            Pronouncing {getPronouncingNames().first} &{" "}
+            {getPronouncingNames().second}
+          </label>
+          {currentPartner1Name &&
+            currentPartner2Name &&
+            currentPartner1Name !== "Partner 1" &&
+            currentPartner2Name !== "Partner 2" && (
+              <button
+                type="button"
+                onClick={() => setPronouncingReversed(!pronouncingReversed)}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-primary bg-white border border-primary rounded-md hover:bg-primary hover:text-white transition-colors"
+                title={`Switch to ${
+                  pronouncingReversed
+                    ? currentPartner2Name
+                    : currentPartner1Name
+                } & ${
+                  pronouncingReversed
+                    ? currentPartner1Name
+                    : currentPartner2Name
+                }`}
+              >
+                <FaExchangeAlt className="text-xs" />
+                <span>Switch</span>
+              </button>
+            )}
+        </div>
         <div className="space-y-3">
           {/* Hidden input for form registration */}
-          <input
-            type="hidden"
-            {...register("pronouncing")}
-          />
+          <input type="hidden" {...register("pronouncing")} />
           <CustomDropdown
             name="pronouncing"
             options={pronouncingOptions.map((opt) => opt.label)}
             value={(() => {
               const currentContent = watch("pronouncing");
               if (!currentContent) return "";
-              const currentBrideName = brideName || "Bride's Name";
-              const currentGroomName = groomName || "Groom's Name";
+              const currentPartner2Name = partner2Name || "Partner 2's Name";
+              const currentPartner1Name = partner1Name || "Partner 1's Name";
               const currentOption = pronouncingOptions.find((opt) => {
                 const optionContent = opt.content
-                  .replace(/{bride_name}/g, currentBrideName)
-                  .replace(/{groom_name}/g, currentGroomName);
+                  .replace(/{bride_name}/g, currentPartner2Name)
+                  .replace(/{groom_name}/g, currentPartner1Name);
                 return optionContent === currentContent;
               });
               return currentOption?.label || "";
@@ -601,7 +685,7 @@ const RitualsStep = ({
                 onClick={() => openModal(option.id)}
                 className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors text-sm"
               >
-                 {option.label}
+                {option.label}
               </button>
             ))}
           </div>
@@ -610,27 +694,44 @@ const RitualsStep = ({
 
       {/* Kiss */}
       <div>
-        <label className="block text-lg font-semibold text-gray-900 mb-3">
-          Kiss
-        </label>
+        <div className="flex items-center justify-between mb-3">
+          <label className="block text-sm font-medium text-gray-700">
+            Kiss between {getKissNames().first} & {getKissNames().second}
+          </label>
+          {currentPartner1Name &&
+            currentPartner2Name &&
+            currentPartner1Name !== "Partner 1" &&
+            currentPartner2Name !== "Partner 2" && (
+              <button
+                type="button"
+                onClick={() => setKissReversed(!kissReversed)}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-primary bg-white border border-primary rounded-md hover:bg-primary hover:text-white transition-colors"
+                title={`Switch to ${
+                  kissReversed ? currentPartner2Name : currentPartner1Name
+                } & ${
+                  kissReversed ? currentPartner1Name : currentPartner2Name
+                }`}
+              >
+                <FaExchangeAlt className="text-xs" />
+                <span>Switch</span>
+              </button>
+            )}
+        </div>
         <div className="space-y-3">
           {/* Hidden input for form registration */}
-          <input
-            type="hidden"
-            {...register("kiss")}
-          />
+          <input type="hidden" {...register("kiss")} />
           <CustomDropdown
             name="kiss"
             options={kissOptions.map((opt) => opt.label)}
             value={(() => {
               const currentContent = watch("kiss");
               if (!currentContent) return "";
-              const currentBrideName = brideName || "Bride's Name";
-              const currentGroomName = groomName || "Groom's Name";
+              const currentPartner2Name = partner2Name || "Partner 2's Name";
+              const currentPartner1Name = partner1Name || "Partner 1's Name";
               const currentOption = kissOptions.find((opt) => {
                 const optionContent = opt.content
-                  .replace(/{bride_name}/g, currentBrideName)
-                  .replace(/{groom_name}/g, currentGroomName);
+                  .replace(/{bride_name}/g, currentPartner2Name)
+                  .replace(/{groom_name}/g, currentPartner1Name);
                 return optionContent === currentContent;
               });
               return currentOption?.label || "";
@@ -651,7 +752,7 @@ const RitualsStep = ({
                 onClick={() => openModal(option.id)}
                 className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors text-sm"
               >
-                 {option.label}
+                {option.label}
               </button>
             ))}
           </div>
@@ -665,22 +766,19 @@ const RitualsStep = ({
         </label>
         <div className="space-y-3">
           {/* Hidden input for form registration */}
-          <input
-            type="hidden"
-            {...register("introductionOfCouple")}
-          />
+          <input type="hidden" {...register("introductionOfCouple")} />
           <CustomDropdown
             name="introductionOfCouple"
             options={introductionOptions.map((opt) => opt.label)}
             value={(() => {
               const currentContent = watch("introductionOfCouple");
               if (!currentContent) return "";
-              const currentBrideName = brideName || "Bride's Name";
-              const currentGroomName = groomName || "Groom's Name";
+              const currentPartner2Name = partner2Name || "Partner 2's Name";
+              const currentPartner1Name = partner1Name || "Partner 1's Name";
               const currentOption = introductionOptions.find((opt) => {
                 const optionContent = opt.content
-                  .replace(/{bride_name}/g, currentBrideName)
-                  .replace(/{groom_name}/g, currentGroomName);
+                  .replace(/{bride_name}/g, currentPartner2Name)
+                  .replace(/{groom_name}/g, currentPartner1Name);
                 return optionContent === currentContent;
               });
               return currentOption?.label || "";
@@ -703,7 +801,7 @@ const RitualsStep = ({
                 onClick={() => openModal(option.id)}
                 className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors text-sm"
               >
-                 {option.label}
+                {option.label}
               </button>
             ))}
           </div>
@@ -764,10 +862,10 @@ const RitualsStep = ({
               <div className="bg-gray-50 p-4 rounded-lg">
                 <p className="text-gray-800 leading-relaxed whitespace-pre-line">
                   {(() => {
-                    const currentBrideName =
-                      watch("brideName") || brideName || "";
-                    const currentGroomName =
-                      watch("groomName") || groomName || "";
+                    const currentPartner2Name =
+                      watch("partner2Name") || partner2Name || "";
+                    const currentPartner1Name =
+                      watch("partner1Name") || partner1Name || "";
 
                     // Check which option type this is and get content
                     if (
@@ -778,8 +876,8 @@ const RitualsStep = ({
                       return getOptionContent(
                         sandCeremonyOptions,
                         selectedModal,
-                        currentBrideName,
-                        currentGroomName
+                        currentPartner2Name,
+                        currentPartner1Name
                       );
                     } else if (
                       roseCeremonyOptions.find(
@@ -789,8 +887,8 @@ const RitualsStep = ({
                       return getOptionContent(
                         roseCeremonyOptions,
                         selectedModal,
-                        currentBrideName,
-                        currentGroomName
+                        currentPartner2Name,
+                        currentPartner1Name
                       );
                     } else if (
                       unityCandleOptions.find((opt) => opt.id === selectedModal)
@@ -798,8 +896,8 @@ const RitualsStep = ({
                       return getOptionContent(
                         unityCandleOptions,
                         selectedModal,
-                        currentBrideName,
-                        currentGroomName
+                        currentPartner2Name,
+                        currentPartner1Name
                       );
                     } else if (
                       handfastingOptions.find((opt) => opt.id === selectedModal)
@@ -807,17 +905,19 @@ const RitualsStep = ({
                       return getOptionContent(
                         handfastingOptions,
                         selectedModal,
-                        currentBrideName,
-                        currentGroomName
+                        currentPartner2Name,
+                        currentPartner1Name
                       );
                     } else if (
-                      wineCeremonyOptions.find((opt) => opt.id === selectedModal)
+                      wineCeremonyOptions.find(
+                        (opt) => opt.id === selectedModal
+                      )
                     ) {
                       return getOptionContent(
                         wineCeremonyOptions,
                         selectedModal,
-                        currentBrideName,
-                        currentGroomName
+                        currentPartner2Name,
+                        currentPartner1Name
                       );
                     } else if (
                       ringWarmingOptions.find((opt) => opt.id === selectedModal)
@@ -825,44 +925,52 @@ const RitualsStep = ({
                       return getOptionContent(
                         ringWarmingOptions,
                         selectedModal,
-                        currentBrideName,
-                        currentGroomName
+                        currentPartner2Name,
+                        currentPartner1Name
                       );
                     } else if (
-                      treePlantingOptions.find((opt) => opt.id === selectedModal)
+                      treePlantingOptions.find(
+                        (opt) => opt.id === selectedModal
+                      )
                     ) {
                       return getOptionContent(
                         treePlantingOptions,
                         selectedModal,
-                        currentBrideName,
-                        currentGroomName
+                        currentPartner2Name,
+                        currentPartner1Name
                       );
                     } else if (
-                      stoneCeremonyOptions.find((opt) => opt.id === selectedModal)
+                      stoneCeremonyOptions.find(
+                        (opt) => opt.id === selectedModal
+                      )
                     ) {
                       return getOptionContent(
                         stoneCeremonyOptions,
                         selectedModal,
-                        currentBrideName,
-                        currentGroomName
+                        currentPartner2Name,
+                        currentPartner1Name
                       );
                     } else if (
-                      oathingStoneOptions.find((opt) => opt.id === selectedModal)
+                      oathingStoneOptions.find(
+                        (opt) => opt.id === selectedModal
+                      )
                     ) {
                       return getOptionContent(
                         oathingStoneOptions,
                         selectedModal,
-                        currentBrideName,
-                        currentGroomName
+                        currentPartner2Name,
+                        currentPartner1Name
                       );
                     } else if (
-                      cordOfThreeStrandsOptions.find((opt) => opt.id === selectedModal)
+                      cordOfThreeStrandsOptions.find(
+                        (opt) => opt.id === selectedModal
+                      )
                     ) {
                       return getOptionContent(
                         cordOfThreeStrandsOptions,
                         selectedModal,
-                        currentBrideName,
-                        currentGroomName
+                        currentPartner2Name,
+                        currentPartner1Name
                       );
                     } else if (
                       closingOptions.find((opt) => opt.id === selectedModal)
@@ -870,8 +978,8 @@ const RitualsStep = ({
                       return getOptionContent(
                         closingOptions,
                         selectedModal,
-                        currentBrideName,
-                        currentGroomName
+                        currentPartner2Name,
+                        currentPartner1Name
                       );
                     } else if (
                       pronouncingOptions.find((opt) => opt.id === selectedModal)
@@ -879,8 +987,8 @@ const RitualsStep = ({
                       return getOptionContent(
                         pronouncingOptions,
                         selectedModal,
-                        currentBrideName,
-                        currentGroomName
+                        currentPartner2Name,
+                        currentPartner1Name
                       );
                     } else if (
                       kissOptions.find((opt) => opt.id === selectedModal)
@@ -888,8 +996,8 @@ const RitualsStep = ({
                       return getOptionContent(
                         kissOptions,
                         selectedModal,
-                        currentBrideName,
-                        currentGroomName
+                        currentPartner2Name,
+                        currentPartner1Name
                       );
                     } else if (
                       introductionOptions.find(
@@ -899,8 +1007,8 @@ const RitualsStep = ({
                       return getOptionContent(
                         introductionOptions,
                         selectedModal,
-                        currentBrideName,
-                        currentGroomName
+                        currentPartner2Name,
+                        currentPartner1Name
                       );
                     }
                     return "";
@@ -925,14 +1033,30 @@ const RitualsStep = ({
                       roseCeremonyOptions.find(
                         (opt) => opt.id === selectedModal
                       ) ||
-                      unityCandleOptions.find((opt) => opt.id === selectedModal) ||
-                      handfastingOptions.find((opt) => opt.id === selectedModal) ||
-                      wineCeremonyOptions.find((opt) => opt.id === selectedModal) ||
-                      ringWarmingOptions.find((opt) => opt.id === selectedModal) ||
-                      treePlantingOptions.find((opt) => opt.id === selectedModal) ||
-                      stoneCeremonyOptions.find((opt) => opt.id === selectedModal) ||
-                      oathingStoneOptions.find((opt) => opt.id === selectedModal) ||
-                      cordOfThreeStrandsOptions.find((opt) => opt.id === selectedModal)
+                      unityCandleOptions.find(
+                        (opt) => opt.id === selectedModal
+                      ) ||
+                      handfastingOptions.find(
+                        (opt) => opt.id === selectedModal
+                      ) ||
+                      wineCeremonyOptions.find(
+                        (opt) => opt.id === selectedModal
+                      ) ||
+                      ringWarmingOptions.find(
+                        (opt) => opt.id === selectedModal
+                      ) ||
+                      treePlantingOptions.find(
+                        (opt) => opt.id === selectedModal
+                      ) ||
+                      stoneCeremonyOptions.find(
+                        (opt) => opt.id === selectedModal
+                      ) ||
+                      oathingStoneOptions.find(
+                        (opt) => opt.id === selectedModal
+                      ) ||
+                      cordOfThreeStrandsOptions.find(
+                        (opt) => opt.id === selectedModal
+                      )
                     ) {
                       handleSelection("ritualsOption", selectedModal);
                     } else if (

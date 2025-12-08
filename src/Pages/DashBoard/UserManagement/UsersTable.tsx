@@ -45,6 +45,40 @@ const UsersTable: React.FC<UsersTableProps> = ({
     fetchOfficiants();
   }, [axios]);
 
+  const handleView = async (user: User) => {
+    await showUserDetailsModal(user);
+  };
+
+  const handleDelete = async (user: User) => {
+    const result = await Swal.fire({
+      title: "Delete User?",
+      html: `Are you sure you want to delete <strong>${
+        user.name || user.email
+      }</strong>?<br/><br/>
+             <span class="text-red-600">⚠️ This action cannot be undone!</span>`,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#EF4444",
+      cancelButtonColor: "#6B7280",
+      confirmButtonText: "Yes, Delete User",
+      cancelButtonText: "Cancel",
+    });
+
+    if (result.isConfirmed) {
+      try {
+        await axios.delete(`/users/delete-account/${user._id}`);
+        GlassSwal.success("Deleted", "User deleted successfully");
+        onRefresh();
+      } catch (error: any) {
+        console.error("Error deleting user:", error);
+        GlassSwal.error(
+          "Error",
+          error.response?.data?.message || "Failed to delete user"
+        );
+      }
+    }
+  };
+
   const handleAssignOfficiant = async (user: User) => {
     // Validate user has accepted agreement
     if (!user.AgreementAccepted) {
@@ -127,130 +161,6 @@ const UsersTable: React.FC<UsersTableProps> = ({
         await GlassSwal.error(
           "Error",
           error.response?.data?.error || "Failed to assign officiant"
-        );
-      }
-    }
-  };
-
-  const handleView = async (user: User) => {
-    await showUserDetailsModal(user);
-  };
-
-  // const handleEdit = async (user: User) => {
-  //   const { value: formValues } = await Swal.fire({
-  //     title: "Edit User Information",
-  //     html: `
-  //       <div class="space-y-4 text-left">
-  //         <div>
-  //           <label class="block text-sm font-medium text-gray-700 mb-1">Name</label>
-  //           <input id="name" class="swal2-input" placeholder="Full Name" value="${
-  //             user.name || ""
-  //           }">
-  //         </div>
-  //         <div>
-  //           <label class="block text-sm font-medium text-gray-700 mb-1">Partner 1</label>
-  //           <input id="partner1" class="swal2-input" placeholder="Partner 1" value="${
-  //             user.partner_1 || ""
-  //           }">
-  //         </div>
-  //         <div>
-  //           <label class="block text-sm font-medium text-gray-700 mb-1">Partner 2</label>
-  //           <input id="partner2" class="swal2-input" placeholder="Partner 2" value="${
-  //             user.partner_2 || ""
-  //           }">
-  //         </div>
-  //         <div>
-  //           <label class="block text-sm font-medium text-gray-700 mb-1">Phone</label>
-  //           <input id="phone" class="swal2-input" placeholder="Phone Number" value="${
-  //             user.phone || ""
-  //           }">
-  //         </div>
-  //         <div>
-  //           <label class="block text-sm font-medium text-gray-700 mb-1">Address</label>
-  //           <input id="address" class="swal2-input" placeholder="Address" value="${
-  //             user.address || ""
-  //           }">
-  //         </div>
-  //         <div>
-  //           <label class="block text-sm font-medium text-gray-700 mb-1">Wedding Date</label>
-  //           <input id="weddingDate" type="date" class="swal2-input" value="${
-  //             user.weddingDate
-  //               ? new Date(user.weddingDate).toISOString().split("T")[0]
-  //               : ""
-  //           }">
-  //         </div>
-  //         <div>
-  //           <label class="block text-sm font-medium text-gray-700 mb-1">Location</label>
-  //           <input id="location" class="swal2-input" placeholder="Wedding Location" value="${
-  //             user.location || ""
-  //           }">
-  //         </div>
-  //       </div>
-  //     `,
-  //     focusConfirm: false,
-  //     showCancelButton: true,
-  //     confirmButtonText: "Update User",
-  //     cancelButtonText: "Cancel",
-  //     width: "600px",
-  //     preConfirm: () => {
-  //       return {
-  //         name: (document.getElementById("name") as HTMLInputElement).value,
-  //         partner_1: (document.getElementById("partner1") as HTMLInputElement)
-  //           .value,
-  //         partner_2: (document.getElementById("partner2") as HTMLInputElement)
-  //           .value,
-  //         phone: (document.getElementById("phone") as HTMLInputElement).value,
-  //         address: (document.getElementById("address") as HTMLInputElement)
-  //           .value,
-  //         weddingDate: (
-  //           document.getElementById("weddingDate") as HTMLInputElement
-  //         ).value,
-  //         location: (document.getElementById("location") as HTMLInputElement)
-  //           .value,
-  //       };
-  //     },
-  //   });
-
-  //   if (formValues) {
-  //     try {
-  //       await axios.patch(`/users/update/${user._id}`, formValues);
-  //       GlassSwal.success("Success", "User updated successfully");
-  //       onRefresh();
-  //     } catch (error: any) {
-  //       console.error("Error updating user:", error);
-  //       GlassSwal.error(
-  //         "Error",
-  //         error.response?.data?.message || "Failed to update user"
-  //       );
-  //     }
-  //   }
-  // };
-
-  const handleDelete = async (user: User) => {
-    const result = await Swal.fire({
-      title: "Delete User?",
-      html: `Are you sure you want to delete <strong>${
-        user.name || user.email
-      }</strong>?<br/><br/>
-             <span class="text-red-600">⚠️ This action cannot be undone!</span>`,
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#EF4444",
-      cancelButtonColor: "#6B7280",
-      confirmButtonText: "Yes, Delete User",
-      cancelButtonText: "Cancel",
-    });
-
-    if (result.isConfirmed) {
-      try {
-        await axios.delete(`/users/delete-account/${user._id}`);
-        GlassSwal.success("Deleted", "User deleted successfully");
-        onRefresh();
-      } catch (error: any) {
-        console.error("Error deleting user:", error);
-        GlassSwal.error(
-          "Error",
-          error.response?.data?.message || "Failed to delete user"
         );
       }
     }
@@ -377,7 +287,7 @@ const UsersTable: React.FC<UsersTableProps> = ({
                     Contact
                   </th>
                   <th className="hidden lg:table-cell px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Wedding Info
+                    Prefered Officiant 
                   </th>
                   <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Assigned Officiant
@@ -432,16 +342,7 @@ const UsersTable: React.FC<UsersTableProps> = ({
                         </div>
                       </td>
                       <td className="hidden lg:table-cell px-3 sm:px-6 py-4">
-                        <div className="text-xs sm:text-sm text-gray-900">
-                          {firstEvent ? (
-                            <p className=" text-base ">{firstEvent.title}</p>
-                          ) : (
-                            "N/A"
-                          )}
-                        </div>
-                        <div className="text-xs text-gray-500 max-w-xs truncate">
-                          {firstEvent?.location || "N/A"}
-                        </div>
+                        <PreferedOfficiant uid={user._id} />
                       </td>
                       <td className="px-3 sm:px-6 py-4">
                         {user.currentOfficiant?.officiantName ? (
@@ -526,13 +427,7 @@ const UsersTable: React.FC<UsersTableProps> = ({
                           >
                             <FaEye className="text-sm sm:text-base" />
                           </button>
-                          {/* <button
-                          onClick={() => handleEdit(user)}
-                          className="text-blue-600 hover:text-blue-900 p-1 sm:p-2 rounded hover:bg-blue-50"
-                          title="Edit User"
-                        >
-                          <FaEdit className="text-sm sm:text-base" />
-                        </button> */}
+
                           <button
                             onClick={() => handleDelete(user)}
                             className="text-red-600 hover:text-red-900 p-1 sm:p-2 rounded hover:bg-red-50"
@@ -557,3 +452,33 @@ const UsersTable: React.FC<UsersTableProps> = ({
 };
 
 export default UsersTable;
+
+// ==============================================================================================
+
+export const PreferedOfficiant = ({ uid }: { uid: string }) => {
+  const axios = useAxios();
+  const [officiants, setOfficiants] = useState<any[]>([]);
+  const findOfficiant = async () => {
+    const response = await axios.get(`/schedule/get/${uid}`);
+    console.log("preferred officiant", response);
+    setOfficiants(response.data);
+  };
+
+  useEffect(() => {
+    findOfficiant();
+  }, [uid]);
+
+  return (
+    <div>
+      {officiants[0] ? (
+        <div>
+          <div className="text-xs sm:text-sm font-medium text-indigo-700">
+            {officiants[0].officiantName}
+          </div>
+        </div>
+      ) : (
+        <span className="text-xs text-gray-400 italic">No preference</span>
+      )}
+    </div>
+  );
+};

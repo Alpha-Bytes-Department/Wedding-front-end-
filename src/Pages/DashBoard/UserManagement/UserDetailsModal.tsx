@@ -75,13 +75,13 @@ const getCoupleInfoHTML = (event: any) => `
     </h4>
     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
       <div style="background: rgba(255,255,255,0.6); padding: 12px; border-radius: 8px;">
-        <span style="font-size: 11px; color: #78350f; text-transform: uppercase; font-weight: 600;">Groom</span>
+        <span style="font-size: 11px; color: #78350f; text-transform: uppercase; font-weight: 600;">Partner 1</span>
         <div style="font-weight: 700; color: #1f2937; font-size: 15px; margin-top: 4px;">${
           event.groomName || "N/A"
         }</div>
       </div>
       <div style="background: rgba(255,255,255,0.6); padding: 12px; border-radius: 8px;">
-        <span style="font-size: 11px; color: #78350f; text-transform: uppercase; font-weight: 600;">Bride</span>
+        <span style="font-size: 11px; color: #78350f; text-transform: uppercase; font-weight: 600;">Partner 2</span>
         <div style="font-weight: 700; color: #1f2937; font-size: 15px; margin-top: 4px;">${
           event.brideName || "N/A"
         }</div>
@@ -204,7 +204,7 @@ const getVowsCommitmentsHTML = (event: any) => {
       </h4>
       <div style="background: rgba(255,255,255,0.7); padding: 14px; border-radius: 8px;">
         ${renderField(
-          "Charge to Groom and Bride",
+          "Charge to Partner 1 and Partner 2",
           event.chargeToGroomAndBride,
           true
         )}
@@ -243,12 +243,12 @@ const getRingExchangeHTML = (event: any) => {
         )}
         ${renderField("Blessings of Rings", event.blessingsOfRings, true)}
         ${renderField(
-          "Exchange of Rings - Groom",
+          "Exchange of Rings - Partner 1",
           event.exchangeOfRingsGroom,
           true
         )}
         ${renderField(
-          "Exchange of Rings - Bride",
+          "Exchange of Rings - Partner 2",
           event.exchangeOfRingsBride,
           true
         )}
@@ -300,35 +300,47 @@ const getNoEventHTML = () => `
 // User Information Component HTML
 const getUserInfoHTML = (user: User) => `
   <div style="background: #f8fafc; padding: 16px; border-radius: 8px; margin-bottom: 20px;">
-    <h4 style="margin: 0 0 12px 0; font-size: 14px; font-weight: 600; color: #475569;">👤 User Information</h4>
-    <div style="display: grid; gap: 6px;">
-      <p style="margin: 0; font-size: 13px;"><strong style="color: #64748b;">Account Name:</strong> <span style="color: #1e293b;">${
+    <h4 style="margin: 0 0 12px 0; font-size: 16px; font-weight: 600; color: #475569;">👤 User Information</h4>
+    <div style="display: grid; gap: 8px;">
+      <p style="margin: 0; font-size: 15px;"><strong style="color: #64748b;">Account Name:</strong> <span style="color: #1e293b;">${
         user.name || "N/A"
       }</span></p>
-      <p style="margin: 0; font-size: 13px;"><strong style="color: #64748b;">Partner-1:</strong> <span style="color: #1e293b;">${
+      <p style="margin: 0; font-size: 15px;"><strong style="color: #64748b;">Partner-1:</strong> <span style="color: #1e293b;">${
         user.partner_1 || "N/A"
       }</span></p>
-      <p style="margin: 0; font-size: 13px;"><strong style="color: #64748b;">Partner-2:</strong> <span style="color: #1e293b;">${
+      <p style="margin: 0; font-size: 15px;"><strong style="color: #64748b;">Partner-2:</strong> <span style="color: #1e293b;">${
         user.partner_2 || "N/A"
       }</span></p>
-      <p style="margin: 0; font-size: 13px;"><strong style="color: #64748b;">Email:</strong> <span style="color: #1e293b;">${
+      <p style="margin: 0; font-size: 15px;"><strong style="color: #64748b;">Email:</strong> <span style="color: #1e293b;">${
         user.email || "N/A"
       }</span></p>
-      <p style="margin: 0; font-size: 13px;"><strong style="color: #64748b;">Partner-1 Phone:</strong> <span style="color: #1e293b;">${
+      <p style="margin: 0; font-size: 15px;"><strong style="color: #64748b;">Partner-1 Phone:</strong> <span style="color: #1e293b;">${
         user.contact?.partner_1 || "N/A"
       }</span></p>
-      <p style="margin: 0; font-size: 13px;"><strong style="color: #64748b;">Partner-2 Phone:</strong> <span style="color: #1e293b;">${
+      <p style="margin: 0; font-size: 15px;"><strong style="color: #64748b;">Partner-2 Phone:</strong> <span style="color: #1e293b;">${
         user.contact?.partner_2 || "N/A"
       }</span></p>
-      <p style="margin: 0; font-size: 13px;"><strong style="color: #64748b;">Address:</strong> <span style="color: #1e293b;">${
+      <p style="margin: 0; font-size: 15px;"><strong style="color: #64748b;">Address:</strong> <span style="color: #1e293b;">${
         user.location || "N/A"
       }</span></p>
-      <p style="margin: 0; font-size: 13px;"><strong style="color: #64748b;">Account Status:</strong> ${
-        user.isVerified
-          ? '<span style="color: #059669;">✅ Verified</span>'
-          : '<span style="color: #d97706;">⚠️ Unverified</span>'
+      
+      <p style="margin: 0; font-size: 15px;"><strong style="color: #64748b;">Wedding Date:</strong> ${
+        user?.weddingDate
+          ? `<span style="color: #059669;"> ${new Date(
+              user.weddingDate
+            ).toLocaleDateString()}</span>`
+          : '<span style="color: #d97706;">No wedding Date fixed</span>'
       }</p>
-      <p style="margin: 0; font-size: 13px;"><strong style="color: #64748b;">Joined:</strong> <span style="color: #1e293b;">${new Date(
+      <p style="margin: 0; font-size: 15px;"><strong style="color: #64748b;">Rehearsal Needed:</strong> <span style="color: #1e293b;">${
+        user?.needRehearsal
+          ? `Yes, The Rehearsal Date: ${
+              user?.rehearsalDate
+                ? new Date(user.rehearsalDate).toLocaleDateString()
+                : "N/A"
+            }`
+          : "No Rehearsal Data"
+      }</span></p>
+      <p style="margin: 0; font-size: 15px;"><strong style="color: #64748b;">Joined:</strong> <span style="color: #1e293b;">${new Date(
         user.createdAt
       ).toLocaleDateString()}</span></p>
     </div>

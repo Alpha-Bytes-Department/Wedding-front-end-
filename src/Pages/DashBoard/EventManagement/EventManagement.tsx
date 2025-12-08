@@ -421,7 +421,7 @@ const EventManagement = () => {
                   <div className="grid grid-cols-2 gap-4">
                     {selectedEvent.groomName && (
                       <div className="bg-blue-50 p-3 rounded-lg">
-                        <p className="text-sm text-gray-600 mb-1">Groom</p>
+                        <p className="text-sm text-gray-600 mb-1">Partner 1</p>
                         <p className="font-semibold text-gray-900">
                           {selectedEvent.groomName}
                         </p>
@@ -429,7 +429,7 @@ const EventManagement = () => {
                     )}
                     {selectedEvent.brideName && (
                       <div className="bg-pink-50 p-3 rounded-lg">
-                        <p className="text-sm text-gray-600 mb-1">Bride</p>
+                        <p className="text-sm text-gray-600 mb-1">Partner 2</p>
                         <p className="font-semibold text-gray-900">
                           {selectedEvent.brideName}
                         </p>
