@@ -11,7 +11,7 @@ const Header = () => {
           backgroundImage: "url('/background.jpg')",
         }}
       >
-        <div className="flex flex-col items-center justify-center h-full">
+        <div className="flex flex-col items-center justify-center h-full  pb-16 lg:pb-0">
           <h1 className=" font-primary font-medium md:text-4xl text-3xl lg:text-6xl text-center text-black">
             Design Your Dream Ceremony, <br className="" /> Together.
           </h1>
