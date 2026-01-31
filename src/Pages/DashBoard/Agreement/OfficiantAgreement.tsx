@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useAxios } from "../../../Component/Providers/useAxios";
 import GlassSwal from "../../../utils/glassSwal";
+import { convertLocalDateToISO, formatDateForInput } from "../../../utils/dateUtils";
 
 interface AgreementData {
   _id: string;
@@ -69,7 +70,7 @@ const OfficiantAgreement: React.FC = () => {
         setFormData({
           officiantName: data.officiantName || "",
           eventDate: data.eventDate
-            ? new Date(data.eventDate).toISOString().split("T")[0]
+            ? formatDateForInput(data.eventDate)
             : "",
           partner1Name: data.partner1Name || "",
           partner2Name: data.partner2Name || "",
@@ -135,7 +136,7 @@ const OfficiantAgreement: React.FC = () => {
         await axios.post(`/agreements/create`, {
           userId: userId,
           officiantName: formData.officiantName,
-          eventDate: formData.eventDate,
+          eventDate: convertLocalDateToISO(formData.eventDate),
           partner1Name: formData.partner1Name,
           partner2Name: formData.partner2Name,
           location: formData.location,
@@ -151,7 +152,7 @@ const OfficiantAgreement: React.FC = () => {
         // Agreement exists, just update details
         await axios.put(`/agreements/update-details/${agreement._id}`, {
           officiantName: formData.officiantName,
-          eventDate: formData.eventDate,
+          eventDate: convertLocalDateToISO(formData.eventDate),
           partner1Name: formData.partner1Name,
           partner2Name: formData.partner2Name,
           location: formData.location,

@@ -5,6 +5,7 @@ import type {
 } from "react-hook-form";
 import { useState } from "react";
 import type { CeremonyFormData } from "../types";
+import { getTodayDateString } from "../../../../utils/dateUtils";
 
 interface ScheduleStepProps {
   register: UseFormRegister<CeremonyFormData>;
@@ -24,7 +25,7 @@ const ScheduleStep = ({ register, errors, watch }: ScheduleStepProps) => {
             Event Date
           </label>
           <input
-            min={new Date().toISOString().split("T")[0]}
+            min={getTodayDateString()}
             {...register("eventDate", { required: "Date is required" })}
             // defaultValue={new Date().toISOString().split("T")[0]}
             type="date"
@@ -86,7 +87,7 @@ const ScheduleStep = ({ register, errors, watch }: ScheduleStepProps) => {
               Rehearsal Date
             </label>
             <input
-              min={new Date().toISOString().split("T")[0]}
+              min={getTodayDateString()}
               max={eventDate || undefined}
               {...register("rehearsalDate")}
               type="date"

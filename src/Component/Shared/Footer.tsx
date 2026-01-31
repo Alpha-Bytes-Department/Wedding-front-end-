@@ -15,7 +15,7 @@ const Footer = () => {
     const form = e.currentTarget;
     const formData = new FormData(form);
     const email = formData.get("email");
-    console.log(email);
+    // console.log(email);
     const res = await axios.post("/marketing/subscribe", { email });
     if (res.status === 200 || res.status === 201) {
       console.log("Subscription successful:", res.data);

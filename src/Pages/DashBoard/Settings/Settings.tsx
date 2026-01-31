@@ -7,6 +7,7 @@ import { useAuth } from "../../../Component/Providers/AuthProvider";
 import { useAxios } from "../../../Component/Providers/useAxios";
 import { useNavigate } from "react-router-dom";
 import Avatar from "../../../Component/Shared/Avatar";
+import { convertLocalDateToISO, formatDateForInput } from "../../../utils/dateUtils";
 
 const Settings = () => {
   const [isEditingProfile, setIsEditingProfile] = useState(false);
@@ -33,7 +34,7 @@ const Settings = () => {
       partner2Phone: user?.contact?.partner_2 || "",
       location: user?.location || " ",
       weddingDate: user?.weddingDate
-        ? new Date(user.weddingDate).toISOString().split("T")[0]
+        ? formatDateForInput(user.weddingDate)
         : "",
       officiantBio: user?.bio || "",
       booking: user?.bookingMoney || 0,
@@ -45,7 +46,7 @@ const Settings = () => {
           ? false
           : null,
       rehearsalDate: user?.rehearsalDate
-        ? new Date(user.rehearsalDate).toISOString().split("T")[0]
+        ? formatDateForInput(user.rehearsalDate)
         : "",
     },
   });
@@ -69,7 +70,7 @@ const Settings = () => {
         partner2Phone: user.contact?.partner_2 || "",
         location: user.location || "",
         weddingDate: user.weddingDate
-          ? new Date(user.weddingDate).toISOString().split("T")[0]
+          ? formatDateForInput(user.weddingDate)
           : "",
         officiantBio: user.bio || "",
         booking: user.bookingMoney || 0,
@@ -81,7 +82,7 @@ const Settings = () => {
             ? false
             : null,
         rehearsalDate: user.rehearsalDate
-          ? new Date(user.rehearsalDate).toISOString().split("T")[0]
+          ? formatDateForInput(user.rehearsalDate)
           : "",
       });
     }
@@ -106,7 +107,7 @@ const Settings = () => {
         name: info.name,
         phone: info.contact,
         location: info.location,
-        weddingDate: info.weddingDate,
+        weddingDate: info.weddingDate ? convertLocalDateToISO(info.weddingDate) : null,
         bio: info.officiantBio,
         bookingMoney: info.booking,
         needRehearsal:
@@ -116,7 +117,7 @@ const Settings = () => {
             ? false
             : null,
         rehearsalDate:
-          info.needRehearsal && info.rehearsalDate ? info.rehearsalDate : null,
+          info.needRehearsal && info.rehearsalDate ? convertLocalDateToISO(info.rehearsalDate) : null,
       };
 
       // Add contact object for user role

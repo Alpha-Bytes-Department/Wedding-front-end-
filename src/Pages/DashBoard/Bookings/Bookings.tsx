@@ -80,7 +80,7 @@ const Bookings = () => {
           (booking: Booking) => booking.approvedStatus === "approved"
         )
       );
-      console.log("Bookings:", response.data);
+      // console.log("Bookings:", response.data);
       //console.log(response.data);
     } catch (error) {
       console.error("Error fetching bookings:", error);
@@ -97,7 +97,7 @@ const Bookings = () => {
         (event: any) =>
           event.status === "completed" && event.officiantId === user?._id
       );
-      console.log("Response Data:", response.data.events);
+      // console.log("Response Data:", response.data.events);
 
       const ongoing = response.data.events.filter(
         (event: any) =>

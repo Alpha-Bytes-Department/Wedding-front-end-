@@ -89,7 +89,7 @@ const Nav = () => {
     }
   }, [location, user]);
 
-  console.log("User in Nav:", user);
+  // console.log("User in Nav:", user);
   return (
     <div className="bg-transparent flex justify-between items-center pt-3 sm:pt-4 md:pt-5   px-3 sm:px-4 md:px-6 lg:px-12 xl:px-20 absolute top-0 left-0 right-0 z-50">
       <Link to="/" className="flex items-center gap-2 sm:gap-3 flex-col">

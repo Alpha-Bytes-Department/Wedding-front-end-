@@ -77,11 +77,7 @@ export const AxiosProvider: React.FC<AxiosProviderProps> = ({
 
       // Log API URL in development only
       if (process.env.NODE_ENV === 'development') {
-        console.log(
-          ` API Request: ${config.method?.toUpperCase()} ${config.baseURL}${
-            config.url
-          }`
-        );
+        
       }
 
       return config;
@@ -96,13 +92,13 @@ export const AxiosProvider: React.FC<AxiosProviderProps> = ({
   axiosInstance.interceptors.response.use(
     (response: AxiosResponse) => {
       // Log response status (only in development)
-      if (process.env.NODE_ENV === 'development') {
-        console.log(
-          ` API Response: ${response.config.method?.toUpperCase()} ${
-            response.config.url
-          } - Status: ${response.status}`
-        );
-      }
+      // if (process.env.NODE_ENV === 'development') {
+      //   console.log(
+      //     ` API Response: ${response.config.method?.toUpperCase()} ${
+      //       response.config.url
+      //     } - Status: ${response.status}`
+      //   );
+      // }
       return response;
     },
     async (error) => {
@@ -115,7 +111,7 @@ export const AxiosProvider: React.FC<AxiosProviderProps> = ({
       
       // Handle timeouts more gracefully
       if (error.code === 'ECONNABORTED') {
-        console.log('Request timed out. Tab may be in background.');
+        // console.log('Request timed out. Tab may be in background.');
         return Promise.reject(error);
       }
      
@@ -139,14 +135,14 @@ export const AxiosProvider: React.FC<AxiosProviderProps> = ({
             return Promise.reject(error);
           }
           
-          console.log("=== Attempting to refresh token ===");
+          // console.log("=== Attempting to refresh token ===");
           
           // Get refresh token
           const refreshToken = localStorage.getItem("refreshToken");
           
           // If no refresh token, logout
           if (!refreshToken) {
-            console.log("No refresh token available, logging out");
+            // console.log("No refresh token available, logging out");
             localStorage.removeItem("user");
             localStorage.removeItem("accessToken");
             localStorage.removeItem("refreshToken");
@@ -160,7 +156,7 @@ export const AxiosProvider: React.FC<AxiosProviderProps> = ({
             
             // Only try to refresh token if the tab is active or it's a critical request
             if (!isTabActiveRef.current && !error.config.url?.includes('/auth/')) {
-              console.log("Tab in background, skipping token refresh");
+              // console.log("Tab in background, skipping token refresh");
               return Promise.reject(error);
             }
             
@@ -175,7 +171,7 @@ export const AxiosProvider: React.FC<AxiosProviderProps> = ({
             
             if (response.status === 200 && response.data.accessToken) {
               
-              console.log("=== Refresh Token Successful ===");
+              // console.log("=== Refresh Token Successful ===");
               const { accessToken , refreshToken , user } = response.data;
               localStorage.setItem("accessToken", accessToken);
               localStorage.setItem("refreshToken", refreshToken);
@@ -191,7 +187,7 @@ export const AxiosProvider: React.FC<AxiosProviderProps> = ({
               throw new Error("Invalid refresh token response");
             }
           } catch (refreshError) {
-            console.log("=== Refresh Token Failed ===", refreshError);
+            // console.log("=== Refresh Token Failed ===", refreshError);
             localStorage.setItem("accessTokendummy", JSON.stringify(refreshError));
             localStorage.removeItem("user");
             localStorage.removeItem("accessToken");

@@ -51,7 +51,7 @@ const Agreement: React.FC = () => {
   useEffect(() => {
     const handleVisibilityChange = () => {
       if (!document.hidden && user?._id) {
-        console.log("Page became visible, refreshing agreement data...");
+        // console.log("Page became visible, refreshing agreement data...");
         fetchAgreement();
       }
     };
@@ -66,24 +66,24 @@ const Agreement: React.FC = () => {
   // Update user's AgreementAccepted status when agreement is completed
   useEffect(() => {
     const updateUserAgreementStatus = async () => {
-      console.log("useEffect triggered with:", {
-        agreementStatus: agreement?.status,
-        isUsedForCeremony: agreement?.isUsedForCeremony,
-        userAgreementAccepted: user?.AgreementAccepted,
-      });
+      //  console.log("useEffect triggered with:", {
+      //   agreementStatus: agreement?.status,
+      //   isUsedForCeremony: agreement?.isUsedForCeremony,
+      //   userAgreementAccepted: user?.AgreementAccepted,
+      // });
 
       if (
         agreement?.status === "officiant_signed" &&
         user &&
         !user.AgreementAccepted
       ) {
-        console.log("Agreement officiant_signed - updating user status");
+        // console.log("Agreement officiant_signed - updating user status");
         try {
           // Fetch fresh user data from database to verify AgreementAccepted status
           const response = await axios.get("/users/get-user");
 
           const dbUser = response.data.user;
-          console.log("Fetched user from DB:", dbUser);
+          // console.log("Fetched user from DB:", dbUser);
 
           // Check if database confirms AgreementAccepted is true
           if (dbUser.AgreementAccepted) {
@@ -121,7 +121,7 @@ const Agreement: React.FC = () => {
         user &&
         !user.AgreementAccepted
       ) {
-        console.log("Agreement is used - showing warning");
+        // console.log("Agreement is used - showing warning");
         GlassSwal.fire({
           title: "Agreement Already Used",
           text: "This agreement was used to submit a ceremony. You need a new agreement to create another ceremony.",
@@ -147,21 +147,21 @@ const Agreement: React.FC = () => {
     try {
       setLoading(true);
       const response = await axios.get(`/agreements/user/${user._id}`);
-      console.log("Fetched agreement:", response.data.agreement);
+      // console.log("Fetched agreement:", response.data.agreement);
       setAgreement(response.data.agreement);
 
       // Also refresh user data to get latest AgreementAccepted status
       try {
         const userResponse = await axios.get("/users/get-user");
         const dbUser = userResponse.data.user;
-        console.log("Refreshed user data:", {
-          AgreementAccepted: dbUser.AgreementAccepted,
-        });
+          // console.log("Refreshed user data:", {
+          //   AgreementAccepted: dbUser.AgreementAccepted,
+          // });
 
         if (user.AgreementAccepted !== dbUser.AgreementAccepted) {
-          console.log(
-            "User AgreementAccepted status changed, updating context"
-          );
+          // console.log(
+          //   "User AgreementAccepted status changed, updating context"
+          // );
           const updatedUser = {
             ...user,
             AgreementAccepted: dbUser.AgreementAccepted,
@@ -326,15 +326,11 @@ const Agreement: React.FC = () => {
   const isSigned =
     agreement.status !== "pending" && agreement.status !== "officiant_filled";
 
-  console.log("Agreement status:", agreement.status);
-  console.log("Status checks:", {
-    canSign,
-    isPending,
-    isPaymentRequested,
-    isPaymentCompleted,
-    isSigned,
-    isUsedForCeremony: agreement.isUsedForCeremony,
-  });
+  // console.log("Agreement status:", agreement.status);
+  // console.log("Status checks:", {
+  //   isSigned,
+  //   isUsedForCeremony: agreement.isUsedForCeremony,
+  // });
 
   const handlePayNow = () => {
     // Redirect to payment page with agreement details
@@ -356,7 +352,7 @@ const Agreement: React.FC = () => {
         `officiantId=${agreement.officiantId}`
     );
   };
- console.log("agreement data:", agreement);
+//  console.log("agreement data:", agreement);
   return (
     <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto">

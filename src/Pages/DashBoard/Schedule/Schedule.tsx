@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useAuth } from "../../../Component/Providers/AuthProvider";
 import GlassSwal from "../../../utils/glassSwal";
 import { Link, useNavigate } from "react-router-dom";
+import { convertLocalDateToISO, getTodayDateString } from "../../../utils/dateUtils";
 interface OfficiantProfile {
   _id: string;
   name: string;
@@ -99,7 +100,7 @@ const Schedule = () => {
       fromUserId: user?._id,
       fromUserName: user?.name || user?.partner_1,
       fromUserImage: user?.profilePicture || "",
-      scheduleDate: data.date,
+      scheduleDate: convertLocalDateToISO(data.date),
       scheduleDateTime: data.time,
       officiantName: data.officiant ? JSON.parse(data.officiant).name : "",
       officiantImage: data.officiant
@@ -186,7 +187,7 @@ const Schedule = () => {
                   <label className="block font-medium mb-1">Date</label>
                   <input
                     type="date"
-                    min={new Date().toISOString().split("T")[0]}
+                    min={getTodayDateString()}
                     {...register("date", {
                       required: "Meeting date is required",
                     })}

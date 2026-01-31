@@ -86,7 +86,7 @@ const Avatar = ({
               imageLoaded ? "opacity-100" : "opacity-0"
             }`}
             onError={() => {
-              console.log("Image failed to load:", src);
+              // console.log("Image failed to load:", src);
               setImageError(true);
             }}
             onLoad={() => setImageLoaded(true)}

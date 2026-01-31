@@ -1,5 +1,11 @@
 import type { AxiosInstance } from "axios";
 import type { CeremonyFormData, CeremonyData } from "../types";
+import { 
+  convertLocalDateToISO, 
+  combineDateAndTime, 
+  formatDateForInput, 
+  formatTimeForInput 
+} from "../../../../utils/dateUtils";
 
 export class CeremonyApiService {
   private axios: AxiosInstance;
@@ -12,9 +18,9 @@ export class CeremonyApiService {
    * Helper function to format form data for backend compatibility
    *
    * Handles the following transformations:
-   * - Converts eventDate string to Date object
-   * - Converts eventTime string to Date object (combined with eventDate or today's date)
-   * - Converts rehearsalDate string to Date object
+   * - Converts eventDate string to ISO with local timezone
+   * - Converts eventTime string to ISO with combined date and time
+   * - Converts rehearsalDate string to ISO with local timezone
    * - Removes empty strings and null values
    * - Provides error handling for date parsing failures
    *
@@ -24,14 +30,16 @@ export class CeremonyApiService {
   private formatCeremonyData(data: Partial<CeremonyFormData>): any {
     const formattedData: any = { ...data };
 
-    // Convert eventDate and eventTime to proper Date objects
+    // Convert eventDate and eventTime to proper ISO strings
     if (formattedData.eventDate && formattedData.eventTime) {
       try {
-        // Combine date and time into a single Date object for eventTime
-        const dateTimeString = `${formattedData.eventDate}T${formattedData.eventTime}:00`;
-        formattedData.eventTime = new Date(dateTimeString);
-        // Keep eventDate as Date object
-        formattedData.eventDate = new Date(formattedData.eventDate);
+        // Combine date and time into a single ISO string for eventTime
+        formattedData.eventTime = combineDateAndTime(
+          formattedData.eventDate,
+          formattedData.eventTime
+        );
+        // Convert eventDate to ISO with local timezone
+        formattedData.eventDate = convertLocalDateToISO(formattedData.eventDate);
       } catch (error) {
         console.error("Error parsing date/time:", error);
         // If parsing fails, remove the problematic fields
@@ -41,27 +49,30 @@ export class CeremonyApiService {
     } else if (formattedData.eventTime && !formattedData.eventDate) {
       try {
         // If only time is provided, use today's date
-        const today = new Date().toISOString().split("T")[0];
-        const dateTimeString = `${today}T${formattedData.eventTime}:00`;
-        formattedData.eventTime = new Date(dateTimeString);
+        const today = new Date();
+        const year = today.getFullYear();
+        const month = String(today.getMonth() + 1).padStart(2, '0');
+        const day = String(today.getDate()).padStart(2, '0');
+        const todayString = `${year}-${month}-${day}`;
+        formattedData.eventTime = combineDateAndTime(todayString, formattedData.eventTime);
       } catch (error) {
         console.error("Error parsing time:", error);
         delete formattedData.eventTime;
       }
     } else if (formattedData.eventDate) {
       try {
-        // Convert eventDate to Date object if provided
-        formattedData.eventDate = new Date(formattedData.eventDate);
+        // Convert eventDate to ISO with local timezone if provided
+        formattedData.eventDate = convertLocalDateToISO(formattedData.eventDate);
       } catch (error) {
         console.error("Error parsing date:", error);
         delete formattedData.eventDate;
       }
     }
 
-    // Convert rehearsalDate to Date object if provided
+    // Convert rehearsalDate to ISO with local timezone if provided
     if (formattedData.rehearsalDate) {
       try {
-        formattedData.rehearsalDate = new Date(formattedData.rehearsalDate);
+        formattedData.rehearsalDate = convertLocalDateToISO(formattedData.rehearsalDate);
       } catch (error) {
         console.error("Error parsing rehearsal date:", error);
         delete formattedData.rehearsalDate;
@@ -79,21 +90,13 @@ export class CeremonyApiService {
   }
 
   // Helper method to format Date to YYYY-MM-DD for date input
-  private formatDateForInput(date: Date): string {
-    if (!date || !(date instanceof Date) || isNaN(date.getTime())) {
-      return "";
-    }
-    return date.toISOString().split("T")[0];
+  private formatDateForInputLocal(date: Date | string): string {
+    return formatDateForInput(date);
   }
 
   // Helper method to format Date to HH:MM for time input
-  private formatTimeForInput(date: Date): string {
-    if (!date || !(date instanceof Date) || isNaN(date.getTime())) {
-      return "";
-    }
-    const hours = date.getHours().toString().padStart(2, "0");
-    const minutes = date.getMinutes().toString().padStart(2, "0");
-    return `${hours}:${minutes}`;
+  private formatTimeForInputLocal(date: Date | string): string {
+    return formatTimeForInput(date);
   }
 
   // Create a new ceremony
@@ -189,11 +192,11 @@ export class CeremonyApiService {
           id: event._id, // Map _id to id for compatibility
           // Format dates for form display
           ...(event.eventDate && {
-            eventDate: this.formatDateForInput(new Date(event.eventDate)),
-            eventTime: this.formatTimeForInput(new Date(event.eventDate)),
+            eventDate: this.formatDateForInputLocal(new Date(event.eventDate)),
+            eventTime: this.formatTimeForInputLocal(new Date(event.eventDate)),
           }),
           ...(event.rehearsalDate && {
-            rehearsalDate: this.formatDateForInput(
+            rehearsalDate: this.formatDateForInputLocal(
               new Date(event.rehearsalDate)
             ),
           }),
@@ -221,11 +224,11 @@ export class CeremonyApiService {
           id: event._id, // Map _id to id for compatibility
           // Format dates for form display
           ...(event.eventDate && {
-            eventDate: this.formatDateForInput(new Date(event.eventDate)),
-            eventTime: this.formatTimeForInput(new Date(event.eventDate)),
+            eventDate: this.formatDateForInputLocal(new Date(event.eventDate)),
+            eventTime: this.formatTimeForInputLocal(new Date(event.eventDate)),
           }),
           ...(event.rehearsalDate && {
-            rehearsalDate: this.formatDateForInput(
+            rehearsalDate: this.formatDateForInputLocal(
               new Date(event.rehearsalDate)
             ),
           }),

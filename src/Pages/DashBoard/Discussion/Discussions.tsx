@@ -154,16 +154,16 @@ const Discussions: React.FC = () => {
 
     // Connection events
     newSocket.on("connect", () => {
-      console.log("✅ Socket connected:", newSocket.id);
+      // console.log("✅ Socket connected:", newSocket.id);
       setIsConnected(true);
       setConnectionError(null);
 
       // Join room for the selected participant
-      console.log(
-        `🏠 Joining room: ${roomId} as ${
-          user.partner_1 || user.partner_2 || "User"
-        }`
-      );
+      // console.log(
+      //   `🏠 Joining room: ${roomId} as ${
+      //     user.partner_1 || user.partner_2 || "User"
+      //   }`
+      // );
       setMessagesLoading(true); // Start loading messages
       newSocket.emit("joinRoom", {
         roomId: roomId,
@@ -172,18 +172,18 @@ const Discussions: React.FC = () => {
       });
 
       // Mark user as online
-      console.log(`📡 Marking user as online: ${user._id}`);
+      // console.log(`📡 Marking user as online: ${user._id}`);
       newSocket.emit("userOnline", {
         userId: user._id,
         userName: user.name || user.partner_1 || "User",
       });
 
       // Request online status for all participants
-      console.log(`📡 Requesting online status for all participants`);
+      // console.log(`📡 Requesting online status for all participants`);
       newSocket.emit("getOnlineUsers", {});
     });
     newSocket.on("disconnect", (reason: string) => {
-      console.log("❌ Socket disconnected:", reason);
+      // console.log("❌ Socket disconnected:", reason);
       setIsConnected(false);
 
       // Emit user offline status
@@ -196,7 +196,7 @@ const Discussions: React.FC = () => {
 
       // Attempt to reconnect for certain disconnect reasons
       if (reason === "io server disconnect" || reason === "transport close") {
-        console.log(" Attempting to reconnect...");
+        // console.log(" Attempting to reconnect...");
         setTimeout(() => {
           if (!newSocket.connected) {
             newSocket.connect();
@@ -233,15 +233,15 @@ const Discussions: React.FC = () => {
     newSocket.on(
       "loadExistingMessages",
       ({ messages: existingMessages }: { messages: Message[] }) => {
-        console.log("📥 Loading existing messages:", existingMessages.length);
-        console.log(
-          "📋 Message types:",
-          existingMessages.map((msg) => ({
-            id: msg.id,
-            type: msg.type,
-            sender: msg.senderName,
-          }))
-        );
+        // console.log("📥 Loading existing messages:", existingMessages.length);
+        // console.log(
+        //   "📋 Message types:",
+        //   existingMessages.map((msg) => ({
+        //     id: msg.id,
+        //     type: msg.type,
+        //     sender: msg.senderName,
+        //   }))
+        // );
 
         // Log booking proposals specifically
         const bookingProposals = existingMessages.filter(
@@ -260,7 +260,7 @@ const Discussions: React.FC = () => {
 
     // Chat events
     newSocket.on("receiveMessage", (messageData: Message) => {
-      console.log("📩 Message received:", messageData);
+      // console.log("📩 Message received:", messageData);
 
       // Prevent duplicate messages with improved detection
       setMessages((prev) => {
@@ -269,7 +269,7 @@ const Discussions: React.FC = () => {
           messageData._id &&
           prev.some((msg) => msg._id === messageData._id)
         ) {
-          console.log("Duplicate message detected (DB ID):", messageData._id);
+          // console.log("Duplicate message detected (DB ID):", messageData._id);
           return prev;
         }
 
@@ -278,19 +278,19 @@ const Discussions: React.FC = () => {
           messageData.serverId &&
           prev.some((msg) => msg.serverId === messageData.serverId)
         ) {
-          console.log(
-            "Duplicate message detected (Server ID):",
-            messageData.serverId
-          );
+          // console.log(
+          //   "Duplicate message detected (Server ID):",
+          //   messageData.serverId
+          // );
           return prev;
         }
 
         // Check for client-generated ID match
         if (messageData.id && prev.some((msg) => msg.id === messageData.id)) {
-          console.log(
-            "Duplicate message detected (Client ID):",
-            messageData.id
-          );
+          // console.log(
+          //   "Duplicate message detected (Client ID):",
+          //   messageData.id
+          // );
           return prev;
         }
 
@@ -309,10 +309,10 @@ const Discussions: React.FC = () => {
         );
 
         if (duplicateFound) {
-          console.log(
-            "Duplicate message detected (Content match):",
-            messageData.content?.substring(0, 50)
-          );
+          // console.log(
+          //   "Duplicate message detected (Content match):",
+          //   messageData.content?.substring(0, 50)
+          // );
           return prev;
         }
 
@@ -329,7 +329,7 @@ const Discussions: React.FC = () => {
 
     // Handle message confirmation from server (for own messages)
     newSocket.on("messageConfirmed", (confirmedMessage: Message) => {
-      console.log("✅ Message confirmed by server:", confirmedMessage);
+      // console.log("✅ Message confirmed by server:", confirmedMessage);
 
       // Update the local optimistic message with server data
       setMessages((prev) => {
@@ -356,11 +356,11 @@ const Discussions: React.FC = () => {
         userId: string;
         isOnline: boolean;
       }) => {
-        console.log(
-          `📡 User status changed: ${statusUserId} is now ${
-            isOnline ? "online" : "offline"
-          }`
-        );
+        // console.log(
+        //   `📡 User status changed: ${statusUserId} is now ${
+        //     isOnline ? "online" : "offline"
+        //   }`
+        // );
 
         // Update the online users set
         setOnlineUsers((prevOnline) => {
@@ -370,20 +370,20 @@ const Discussions: React.FC = () => {
           } else {
             newSet.delete(statusUserId);
           }
-          console.log(`📊 Updated online users:`, Array.from(newSet));
+          // console.log(`📊 Updated online users:`, Array.from(newSet));
           return newSet;
         });
 
         // Update participants online status (whether they are officiants or users)
         setOfficiants((prev) => {
-          console.log(
-            `👥 Current participants:`,
-            prev.map((p: any) => ({
-              id: p._id,
-              name: p.name,
-              online: p.online,
-            }))
-          );
+          // console.log(
+          //   `👥 Current participants:`,
+          //   prev.map((p: any) => ({
+          //     id: p._id,
+          //     name: p.name,
+          //     online: p.online,
+          //   }))
+          // );
 
           const updatedParticipants = prev.map((participant) =>
             participant._id === statusUserId
@@ -391,14 +391,14 @@ const Discussions: React.FC = () => {
               : participant
           );
 
-          console.log(
-            `👥 Updated participants:`,
-            updatedParticipants.map((p: any) => ({
-              id: p._id,
-              name: p.name,
-              online: p.online,
-            }))
-          );
+          // console.log(
+          //   `👥 Updated participants:`,
+          //   updatedParticipants.map((p: any) => ({
+          //     id: p._id,
+          //     name: p.name,
+          //     online: p.online,
+          //   }))
+          // );
 
           return updatedParticipants;
         });
@@ -409,7 +409,7 @@ const Discussions: React.FC = () => {
     newSocket.on(
       "onlineUsersList",
       ({ onlineUsers: onlineUsersList }: { onlineUsers: string[] }) => {
-        console.log(`📡 Received online users list:`, onlineUsersList);
+        // console.log(`📡 Received online users list:`, onlineUsersList);
 
         // Update the online users set
         setOnlineUsers(new Set(onlineUsersList));
@@ -420,14 +420,14 @@ const Discussions: React.FC = () => {
             ...participant,
             online: onlineUsersList.includes(participant._id),
           }));
-          console.log(
-            `👥 Updated participants with online status:`,
-            updated.map((p: any) => ({
-              id: p._id,
-              name: p.name,
-              online: p.online,
-            }))
-          );
+          // console.log(
+          //   `👥 Updated participants with online status:`,
+          //   updated.map((p: any) => ({
+          //     id: p._id,
+          //     name: p.name,
+          //     online: p.online,
+          //   }))
+          // );
           return updated;
         });
       }
@@ -477,9 +477,9 @@ const Discussions: React.FC = () => {
 
     // Booking proposal event handlers
     newSocket.on("booking_proposal_received", (messageData: Message) => {
-      console.log("📅 Booking proposal received:", messageData);
-      console.log("🎯 Current user role:", user?.role);
-      console.log("💼 Booking data:", messageData.bookingData);
+      // console.log("📅 Booking proposal received:", messageData);
+      // console.log("🎯 Current user role:", user?.role);
+      // console.log("💼 Booking data:", messageData.bookingData);
 
       setMessages((prevMessages) => {
         // Check for duplicates
@@ -497,14 +497,14 @@ const Discussions: React.FC = () => {
         );
 
         if (isDuplicate) {
-          console.log(
-            "🚫 Duplicate booking proposal message detected, skipping:",
-            messageData.id
-          );
+          // console.log(
+          //   "🚫 Duplicate booking proposal message detected, skipping:",
+          //   messageData.id
+          // );
           return prevMessages;
         }
 
-        console.log("✅ Adding booking proposal to messages");
+        // console.log("✅ Adding booking proposal to messages");
         return [...prevMessages, messageData];
       });
     });
@@ -522,12 +522,12 @@ const Discussions: React.FC = () => {
         userId: string;
         bookingData?: BookingProposal;
       }) => {
-        console.log("📋 Booking response received:", {
-          messageId,
-          response,
-          userId,
-          bookingData,
-        });
+        // console.log("📋 Booking response received:", {
+        //   messageId,
+        //   response,
+        //   userId,
+        //   bookingData,
+        // });
 
         setMessages((prevMessages) =>
           prevMessages.map((msg) => {
@@ -538,12 +538,12 @@ const Discussions: React.FC = () => {
                 String(msg.messageId) === messageId) &&
               msg.type === "booking_proposal"
             ) {
-              console.log(
-                "📋 Updating booking proposal message:",
-                msg.id,
-                "with status:",
-                response
-              );
+              // console.log(
+              //   "📋 Updating booking proposal message:",
+              //   msg.id,
+              //   "with status:",
+              //   response
+              // );
               return {
                 ...msg,
                 bookingData:
