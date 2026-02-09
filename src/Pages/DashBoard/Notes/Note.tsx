@@ -105,7 +105,7 @@ const Note = () => {
         id: note._id,
         title: note.title,
         from: note.from_userName,
-        date: new Date(note.createdAt).toLocaleDateString(),
+        date: new Date(note.createdAt).toLocaleDateString('en-US', { timeZone: 'America/New_York' }),
         content: note.message,
       }));
       setNotes(formattedNotes);

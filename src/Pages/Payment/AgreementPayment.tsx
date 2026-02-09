@@ -661,6 +661,7 @@ const AgreementPayment = () => {
   const formatDate = (date?: Date | string) => {
     if (!date) return "Not Set";
     return new Date(date).toLocaleDateString("en-US", {
+      timeZone: "America/New_York",
       weekday: "long",
       year: "numeric",
       month: "long",

@@ -47,7 +47,7 @@ const DraftTab = ({
                   <span className="font-thin">
                     {typeof draft.updatedAt === "string"
                       ? draft.updatedAt
-                      : draft.updatedAt.toLocaleDateString()}
+                      : draft.updatedAt.toLocaleDateString('en-US', { timeZone: 'America/New_York' })}
                   </span>
                 </p>
                 {draft.description && (

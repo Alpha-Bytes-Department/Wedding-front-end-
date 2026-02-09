@@ -368,6 +368,7 @@ const ReviewStep = ({ watch }: ReviewStepProps) => {
     try {
       const date = new Date(dateString);
       return date.toLocaleDateString("en-US", {
+        timeZone: "America/New_York",
         weekday: "long",
         year: "numeric",
         month: "long",
@@ -386,6 +387,7 @@ const ReviewStep = ({ watch }: ReviewStepProps) => {
       const date = new Date();
       date.setHours(parseInt(hours), parseInt(minutes));
       return date.toLocaleTimeString("en-US", {
+        timeZone: "America/New_York",
         hour: "numeric",
         minute: "2-digit",
         hour12: true,

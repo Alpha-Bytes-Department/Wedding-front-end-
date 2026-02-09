@@ -204,7 +204,14 @@ const Ceremony = () => {
 
     try {
       const dateObj = typeof date === "string" ? new Date(date) : date;
-      return dateObj.toISOString().split("T")[0]; // Returns YYYY-MM-DD format
+      // Use Intl with America/New_York timezone to extract the correct date
+      const formatter = new Intl.DateTimeFormat('en-CA', {
+        timeZone: 'America/New_York',
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+      });
+      return formatter.format(dateObj); // Returns YYYY-MM-DD format
     } catch (error) {
       console.error("Error formatting date:", error);
       return "";
@@ -216,7 +223,16 @@ const Ceremony = () => {
 
     try {
       const timeObj = typeof time === "string" ? new Date(time) : time;
-      return timeObj.toTimeString().split(" ")[0].slice(0, 5); // Returns HH:MM format
+      // Use Intl with America/New_York timezone to extract the correct time
+      const parts = new Intl.DateTimeFormat('en-US', {
+        timeZone: 'America/New_York',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false,
+      }).formatToParts(timeObj);
+      const hour = parts.find(p => p.type === 'hour')?.value ?? '00';
+      const minute = parts.find(p => p.type === 'minute')?.value ?? '00';
+      return `${hour}:${minute}`; // Returns HH:MM format
     } catch (error) {
       console.error("Error formatting time:", error);
       return "";

@@ -299,15 +299,15 @@ const EventManagement = () => {
                           {event.eventDate && (
                             <p className="text-gray-900">
                               📅{" "}
-                              {new Date(event.eventDate).toLocaleDateString()}
+                              {new Date(event.eventDate).toLocaleDateString('en-US', { timeZone: 'America/New_York', year: 'numeric', month: 'long', day: 'numeric' })}
                             </p>
                           )}
                           {event.eventTime && (
                             <p className="text-gray-600">
                               🕒{" "}
                               {new Date(event.eventTime).toLocaleTimeString(
-                                [],
-                                { hour: "2-digit", minute: "2-digit" }
+                                'en-US',
+                                { timeZone: 'America/New_York', hour: "2-digit", minute: "2-digit", hour12: true }
                               )}
                             </p>
                           )}
@@ -457,6 +457,7 @@ const EventManagement = () => {
                             {new Date(
                               selectedEvent.eventDate
                             ).toLocaleDateString("en-US", {
+                              timeZone: "America/New_York",
                               weekday: "long",
                               year: "numeric",
                               month: "long",
@@ -475,6 +476,7 @@ const EventManagement = () => {
                             {new Date(
                               selectedEvent.eventTime
                             ).toLocaleTimeString("en-US", {
+                              timeZone: "America/New_York",
                               hour: "2-digit",
                               minute: "2-digit",
                               hour12: true,
@@ -494,6 +496,7 @@ const EventManagement = () => {
                             {new Date(
                               selectedEvent.rehearsalDate
                             ).toLocaleDateString("en-US", {
+                              timeZone: "America/New_York",
                               weekday: "long",
                               year: "numeric",
                               month: "long",
@@ -591,6 +594,7 @@ const EventManagement = () => {
                         {new Date(selectedEvent.createdAt).toLocaleDateString(
                           "en-US",
                           {
+                            timeZone: "America/New_York",
                             month: "short",
                             day: "numeric",
                             year: "numeric",

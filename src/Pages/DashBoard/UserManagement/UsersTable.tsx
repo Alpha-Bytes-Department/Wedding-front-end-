@@ -124,7 +124,7 @@ const UsersTable: React.FC<UsersTableProps> = ({
               <br/>
               <span class="text-gray-600">Assigned: ${new Date(
                 user.currentOfficiant.assignedAt!
-              ).toLocaleDateString()}</span>
+              ).toLocaleDateString('en-US', { timeZone: 'America/New_York' })}</span>
             </div>
           `
               : ""
@@ -360,7 +360,7 @@ const UsersTable: React.FC<UsersTableProps> = ({
                                 Assigned:{" "}
                                 {new Date(
                                   user.currentOfficiant.assignedAt!
-                                ).toLocaleDateString()}
+                                ).toLocaleDateString('en-US', { timeZone: 'America/New_York' })}
                               </p>
                             </div>
                             {user.AgreementAccepted && (
@@ -416,7 +416,7 @@ const UsersTable: React.FC<UsersTableProps> = ({
                         )}
                       </td>
                       <td className="hidden sm:table-cell px-3 sm:px-6 py-4 text-xs sm:text-sm text-gray-500">
-                        {new Date(user.createdAt).toLocaleDateString()}
+                        {new Date(user.createdAt).toLocaleDateString('en-US', { timeZone: 'America/New_York' })}
                       </td>
                       <td className="px-3 sm:px-6 py-4 text-right text-xs sm:text-sm font-medium">
                         <div className="flex space-x-1 sm:space-x-2 justify-end">

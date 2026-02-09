@@ -289,6 +289,7 @@ const OfficiantAgreement: React.FC = () => {
   const formatDate = (date?: Date) => {
     if (!date) return "Not Set";
     return new Date(date).toLocaleDateString("en-US", {
+      timeZone: "America/New_York",
       year: "numeric",
       month: "long",
       day: "numeric",
