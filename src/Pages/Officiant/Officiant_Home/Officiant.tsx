@@ -235,7 +235,7 @@ const Officiant = () => {
               {officiant.role}
             </p>
             <p className="pb-8 text-[16px] text-center text-black-web flex-1">
-              {officiant.description.length > 100 ? (
+              {officiant.description?.length > 100 ? (
                 <>
                   {officiant.description.slice(0, 100)}
                   <span className="text-gray-400">.... </span>
@@ -271,7 +271,7 @@ const Officiant = () => {
           <h2 className="text-text font-secondary text-center font-bold text-2xl py-5">
             This Could Be You
           </h2>
-          <p className="text-lg text-center pb-5 text-text">Join the Team</p>
+          <p className="text-lg  text-center pb-5 text-text">Join the Team</p>
           <p className="pb-8 text-[16px] text-center text-black-web flex-1">
             Erie wedding officiants always welcome passionate individuals to
             join our team.
@@ -291,7 +291,7 @@ const Officiant = () => {
       </div>
       <ContactForm />
       <dialog id="JoiningForm" className="modal">
-        <div className="modal-box">
+        <div className="modal-box bg-white">
           <form method="dialog">
             {/* if there is a button in form, it will close the modal */}
             <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">

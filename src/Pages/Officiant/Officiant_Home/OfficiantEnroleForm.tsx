@@ -35,8 +35,8 @@ const OfficiantEnroleForm = ({
   onsubmit,
 }: OfficiantEnroleFormProps) => {
   return (
-    <form onSubmit={handleSubmit(onsubmit)} className="space-y-4">
-      <h3 className="font-primary text-2xl font-bold text-center mb-6">
+    <form onSubmit={handleSubmit(onsubmit)} className="space-y-4  ">
+      <h3 className="font-primary  text-2xl font-bold text-center mb-6">
         Join Our Officiant Team
       </h3>
 
@@ -46,7 +46,7 @@ const OfficiantEnroleForm = ({
             type="text"
             {...register("name", { required: "Name is required" })}
             placeholder="Full Name"
-            className="input input-bordered border-primary w-full focus:outline-primary"
+            className="input input-bordered border-primary w-full focus:outline-primary bg-white"
           />
           {errors.name && (
             <span className="text-red-500 text-sm">
@@ -62,7 +62,7 @@ const OfficiantEnroleForm = ({
               required: "Contact number is required",
             })}
             placeholder="Contact Number"
-            className="input input-bordered border-primary w-full focus:outline-primary"
+            className="input input-bordered border-primary w-full focus:outline-primary bg-white"
           />
           {errors.contactNo && (
             <span className="text-red-500 text-sm">
@@ -76,7 +76,7 @@ const OfficiantEnroleForm = ({
             type="email"
             {...register("email", { required: "Email is required" })}
             placeholder="Email Address"
-            className="input input-bordered border-primary w-full focus:outline-primary"
+            className="input input-bordered border-primary w-full focus:outline-primary bg-white"
           />
           {errors.email && (
             <span className="text-red-500 text-sm">
@@ -90,7 +90,7 @@ const OfficiantEnroleForm = ({
             type="text"
             {...register("language", { required: "Languages are required" })}
             placeholder="Languages (comma separated)"
-            className="input input-bordered border-primary w-full focus:outline-primary"
+            className="input input-bordered border-primary w-full focus:outline-primary bg-white"
           />
           {errors.language && (
             <span className="text-red-500 text-sm">
@@ -104,7 +104,7 @@ const OfficiantEnroleForm = ({
         <textarea
           {...register("address", { required: "Address is required" })}
           placeholder="Full Address"
-          className="textarea textarea-bordered border-primary w-full focus:outline-primary h-20"
+          className="textarea textarea-bordered border-primary w-full focus:outline-primary h-20 bg-white"
         />
         {errors.address && (
           <span className="text-red-500 text-sm">
@@ -118,7 +118,7 @@ const OfficiantEnroleForm = ({
           type="number"
           {...register("experience", { required: "Experience is required" })}
           placeholder="Years of Experience"
-          className="input input-bordered border-primary w-full focus:outline-primary"
+          className="input input-bordered border-primary w-full focus:outline-primary bg-white"
         />
         {errors.experience && (
           <span className="text-red-500 text-sm">
@@ -133,7 +133,7 @@ const OfficiantEnroleForm = ({
             required: "Experience details are required",
           })}
           placeholder="Tell us about your experience"
-          className="textarea textarea-bordered border-primary w-full focus:outline-primary h-32"
+          className="textarea textarea-bordered border-primary w-full focus:outline-primary h-32 bg-white"
         />
         {errors.experience_details && (
           <span className="text-red-500 text-sm">
@@ -146,7 +146,7 @@ const OfficiantEnroleForm = ({
         <textarea
           {...register("speciality", { required: "Speciality is required" })}
           placeholder="Your Specialities"
-          className="textarea textarea-bordered border-primary w-full focus:outline-primary h-20"
+          className="textarea textarea-bordered border-primary w-full focus:outline-primary h-20 bg-white"
         />
         {errors.speciality && (
           <span className="text-red-500 text-sm">
@@ -166,7 +166,7 @@ const OfficiantEnroleForm = ({
               required: "Profile picture is required",
             })}
             accept="image/*"
-            className="file-input file-input-bordered border-primary w-full"
+            className="file-input file-input-bordered border-primary w-full bg-white"
           />
           {errors.profilePicture && (
             <span className="text-red-500 text-sm">
@@ -183,7 +183,7 @@ const OfficiantEnroleForm = ({
             type="file"
             {...register("portfolio", { required: "Portfolio is required" })}
             accept=".pdf"
-            className="file-input file-input-bordered border-primary w-full"
+            className="file-input file-input-bordered border-primary w-full bg-white"
           />
           {errors.portfolio && (
             <span className="text-red-500 text-sm">
