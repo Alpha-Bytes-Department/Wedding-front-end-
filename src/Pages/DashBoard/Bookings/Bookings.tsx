@@ -210,7 +210,7 @@ const Bookings = () => {
                         {m.fromUserName}
                       </div>
                       <div className="text-sm text-gray-500">
-                        {new Date(m.scheduleDate).toLocaleDateString("en-GB")} ·
+                        {new Date(m.scheduleDate).toLocaleDateString("en-US", { timeZone: "America/New_York", year: "numeric", month: "short", day: "numeric" })} ·
                         Officiant: {m.officiantName}
                       </div>
                     </div>
@@ -247,7 +247,7 @@ const Bookings = () => {
                         {m.fromUserName}
                       </div>
                       <div className="text-sm text-gray-500">
-                        {new Date(m.scheduleDate).toDateString()} · Officiant:{" "}
+                        {new Date(m.scheduleDate).toLocaleDateString('en-US', { timeZone: 'America/New_York', weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' })} · Officiant:{" "}
                         {m.officiantName}
                       </div>
                     </div>
@@ -317,7 +317,7 @@ const Bookings = () => {
                           {m.fromUserName}
                         </div>
                         <div className="text-sm text-gray-500">
-                          {new Date(m.scheduleDate).toDateString()} · Officiant:{" "}
+                          {new Date(m.scheduleDate).toLocaleDateString('en-US', { timeZone: 'America/New_York', weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' })} · Officiant:{" "}
                           {m.officiantName}
                         </div>
                       </div>
@@ -351,7 +351,7 @@ const Bookings = () => {
                           {m.fromUserName}
                         </div>
                         <div className="text-sm text-gray-500">
-                          {new Date(m.scheduleDate).toDateString()} · Officiant:{" "}
+                          {new Date(m.scheduleDate).toLocaleDateString('en-US', { timeZone: 'America/New_York', weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' })} · Officiant:{" "}
                           {m.officiantName}
                         </div>
                       </div>
@@ -416,7 +416,7 @@ const Bookings = () => {
                       </div>
                       <p className="font-bold py-1 px-3 rounded-full border-amber-500 border-2">value : ${m.price}</p>
                       <div className="text-sm text-gray-500">
-                        {new Date(m.eventDate).toLocaleDateString("en-GB")} ·
+                        {new Date(m.eventDate).toLocaleDateString("en-US", { timeZone: "America/New_York", year: "numeric", month: "short", day: "numeric" })} ·
                         Officiant: {m.officiantName}
                       </div>
                     </div>
@@ -443,7 +443,7 @@ const Bookings = () => {
                         {m.title}
                       </div>
                       <div className="text-sm text-gray-500">
-                        {new Date(m.eventDate).toLocaleDateString("en-GB")} ·
+                        {new Date(m.eventDate).toLocaleDateString("en-US", { timeZone: "America/New_York", year: "numeric", month: "short", day: "numeric" })} ·
                         Officiant: {m.officiantName}
                       </div>
                     </div>

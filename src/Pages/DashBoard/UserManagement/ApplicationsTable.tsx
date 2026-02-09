@@ -84,7 +84,7 @@ const ApplicationsTable: React.FC<ApplicationsTableProps> = ({
               </p>
               <p><strong>Submitted:</strong> ${new Date(
                 submittedDate
-              ).toLocaleDateString()}</p>
+              ).toLocaleDateString('en-US', { timeZone: 'America/New_York' })}</p>
             </div>
           </div>
           
@@ -331,7 +331,7 @@ const ApplicationsTable: React.FC<ApplicationsTableProps> = ({
                         application.status.slice(1)}
                     </span>
                     <div className="text-xs text-gray-500 mt-1 hidden sm:block">
-                      {new Date(submittedDate).toLocaleDateString()}
+                      {new Date(submittedDate).toLocaleDateString('en-US', { timeZone: 'America/New_York' })}
                     </div>
                   </td>
                   <td className="hidden sm:table-cell px-3 sm:px-6 py-4">

@@ -51,6 +51,7 @@ const PdfMaker: React.FC<PdfMakerProps> = ({ eventId }) => {
     if (!date) return "N/A";
     const d = new Date(date);
     return d.toLocaleDateString("en-US", {
+      timeZone: "America/New_York",
       year: "numeric",
       month: "short",
       day: "numeric",

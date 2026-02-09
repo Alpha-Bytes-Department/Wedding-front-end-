@@ -24,7 +24,7 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({
   const formatTimestamp = (timestamp?: string) => {
     if (!timestamp) return "";
     const date = new Date(timestamp);
-    return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+    return date.toLocaleTimeString('en-US', { timeZone: 'America/New_York', hour: "2-digit", minute: "2-digit" });
   };
   const getProfileImageUrl = (profilePicture?: string) => {
     if (!profilePicture) return "";

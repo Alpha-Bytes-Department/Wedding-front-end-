@@ -27,12 +27,13 @@ const MessageRenderer: React.FC<MessageRendererProps> = ({
     const diffInHours = (now.getTime() - date.getTime()) / (1000 * 60 * 60);
 
     if (diffInHours < 24) {
-      return date.toLocaleTimeString([], {
+      return date.toLocaleTimeString('en-US', {
+        timeZone: 'America/New_York',
         hour: "2-digit",
         minute: "2-digit",
       });
     } else {
-      return date.toLocaleDateString([], { month: "short", day: "numeric" });
+      return date.toLocaleDateString('en-US', { timeZone: 'America/New_York', month: "short", day: "numeric" });
     }
   };
 

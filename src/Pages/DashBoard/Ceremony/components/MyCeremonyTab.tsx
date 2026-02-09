@@ -58,8 +58,8 @@ const MyCeremonyTab = ({
       
       const basicInfo = [
         `Language: ${ceremony.language || 'Not specified'}`,
-        `Event Date: ${ceremony.eventDate ? new Date(ceremony.eventDate).toLocaleDateString() : 'Not specified'}`,
-        `Event Time: ${ceremony.eventTime ? new Date(ceremony.eventTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'Not specified'}`,
+        `Event Date: ${ceremony.eventDate ? new Date(ceremony.eventDate).toLocaleDateString('en-US', { timeZone: 'America/New_York', year: 'numeric', month: 'long', day: 'numeric' }) : 'Not specified'}`,
+        `Event Time: ${ceremony.eventTime ? new Date(ceremony.eventTime).toLocaleTimeString('en-US', { timeZone: 'America/New_York', hour: '2-digit', minute: '2-digit', hour12: true }) : 'Not specified'}`,
         `Location: ${ceremony.location || 'Not specified'}`,
         `Officiant: ${ceremony.officiantName || 'Not specified'}`,
         `Status: ${ceremony.status}`,
@@ -160,7 +160,7 @@ const MyCeremonyTab = ({
       // Footer
       pdf.setFontSize(8);
       pdf.setFont("helvetica", "italic");
-      pdf.text(`Generated on ${new Date().toLocaleDateString()}`, pageWidth / 2, pageHeight - 20, { align: 'center' });
+      pdf.text(`Generated on ${new Date().toLocaleDateString('en-US', { timeZone: 'America/New_York' })}`, pageWidth / 2, pageHeight - 20, { align: 'center' });
       
       // Save the PDF
       pdf.save(`${ceremony.title || 'ceremony'}-details.pdf`);
@@ -224,7 +224,7 @@ const MyCeremonyTab = ({
                 </span>
               </div>
               <span className="text-xs text-primary font-secondary mt-2 md:mt-0">
-                {new Date(ceremony.createdAt).toLocaleDateString()}
+                {new Date(ceremony.createdAt).toLocaleDateString('en-US', { timeZone: 'America/New_York' })}
               </span>
             </div>
 
@@ -300,7 +300,7 @@ const MyCeremonyTab = ({
                     <p className="text-sm text-gray-500">Event Date</p>
                     <p className="font-semibold">
                       {selectedCeremony.eventDate
-                        ? new Date(selectedCeremony.eventDate).toLocaleDateString()
+                        ? new Date(selectedCeremony.eventDate).toLocaleDateString('en-US', { timeZone: 'America/New_York', year: 'numeric', month: 'long', day: 'numeric' })
                         : "—"}
                     </p>
                   </div>
@@ -308,9 +308,11 @@ const MyCeremonyTab = ({
                     <p className="text-sm text-gray-500">Event Time</p>
                     <p className="font-semibold">
                       {selectedCeremony.eventTime
-                        ? new Date(selectedCeremony.eventTime).toLocaleTimeString([], {
+                        ? new Date(selectedCeremony.eventTime).toLocaleTimeString('en-US', {
+                            timeZone: 'America/New_York',
                             hour: "2-digit",
                             minute: "2-digit",
+                            hour12: true,
                           })
                         : "—"}
                     </p>
@@ -327,7 +329,7 @@ const MyCeremonyTab = ({
                     <p className="text-sm text-gray-500">Rehearsal Date</p>
                     <p className="font-semibold">
                       {selectedCeremony.rehearsalDate
-                        ? new Date(selectedCeremony.rehearsalDate).toLocaleDateString()
+                        ? new Date(selectedCeremony.rehearsalDate).toLocaleDateString('en-US', { timeZone: 'America/New_York', year: 'numeric', month: 'long', day: 'numeric' })
                         : "—"}
                     </p>
                   </div>
@@ -458,16 +460,18 @@ const MyCeremonyTab = ({
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm text-gray-500">
                   <div>
                     <span className="font-medium">Created: </span>
-                    {new Date(selectedCeremony.createdAt).toLocaleDateString()} at{" "}
-                    {new Date(selectedCeremony.createdAt).toLocaleTimeString([], {
+                    {new Date(selectedCeremony.createdAt).toLocaleDateString('en-US', { timeZone: 'America/New_York' })} at{" "}
+                    {new Date(selectedCeremony.createdAt).toLocaleTimeString('en-US', {
+                      timeZone: 'America/New_York',
                       hour: "2-digit",
                       minute: "2-digit",
                     })}
                   </div>
                   <div>
                     <span className="font-medium">Last Updated: </span>
-                    {new Date(selectedCeremony.updatedAt).toLocaleDateString()} at{" "}
-                    {new Date(selectedCeremony.updatedAt).toLocaleTimeString([], {
+                    {new Date(selectedCeremony.updatedAt).toLocaleDateString('en-US', { timeZone: 'America/New_York' })} at{" "}
+                    {new Date(selectedCeremony.updatedAt).toLocaleTimeString('en-US', {
+                      timeZone: 'America/New_York',
                       hour: "2-digit",
                       minute: "2-digit",
                     })}

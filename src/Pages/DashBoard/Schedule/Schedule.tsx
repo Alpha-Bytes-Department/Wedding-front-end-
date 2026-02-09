@@ -343,7 +343,7 @@ const Schedule = () => {
                     <p>Officiant : {m.officiant}</p>
                   </div>
                   <div className="text-sm text-gray-500">
-                    {new Date(m.date).toDateString()} ·{" "}
+                    {new Date(m.date).toLocaleDateString('en-US', { timeZone: 'America/New_York', weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' })} ·{" "}
                     <span className="font-medium">Client:</span> {m.name}
                   </div>
                 </div>

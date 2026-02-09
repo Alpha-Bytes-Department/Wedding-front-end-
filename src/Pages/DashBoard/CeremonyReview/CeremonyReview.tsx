@@ -182,7 +182,7 @@ const CeremonyReview = () => {
                 </span>
               </div>
               <span className="text-xs text-primary font-secondary mt-2 md:mt-0">
-                {new Date(event.createdAt).toLocaleDateString()}
+                {new Date(event.createdAt).toLocaleDateString('en-US', { timeZone: 'America/New_York' })}
               </span>
             </div>
 
@@ -202,7 +202,7 @@ const CeremonyReview = () => {
                   <span className="text-primary font-medium">Event Date:</span>
                   <span className="text-gray-700 ml-2">
                     {event.eventDate
-                      ? new Date(event.eventDate).toLocaleDateString()
+                      ? new Date(event.eventDate).toLocaleDateString('en-US', { timeZone: 'America/New_York', year: 'numeric', month: 'long', day: 'numeric' })
                       : "Date not specified"}
                   </span>
                 </div>
@@ -300,7 +300,7 @@ const CeremonyReview = () => {
                     <p className="text-sm text-gray-500">Event Date</p>
                     <p className="font-semibold">
                       {selectedEvent.eventDate
-                        ? new Date(selectedEvent.eventDate).toLocaleDateString()
+                        ? new Date(selectedEvent.eventDate).toLocaleDateString('en-US', { timeZone: 'America/New_York', year: 'numeric', month: 'long', day: 'numeric' })
                         : "—"}
                     </p>
                   </div>
@@ -309,10 +309,12 @@ const CeremonyReview = () => {
                     <p className="font-semibold">
                       {selectedEvent.eventTime
                         ? new Date(selectedEvent.eventTime).toLocaleTimeString(
-                            [],
+                            'en-US',
                             {
+                              timeZone: 'America/New_York',
                               hour: "2-digit",
                               minute: "2-digit",
+                              hour12: true,
                             }
                           )
                         : "—"}
@@ -336,7 +338,7 @@ const CeremonyReview = () => {
                       {selectedEvent.rehearsalDate
                         ? new Date(
                             selectedEvent.rehearsalDate
-                          ).toLocaleDateString()
+                          ).toLocaleDateString('en-US', { timeZone: 'America/New_York', year: 'numeric', month: 'long', day: 'numeric' })
                         : "—"}
                     </p>
                   </div>
@@ -521,8 +523,9 @@ const CeremonyReview = () => {
                     <span className="font-medium">Created: </span>
                     {new Date(
                       selectedEvent.createdAt
-                    ).toLocaleDateString()} at{" "}
-                    {new Date(selectedEvent.createdAt).toLocaleTimeString([], {
+                    ).toLocaleDateString('en-US', { timeZone: 'America/New_York' })} at{" "}
+                    {new Date(selectedEvent.createdAt).toLocaleTimeString('en-US', {
+                      timeZone: 'America/New_York',
                       hour: "2-digit",
                       minute: "2-digit",
                     })}
@@ -531,8 +534,9 @@ const CeremonyReview = () => {
                     <span className="font-medium">Last Updated: </span>
                     {new Date(
                       selectedEvent.updatedAt
-                    ).toLocaleDateString()} at{" "}
-                    {new Date(selectedEvent.updatedAt).toLocaleTimeString([], {
+                    ).toLocaleDateString('en-US', { timeZone: 'America/New_York' })} at{" "}
+                    {new Date(selectedEvent.updatedAt).toLocaleTimeString('en-US', {
+                      timeZone: 'America/New_York',
                       hour: "2-digit",
                       minute: "2-digit",
                     })}

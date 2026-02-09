@@ -60,6 +60,7 @@ const Bills = () => {
   const formatDate = (date?: Date | string) => {
     if (!date) return "N/A";
     return new Date(date).toLocaleDateString("en-US", {
+      timeZone: "America/New_York",
       year: "numeric",
       month: "short",
       day: "numeric",

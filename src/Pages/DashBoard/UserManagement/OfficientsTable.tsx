@@ -201,7 +201,7 @@ const OfficientsTable: React.FC<OfficientsTableProps> = ({
           
           <p class="text-sm text-gray-500 mt-4"><strong>Joined:</strong> ${new Date(
             officiant.createdAt
-          ).toLocaleDateString()}</p>
+          ).toLocaleDateString('en-US', { timeZone: 'America/New_York' })}</p>
         </div>
       `,
       width: "900px",

@@ -83,7 +83,7 @@ const DashHome = () => {
         .map((ceremony: any) => ({
           id: ceremony._id,
           name: ceremony.title,
-          date: new Date(ceremony.eventDate).toLocaleDateString(),
+          date: new Date(ceremony.eventDate).toLocaleDateString('en-US', { timeZone: 'America/New_York', year: 'numeric', month: 'long', day: 'numeric' }),
           officiant: ceremony.officiantName,
           complete: ceremony.status,
           description: ceremony.description,
@@ -395,7 +395,7 @@ const DashHome = () => {
                     {activeEvent.eventTime && (
                       <p>
                         <span className="font-medium">Time:</span>{" "}
-                        {new Date(activeEvent.eventTime).toLocaleTimeString()}
+                        {new Date(activeEvent.eventTime).toLocaleTimeString('en-US', { timeZone: 'America/New_York', hour: 'numeric', minute: '2-digit', hour12: true })}
                       </p>
                     )}
                     <p>

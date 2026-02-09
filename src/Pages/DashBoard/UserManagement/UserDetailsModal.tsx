@@ -101,6 +101,7 @@ const getEventScheduleHTML = (event: any) => `
         "Event Date",
         event.eventDate
           ? new Date(event.eventDate).toLocaleDateString("en-US", {
+              timeZone: "America/New_York",
               weekday: "long",
               year: "numeric",
               month: "long",
@@ -112,6 +113,7 @@ const getEventScheduleHTML = (event: any) => `
         "Event Time",
         event.eventTime
           ? new Date(event.eventTime).toLocaleTimeString("en-US", {
+              timeZone: "America/New_York",
               hour: "2-digit",
               minute: "2-digit",
             })
@@ -121,6 +123,7 @@ const getEventScheduleHTML = (event: any) => `
         "Rehearsal Date",
         event.rehearsalDate
           ? new Date(event.rehearsalDate).toLocaleDateString("en-US", {
+              timeZone: "America/New_York",
               weekday: "long",
               year: "numeric",
               month: "long",
@@ -132,6 +135,7 @@ const getEventScheduleHTML = (event: any) => `
         "Created At",
         event.createdAt
           ? new Date(event.createdAt).toLocaleDateString("en-US", {
+              timeZone: "America/New_York",
               year: "numeric",
               month: "short",
               day: "numeric",
@@ -143,6 +147,7 @@ const getEventScheduleHTML = (event: any) => `
           ? renderField(
               "Last Updated",
               new Date(event.updatedAt).toLocaleDateString("en-US", {
+                timeZone: "America/New_York",
                 year: "numeric",
                 month: "short",
                 day: "numeric",
@@ -328,21 +333,21 @@ const getUserInfoHTML = (user: User) => `
         user?.weddingDate
           ? `<span style="color: #059669;"> ${new Date(
               user.weddingDate
-            ).toLocaleDateString()}</span>`
+            ).toLocaleDateString('en-US', { timeZone: 'America/New_York', year: 'numeric', month: 'long', day: 'numeric' })}</span>`
           : '<span style="color: #d97706;">No wedding Date fixed</span>'
       }</p>
       <p style="margin: 0; font-size: 15px;"><strong style="color: #64748b;">Rehearsal Needed:</strong> <span style="color: #1e293b;">${
         user?.needRehearsal
           ? `Yes, The Rehearsal Date: ${
               user?.rehearsalDate
-                ? new Date(user.rehearsalDate).toLocaleDateString()
+                ? new Date(user.rehearsalDate).toLocaleDateString('en-US', { timeZone: 'America/New_York', year: 'numeric', month: 'long', day: 'numeric' })
                 : "N/A"
             }`
           : "No Rehearsal Data"
       }</span></p>
       <p style="margin: 0; font-size: 15px;"><strong style="color: #64748b;">Joined:</strong> <span style="color: #1e293b;">${new Date(
         user.createdAt
-      ).toLocaleDateString()}</span></p>
+      ).toLocaleDateString('en-US', { timeZone: 'America/New_York' })}</span></p>
     </div>
   </div>
 `;
