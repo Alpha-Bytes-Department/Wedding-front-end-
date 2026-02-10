@@ -13,9 +13,7 @@ const AgreementDocument: React.FC<AgreementDocumentProps> = ({ agreement }) => {
       <div className="bg-gradient-to-r from-primary to-yellow-600 text-white p-8">
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-2xl font-bold mb-1">
-              ERIE WEDDING OFFICIANTS
-            </h2>
+            <h2 className="text-2xl font-bold mb-1">ERIE WEDDING OFFICIANTS</h2>
             <p className="text-yellow-100 text-sm">
               Professional Wedding Ceremony Services
             </p>
