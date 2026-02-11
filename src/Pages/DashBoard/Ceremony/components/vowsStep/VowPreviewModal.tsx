@@ -1,35 +1,36 @@
-import React from "react";
 import {
   getAllOptions,
-  getOptionsArrayForId,
+  getFieldForOptionId,
   getOptionContent,
-} from "./ritualOptionsData";
+  getOptionsForField,
+} from "./vowOptionsData";
 
-interface RitualPreviewModalProps {
+interface VowPreviewModalProps {
   selectedModal: string;
   partner1Name: string;
   partner2Name: string;
   onClose: () => void;
-  onSelect: (optionId: string) => void;
+  onSelect: (fieldName: string, optionId: string) => void;
 }
 
-const RitualPreviewModal: React.FC<RitualPreviewModalProps> = ({
+const VowPreviewModal = ({
   selectedModal,
   partner1Name,
   partner2Name,
   onClose,
   onSelect,
-}) => {
+}: VowPreviewModalProps) => {
   const allOptions = getAllOptions();
-  const modalLabel =
-    allOptions.find((opt) => opt.id === selectedModal)?.label || "Preview";
+  const selectedOption = allOptions.find((opt) => opt.id === selectedModal);
+  const fieldName = getFieldForOptionId(selectedModal);
 
-  const optionsArray = getOptionsArrayForId(selectedModal);
+  if (!selectedOption || !fieldName) return null;
+
   const content = getOptionContent(
-    optionsArray,
+    getOptionsForField(fieldName),
     selectedModal,
-    partner2Name,
     partner1Name,
+    partner2Name,
   );
 
   return (
@@ -38,7 +39,7 @@ const RitualPreviewModal: React.FC<RitualPreviewModalProps> = ({
         <div className="p-6">
           <div className="flex justify-between items-center mb-4">
             <h3 className="text-xl font-semibold text-gray-900">
-              {modalLabel} Preview
+              {selectedOption.label} Preview
             </h3>
             <button
               onClick={onClose}
@@ -61,9 +62,7 @@ const RitualPreviewModal: React.FC<RitualPreviewModalProps> = ({
           </div>
 
           <div className="bg-gray-50 p-4 rounded-lg">
-            <p className="text-gray-800 leading-relaxed whitespace-pre-line">
-              {content}
-            </p>
+            <p className="text-gray-800 leading-relaxed">{content}</p>
           </div>
 
           <div className="mt-4 flex justify-end gap-3">
@@ -75,7 +74,7 @@ const RitualPreviewModal: React.FC<RitualPreviewModalProps> = ({
             </button>
             <button
               onClick={() => {
-                onSelect(selectedModal);
+                onSelect(fieldName, selectedModal);
                 onClose();
               }}
               className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors"
@@ -89,4 +88,4 @@ const RitualPreviewModal: React.FC<RitualPreviewModalProps> = ({
   );
 };
 
-export default RitualPreviewModal;
+export default VowPreviewModal;

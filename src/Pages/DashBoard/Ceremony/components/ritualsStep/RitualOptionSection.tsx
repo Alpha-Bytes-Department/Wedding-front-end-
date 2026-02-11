@@ -52,7 +52,11 @@ const RitualOptionSection: React.FC<RitualOptionSectionProps> = ({
     const currentContent = watch(fieldName);
     if (!currentContent) return "";
     const currentOption = options.find((opt) => {
-      const optionContent = replaceNames(opt.content, partner1Name, partner2Name);
+      const optionContent = replaceNames(
+        opt.content,
+        partner1Name,
+        partner2Name,
+      );
       return optionContent === currentContent;
     });
     return currentOption?.label || "";

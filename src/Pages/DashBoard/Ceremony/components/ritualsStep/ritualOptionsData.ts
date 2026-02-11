@@ -362,7 +362,7 @@ export const getAllOptions = (): RitualOption[] => [
 export const replaceNames = (
   content: string,
   partner1Name: string,
-  partner2Name: string
+  partner2Name: string,
 ): string => {
   return content
     .replace(/{bride_name}/g, partner2Name || "Partner 2's Name")
@@ -376,7 +376,7 @@ export const getOptionContent = (
   options: RitualOption[],
   optionId: string,
   partner2Name: string,
-  partner1Name: string
+  partner1Name: string,
 ): string => {
   const option = options.find((opt) => opt.id === optionId);
   if (!option) return "";
@@ -386,9 +386,7 @@ export const getOptionContent = (
 /**
  * Find which option array contains the given option ID and return the field name
  */
-export const getFieldForOptionId = (
-  optionId: string
-): string | null => {
+export const getFieldForOptionId = (optionId: string): string | null => {
   if (
     sandCeremonyOptions.find((opt) => opt.id === optionId) ||
     roseCeremonyOptions.find((opt) => opt.id === optionId) ||
@@ -403,10 +401,13 @@ export const getFieldForOptionId = (
   ) {
     return "ritualsOption";
   }
-  if (closingOptions.find((opt) => opt.id === optionId)) return "closingStatement";
-  if (pronouncingOptions.find((opt) => opt.id === optionId)) return "pronouncing";
+  if (closingOptions.find((opt) => opt.id === optionId))
+    return "closingStatement";
+  if (pronouncingOptions.find((opt) => opt.id === optionId))
+    return "pronouncing";
   if (kissOptions.find((opt) => opt.id === optionId)) return "kiss";
-  if (introductionOptions.find((opt) => opt.id === optionId)) return "introductionOfCouple";
+  if (introductionOptions.find((opt) => opt.id === optionId))
+    return "introductionOfCouple";
   return null;
 };
 
