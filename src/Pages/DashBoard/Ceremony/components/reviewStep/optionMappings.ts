@@ -115,11 +115,10 @@ const optionLabelMappings: { [key: string]: { [key: string]: string } } = {
   },
 };
 
-export const getOptionLabel = (
-  optionId: string,
-  category: string
-): string => {
-  return optionLabelMappings[category]?.[optionId] || optionId || "Not specified";
+export const getOptionLabel = (optionId: string, category: string): string => {
+  return (
+    optionLabelMappings[category]?.[optionId] || optionId || "Not specified"
+  );
 };
 
 // Content mappings for modal previews
@@ -127,7 +126,7 @@ export const getOptionContent = (
   optionId: string,
   category: string,
   partner1Name: string,
-  partner2Name: string
+  partner2Name: string,
 ): string => {
   const p1 = partner1Name || "Partner 1's Name";
   const p2 = partner2Name || "Partner 2's Name";
