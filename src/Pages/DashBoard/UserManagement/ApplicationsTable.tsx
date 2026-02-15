@@ -137,7 +137,7 @@ const ApplicationsTable: React.FC<ApplicationsTableProps> = ({
     const result = await Swal.fire({
       title: "Approve Application?",
       html: `Are you sure you want to approve <strong>${application.name}</strong>'s application?<br/><br/>
-             <span class="text-green-600">✅ This will change their role to officiant.</span>`,
+             <span class="text-green-600"> This will change their role to officiant.</span>`,
       icon: "question",
       showCancelButton: true,
       confirmButtonColor: "#10B981",
