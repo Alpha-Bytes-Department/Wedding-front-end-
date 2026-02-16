@@ -67,7 +67,7 @@ const VowsStep = ({
       const content = replaceNames(
         option.content,
         partner1Name || "Partner 1's Name",
-        partner2Name || "Partner 2's Name"
+        partner2Name || "Partner 2's Name",
       );
       onSelectDropdown(fieldName, content);
     }
