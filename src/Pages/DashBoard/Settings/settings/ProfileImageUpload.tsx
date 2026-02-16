@@ -40,9 +40,7 @@ const ProfileImageUpload = ({
       <label
         htmlFor="logo-upload"
         className={`${
-          isEditingProfile
-            ? "cursor-pointer hover:scale-105"
-            : "cursor-default"
+          isEditingProfile ? "cursor-pointer hover:scale-105" : "cursor-default"
         } duration-300 relative`}
       >
         <div className="w-20 h-20 sm:w-24 sm:h-24 lg:w-28 lg:h-28 mb-3 border border-white/30 p-1 rounded-full flex items-center justify-center transition overflow-hidden bg-gray-800/50">

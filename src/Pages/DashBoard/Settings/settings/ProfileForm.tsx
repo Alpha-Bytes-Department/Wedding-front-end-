@@ -143,17 +143,13 @@ const ProfileForm = ({
                   id="needRehearsal"
                   disabled={!isEditingProfile}
                   className={`w-5 h-5 text-primary border-primary rounded focus:ring-primary ${
-                    !isEditingProfile
-                      ? "cursor-not-allowed"
-                      : "cursor-pointer"
+                    !isEditingProfile ? "cursor-not-allowed" : "cursor-pointer"
                   }`}
                 />
                 <label
                   htmlFor="needRehearsal"
                   className={`text-sm font-medium text-gray-700 ${
-                    !isEditingProfile
-                      ? "cursor-not-allowed"
-                      : "cursor-pointer"
+                    !isEditingProfile ? "cursor-not-allowed" : "cursor-pointer"
                   }`}
                 >
                   Need Rehearsal?
@@ -170,9 +166,7 @@ const ProfileForm = ({
                     type="date"
                     disabled={!isEditingProfile}
                     className={`w-full lg:w-96 px-4 py-3 border border-primary rounded-lg focus:outline-none ${
-                      !isEditingProfile
-                        ? "bg-gray-50 cursor-not-allowed"
-                        : ""
+                      !isEditingProfile ? "bg-gray-50 cursor-not-allowed" : ""
                     }`}
                   />
                 </div>
