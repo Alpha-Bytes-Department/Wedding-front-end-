@@ -25,9 +25,7 @@ const PreviewModal = ({
 
   const content = (() => {
     if (!result) return "";
-    const group = allOptionArrays.find(
-      (g) => g.fieldName === result.fieldName,
-    );
+    const group = allOptionArrays.find((g) => g.fieldName === result.fieldName);
     if (!group) return "";
     return getOptionContent(
       group.options,
