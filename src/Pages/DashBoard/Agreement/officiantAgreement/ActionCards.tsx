@@ -78,9 +78,7 @@ const ActionCards: React.FC<ActionCardsProps> = ({
 
       {/* Quick Info */}
       <div className="bg-white shadow rounded-lg p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">
-          Quick Info
-        </h3>
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">Quick Info</h3>
         <div className="space-y-2 text-sm">
           <div className="flex justify-between">
             <span className="text-gray-600">Created:</span>
