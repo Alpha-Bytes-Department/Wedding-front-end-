@@ -4,7 +4,11 @@ import { useEffect, useState } from "react";
 import { useAuth } from "../../../Component/Providers/AuthProvider";
 import GlassSwal from "../../../utils/glassSwal";
 import { Link, useNavigate } from "react-router-dom";
-import { convertLocalDateToISO, getTodayDateString } from "../../../utils/dateUtils";
+import Avatar from "../../../Component/Shared/Avatar";
+import {
+  convertLocalDateToISO,
+  getTodayDateString,
+} from "../../../utils/dateUtils";
 interface OfficiantProfile {
   _id: string;
   name: string;
@@ -237,9 +241,9 @@ const Schedule = () => {
                     Profile Incomplete
                   </h3>
                   <p className="text-sm text-amber-800">
-                    Please complete your profile before booking an officiant. Make sure to
-                    fill in all required details including location, wedding date, and
-                    rehearsal information.
+                    Please complete your profile before booking an officiant.
+                    Make sure to fill in all required details including
+                    location, wedding date, and rehearsal information.
                   </p>
                   <Link
                     to="/dashboard/settings"
@@ -262,10 +266,10 @@ const Schedule = () => {
                     key={o?._id}
                     className="flex items-center gap-3 border border-primary rounded-lg px-3 py-2"
                   >
-                    <img
+                    <Avatar
                       src={getProfileImageUrl(o?.profilePicture)}
-                      alt={o?.name}
-                      className="w-10 h-10 rounded-full object-cover"
+                      name={o?.name}
+                      size="md"
                     />
                     <div className="flex-1 min-w-0">
                       <div className="font-medium flex  justify-between text-gray-900 truncate">
@@ -288,7 +292,7 @@ const Schedule = () => {
                             return "1 year of experience";
                           const years = Math.floor(
                             (Date.now() - d.getTime()) /
-                              (1000 * 60 * 60 * 24 * 365.25)
+                              (1000 * 60 * 60 * 24 * 365.25),
                           );
                           const y = Math.max(1, years);
                           const label = y === 1 ? "year" : "years";
@@ -335,16 +339,22 @@ const Schedule = () => {
               >
                 <div>
                   <div className="font-medium text-gray-900 flex gap-4">
-                    <img
+                    <Avatar
                       src={getProfileImageUrl(m?.officiantImage || "")}
-                      alt={m.officiant}
-                      className="w-10 h-10 rounded-full object-cover"
+                      name={m.officiant}
+                      size="md"
                     />
                     <p>Officiant : {m.officiant}</p>
                   </div>
                   <div className="text-sm text-gray-500">
-                    {new Date(m.date).toLocaleDateString('en-US', { timeZone: 'America/New_York', weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' })} ·{" "}
-                    <span className="font-medium">Client:</span> {m.name}
+                    {new Date(m.date).toLocaleDateString("en-US", {
+                      timeZone: "America/New_York",
+                      weekday: "short",
+                      year: "numeric",
+                      month: "short",
+                      day: "numeric",
+                    })}{" "}
+                    · <span className="font-medium">Client:</span> {m.name}
                   </div>
                 </div>
                 <div className="flex items-center gap-2">

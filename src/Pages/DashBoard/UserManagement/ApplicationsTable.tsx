@@ -10,6 +10,7 @@ import {
 import Swal from "sweetalert2";
 import GlassSwal from "../../../utils/glassSwal";
 import { useAxios } from "../../../Component/Providers/useAxios";
+import Avatar from "../../../Component/Shared/Avatar";
 import type { OfficiantApplication } from "./types";
 import Pagination from "./Pagination";
 
@@ -74,7 +75,7 @@ const ApplicationsTable: React.FC<ApplicationsTableProps> = ({
               <p><strong>Address:</strong> ${application.address}</p>
               <p><strong>Status:</strong> 
                 <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(
-                  application.status
+                  application.status,
                 )}">
                   ${
                     application.status.charAt(0).toUpperCase() +
@@ -83,8 +84,10 @@ const ApplicationsTable: React.FC<ApplicationsTableProps> = ({
                 </span>
               </p>
               <p><strong>Submitted:</strong> ${new Date(
-                submittedDate
-              ).toLocaleDateString('en-US', { timeZone: 'America/New_York' })}</p>
+                submittedDate,
+              ).toLocaleDateString("en-US", {
+                timeZone: "America/New_York",
+              })}</p>
             </div>
           </div>
           
@@ -156,14 +159,14 @@ const ApplicationsTable: React.FC<ApplicationsTableProps> = ({
         GlassSwal.success(
           "Approved",
           response.data.message ||
-            "Application approved successfully. User role updated to officiant."
+            "Application approved successfully. User role updated to officiant.",
         );
         onRefresh();
       } catch (error: any) {
         console.error("Error approving application:", error);
         GlassSwal.error(
           "Error",
-          error.response?.data?.message || "Failed to approve application"
+          error.response?.data?.message || "Failed to approve application",
         );
       }
     }
@@ -205,7 +208,7 @@ const ApplicationsTable: React.FC<ApplicationsTableProps> = ({
         console.error("Error rejecting application:", error);
         GlassSwal.error(
           "Error",
-          error.response?.data?.message || "Failed to reject application"
+          error.response?.data?.message || "Failed to reject application",
         );
       }
     }
@@ -275,17 +278,11 @@ const ApplicationsTable: React.FC<ApplicationsTableProps> = ({
                   <td className="px-3 sm:px-6 py-4">
                     <div className="flex items-center">
                       <div className="flex-shrink-0 h-8 w-8 sm:h-10 sm:w-10">
-                        {profilePic ? (
-                          <img
-                            className="h-8 w-8 sm:h-10 sm:w-10 rounded-full object-cover"
-                            src={profilePic}
-                            alt=""
-                          />
-                        ) : (
-                          <div className="h-8 w-8 sm:h-10 sm:w-10 rounded-full bg-gray-300 flex items-center justify-center">
-                            <FaFileAlt className="text-gray-600 text-xs sm:text-base" />
-                          </div>
-                        )}
+                        <Avatar
+                          src={profilePic}
+                          name={application.name}
+                          size="md"
+                        />
                       </div>
                       <div className="ml-2 sm:ml-4">
                         <div className="text-xs sm:text-sm font-medium text-gray-900 truncate max-w-[120px] sm:max-w-none">
@@ -324,14 +321,16 @@ const ApplicationsTable: React.FC<ApplicationsTableProps> = ({
                   <td className="px-3 sm:px-6 py-4">
                     <span
                       className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(
-                        application.status
+                        application.status,
                       )}`}
                     >
                       {application.status.charAt(0).toUpperCase() +
                         application.status.slice(1)}
                     </span>
                     <div className="text-xs text-gray-500 mt-1 hidden sm:block">
-                      {new Date(submittedDate).toLocaleDateString('en-US', { timeZone: 'America/New_York' })}
+                      {new Date(submittedDate).toLocaleDateString("en-US", {
+                        timeZone: "America/New_York",
+                      })}
                     </div>
                   </td>
                   <td className="hidden sm:table-cell px-3 sm:px-6 py-4">
@@ -341,7 +340,7 @@ const ApplicationsTable: React.FC<ApplicationsTableProps> = ({
                           onClick={() =>
                             downloadFile(
                               profilePic,
-                              `${application.name}_profile.jpg`
+                              `${application.name}_profile.jpg`,
                             )
                           }
                           className="text-indigo-600 hover:text-indigo-900 p-1 rounded hover:bg-indigo-50"

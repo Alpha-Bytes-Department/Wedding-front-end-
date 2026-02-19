@@ -6,8 +6,9 @@ import { BsPatchCheck } from "react-icons/bs";
 import { HiOutlineSparkles } from "react-icons/hi";
 import { BsFillStarFill } from "react-icons/bs";
 import { AiOutlineDoubleLeft, AiOutlineDoubleRight } from "react-icons/ai";
-import { FaUserAlt, FaHeart } from "react-icons/fa";
+import { FaHeart } from "react-icons/fa";
 import { PiFlowerTulipBold } from "react-icons/pi";
+import Avatar from "../../../Component/Shared/Avatar";
 
 interface Testimonial {
   id: string;
@@ -121,17 +122,12 @@ const TestimonialCarousel = ({
 
                     <div className="flex gap-3 items-start">
                       <div className="w-14 h-14 rounded-full overflow-hidden border-2 border-primary/60 shadow-md">
-                        {testimonial.avatar ? (
-                          <img
-                            src={testimonial.avatar}
-                            alt={testimonial.name}
-                            className="w-full h-full object-cover"
-                          />
-                        ) : (
-                          <div className="w-full h-full flex items-center justify-center bg-[#faf8f0]">
-                            <FaUserAlt size={22} className="text-primary/30" />
-                          </div>
-                        )}
+                        <Avatar
+                          src={testimonial.avatar}
+                          name={testimonial.name}
+                          size="lg"
+                          className="w-full h-full"
+                        />
                       </div>
                       <div>
                         <h4 className="font-primary font-bold text-text text-lg">

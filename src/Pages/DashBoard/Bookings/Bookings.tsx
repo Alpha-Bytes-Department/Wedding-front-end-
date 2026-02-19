@@ -3,6 +3,7 @@ import { useAxios } from "../../../Component/Providers/useAxios";
 import { useAuth } from "../../../Component/Providers/AuthProvider";
 import { useNavigate } from "react-router-dom";
 import GlassSwal from "../../../utils/glassSwal";
+import Avatar from "../../../Component/Shared/Avatar";
 // import { get } from "http";
 
 interface Booking {
@@ -33,7 +34,7 @@ const Bookings = () => {
   const [showFullList, setShowFullList] = useState(false);
   const [ongoingCeremonies, setOngoingCeremonies] = useState<Booking[]>([]);
   const [completedCeremonies, setCompletedCeremonies] = useState<Ceremony[]>(
-    []
+    [],
   );
   const [seeFullCeremonies, setSeeFullCeremonies] = useState(false);
   const [seeOngoingCeremonies, setSeeOngoingCeremonies] = useState(false);
@@ -57,10 +58,10 @@ const Bookings = () => {
         setShowFullList(!showFullList);
         break;
       case 2:
-        setSeeFullCeremonies(!seeFullCeremonies);
+        setSeeOngoingCeremonies(!seeOngoingCeremonies);
         break;
       case 3:
-        setSeeOngoingCeremonies(!seeOngoingCeremonies);
+        setSeeFullCeremonies(!seeFullCeremonies);
         break;
     }
   };
@@ -72,13 +73,13 @@ const Bookings = () => {
       const response = await axios.get(`/schedule/get-officiant/${user?._id}`);
       setBookings(
         response.data.filter(
-          (booking: Booking) => booking.approvedStatus === "pending"
-        )
+          (booking: Booking) => booking.approvedStatus === "pending",
+        ),
       );
       setOngoingCeremonies(
         response.data.filter(
-          (booking: Booking) => booking.approvedStatus === "approved"
-        )
+          (booking: Booking) => booking.approvedStatus === "approved",
+        ),
       );
       // console.log("Bookings:", response.data);
       //console.log(response.data);
@@ -95,13 +96,13 @@ const Bookings = () => {
 
       const completed = response.data.events.filter(
         (event: any) =>
-          event.status === "completed" && event.officiantId === user?._id
+          event.status === "completed" && event.officiantId === user?._id,
       );
       // console.log("Response Data:", response.data.events);
 
       const ongoing = response.data.events.filter(
         (event: any) =>
-          event.status == "approved" && event.officiantId === user?._id
+          event.status == "approved" && event.officiantId === user?._id,
       );
 
       setCompletedCeremonies(completed);
@@ -119,7 +120,7 @@ const Bookings = () => {
       setLoading(true);
       const confirmed = await GlassSwal.confirm(
         "Are you sure?",
-        `You are about to ${approvedStatus} this booking.`
+        `You are about to ${approvedStatus} this booking.`,
       );
       if (confirmed.isConfirmed) {
         const response = await axios.put(`/schedule/update/${id}`, {
@@ -132,7 +133,7 @@ const Bookings = () => {
     } catch (error) {
       await GlassSwal.error(
         "Failed to update booking. Please try again later.",
-        "error"
+        "error",
       );
     } finally {
       setLoading(false);
@@ -160,7 +161,7 @@ const Bookings = () => {
 
   const getImage = (id: string) => {
     const event = ongoingCeremonies.find(
-      (event: any) => event.fromUserId === id
+      (event: any) => event.fromUserId === id,
     );
     return event ? event.fromUserImage : "";
   };
@@ -202,23 +203,28 @@ const Bookings = () => {
                   >
                     <div>
                       <div className="font-medium text-gray-900">
-                        <img
+                        <Avatar
                           src={getProfileImageUrl(m?.fromUserImage)}
-                          alt={m.fromUserName}
-                          className="w-10 h-10 rounded-full object-cover"
+                          name={m.fromUserName}
+                          size="md"
                         />
                         {m.fromUserName}
                       </div>
                       <div className="text-sm text-gray-500">
-                        {new Date(m.scheduleDate).toLocaleDateString("en-US", { timeZone: "America/New_York", year: "numeric", month: "short", day: "numeric" })} ·
-                        Officiant: {m.officiantName}
+                        {new Date(m.scheduleDate).toLocaleDateString("en-US", {
+                          timeZone: "America/New_York",
+                          year: "numeric",
+                          month: "short",
+                          day: "numeric",
+                        })}{" "}
+                        · Officiant: {m.officiantName}
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
                       <button
                         onClick={() =>
                           navigate(
-                            `/dashboard/officiant-agreement?userId=${m.fromUserId}`
+                            `/dashboard/officiant-agreement?userId=${m.fromUserId}`,
                           )
                         }
                         className="bg-gradient-to-r from-orange-400 to-yellow-400 text-white text-sm px-5 py-2 rounded-lg font-medium hover:from-orange-500 hover:to-yellow-500 transition-all"
@@ -239,16 +245,22 @@ const Bookings = () => {
                   >
                     <div>
                       <div className="font-medium items-center flex gap-4 text-gray-900">
-                        <img
+                        <Avatar
                           src={getProfileImageUrl(m?.fromUserImage)}
-                          alt={m.fromUserName}
-                          className="w-10 h-10 rounded-full object-cover"
+                          name={m.fromUserName}
+                          size="md"
                         />
                         {m.fromUserName}
                       </div>
                       <div className="text-sm text-gray-500">
-                        {new Date(m.scheduleDate).toLocaleDateString('en-US', { timeZone: 'America/New_York', weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' })} · Officiant:{" "}
-                        {m.officiantName}
+                        {new Date(m.scheduleDate).toLocaleDateString("en-US", {
+                          timeZone: "America/New_York",
+                          weekday: "short",
+                          year: "numeric",
+                          month: "short",
+                          day: "numeric",
+                        })}{" "}
+                        · Officiant: {m.officiantName}
                       </div>
                     </div>
                     <div className="flex items-center gap-3">
@@ -309,23 +321,32 @@ const Bookings = () => {
                     >
                       <div>
                         <div className="font-medium text-gray-900">
-                          <img
+                          <Avatar
                             src={m.fromUserImage}
-                            className="size-10"
-                            alt={m.fromUserName}
+                            name={m.fromUserName}
+                            size="md"
                           />
                           {m.fromUserName}
                         </div>
                         <div className="text-sm text-gray-500">
-                          {new Date(m.scheduleDate).toLocaleDateString('en-US', { timeZone: 'America/New_York', weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' })} · Officiant:{" "}
-                          {m.officiantName}
+                          {new Date(m.scheduleDate).toLocaleDateString(
+                            "en-US",
+                            {
+                              timeZone: "America/New_York",
+                              weekday: "short",
+                              year: "numeric",
+                              month: "short",
+                              day: "numeric",
+                            },
+                          )}{" "}
+                          · Officiant: {m.officiantName}
                         </div>
                       </div>
                       <div className="flex items-center gap-2">
                         <button
                           onClick={() =>
                             navigate(
-                              `/dashboard/officiant-agreement?userId=${m.fromUserId}`
+                              `/dashboard/officiant-agreement?userId=${m.fromUserId}`,
                             )
                           }
                           className="bg-gradient-to-r from-orange-400 to-yellow-400 text-white text-sm px-5 py-2 rounded-lg font-medium hover:from-orange-500 hover:to-yellow-500 transition-all"
@@ -343,23 +364,32 @@ const Bookings = () => {
                     >
                       <div>
                         <div className="font-medium flex gap-3 text-lg items-center text-gray-900">
-                          <img
+                          <Avatar
                             src={m.fromUserImage}
-                            className="size-16 rounded-full"
-                            alt={m.fromUserName}
+                            name={m.fromUserName}
+                            size="xl"
                           />
                           {m.fromUserName}
                         </div>
                         <div className="text-sm text-gray-500">
-                          {new Date(m.scheduleDate).toLocaleDateString('en-US', { timeZone: 'America/New_York', weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' })} · Officiant:{" "}
-                          {m.officiantName}
+                          {new Date(m.scheduleDate).toLocaleDateString(
+                            "en-US",
+                            {
+                              timeZone: "America/New_York",
+                              weekday: "short",
+                              year: "numeric",
+                              month: "short",
+                              day: "numeric",
+                            },
+                          )}{" "}
+                          · Officiant: {m.officiantName}
                         </div>
                       </div>
                       <div className="flex items-center gap-2">
                         <button
                           onClick={() =>
                             navigate(
-                              `/dashboard/officiant-agreement?userId=${m.fromUserId}`
+                              `/dashboard/officiant-agreement?userId=${m.fromUserId}`,
                             )
                           }
                           className="bg-gradient-to-r from-orange-400 to-yellow-400 text-white text-sm px-5 py-2 rounded-lg font-medium hover:from-orange-500 hover:to-yellow-500 transition-all"
@@ -393,31 +423,32 @@ const Bookings = () => {
                     <p className="py-5 text-center">No past ceremonies</p>
                     <p className="text-3xl text-center">📉</p>
                   </div>
-                ) : !seeFullCeremonies ? (
+                ) : seeFullCeremonies ? (
                   completedCeremonies.map((m) => (
                     <div
                       key={m._id}
                       className="flex  flex-col md:flex-row gap-5 items-center justify-between border border-primary rounded-lg px-4 py-3"
                     >
                       <div className="font-medium flex gap-2 items-center text-gray-900">
-                        {getImage(m.userId) ? (
-                          <img
-                            src={getImage(m.userId)}
-                            className="size-12 rounded-full"
-                            alt=""
-                          />
-                        ) : (
-                          <div className="size-12 rounded-full bg-amber-700 flex items-center justify-center text-white font-bold">
-                            {m.title.charAt(0).toUpperCase()}
-                          </div>
-                        )}
+                        <Avatar
+                          src={getImage(m.userId)}
+                          name={m.title}
+                          size="lg"
+                        />
 
                         {m.title}
                       </div>
-                      <p className="font-bold py-1 px-3 rounded-full border-amber-500 border-2">value : ${m.price}</p>
+                      <p className="font-bold py-1 px-3 rounded-full border-amber-500 border-2">
+                        value : ${m.price}
+                      </p>
                       <div className="text-sm text-gray-500">
-                        {new Date(m.eventDate).toLocaleDateString("en-US", { timeZone: "America/New_York", year: "numeric", month: "short", day: "numeric" })} ·
-                        Officiant: {m.officiantName}
+                        {new Date(m.eventDate).toLocaleDateString("en-US", {
+                          timeZone: "America/New_York",
+                          year: "numeric",
+                          month: "short",
+                          day: "numeric",
+                        })}{" "}
+                        · Officiant: {m.officiantName}
                       </div>
                     </div>
                   ))
@@ -428,23 +459,22 @@ const Bookings = () => {
                       className="flex  flex-col md:flex-row gap-5 items-center justify-between border border-primary rounded-lg px-4 py-3"
                     >
                       <div className="font-medium flex gap-2 items-center text-gray-900">
-                        {getImage(m.userId) ? (
-                          <img
-                            src={getImage(m.userId)}
-                            className="size-12 rounded-full"
-                            alt=""
-                          />
-                        ) : (
-                          <div className="size-12 rounded-full bg-amber-700 flex items-center justify-center text-white font-bold">
-                            {m.title.charAt(0).toUpperCase()}
-                          </div>
-                        )}
+                        <Avatar
+                          src={getImage(m.userId)}
+                          name={m.title}
+                          size="lg"
+                        />
 
                         {m.title}
                       </div>
                       <div className="text-sm text-gray-500">
-                        {new Date(m.eventDate).toLocaleDateString("en-US", { timeZone: "America/New_York", year: "numeric", month: "short", day: "numeric" })} ·
-                        Officiant: {m.officiantName}
+                        {new Date(m.eventDate).toLocaleDateString("en-US", {
+                          timeZone: "America/New_York",
+                          year: "numeric",
+                          month: "short",
+                          day: "numeric",
+                        })}{" "}
+                        · Officiant: {m.officiantName}
                       </div>
                     </div>
                   ))

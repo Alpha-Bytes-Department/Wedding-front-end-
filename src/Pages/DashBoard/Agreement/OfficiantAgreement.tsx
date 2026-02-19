@@ -2,7 +2,10 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useAxios } from "../../../Component/Providers/useAxios";
 import GlassSwal from "../../../utils/glassSwal";
-import { convertLocalDateToISO, formatDateForInput } from "../../../utils/dateUtils";
+import {
+  convertLocalDateToISO,
+  formatDateForInput,
+} from "../../../utils/dateUtils";
 
 interface AgreementData {
   _id: string;
@@ -26,6 +29,7 @@ interface AgreementData {
 const OfficiantAgreement: React.FC = () => {
   const [searchParams] = useSearchParams();
   const userId = searchParams.get("userId");
+  const agreementId = searchParams.get("agreementId");
   const navigate = useNavigate();
   const axios = useAxios();
   const [agreement, setAgreement] = useState<AgreementData | null>(null);
@@ -50,17 +54,20 @@ const OfficiantAgreement: React.FC = () => {
   const [signaturePreview, setSignaturePreview] = useState<string>("");
 
   useEffect(() => {
-    if (userId) {
+    if (agreementId || userId) {
       fetchAgreement();
     }
-  }, [userId]);
+  }, [agreementId, userId]);
 
   const fetchAgreement = async () => {
-    if (!userId) return;
+    if (!agreementId && !userId) return;
 
     try {
       setLoading(true);
-      const response = await axios.get(`/agreements/user/${userId}`);
+      const url = agreementId
+        ? `/agreements/${agreementId}`
+        : `/agreements/user/${userId}`;
+      const response = await axios.get(url);
       const data = response.data.agreement;
       setAgreement(data);
       setAgreementNotFound(false);
@@ -69,9 +76,7 @@ const OfficiantAgreement: React.FC = () => {
       if (data) {
         setFormData({
           officiantName: data.officiantName || "",
-          eventDate: data.eventDate
-            ? formatDateForInput(data.eventDate)
-            : "",
+          eventDate: data.eventDate ? formatDateForInput(data.eventDate) : "",
           partner1Name: data.partner1Name || "",
           partner2Name: data.partner2Name || "",
           location: data.location || "",
@@ -88,7 +93,7 @@ const OfficiantAgreement: React.FC = () => {
       } else {
         GlassSwal.error(
           "Error",
-          error.response?.data?.message || "Failed to load agreement"
+          error.response?.data?.message || "Failed to load agreement",
         );
       }
     } finally {
@@ -97,7 +102,7 @@ const OfficiantAgreement: React.FC = () => {
   };
 
   const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -118,12 +123,12 @@ const OfficiantAgreement: React.FC = () => {
     ) {
       GlassSwal.error(
         "Missing Information",
-        "Please fill in all required fields"
+        "Please fill in all required fields",
       );
       return;
     }
 
-    if (!userId) {
+    if (!userId && !agreement) {
       GlassSwal.error("Error", "User information not found");
       return;
     }
@@ -146,7 +151,7 @@ const OfficiantAgreement: React.FC = () => {
 
         GlassSwal.success(
           "Agreement Created",
-          "Agreement has been created. The couple will be notified to review and sign."
+          "Agreement has been created. The couple will be notified to review and sign.",
         );
       } else {
         // Agreement exists, just update details
@@ -162,7 +167,7 @@ const OfficiantAgreement: React.FC = () => {
 
         GlassSwal.success(
           "Details Saved",
-          "Agreement details have been updated. The couple will be notified to review and sign."
+          "Agreement details have been updated. The couple will be notified to review and sign.",
         );
       }
 
@@ -172,7 +177,7 @@ const OfficiantAgreement: React.FC = () => {
       console.error("Error saving details:", error);
       GlassSwal.error(
         "Save Failed",
-        error.response?.data?.message || "Failed to save agreement details"
+        error.response?.data?.message || "Failed to save agreement details",
       );
     } finally {
       setSaving(false);
@@ -187,7 +192,7 @@ const OfficiantAgreement: React.FC = () => {
       `This will notify the couple to pay $${(
         (parseFloat(formData.price) || 0) +
         (parseFloat(formData.travelFee) || 0)
-      ).toFixed(2)}`
+      ).toFixed(2)}`,
     );
 
     if (!result.isConfirmed) return;
@@ -197,7 +202,7 @@ const OfficiantAgreement: React.FC = () => {
 
       GlassSwal.success(
         "Payment Request Sent",
-        "The couple has been notified and can now proceed with payment."
+        "The couple has been notified and can now proceed with payment.",
       );
 
       // Refresh agreement data
@@ -206,7 +211,7 @@ const OfficiantAgreement: React.FC = () => {
       console.error("Error sending payment request:", error);
       GlassSwal.error(
         "Failed",
-        error.response?.data?.message || "Failed to send payment request"
+        error.response?.data?.message || "Failed to send payment request",
       );
     }
   };
@@ -232,7 +237,7 @@ const OfficiantAgreement: React.FC = () => {
     if (!validTypes.includes(file.type.toLowerCase())) {
       GlassSwal.error(
         "Invalid File",
-        "Only image files (JPG, PNG, GIF, WebP) are allowed"
+        "Only image files (JPG, PNG, GIF, WebP) are allowed",
       );
       return;
     }
@@ -265,12 +270,12 @@ const OfficiantAgreement: React.FC = () => {
           headers: {
             "Content-Type": "multipart/form-data",
           },
-        }
+        },
       );
 
       GlassSwal.success(
         "Agreement Completed",
-        "Your signature has been uploaded. The agreement is now complete!"
+        "Your signature has been uploaded. The agreement is now complete!",
       );
 
       // Refresh agreement data
@@ -279,7 +284,7 @@ const OfficiantAgreement: React.FC = () => {
       console.error("Error uploading signature:", error);
       GlassSwal.error(
         "Upload Failed",
-        error.response?.data?.message || "Failed to upload signature"
+        error.response?.data?.message || "Failed to upload signature",
       );
     } finally {
       setUploading(false);
@@ -549,7 +554,15 @@ const OfficiantAgreement: React.FC = () => {
     );
   }
 
-  const canEdit = agreement.status === "pending";
+  const lockedStatuses = [
+    "user_signed",
+    "payment_requested",
+    "payment_completed",
+    "officiant_signed",
+    "completed",
+    "used",
+  ];
+  const canEdit = !lockedStatuses.includes(agreement.status);
   const canSendPayment = agreement.status === "user_signed";
   const canSign = agreement.status === "payment_completed";
   const isCompleted = agreement.status === "officiant_signed";
@@ -560,7 +573,7 @@ const OfficiantAgreement: React.FC = () => {
         {/* Header */}
         <div className="mb-6">
           <button
-            onClick={() => navigate("/dashboard")}
+            onClick={() => navigate("/dashboard/officiant-agreements")}
             className="text-primary hover:text-primary/80 font-medium mb-4 flex items-center"
           >
             <svg
@@ -576,7 +589,7 @@ const OfficiantAgreement: React.FC = () => {
                 d="M10 19l-7-7m0 0l7-7m-7 7h18"
               />
             </svg>
-            Back to Dashboard
+            Back to Agreements
           </button>
           <h1 className="text-3xl font-bold text-gray-900">
             Ceremony Agreement Management
@@ -587,6 +600,25 @@ const OfficiantAgreement: React.FC = () => {
               {agreement.status.replace(/_/g, " ")}
             </span>
           </p>
+          {!canEdit && (
+            <div className="mt-3 p-3 bg-amber-50 border border-amber-200 rounded-lg text-amber-800 text-sm flex items-center gap-2">
+              <svg
+                className="w-5 h-5 flex-shrink-0"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z"
+                  clipRule="evenodd"
+                />
+              </svg>
+              <span>
+                Editing is locked because the couple has already signed this
+                agreement.
+              </span>
+            </div>
+          )}
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -894,7 +926,7 @@ const OfficiantAgreement: React.FC = () => {
                 <div
                   className={`flex items-center ${
                     ["payment_completed", "officiant_signed"].includes(
-                      agreement.status
+                      agreement.status,
                     )
                       ? "text-green-600"
                       : "text-gray-400"
@@ -903,14 +935,14 @@ const OfficiantAgreement: React.FC = () => {
                   <div
                     className={`w-8 h-8 rounded-full flex items-center justify-center mr-3 ${
                       ["payment_completed", "officiant_signed"].includes(
-                        agreement.status
+                        agreement.status,
                       )
                         ? "bg-green-100"
                         : "bg-gray-100"
                     }`}
                   >
                     {["payment_completed", "officiant_signed"].includes(
-                      agreement.status
+                      agreement.status,
                     )
                       ? "✓"
                       : "3"}

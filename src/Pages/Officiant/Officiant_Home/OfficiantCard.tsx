@@ -1,4 +1,4 @@
-import { FaArrowRight, FaUserTie } from "react-icons/fa6";
+import { FaArrowRight } from "react-icons/fa6";
 import { FaStar } from "react-icons/fa";
 import { BsPatchCheck } from "react-icons/bs";
 import { PiFlowerTulipBold } from "react-icons/pi";
@@ -54,7 +54,9 @@ const OfficiantCard = ({
           />
         ) : (
           <div className="flex items-center justify-center h-full">
-            <FaUserTie className="text-[#d4af37]/30 text-8xl" />
+            <span className="text-8xl font-bold font-primary text-[#d4af37]/30">
+              {officiant.name ? officiant.name.charAt(0).toUpperCase() : "O"}
+            </span>
           </div>
         )}
 

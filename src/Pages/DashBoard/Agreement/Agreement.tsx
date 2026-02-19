@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useAxios } from "../../../Component/Providers/useAxios";
 import { useAuth } from "../../../Component/Providers/AuthProvider";
 import GlassSwal from "../../../utils/glassSwal";
@@ -26,6 +26,7 @@ interface AgreementData {
 }
 
 const Agreement: React.FC = () => {
+  const { eventId } = useParams<{ eventId: string }>();
   const navigate = useNavigate();
   const axios = useAxios();
   const { user, setUser } = useAuth();
@@ -42,15 +43,15 @@ const Agreement: React.FC = () => {
   const [partner2Preview, setPartner2Preview] = useState<string>("");
 
   useEffect(() => {
-    if (user?._id) {
+    if (eventId) {
       fetchAgreement();
     }
-  }, [user?._id]);
+  }, [eventId]);
 
   // Refresh agreement data when component becomes visible (user returns to page)
   useEffect(() => {
     const handleVisibilityChange = () => {
-      if (!document.hidden && user?._id) {
+      if (!document.hidden && eventId) {
         // console.log("Page became visible, refreshing agreement data...");
         fetchAgreement();
       }
@@ -61,23 +62,16 @@ const Agreement: React.FC = () => {
     return () => {
       document.removeEventListener("visibilitychange", handleVisibilityChange);
     };
-  }, [user?._id]);
+  }, [eventId]);
 
   // Update user's AgreementAccepted status when agreement is completed
   useEffect(() => {
     const updateUserAgreementStatus = async () => {
-      //  console.log("useEffect triggered with:", {
-      //   agreementStatus: agreement?.status,
-      //   isUsedForCeremony: agreement?.isUsedForCeremony,
-      //   userAgreementAccepted: user?.AgreementAccepted,
-      // });
-
       if (
         agreement?.status === "officiant_signed" &&
         user &&
         !user.AgreementAccepted
       ) {
-        // console.log("Agreement officiant_signed - updating user status");
         try {
           // Fetch fresh user data from database to verify AgreementAccepted status
           const response = await axios.get("/users/get-user");
@@ -96,7 +90,7 @@ const Agreement: React.FC = () => {
             // Show success message
             GlassSwal.success(
               "Agreement Complete!",
-              "You can now access the Ceremony Builder to create your ceremony."
+              "You can now access the Ceremony Builder to create your ceremony.",
             );
           }
         } catch (error) {
@@ -109,7 +103,7 @@ const Agreement: React.FC = () => {
 
           GlassSwal.success(
             "Agreement Complete!",
-            "You can now access the Ceremony Builder to create your ceremony."
+            "You can now access the Ceremony Builder to create your ceremony.",
           );
         }
       }
@@ -142,11 +136,11 @@ const Agreement: React.FC = () => {
   ]);
 
   const fetchAgreement = async () => {
-    if (!user?._id) return;
+    if (!eventId) return;
 
     try {
       setLoading(true);
-      const response = await axios.get(`/agreements/user/${user._id}`);
+      const response = await axios.get(`/agreements/${eventId}`);
       // console.log("Fetched agreement:", response.data.agreement);
       setAgreement(response.data.agreement);
 
@@ -154,11 +148,8 @@ const Agreement: React.FC = () => {
       try {
         const userResponse = await axios.get("/users/get-user");
         const dbUser = userResponse.data.user;
-          // console.log("Refreshed user data:", {
-          //   AgreementAccepted: dbUser.AgreementAccepted,
-          // });
 
-        if (user.AgreementAccepted !== dbUser.AgreementAccepted) {
+        if (user && user.AgreementAccepted !== dbUser.AgreementAccepted) {
           // console.log(
           //   "User AgreementAccepted status changed, updating context"
           // );
@@ -180,7 +171,7 @@ const Agreement: React.FC = () => {
       } else {
         GlassSwal.error(
           "Error",
-          error.response?.data?.message || "Failed to load agreement"
+          error.response?.data?.message || "Failed to load agreement",
         );
       }
     } finally {
@@ -190,7 +181,7 @@ const Agreement: React.FC = () => {
 
   const handleFileChange = (
     partner: "partner1" | "partner2",
-    event: React.ChangeEvent<HTMLInputElement>
+    event: React.ChangeEvent<HTMLInputElement>,
   ) => {
     const file = event.target.files?.[0];
     if (!file) return;
@@ -212,7 +203,7 @@ const Agreement: React.FC = () => {
     if (!validTypes.includes(file.type.toLowerCase())) {
       GlassSwal.error(
         "Invalid File",
-        "Only image files (JPG, PNG, GIF, WebP) are allowed"
+        "Only image files (JPG, PNG, GIF, WebP) are allowed",
       );
       return;
     }
@@ -235,7 +226,7 @@ const Agreement: React.FC = () => {
     if (!partner1SignatureFile || !partner2SignatureFile) {
       GlassSwal.error(
         "Missing Signatures",
-        "Both partner signatures are required"
+        "Both partner signatures are required",
       );
       return;
     }
@@ -259,12 +250,12 @@ const Agreement: React.FC = () => {
           headers: {
             "Content-Type": "multipart/form-data",
           },
-        }
+        },
       );
 
       GlassSwal.success(
         "Signatures Submitted",
-        "Your signatures have been uploaded successfully. The officiant will now send a payment request."
+        "Your signatures have been uploaded successfully. The officiant will now send a payment request.",
       );
 
       // Refresh agreement data
@@ -273,7 +264,7 @@ const Agreement: React.FC = () => {
       console.error("Error uploading signatures:", error);
       GlassSwal.error(
         "Upload Failed",
-        error.response?.data?.message || "Failed to upload signatures"
+        error.response?.data?.message || "Failed to upload signatures",
       );
     } finally {
       setUploading(false);
@@ -345,15 +336,15 @@ const Agreement: React.FC = () => {
         `partner1Name=${encodeURIComponent(agreement.partner1Name || "")}&` +
         `partner2Name=${encodeURIComponent(agreement.partner2Name || "")}&` +
         `officiantName=${encodeURIComponent(
-          agreement.officiantName || "Erie Wedding Officiants"
+          agreement.officiantName || "Erie Wedding Officiants",
         )}&` +
         `eventDate=${agreement.eventDate}&` +
         `location=${encodeURIComponent(agreement.location || "")}&` +
         `userId=${agreement.userId}&` +
-        `officiantId=${agreement.officiantId}`
+        `officiantId=${agreement.officiantId}`,
     );
   };
-//  console.log("agreement data:", agreement);
+  //  console.log("agreement data:", agreement);
   return (
     <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto">

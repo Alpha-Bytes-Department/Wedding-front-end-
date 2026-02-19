@@ -1,6 +1,5 @@
 import { BsPatchCheck } from "react-icons/bs";
 import { HiOutlineSparkles } from "react-icons/hi";
-import { FaUserTie } from "react-icons/fa6";
 import { PiFlowerTulipBold } from "react-icons/pi";
 
 interface ProfileCardProps {
@@ -30,7 +29,13 @@ const ProfileCard = ({
             onError={onImageError}
           />
         ) : (
-          <FaUserTie size={60} className="text-primary/30" />
+          <div className="w-full h-full rounded-full bg-primary/20 flex items-center justify-center">
+            <span className="text-5xl font-bold font-primary text-primary/60">
+              {officiantDetails.name
+                ? officiantDetails.name.charAt(0).toUpperCase()
+                : "O"}
+            </span>
+          </div>
         )}
         {/* Sparkle on hover */}
         <div className="absolute top-1 right-1 bg-white/80 backdrop-blur-sm rounded-full p-1.5 opacity-0 group-hover:opacity-100 transition-opacity duration-300">

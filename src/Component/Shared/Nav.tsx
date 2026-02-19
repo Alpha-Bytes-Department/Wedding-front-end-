@@ -2,10 +2,14 @@ import { Link, NavLink, useNavigate, useLocation } from "react-router-dom";
 import { useState, useEffect, useCallback } from "react";
 import { FaUserAlt } from "react-icons/fa";
 import { BsBellFill } from "react-icons/bs";
-import { MdOutlineNotifications, MdOutlineNotificationsActive } from "react-icons/md";
+import {
+  MdOutlineNotifications,
+  MdOutlineNotificationsActive,
+} from "react-icons/md";
 import { GoRead } from "react-icons/go";
 import { useAuth } from "../Providers/AuthProvider";
 import { useAxios } from "../Providers/useAxios";
+import Avatar from "./Avatar";
 
 // Define notification type
 type Notification = {
@@ -17,33 +21,34 @@ type Notification = {
   createdAt: string;
 };
 
-
-
 const Nav = () => {
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
   const [notifications, setNotifications] = useState<Notification[]>([]);
-  const {user}=useAuth()
-  const axios=useAxios()
+  const { user } = useAuth();
+  const axios = useAxios();
   const navigate = useNavigate();
   const location = useLocation();
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
-  
-  const markAsRead = useCallback(async (notificationId: string) => {
-    try {
-      await axios.patch(`/notifications/toggle-read/${notificationId}`);
-      // Update local state to reflect the change
-      setNotifications(prev => 
-        prev.map(note => 
-          note._id === notificationId ? {...note, isRead: true} : note
-        )
-      );
-    } catch (error) {
-      console.error("Error marking notification as read:", error);
-    }
-  }, [axios]);
+
+  const markAsRead = useCallback(
+    async (notificationId: string) => {
+      try {
+        await axios.patch(`/notifications/toggle-read/${notificationId}`);
+        // Update local state to reflect the change
+        setNotifications((prev) =>
+          prev.map((note) =>
+            note._id === notificationId ? { ...note, isRead: true } : note,
+          ),
+        );
+      } catch (error) {
+        console.error("Error marking notification as read:", error);
+      }
+    },
+    [axios],
+  );
 
   const scrollToClientReview = () => {
     // Check if we're already on the home page
@@ -64,7 +69,7 @@ const Nav = () => {
 
   const getNotifications = useCallback(async () => {
     try {
-      const response = await axios.get('/notifications/my');
+      const response = await axios.get("/notifications/my");
       setNotifications(response.data.notifications);
       // console.log("Notifications:", response.data);
     } catch (error) {
@@ -287,7 +292,7 @@ const Nav = () => {
                 <BsBellFill
                   onClick={() => {
                     const modal = document.getElementById(
-                      "my_modal_3"
+                      "my_modal_3",
                     ) as HTMLDialogElement | null;
                     if (modal) modal.showModal();
                   }}
@@ -300,13 +305,12 @@ const Nav = () => {
                   </span>
                 )}
               </div>
-              <div className="rounded-full p-1 border-2 border-[#D4AF37]">
-                <img
-                  src={user.profilePicture}
-                  alt="Profile"
-                  className="w-8 h-8 lg:size-12 rounded-full"
-                />
-              </div>
+              <Avatar
+                src={user.profilePicture}
+                name={user?.name || user?.email}
+                size="lg"
+                className="border-2 border-[#D4AF37]"
+              />
             </div>
           ) : (
             <div className="flex gap-3 lg:gap-4 items-center relative">
@@ -314,7 +318,7 @@ const Nav = () => {
                 <BsBellFill
                   onClick={() => {
                     const modal = document.getElementById(
-                      "my_modal_3"
+                      "my_modal_3",
                     ) as HTMLDialogElement | null;
                     if (modal) modal.showModal();
                   }}
@@ -467,7 +471,7 @@ const Nav = () => {
                     <BsBellFill
                       onClick={() => {
                         const modal = document.getElementById(
-                          "my_modal_3"
+                          "my_modal_3",
                         ) as HTMLDialogElement | null;
                         if (modal) modal.showModal();
                       }}
@@ -480,13 +484,12 @@ const Nav = () => {
                       </span>
                     )}
                   </div>
-                  <div className="rounded-full p-2 lg:p-3 border-2 border-[#D4AF37]">
-                    <img
-                      src={user.profilePicture}
-                      alt="Profile"
-                      className="w-8 h-8 lg:w-10 lg:h-10 rounded-full"
-                    />
-                  </div>
+                  <Avatar
+                    src={user.profilePicture}
+                    name={user?.name || user?.email}
+                    size="lg"
+                    className="border-2 border-[#D4AF37]"
+                  />
                 </div>
               ) : (
                 <div className="flex gap-3 sm:gap-4 items-center">
@@ -494,7 +497,7 @@ const Nav = () => {
                     <BsBellFill
                       onClick={() => {
                         const modal = document.getElementById(
-                          "my_modal_3"
+                          "my_modal_3",
                         ) as HTMLDialogElement | null;
                         if (modal) modal.showModal();
                       }}

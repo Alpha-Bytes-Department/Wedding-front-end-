@@ -3,87 +3,88 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination, Mousewheel, Autoplay } from "swiper/modules";
 import "swiper/swiper-bundle.css";
 import { BsFillStarFill } from "react-icons/bs";
+import Avatar from "../../Component/Shared/Avatar";
 import { FaArrowDown, FaArrowUp } from "react-icons/fa6";
 import { useAxios } from "../../Component/Providers/useAxios";
 import { FaRegUserCircle } from "react-icons/fa";
 
 const ClientReview = () => {
   const [screenSize, setScreenSize] = useState<"sm" | "md" | "lg" | "xl">("lg");
-const axios = useAxios();
-type PublicReview = {
-  _id?: string;
-  userName?: string;
-  userImageUrl?: string | null;
-  rating?: number;
-  ratingDescription?: string;
-};
+  const axios = useAxios();
+  type PublicReview = {
+    _id?: string;
+    userName?: string;
+    userImageUrl?: string | null;
+    rating?: number;
+    ratingDescription?: string;
+  };
 
-const [publicReviews, setPublicReviews] = useState<PublicReview[]>([]);
- 
+  const [publicReviews, setPublicReviews] = useState<PublicReview[]>([]);
 
-const handleResize = () => {
-  const width = window.innerWidth;
-  if (width < 640) setScreenSize("sm");
-  else if (width < 768) setScreenSize("md");
-  else if (width < 1024) setScreenSize("lg");
-  else setScreenSize("xl");
-};
+  const handleResize = () => {
+    const width = window.innerWidth;
+    if (width < 640) setScreenSize("sm");
+    else if (width < 768) setScreenSize("md");
+    else if (width < 1024) setScreenSize("lg");
+    else setScreenSize("xl");
+  };
   useEffect(() => {
-   const getPublicReviews = async () => {
-  try {
-    const response = await axios.get("/reviews/public");
-    // console.log("Public Reviews:", response.data.reviews);
+    const getPublicReviews = async () => {
+      try {
+        const response = await axios.get("/reviews/public");
+        // console.log("Public Reviews:", response.data.reviews);
 
-    const visibleReviews: PublicReview[] = response.data.reviews.map((review: any) => ({
-      _id: review._id,
-      userName: review.userName,
-      userImageUrl: review.userImageUrl,
-      rating: review.rating,
-      ratingDescription: review.ratingDescription,
-    }));
+        const visibleReviews: PublicReview[] = response.data.reviews.map(
+          (review: any) => ({
+            _id: review._id,
+            userName: review.userName,
+            userImageUrl: review.userImageUrl,
+            rating: review.rating,
+            ratingDescription: review.ratingDescription,
+          }),
+        );
 
-    setPublicReviews(visibleReviews);
-  } catch (error) {
-    console.error("Error fetching public reviews:", error);
+        setPublicReviews(visibleReviews);
+      } catch (error) {
+        console.error("Error fetching public reviews:", error);
 
-    // fallback dummy data (no images)
-    const dummyReviews: PublicReview[] = [
-      {
-        _id: "1",
-        userName: "Alice Johnson",
-        userImageUrl: null,
-        rating: 5,
-        ratingDescription: "Absolutely wonderful experience! Highly recommended.",
-      },
-      {
-        _id: "2",
-        userName: "Michael Smith",
-        userImageUrl: null,
-        rating: 4,
-        ratingDescription: "Very professional and kind, made everything smooth.",
-      },
-      {
-        _id: "3",
-        userName: "Sophia Williams",
-        userImageUrl: null,
-        rating: 5,
-        ratingDescription: "Exceeded expectations — everything was perfect.",
-      },
-    ];
+        // fallback dummy data (no images)
+        const dummyReviews: PublicReview[] = [
+          {
+            _id: "1",
+            userName: "Alice Johnson",
+            userImageUrl: null,
+            rating: 5,
+            ratingDescription:
+              "Absolutely wonderful experience! Highly recommended.",
+          },
+          {
+            _id: "2",
+            userName: "Michael Smith",
+            userImageUrl: null,
+            rating: 4,
+            ratingDescription:
+              "Very professional and kind, made everything smooth.",
+          },
+          {
+            _id: "3",
+            userName: "Sophia Williams",
+            userImageUrl: null,
+            rating: 5,
+            ratingDescription:
+              "Exceeded expectations — everything was perfect.",
+          },
+        ];
 
-    setPublicReviews(dummyReviews);
-  }
-};
+        setPublicReviews(dummyReviews);
+      }
+    };
 
     getPublicReviews();
     handleResize(); // Set initial size
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, [axios]);
-
-
-  
-
 
   const getSwiperConfig = () => {
     switch (screenSize) {
@@ -118,8 +119,8 @@ const handleResize = () => {
             Client <span className="text-primary">Reviews</span> to our service
           </h1>
           <p className="text-sm sm:text-base md:text-lg xl:text-xl text-start font-normal font-secondary text-black-web mt-2 sm:mt-3 md:mt-4">
-            what our satisfied clients have to say about their experience
-            with Erie Wedding Officiants. Your feedback inspires us to create
+            what our satisfied clients have to say about their experience with
+            Erie Wedding Officiants. Your feedback inspires us to create
             unforgettable ceremonies.
           </p>
         </div>
@@ -150,39 +151,38 @@ const handleResize = () => {
           modules={[Pagination, Mousewheel, Autoplay, Navigation]}
           className="h-[300px] sm:h-[500px]  lg:h-[600px]"
         >
-         {publicReviews?.map((item) => (
-  <SwiperSlide key={item._id}>
-    <div className="flex flex-col items-start bg-white py-3 sm:py-4 md:py-5 px-2 sm:px-3 gap-2 sm:gap-3 md:gap-4 w-full max-w-xs sm:max-w-sm md:max-w-lg lg:max-w-sm lg:px-5 shadow-xl mx-auto xl:ml-40">
-      <div className="flex justify-between items-center w-full">
-        <div>
-          <p className="text-base sm:text-lg font-secondary mb-1 sm:mb-2">
-            "{item.userName}"
-          </p>
-          <div className="flex gap-1">
-            {Array.from({ length: item.rating || 0 }).map((_, i) => (
-              <BsFillStarFill
-                key={i}
-                className="text-yellow-600 text-sm sm:text-base"
-              />
-            ))}
-          </div>
-        </div>
-        <div className=" size-12 border-2 rounded-full border-primary flex justify-center items-center ">
-          {item?.userImageUrl ? (
-            <img src={item.userImageUrl} className="size-12 rounded-full" alt={item.userName} />
-          ) : (
-            <FaRegUserCircle  className="size-10 text-primary" />
-          )}
-        </div>
-      </div>
-      <div className="border-t w-full border-[#BEBEBE]" />
-      <span className="font-normal text-text text-xs sm:text-sm leading-relaxed">
-        {item.ratingDescription}
-      </span>
-    </div>
-  </SwiperSlide>
-))}
-
+          {publicReviews?.map((item) => (
+            <SwiperSlide key={item._id}>
+              <div className="flex flex-col items-start bg-white py-3 sm:py-4 md:py-5 px-2 sm:px-3 gap-2 sm:gap-3 md:gap-4 w-full max-w-xs sm:max-w-sm md:max-w-lg lg:max-w-sm lg:px-5 shadow-xl mx-auto xl:ml-40">
+                <div className="flex justify-between items-center w-full">
+                  <div>
+                    <p className="text-base sm:text-lg font-secondary mb-1 sm:mb-2">
+                      "{item.userName}"
+                    </p>
+                    <div className="flex gap-1">
+                      {Array.from({ length: item.rating || 0 }).map((_, i) => (
+                        <BsFillStarFill
+                          key={i}
+                          className="text-yellow-600 text-sm sm:text-base"
+                        />
+                      ))}
+                    </div>
+                  </div>
+                  <div className=" size-12 border-2 rounded-full border-primary flex justify-center items-center ">
+                    <Avatar
+                      src={item?.userImageUrl}
+                      name={item.userName}
+                      size="lg"
+                    />
+                  </div>
+                </div>
+                <div className="border-t w-full border-[#BEBEBE]" />
+                <span className="font-normal text-text text-xs sm:text-sm leading-relaxed">
+                  {item.ratingDescription}
+                </span>
+              </div>
+            </SwiperSlide>
+          ))}
         </Swiper>
         {/* Up/Down Buttons */}
         <div className="absolute sm:right-2 bottom-6 sm:-bottom-8 md:bottom-10 left-0 xl:pl-6 2xl:-left-80 sm:-left-20 md:-left-32 w-8 sm:w-10 md:w-13 flex flex-col gap-1 sm:gap-2 z-10">

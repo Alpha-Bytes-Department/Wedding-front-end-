@@ -4,6 +4,7 @@ import {
   HiOutlineMenu,
   HiOutlineX,
   HiOutlineBell,
+  HiOutlineDocumentText,
 } from "react-icons/hi";
 import { LuUserCog } from "react-icons/lu";
 import { IoCalendarNumberOutline } from "react-icons/io5";
@@ -65,14 +66,14 @@ const DashNav = ({
         // Update local state to reflect the change
         setNotifications((prev) =>
           prev.map((note) =>
-            note._id === notificationId ? { ...note, isRead: true } : note
-          )
+            note._id === notificationId ? { ...note, isRead: true } : note,
+          ),
         );
       } catch (error) {
         console.error("Error marking notification as read:", error);
       }
     },
-    [axios]
+    [axios],
   );
 
   const navigationItems = [
@@ -93,6 +94,14 @@ const DashNav = ({
             current: location.pathname.includes("/dashboard/bookings"),
           },
           {
+            name: "Agreements",
+            href: "/dashboard/officiant-agreements",
+            icon: HiOutlineDocumentText,
+            current: location.pathname.includes(
+              "/dashboard/officiant-agreement",
+            ),
+          },
+          {
             name: "Discussions",
             href: "/dashboard/discussions",
             icon: PiChats,
@@ -105,6 +114,12 @@ const DashNav = ({
             href: "/dashboard/schedule",
             icon: IoCalendarNumberOutline,
             current: location.pathname.includes("/dashboard/schedule"),
+          },
+          {
+            name: "Agreements",
+            href: "/dashboard/agreements",
+            icon: HiOutlineDocumentText,
+            current: location.pathname.includes("/dashboard/agreement"),
           },
           {
             name: "Discussions",
@@ -225,7 +240,7 @@ const DashNav = ({
             <HiOutlineBell
               onClick={() => {
                 const modal = document.getElementById(
-                  "my_modal_3"
+                  "my_modal_3",
                 ) as HTMLDialogElement | null;
                 if (modal) modal.showModal();
               }}
@@ -300,7 +315,7 @@ const DashNav = ({
             <HiOutlineBell
               onClick={() => {
                 const modal = document.getElementById(
-                  "my_modal_3"
+                  "my_modal_3",
                 ) as HTMLDialogElement | null;
                 if (modal) modal.showModal();
               }}

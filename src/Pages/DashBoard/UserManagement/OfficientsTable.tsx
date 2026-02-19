@@ -10,6 +10,7 @@ import {
 import Swal from "sweetalert2";
 import GlassSwal from "../../../utils/glassSwal";
 import { useAxios } from "../../../Component/Providers/useAxios";
+import Avatar from "../../../Component/Shared/Avatar";
 import type { Officiant } from "./types";
 import { getProfileImageUrl } from "./types";
 import Pagination from "./Pagination";
@@ -42,21 +43,21 @@ const OfficientsTable: React.FC<OfficientsTableProps> = ({
   // Calculate total revenue and current bookings
   const calculateFinancials = (events: any[] = []) => {
     const completedEvents = events.filter(
-      (e) => e.status?.toLowerCase() === "completed"
+      (e) => e.status?.toLowerCase() === "completed",
     );
     const currentBookings = events.filter(
       (e) =>
         e.status?.toLowerCase() !== "completed" &&
-        e.status?.toLowerCase() !== "canceled"
+        e.status?.toLowerCase() !== "canceled",
     );
 
     const totalRevenue = completedEvents.reduce(
       (sum, event) => sum + (event.price || 0),
-      0
+      0,
     );
     const currentBookingsValue = currentBookings.reduce(
       (sum, event) => sum + (event.price || 0),
-      0
+      0,
     );
 
     return {
@@ -119,8 +120,8 @@ const OfficientsTable: React.FC<OfficientsTableProps> = ({
                     }</td>
                     <td class="border border-gray-300 px-3 py-2 text-sm">
                       <span class="px-2 py-1 rounded ${statusClass} text-xs font-medium">${
-                    event.status || "N/A"
-                  }</span>
+                        event.status || "N/A"
+                      }</span>
                     </td>
                     <td class="border border-gray-300 px-3 py-2 text-sm font-semibold">$${
                       event.price || 0
@@ -132,7 +133,7 @@ const OfficientsTable: React.FC<OfficientsTableProps> = ({
                       event.eventDate
                         ? new Date(event.eventDate).toLocaleDateString(
                             "en-US",
-                            { month: "short", day: "numeric", year: "numeric" }
+                            { month: "short", day: "numeric", year: "numeric" },
                           )
                         : "N/A"
                     }</td>
@@ -200,8 +201,8 @@ const OfficientsTable: React.FC<OfficientsTableProps> = ({
           ${eventsTableHTML}
           
           <p class="text-sm text-gray-500 mt-4"><strong>Joined:</strong> ${new Date(
-            officiant.createdAt
-          ).toLocaleDateString('en-US', { timeZone: 'America/New_York' })}</p>
+            officiant.createdAt,
+          ).toLocaleDateString("en-US", { timeZone: "America/New_York" })}</p>
         </div>
       `,
       width: "900px",
@@ -299,7 +300,7 @@ const OfficientsTable: React.FC<OfficientsTableProps> = ({
       try {
         const res = await axios.patch(
           `/users/update/${officiant._id}`,
-          formValues
+          formValues,
         );
         console.log("Update response:", res);
 
@@ -309,7 +310,7 @@ const OfficientsTable: React.FC<OfficientsTableProps> = ({
         console.error("Error updating officiant:", error);
         GlassSwal.error(
           "Error",
-          error.response?.data?.message || "Failed to update officiant"
+          error.response?.data?.message || "Failed to update officiant",
         );
       }
     }
@@ -337,7 +338,7 @@ const OfficientsTable: React.FC<OfficientsTableProps> = ({
         console.error("Error deleting officiant:", error);
         GlassSwal.error(
           "Error",
-          error.response?.data?.message || "Failed to delete officiant"
+          error.response?.data?.message || "Failed to delete officiant",
         );
       }
     }
@@ -386,18 +387,18 @@ const OfficientsTable: React.FC<OfficientsTableProps> = ({
   const maxTotalRevenue = useMemo(() => {
     return Math.max(
       ...sortedOfficiants.map(
-        (off) => calculateFinancials(off.events || []).totalRevenue
+        (off) => calculateFinancials(off.events || []).totalRevenue,
       ),
-      1
+      1,
     );
   }, [sortedOfficiants]);
 
   const maxCurrentRevenue = useMemo(() => {
     return Math.max(
       ...sortedOfficiants.map(
-        (off) => calculateFinancials(off.events || []).currentBookingsValue
+        (off) => calculateFinancials(off.events || []).currentBookingsValue,
       ),
-      1
+      1,
     );
   }, [sortedOfficiants]);
 
@@ -508,17 +509,11 @@ const OfficientsTable: React.FC<OfficientsTableProps> = ({
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex items-center">
                       <div className="flex-shrink-0 h-10 w-10">
-                        {officiant.profilePicture ? (
-                          <img
-                            className="h-10 w-10 rounded-full object-cover"
-                            src={getProfileImageUrl(officiant.profilePicture)}
-                            alt=""
-                          />
-                        ) : (
-                          <div className="h-10 w-10 rounded-full bg-gray-300 flex items-center justify-center">
-                            <FaUser className="text-gray-600" />
-                          </div>
-                        )}
+                        <Avatar
+                          src={getProfileImageUrl(officiant.profilePicture)}
+                          name={officiant.name}
+                          size="md"
+                        />
                       </div>
                       <div className="ml-4">
                         <div className="text-sm font-medium text-gray-900">

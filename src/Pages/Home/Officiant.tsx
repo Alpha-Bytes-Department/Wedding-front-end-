@@ -1,7 +1,7 @@
-import { FaArrowRight, FaUserTie } from 'react-icons/fa6';
-import { useAxios } from '../../Component/Providers/useAxios';
-import { useCallback, useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { FaArrowRight } from "react-icons/fa6";
+import { useAxios } from "../../Component/Providers/useAxios";
+import { useCallback, useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 
 const Officiant = () => {
   const axios = useAxios();
@@ -17,20 +17,22 @@ const Officiant = () => {
 
   // Track which images have failed to load
   const [failedImages, setFailedImages] = useState<Set<string | number>>(
-    new Set()
+    new Set(),
   );
 
   const fetchOfficiants = useCallback(async () => {
     try {
       const response = await axios.get("/users/officiants");
       console.log("Officiants in home:", response.data);
-      const objectarray = response?.data?.officiants?.slice(0, 4).map((officiant: any) => ({
-        id: officiant._id,
-        name: officiant.name,
-        image: officiant.profilePicture,
-        role: officiant.specialization,
-        description: officiant.bio,
-      }));
+      const objectarray = response?.data?.officiants
+        ?.slice(0, 4)
+        .map((officiant: any) => ({
+          id: officiant._id,
+          name: officiant.name,
+          image: officiant.profilePicture,
+          role: officiant.specialization,
+          description: officiant.bio,
+        }));
       setOfficiants(objectarray);
     } catch (error) {
       console.error("Error fetching officiants:", error);
@@ -129,7 +131,11 @@ const Officiant = () => {
                   onError={() => handleImageError(officiant.id)}
                 />
               ) : (
-                <FaUserTie className="text-gray-400 size-36 " />
+                <span className="text-gray-400 text-8xl font-bold font-primary">
+                  {officiant.name
+                    ? officiant.name.charAt(0).toUpperCase()
+                    : "O"}
+                </span>
               )}
             </div>
 
@@ -171,6 +177,6 @@ const Officiant = () => {
       </div>
     </div>
   );
-}
+};
 
-export default Officiant
+export default Officiant;

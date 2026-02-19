@@ -1,5 +1,6 @@
 import React from "react";
 import { GoFileDirectoryFill } from "react-icons/go";
+import Avatar from "../../../Component/Shared/Avatar";
 import type { ChatParticipant } from "./types";
 
 interface ChatSidebarProps {
@@ -24,7 +25,11 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({
   const formatTimestamp = (timestamp?: string) => {
     if (!timestamp) return "";
     const date = new Date(timestamp);
-    return date.toLocaleTimeString('en-US', { timeZone: 'America/New_York', hour: "2-digit", minute: "2-digit" });
+    return date.toLocaleTimeString("en-US", {
+      timeZone: "America/New_York",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
   };
   const getProfileImageUrl = (profilePicture?: string) => {
     if (!profilePicture) return "";
@@ -78,12 +83,14 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({
               >
                 <div className="flex items-center space-x-3">
                   <div className="relative">
-                    <img
-                      className="h-10 w-10 rounded-full object-cover"
-                      src={
-                        getProfileImageUrl(participant.profilePicture) 
+                    <Avatar
+                      src={getProfileImageUrl(participant.profilePicture)}
+                      name={
+                        participant.name ||
+                        participant.partner_1 ||
+                        participant.partner_2
                       }
-                      alt={participant.name || "Profile"}
+                      size="md"
                     />
                     <div
                       className={`absolute -bottom-1 -right-1 h-3 w-3 rounded-full border-2 border-white ${

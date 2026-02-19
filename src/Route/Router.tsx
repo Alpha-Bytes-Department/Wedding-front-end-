@@ -14,17 +14,17 @@ import { CeremonyProvider } from "../Pages/DashBoard/Ceremony/contexts/CeremonyC
 const Login = lazy(() => import("../Pages/Login/Login"));
 const Signup = lazy(() => import("../Pages/SignUp/Signup"));
 const ResetPassword = lazy(
-  () => import("../Pages/Verify_Forget/ResetPassword")
+  () => import("../Pages/Verify_Forget/ResetPassword"),
 );
 const VerifyUser = lazy(() => import("../Pages/Verify_Forget/verifyUser"));
 
 // Lazy load public pages
 const Feature = lazy(() => import("../Pages/Feature/Feature"));
 const Officiant = lazy(
-  () => import("../Pages/Officiant/Officiant_Home/Officiant")
+  () => import("../Pages/Officiant/Officiant_Home/Officiant"),
 );
 const OfficiantDetail = lazy(
-  () => import("../Pages/Officiant/Officiant_Details/OfficiantDetail")
+  () => import("../Pages/Officiant/Officiant_Details/OfficiantDetail"),
 );
 
 // Lazy load dashboard pages
@@ -32,25 +32,31 @@ const DashHome = lazy(() => import("../Pages/DashBoard/Home/DashHome"));
 const Ceremony = lazy(() => import("../Pages/DashBoard/Ceremony/Ceremony"));
 const Bookings = lazy(() => import("../Pages/DashBoard/Bookings/Bookings"));
 const CeremonyReview = lazy(
-  () => import("../Pages/DashBoard/CeremonyReview/CeremonyReview")
+  () => import("../Pages/DashBoard/CeremonyReview/CeremonyReview"),
 );
 const Note = lazy(() => import("../Pages/DashBoard/Notes/Note"));
 const Payment = lazy(() => import("../Pages/Payment/AgreementPayment"));
 const Discussions = lazy(
-  () => import("../Pages/DashBoard/Discussion/Discussions")
+  () => import("../Pages/DashBoard/Discussion/Discussions"),
 );
 const Schedule = lazy(() => import("../Pages/DashBoard/Schedule/Schedule"));
 const Settings = lazy(() => import("../Pages/DashBoard/Settings/Settings"));
 const UserManagement = lazy(
-  () => import("../Pages/DashBoard/UserManagement/UserManagement")
+  () => import("../Pages/DashBoard/UserManagement/UserManagement"),
 );
 const Agreement = lazy(() => import("../Pages/DashBoard/Agreement/Agreement"));
+const AgreementList = lazy(
+  () => import("../Pages/DashBoard/Agreement/AgreementList"),
+);
 const OfficiantAgreement = lazy(
-  () => import("../Pages/DashBoard/Agreement/OfficiantAgreement")
+  () => import("../Pages/DashBoard/Agreement/OfficiantAgreement"),
+);
+const OfficiantAgreementList = lazy(
+  () => import("../Pages/DashBoard/Agreement/OfficiantAgreementList"),
 );
 const Bills = lazy(() => import("../Pages/DashBoard/Bills/Bills"));
 const EventManagement = lazy(
-  () => import("../Pages/DashBoard/EventManagement/EventManagement")
+  () => import("../Pages/DashBoard/EventManagement/EventManagement"),
 );
 
 const Router = createBrowserRouter([
@@ -220,6 +226,14 @@ const Router = createBrowserRouter([
         ),
       },
       {
+        path: "/dashboard/agreements",
+        element: (
+          <Suspense fallback={<RouteLoader />}>
+            <AgreementList />
+          </Suspense>
+        ),
+      },
+      {
         path: "/dashboard/bills",
         element: (
           <Suspense fallback={<RouteLoader />}>
@@ -232,6 +246,14 @@ const Router = createBrowserRouter([
         element: (
           <Suspense fallback={<RouteLoader />}>
             <OfficiantAgreement />
+          </Suspense>
+        ),
+      },
+      {
+        path: "/dashboard/officiant-agreements",
+        element: (
+          <Suspense fallback={<RouteLoader />}>
+            <OfficiantAgreementList />
           </Suspense>
         ),
       },

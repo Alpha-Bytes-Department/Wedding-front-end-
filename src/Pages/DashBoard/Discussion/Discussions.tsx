@@ -4,6 +4,7 @@ import { useAuth } from "../../../Component/Providers/AuthProvider";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import io from "socket.io-client";
+import Avatar from "../../../Component/Shared/Avatar";
 
 // Import new components
 import ChatHeader from "./ChatHeader";
@@ -64,7 +65,7 @@ const Discussions: React.FC = () => {
   // Generate private room ID for user-officiant conversation
   const generatePrivateRoomId = (
     userId: string,
-    officiantId: string
+    officiantId: string,
   ): string => {
     // Create consistent room ID regardless of who initiates the conversation
     const ids = [userId, officiantId].sort();
@@ -82,7 +83,7 @@ const Discussions: React.FC = () => {
         if (user.role === "officiant") {
           // If user is an officiant, fetch users who have messaged them
           const response = await axios.get(
-            `/chat/users-for-officiant/${user._id}`
+            `/chat/users-for-officiant/${user._id}`,
           );
           if (response.data.success) {
             const userData = response.data.data.map((user: any) => ({
@@ -135,7 +136,7 @@ const Discussions: React.FC = () => {
         reconnection: true,
         reconnectionAttempts: 5,
         reconnectionDelay: 1000,
-      }
+      },
     );
 
     setSocket(newSocket);
@@ -245,17 +246,17 @@ const Discussions: React.FC = () => {
 
         // Log booking proposals specifically
         const bookingProposals = existingMessages.filter(
-          (msg) => msg.type === "booking_proposal"
+          (msg) => msg.type === "booking_proposal",
         );
         console.log(
           "📅 Booking proposals found:",
           bookingProposals.length,
-          bookingProposals
+          bookingProposals,
         );
 
         setMessages(existingMessages);
         setMessagesLoading(false); // Stop loading messages
-      }
+      },
     );
 
     // Chat events
@@ -303,9 +304,9 @@ const Discussions: React.FC = () => {
             Math.abs(
               new Date(msg.timestamp || msg.createdAt || "").getTime() -
                 new Date(
-                  messageData.timestamp || messageData.createdAt || ""
-                ).getTime()
-            ) < 5000 // 5 second window for duplicate detection
+                  messageData.timestamp || messageData.createdAt || "",
+                ).getTime(),
+            ) < 5000, // 5 second window for duplicate detection
         );
 
         if (duplicateFound) {
@@ -388,7 +389,7 @@ const Discussions: React.FC = () => {
           const updatedParticipants = prev.map((participant) =>
             participant._id === statusUserId
               ? { ...participant, online: isOnline }
-              : participant
+              : participant,
           );
 
           // console.log(
@@ -402,7 +403,7 @@ const Discussions: React.FC = () => {
 
           return updatedParticipants;
         });
-      }
+      },
     );
 
     // Handle online users list response
@@ -430,7 +431,7 @@ const Discussions: React.FC = () => {
           // );
           return updated;
         });
-      }
+      },
     );
 
     // Typing events
@@ -457,7 +458,7 @@ const Discussions: React.FC = () => {
             }
           });
         }
-      }
+      },
     );
 
     // User join/leave events
@@ -465,14 +466,14 @@ const Discussions: React.FC = () => {
       "userJoined",
       ({ userName, message }: { userName: string; message: string }) => {
         console.log(`${userName} joined:`, message);
-      }
+      },
     );
 
     newSocket.on(
       "userLeft",
       ({ userName, message }: { userName: string; message: string }) => {
         console.log(`${userName} left:`, message);
-      }
+      },
     );
 
     // Booking proposal event handlers
@@ -492,8 +493,8 @@ const Discussions: React.FC = () => {
               messageData.timestamp &&
               Math.abs(
                 new Date(msg.timestamp).getTime() -
-                  new Date(messageData.timestamp).getTime()
-              ) < 5000)
+                  new Date(messageData.timestamp).getTime(),
+              ) < 5000),
         );
 
         if (isDuplicate) {
@@ -562,7 +563,7 @@ const Discussions: React.FC = () => {
               } as Message;
             }
             return msg;
-          })
+          }),
         );
 
         // Show notification based on response
@@ -581,7 +582,7 @@ const Discussions: React.FC = () => {
             confirmButtonText: "OK",
           });
         }
-      }
+      },
     );
 
     // Cleanup
@@ -604,7 +605,7 @@ const Discussions: React.FC = () => {
         // Emit user offline status
         newSocket.emit("userOffline", {
           userId: user._id,
-          userName: user.name || user.partner_1  || "User",
+          userName: user.name || user.partner_1 || "User",
         });
       }
 
@@ -623,7 +624,7 @@ const Discussions: React.FC = () => {
   const fetchEvents = async () => {
     try {
       const response = await axios.get(
-        `/events/officiant-Client/${selected?._id}/${user?._id}`
+        `/events/officiant-Client/${selected?._id}/${user?._id}`,
       );
       console.log("Fetched events:", response);
 
@@ -656,7 +657,7 @@ const Discussions: React.FC = () => {
   const handleBookingResponse = async (
     messageId: string,
     response: "accept" | "decline",
-    bookingData?: BookingProposal
+    bookingData?: BookingProposal,
   ) => {
     if (!user?._id || !selected?._id || !socket) return;
 
@@ -872,8 +873,8 @@ const Discussions: React.FC = () => {
               msg.sender === messageData.sender &&
               Math.abs(
                 new Date(msg.timestamp || msg.createdAt || "").getTime() -
-                  new Date(messageData.timestamp || "").getTime()
-              ) < 1000)
+                  new Date(messageData.timestamp || "").getTime(),
+              ) < 1000),
         );
 
         if (exists) {
@@ -912,7 +913,7 @@ const Discussions: React.FC = () => {
   // Handle file upload
   const handleFileUpload = async (
     file: File,
-    type: "file" | "image" = "file"
+    type: "file" | "image" = "file",
   ) => {
     if (!file || !socket || !isConnected || !selected || !user?._id) {
       setUploadError("Cannot upload file: Not connected to server");
@@ -953,7 +954,7 @@ const Discussions: React.FC = () => {
             "Content-Type": "multipart/form-data",
           },
           timeout: 30000, // 30 second timeout
-        }
+        },
       );
 
       if (response.data.success) {
@@ -1042,7 +1043,7 @@ const Discussions: React.FC = () => {
     (officiant) =>
       officiant?.name?.toLowerCase().includes(search.toLowerCase()) ||
       (officiant?.specialization &&
-        officiant.specialization.toLowerCase().includes(search.toLowerCase()))
+        officiant.specialization.toLowerCase().includes(search.toLowerCase())),
   );
 
   // If still loading or user not authenticated, show loading state
@@ -1190,10 +1191,10 @@ const Discussions: React.FC = () => {
 
           <div className="flex items-center gap-3 px-6 py-4 border-b border-gray-200 bg-white">
             <div className="relative">
-              <img
+              <Avatar
                 src={getProfileImageUrl(selected.profilePicture)}
-                alt={selected.name}
-                className="w-10 h-10 rounded-full object-cover"
+                name={selected.name}
+                size="md"
               />
               {selected.online && (
                 <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2 border-white"></div>
