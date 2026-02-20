@@ -17,6 +17,7 @@ interface AgreementData {
   travelFee?: number;
   status: string;
   isUsedForCeremony?: boolean;
+  payLater?: boolean;
   ceremonySubmittedAt?: Date;
   partner1Signature?: string;
   partner2Signature?: string;
@@ -315,6 +316,7 @@ const Agreement: React.FC = () => {
   const isPending = agreement.status === "pending";
   const isPaymentRequested = agreement.status === "payment_requested";
   const isPaymentCompleted = agreement.status === "payment_completed";
+  const isPayLaterAccepted = agreement.status === "pay_later_accepted";
   const isSigned =
     agreement.status !== "pending" && agreement.status !== "officiant_filled";
 
@@ -343,6 +345,42 @@ const Agreement: React.FC = () => {
         `userId=${agreement.userId}&` +
         `officiantId=${agreement.officiantId}`,
     );
+  };
+
+  const handlePayLater = async () => {
+    const result = await GlassSwal.fire({
+      title: "Pay Later?",
+      html: `<p>By choosing <strong>Pay Later</strong>, you agree to pay the total amount of <strong>$${(
+        (agreement.price || 0) + (agreement.travelFee || 0)
+      ).toFixed(
+        2,
+      )}</strong> to the officiant at a later date.</p><p class="mt-2 text-sm text-gray-600">This will be recorded in the agreement and the officiant will proceed to sign.</p>`,
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonText: "Yes, Pay Later",
+      cancelButtonText: "Cancel",
+      confirmButtonColor: "#f59e0b",
+    });
+
+    if (!result.isConfirmed) return;
+
+    try {
+      await axios.patch(`/agreements/pay-later/${agreement._id}`);
+
+      GlassSwal.success(
+        "Pay Later Accepted",
+        "The agreement has been updated. The officiant will now sign to complete the agreement.",
+      );
+
+      // Refresh agreement data
+      fetchAgreement();
+    } catch (error: any) {
+      console.error("Error accepting pay later:", error);
+      GlassSwal.error(
+        "Error",
+        error.response?.data?.message || "Failed to accept pay later",
+      );
+    }
   };
   //  console.log("agreement data:", agreement);
   return (
@@ -495,7 +533,7 @@ const Agreement: React.FC = () => {
                   </h3>
                   <p className="text-sm text-blue-700 mt-1">
                     You have signed the agreement. Please proceed with payment
-                    to finalize.
+                    to finalize, or choose to pay later.
                   </p>
                   <p className="text-2xl font-bold text-blue-900 mt-2">
                     Total Amount: $
@@ -505,12 +543,59 @@ const Agreement: React.FC = () => {
                   </p>
                 </div>
               </div>
-              <button
-                onClick={handlePayNow}
-                className="ml-4 bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors whitespace-nowrap"
+              <div className="ml-4 flex flex-col gap-2">
+                <button
+                  onClick={handlePayNow}
+                  className="bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors whitespace-nowrap"
+                >
+                  Pay Now
+                </button>
+                <button
+                  onClick={handlePayLater}
+                  className="bg-amber-500 text-white px-6 py-3 rounded-lg font-semibold hover:bg-amber-600 transition-colors whitespace-nowrap"
+                >
+                  Pay Later
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Pay Later Accepted Alert */}
+        {isPayLaterAccepted && (
+          <div className="bg-amber-50 border-2 border-amber-400 rounded-lg p-6 mb-6">
+            <div className="flex items-start">
+              <svg
+                className="w-6 h-6 text-amber-600 mt-0.5 mr-3 flex-shrink-0"
+                fill="currentColor"
+                viewBox="0 0 20 20"
               >
-                Pay Now
-              </button>
+                <path
+                  fillRule="evenodd"
+                  d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z"
+                  clipRule="evenodd"
+                />
+              </svg>
+              <div className="flex-1">
+                <h3 className="text-lg font-bold text-amber-900">
+                  Pay Later Accepted
+                </h3>
+                <p className="text-sm text-amber-800 mt-1">
+                  You have agreed to pay the total amount of{" "}
+                  <strong>
+                    $
+                    {(
+                      (agreement.price || 0) + (agreement.travelFee || 0)
+                    ).toFixed(2)}
+                  </strong>{" "}
+                  at a later date. The officiant will now sign to complete the
+                  agreement.
+                </p>
+                <p className="text-sm text-amber-700 mt-2">
+                  This deferred payment has been recorded in the agreement.
+                  Please ensure payment is made before the ceremony date.
+                </p>
+              </div>
             </div>
           </div>
         )}
@@ -816,6 +901,30 @@ const Agreement: React.FC = () => {
                     agreed upon by both parties.
                   </li>
                 </ul>
+
+                {/* Pay Later Clause */}
+                {agreement.payLater && (
+                  <div className="mt-4 p-4 bg-amber-50 border border-amber-300 rounded-lg">
+                    <h5 className="font-semibold text-amber-900 mb-2">
+                      DEFERRED PAYMENT CLAUSE
+                    </h5>
+                    <p className="text-amber-800 text-sm">
+                      The couple ({agreement.partner1Name} &{" "}
+                      {agreement.partner2Name}) and the officiant (
+                      {agreement.officiantName || "Erie Wedding Officiants"})
+                      have mutually agreed that the total amount of{" "}
+                      <strong>
+                        $
+                        {(
+                          (agreement.price || 0) + (agreement.travelFee || 0)
+                        ).toFixed(2)}
+                      </strong>{" "}
+                      will be paid at a later date. Both parties acknowledge and
+                      accept this deferred payment arrangement. Payment should
+                      be completed before the ceremony date.
+                    </p>
+                  </div>
+                )}
               </div>
             </div>
 

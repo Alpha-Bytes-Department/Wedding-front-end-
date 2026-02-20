@@ -19,6 +19,7 @@ interface AgreementData {
   price?: number;
   travelFee?: number;
   status: string;
+  payLater?: boolean;
   partner1Signature?: string;
   partner2Signature?: string;
   officiantSignature?: string;
@@ -558,14 +559,19 @@ const OfficiantAgreement: React.FC = () => {
     "user_signed",
     "payment_requested",
     "payment_completed",
+    "pay_later_accepted",
     "officiant_signed",
     "completed",
     "used",
   ];
   const canEdit = !lockedStatuses.includes(agreement.status);
   const canSendPayment = agreement.status === "user_signed";
-  const canSign = agreement.status === "payment_completed";
+  const canSign =
+    agreement.status === "payment_completed" ||
+    agreement.status === "pay_later_accepted";
   const isCompleted = agreement.status === "officiant_signed";
+  const isPayLater =
+    agreement.status === "pay_later_accepted" || agreement.payLater;
 
   return (
     <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
@@ -792,9 +798,34 @@ const OfficiantAgreement: React.FC = () => {
                   Complete Agreement
                 </h2>
                 <p className="text-gray-600 mb-6">
-                  Payment has been received. Please upload your signature to
-                  complete the agreement.
+                  {agreement.status === "pay_later_accepted"
+                    ? "The couple has agreed to pay later. Please upload your signature to complete the agreement."
+                    : "Payment has been received. Please upload your signature to complete the agreement."}
                 </p>
+
+                {agreement.status === "pay_later_accepted" && (
+                  <div className="mb-4 p-3 bg-amber-50 border border-amber-200 rounded-lg text-amber-800 text-sm flex items-center gap-2">
+                    <svg
+                      className="w-5 h-5 flex-shrink-0"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                    <span>
+                      <strong>Pay Later:</strong> The couple has agreed to pay $
+                      {(
+                        (parseFloat(formData.price) || 0) +
+                        (parseFloat(formData.travelFee) || 0)
+                      ).toFixed(2)}{" "}
+                      at a later date.
+                    </span>
+                  </div>
+                )}
 
                 <div className="border-2 border-dashed border-gray-300 rounded-lg p-6">
                   {signaturePreview ? (
@@ -893,6 +924,7 @@ const OfficiantAgreement: React.FC = () => {
                       "user_signed",
                       "payment_requested",
                       "payment_completed",
+                      "pay_later_accepted",
                       "officiant_signed",
                     ].includes(agreement.status)
                       ? "text-green-600"
@@ -905,6 +937,7 @@ const OfficiantAgreement: React.FC = () => {
                         "user_signed",
                         "payment_requested",
                         "payment_completed",
+                        "pay_later_accepted",
                         "officiant_signed",
                       ].includes(agreement.status)
                         ? "bg-green-100"
@@ -915,6 +948,7 @@ const OfficiantAgreement: React.FC = () => {
                       "user_signed",
                       "payment_requested",
                       "payment_completed",
+                      "pay_later_accepted",
                       "officiant_signed",
                     ].includes(agreement.status)
                       ? "✓"
@@ -925,29 +959,41 @@ const OfficiantAgreement: React.FC = () => {
 
                 <div
                   className={`flex items-center ${
-                    ["payment_completed", "officiant_signed"].includes(
-                      agreement.status,
-                    )
-                      ? "text-green-600"
+                    [
+                      "payment_completed",
+                      "pay_later_accepted",
+                      "officiant_signed",
+                    ].includes(agreement.status)
+                      ? isPayLater
+                        ? "text-amber-600"
+                        : "text-green-600"
                       : "text-gray-400"
                   }`}
                 >
                   <div
                     className={`w-8 h-8 rounded-full flex items-center justify-center mr-3 ${
-                      ["payment_completed", "officiant_signed"].includes(
-                        agreement.status,
-                      )
-                        ? "bg-green-100"
+                      [
+                        "payment_completed",
+                        "pay_later_accepted",
+                        "officiant_signed",
+                      ].includes(agreement.status)
+                        ? isPayLater
+                          ? "bg-amber-100"
+                          : "bg-green-100"
                         : "bg-gray-100"
                     }`}
                   >
-                    {["payment_completed", "officiant_signed"].includes(
-                      agreement.status,
-                    )
+                    {[
+                      "payment_completed",
+                      "pay_later_accepted",
+                      "officiant_signed",
+                    ].includes(agreement.status)
                       ? "✓"
                       : "3"}
                   </div>
-                  <span className="text-sm font-medium">Payment Received</span>
+                  <span className="text-sm font-medium">
+                    {isPayLater ? "Pay Later Agreed" : "Payment Received"}
+                  </span>
                 </div>
 
                 <div
@@ -1014,8 +1060,20 @@ const OfficiantAgreement: React.FC = () => {
                     Agreement Complete!
                   </h3>
                   <p className="text-sm text-green-700">
-                    All signatures received and payment completed.
+                    {isPayLater
+                      ? "All signatures received. Payment will be collected later."
+                      : "All signatures received and payment completed."}
                   </p>
+                  {isPayLater && (
+                    <p className="text-xs text-amber-600 mt-2 font-medium">
+                      ⏰ Pay Later: $
+                      {(
+                        (parseFloat(formData.price) || 0) +
+                        (parseFloat(formData.travelFee) || 0)
+                      ).toFixed(2)}{" "}
+                      pending
+                    </p>
+                  )}
                 </div>
               </div>
             )}

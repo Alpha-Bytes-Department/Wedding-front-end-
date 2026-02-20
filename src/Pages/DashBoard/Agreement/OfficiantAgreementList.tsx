@@ -51,6 +51,11 @@ const statusConfig: Record<
     color: "text-teal-700",
     bg: "bg-teal-100 border-teal-300",
   },
+  pay_later_accepted: {
+    label: "Pay Later",
+    color: "text-amber-700",
+    bg: "bg-amber-100 border-amber-300",
+  },
   officiant_signed: {
     label: "Completed",
     color: "text-green-700",
@@ -102,6 +107,7 @@ const OfficiantAgreementList: React.FC = () => {
 
     const protectedStatuses = [
       "payment_completed",
+      "pay_later_accepted",
       "officiant_signed",
       "completed",
       "used",
@@ -161,6 +167,7 @@ const OfficiantAgreementList: React.FC = () => {
   const canDelete = (status: string) => {
     return ![
       "payment_completed",
+      "pay_later_accepted",
       "officiant_signed",
       "completed",
       "used",
