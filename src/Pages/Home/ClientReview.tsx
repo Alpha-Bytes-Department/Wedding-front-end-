@@ -6,7 +6,7 @@ import { BsFillStarFill } from "react-icons/bs";
 import Avatar from "../../Component/Shared/Avatar";
 import { FaArrowDown, FaArrowUp } from "react-icons/fa6";
 import { useAxios } from "../../Component/Providers/useAxios";
-import { FaRegUserCircle } from "react-icons/fa";
+// import { FaRegUserCircle } from "react-icons/fa";
 
 const ClientReview = () => {
   const [screenSize, setScreenSize] = useState<"sm" | "md" | "lg" | "xl">("lg");

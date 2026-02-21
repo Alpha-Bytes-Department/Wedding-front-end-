@@ -510,7 +510,7 @@ const OfficientsTable: React.FC<OfficientsTableProps> = ({
                     <div className="flex items-center">
                       <div className="flex-shrink-0 h-10 w-10">
                         <Avatar
-                          src={getProfileImageUrl(officiant.profilePicture)}
+                          src={getProfileImageUrl(officiant?.profilePicture || "")}
                           name={officiant.name}
                           size="md"
                         />

@@ -6,7 +6,7 @@ import { BsPatchCheck } from "react-icons/bs";
 import { HiOutlineSparkles } from "react-icons/hi";
 import { BsFillStarFill } from "react-icons/bs";
 import { AiOutlineDoubleLeft, AiOutlineDoubleRight } from "react-icons/ai";
-import { FaHeart } from "react-icons/fa";
+import { FaHeart, FaUserAlt } from "react-icons/fa";
 import { PiFlowerTulipBold } from "react-icons/pi";
 import Avatar from "../../../Component/Shared/Avatar";
 
