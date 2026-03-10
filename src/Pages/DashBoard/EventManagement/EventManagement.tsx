@@ -62,7 +62,7 @@ const EventManagement = () => {
       console.error("Error fetching events:", error);
       await GlassSwal.error(
         "Error",
-        error.response?.data?.error || "Failed to fetch events"
+        error.response?.data?.error || "Failed to fetch events",
       );
     } finally {
       setLoading(false);
@@ -82,12 +82,12 @@ const EventManagement = () => {
   const handleAssignOfficiant = async (
     status: string,
     eventId: string,
-    officiantId: string
+    officiantId: string,
   ) => {
     if (status === "completed" || status === "canceled") {
       await GlassSwal.error(
         "Invalid Action",
-        "Cannot assign an officiant to a completed or canceled event."
+        "Cannot assign an officiant to a completed or canceled event.",
       );
       return;
     }
@@ -97,14 +97,14 @@ const EventManagement = () => {
     if (!selectedOfficiant.availability) {
       await GlassSwal.error(
         "Unavailable",
-        "This officiant is currently not available. Please select another officiant."
+        "This officiant is currently not available. Please select another officiant.",
       );
       return;
     }
 
     const confirmed = await GlassSwal.confirm(
       "Assign Officiant",
-      `Are you sure you want to assign ${selectedOfficiant.name} to this event?`
+      `Are you sure you want to assign ${selectedOfficiant.name} to this event?`,
     );
 
     if (!confirmed) return;
@@ -122,11 +122,44 @@ const EventManagement = () => {
       console.error("Error assigning officiant:", error);
       await GlassSwal.error(
         "Error",
-        error.response?.data?.error || "Failed to assign officiant"
+        error.response?.data?.error || "Failed to assign officiant",
       );
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleDeleteEvent = async (eventId: string, eventTitle: string) => {
+    const result = await GlassSwal.confirm(
+      "Delete Event",
+      `Are you sure you want to delete "${eventTitle}"? This action cannot be undone.`,
+    );
+
+    if (result.isConfirmed) {
+      try {
+      setLoading(true);
+      await axiosSecure.delete(`/events/delete/${eventId}`);
+      await GlassSwal.success(
+        "Deleted",
+        "Event has been deleted successfully!",
+      );
+      fetchEvents();
+    } catch (error: any) {
+      console.error("Error deleting event:", error);
+      await GlassSwal.error(
+        "Error",
+        error.response?.data?.error || "Failed to delete event",
+      );
+    } finally {
+      setLoading(false);
+    }
+    }
+    else{
+      await GlassSwal.info("Cancelled", "Event deletion has been cancelled.");
+      return;
+    }
+
+    
   };
 
   const filteredEvents = events
@@ -299,15 +332,28 @@ const EventManagement = () => {
                           {event.eventDate && (
                             <p className="text-gray-900">
                               📅{" "}
-                              {new Date(event.eventDate).toLocaleDateString('en-US', { timeZone: 'America/New_York', year: 'numeric', month: 'long', day: 'numeric' })}
+                              {new Date(event.eventDate).toLocaleDateString(
+                                "en-US",
+                                {
+                                  timeZone: "America/New_York",
+                                  year: "numeric",
+                                  month: "long",
+                                  day: "numeric",
+                                },
+                              )}
                             </p>
                           )}
                           {event.eventTime && (
                             <p className="text-gray-600">
                               🕒{" "}
                               {new Date(event.eventTime).toLocaleTimeString(
-                                'en-US',
-                                { timeZone: 'America/New_York', hour: "2-digit", minute: "2-digit", hour12: true }
+                                "en-US",
+                                {
+                                  timeZone: "America/New_York",
+                                  hour: "2-digit",
+                                  minute: "2-digit",
+                                  hour12: true,
+                                },
                               )}
                             </p>
                           )}
@@ -322,12 +368,12 @@ const EventManagement = () => {
                             event.status === "completed"
                               ? "bg-green-100 text-green-800"
                               : event.status === "approved"
-                              ? "bg-blue-100 text-blue-800"
-                              : event.status === "submitted"
-                              ? "bg-yellow-100 text-yellow-800"
-                              : event.status === "canceled"
-                              ? "bg-red-100 text-red-800"
-                              : "bg-gray-100 text-gray-800"
+                                ? "bg-blue-100 text-blue-800"
+                                : event.status === "submitted"
+                                  ? "bg-yellow-100 text-yellow-800"
+                                  : event.status === "canceled"
+                                    ? "bg-red-100 text-red-800"
+                                    : "bg-gray-100 text-gray-800"
                           }`}
                         >
                           {event.status}
@@ -347,7 +393,7 @@ const EventManagement = () => {
                               handleAssignOfficiant(
                                 event.status,
                                 event._id,
-                                e.target.value
+                                e.target.value,
                               )
                             }
                             defaultValue=""
@@ -370,12 +416,22 @@ const EventManagement = () => {
                         )}
                       </td>
                       <td className="px-6 py-4">
-                        <button
-                          onClick={() => setSelectedEvent(event)}
-                          className="text-primary hover:text-primary-dark font-medium text-sm"
-                        >
-                          View Details
-                        </button>
+                        <div className="flex items-center space-x-3">
+                          <button
+                            onClick={() => setSelectedEvent(event)}
+                            className="text-white border border-yellow-500 px-2 py-1 bg-orange-400 rounded-xl hover:text-primary-dark font-medium text-md"
+                          >
+                            View
+                          </button>
+                          <button
+                            onClick={() =>
+                              handleDeleteEvent(event._id, event.title)
+                            }
+                            className="text-white  border border-red-500 px-2 py-1 bg-red-400 rounded-xl hover:text-red-700 hover:bg-white font-medium text-sm"
+                          >
+                            Delete
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))}
@@ -455,7 +511,7 @@ const EventManagement = () => {
                           <p className="text-sm text-gray-600">Event Date</p>
                           <p className="font-semibold text-gray-900">
                             {new Date(
-                              selectedEvent.eventDate
+                              selectedEvent.eventDate,
                             ).toLocaleDateString("en-US", {
                               timeZone: "America/New_York",
                               weekday: "long",
@@ -474,7 +530,7 @@ const EventManagement = () => {
                           <p className="text-sm text-gray-600">Event Time</p>
                           <p className="font-semibold text-gray-900">
                             {new Date(
-                              selectedEvent.eventTime
+                              selectedEvent.eventTime,
                             ).toLocaleTimeString("en-US", {
                               timeZone: "America/New_York",
                               hour: "2-digit",
@@ -494,7 +550,7 @@ const EventManagement = () => {
                           </p>
                           <p className="font-semibold text-gray-900">
                             {new Date(
-                              selectedEvent.rehearsalDate
+                              selectedEvent.rehearsalDate,
                             ).toLocaleDateString("en-US", {
                               timeZone: "America/New_York",
                               weekday: "long",
@@ -568,12 +624,12 @@ const EventManagement = () => {
                         selectedEvent.status === "completed"
                           ? "bg-green-100 text-green-800"
                           : selectedEvent.status === "approved"
-                          ? "bg-blue-100 text-blue-800"
-                          : selectedEvent.status === "submitted"
-                          ? "bg-yellow-100 text-yellow-800"
-                          : selectedEvent.status === "canceled"
-                          ? "bg-red-100 text-red-800"
-                          : "bg-gray-100 text-gray-800"
+                            ? "bg-blue-100 text-blue-800"
+                            : selectedEvent.status === "submitted"
+                              ? "bg-yellow-100 text-yellow-800"
+                              : selectedEvent.status === "canceled"
+                                ? "bg-red-100 text-red-800"
+                                : "bg-gray-100 text-gray-800"
                       }`}
                     >
                       {selectedEvent.status}
@@ -598,7 +654,7 @@ const EventManagement = () => {
                             month: "short",
                             day: "numeric",
                             year: "numeric",
-                          }
+                          },
                         )}
                       </p>
                     </div>
