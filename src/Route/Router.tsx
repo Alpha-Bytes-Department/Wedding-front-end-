@@ -1,5 +1,6 @@
 import { createBrowserRouter } from "react-router-dom";
-import { lazy, Suspense } from "react";
+import { Suspense } from "react";
+import { lazyWithRetry } from "../utils/lazyWithRetry";
 import RouteLoader from "../Component/Shared/RouteLoader";
 
 // Eager load critical routes (homepage, layout, error)
@@ -10,53 +11,96 @@ import DashBoardOutline from "../DashBoardLayout/DashBoardOutline";
 import { PrivateRoute } from "../Component/PrivateRoute/PrivateRoute";
 import { CeremonyProvider } from "../Pages/DashBoard/Ceremony/contexts/CeremonyContext";
 
-// Lazy load authentication pages
-const Login = lazy(() => import("../Pages/Login/Login"));
-const Signup = lazy(() => import("../Pages/SignUp/Signup"));
-const ResetPassword = lazy(
+// Lazy load authentication pages (with auto-retry on chunk load failure)
+const Login = lazyWithRetry(() => import("../Pages/Login/Login"), "Login");
+const Signup = lazyWithRetry(() => import("../Pages/SignUp/Signup"), "Signup");
+const ResetPassword = lazyWithRetry(
   () => import("../Pages/Verify_Forget/ResetPassword"),
+  "ResetPassword",
 );
-const VerifyUser = lazy(() => import("../Pages/Verify_Forget/verifyUser"));
+const VerifyUser = lazyWithRetry(
+  () => import("../Pages/Verify_Forget/verifyUser"),
+  "VerifyUser",
+);
 
 // Lazy load public pages
-const Feature = lazy(() => import("../Pages/Feature/Feature"));
-const Officiant = lazy(
-  () => import("../Pages/Officiant/Officiant_Home/Officiant"),
+const Feature = lazyWithRetry(
+  () => import("../Pages/Feature/Feature"),
+  "Feature",
 );
-const OfficiantDetail = lazy(
+const Officiant = lazyWithRetry(
+  () => import("../Pages/Officiant/Officiant_Home/Officiant"),
+  "Officiant",
+);
+const OfficiantDetail = lazyWithRetry(
   () => import("../Pages/Officiant/Officiant_Details/OfficiantDetail"),
+  "OfficiantDetail",
 );
 
 // Lazy load dashboard pages
-const DashHome = lazy(() => import("../Pages/DashBoard/Home/DashHome"));
-const Ceremony = lazy(() => import("../Pages/DashBoard/Ceremony/Ceremony"));
-const Bookings = lazy(() => import("../Pages/DashBoard/Bookings/Bookings"));
-const CeremonyReview = lazy(
+const DashHome = lazyWithRetry(
+  () => import("../Pages/DashBoard/Home/DashHome"),
+  "DashHome",
+);
+const Ceremony = lazyWithRetry(
+  () => import("../Pages/DashBoard/Ceremony/Ceremony"),
+  "Ceremony",
+);
+const Bookings = lazyWithRetry(
+  () => import("../Pages/DashBoard/Bookings/Bookings"),
+  "Bookings",
+);
+const CeremonyReview = lazyWithRetry(
   () => import("../Pages/DashBoard/CeremonyReview/CeremonyReview"),
+  "CeremonyReview",
 );
-const Note = lazy(() => import("../Pages/DashBoard/Notes/Note"));
-const Payment = lazy(() => import("../Pages/Payment/AgreementPayment"));
-const Discussions = lazy(
+const Note = lazyWithRetry(
+  () => import("../Pages/DashBoard/Notes/Note"),
+  "Note",
+);
+const Payment = lazyWithRetry(
+  () => import("../Pages/Payment/AgreementPayment"),
+  "Payment",
+);
+const Discussions = lazyWithRetry(
   () => import("../Pages/DashBoard/Discussion/Discussions"),
+  "Discussions",
 );
-const Schedule = lazy(() => import("../Pages/DashBoard/Schedule/Schedule"));
-const Settings = lazy(() => import("../Pages/DashBoard/Settings/Settings"));
-const UserManagement = lazy(
+const Schedule = lazyWithRetry(
+  () => import("../Pages/DashBoard/Schedule/Schedule"),
+  "Schedule",
+);
+const Settings = lazyWithRetry(
+  () => import("../Pages/DashBoard/Settings/Settings"),
+  "Settings",
+);
+const UserManagement = lazyWithRetry(
   () => import("../Pages/DashBoard/UserManagement/UserManagement"),
+  "UserManagement",
 );
-const Agreement = lazy(() => import("../Pages/DashBoard/Agreement/Agreement"));
-const AgreementList = lazy(
+const Agreement = lazyWithRetry(
+  () => import("../Pages/DashBoard/Agreement/Agreement"),
+  "Agreement",
+);
+const AgreementList = lazyWithRetry(
   () => import("../Pages/DashBoard/Agreement/AgreementList"),
+  "AgreementList",
 );
-const OfficiantAgreement = lazy(
+const OfficiantAgreement = lazyWithRetry(
   () => import("../Pages/DashBoard/Agreement/OfficiantAgreement"),
+  "OfficiantAgreement",
 );
-const OfficiantAgreementList = lazy(
+const OfficiantAgreementList = lazyWithRetry(
   () => import("../Pages/DashBoard/Agreement/OfficiantAgreementList"),
+  "OfficiantAgreementList",
 );
-const Bills = lazy(() => import("../Pages/DashBoard/Bills/Bills"));
-const EventManagement = lazy(
+const Bills = lazyWithRetry(
+  () => import("../Pages/DashBoard/Bills/Bills"),
+  "Bills",
+);
+const EventManagement = lazyWithRetry(
   () => import("../Pages/DashBoard/EventManagement/EventManagement"),
+  "EventManagement",
 );
 
 const Router = createBrowserRouter([

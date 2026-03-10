@@ -32,13 +32,33 @@ if git diff HEAD~1 --name-only | grep -q "package.json"; then
 fi
 
 echo "🔨 Building production bundle..."
+
+# Preserve old assets so users with stale HTML can still load old chunks
+if [ -d "dist/assets" ]; then
+    echo "📦 Backing up old assets for graceful transition..."
+    cp -r dist/assets /tmp/wedding-old-assets-backup
+fi
+
 npm run build
 
 if [ $? -eq 0 ]; then
     echo "✅ Build successful"
     
+    # Merge old asset chunks back into the new build so in-flight users don't break.
+    # New files overwrite old ones with the same name; old hashed chunks are preserved.
+    if [ -d "/tmp/wedding-old-assets-backup" ]; then
+        echo "🔀 Merging old assets into new build for zero-downtime..."
+        cp -rn /tmp/wedding-old-assets-backup/* dist/assets/ 2>/dev/null || true
+        rm -rf /tmp/wedding-old-assets-backup
+    fi
+    
+    # Clean up asset files older than 7 days
+    find dist/assets -type f -mtime +7 -delete 2>/dev/null || true
+    
     echo "📂 Deploying to web directory..."
-    sudo cp -r dist/* /var/www/wedding/
+    # Also sync to /var/www/wedding for backup static serving
+    sudo rsync -a dist/ /var/www/wedding/
+    sudo find /var/www/wedding/assets -type f -mtime +7 -delete 2>/dev/null || true
     sudo chown -R www-data:www-data /var/www/wedding
     
     echo "🔄 Restarting PM2 process..."
