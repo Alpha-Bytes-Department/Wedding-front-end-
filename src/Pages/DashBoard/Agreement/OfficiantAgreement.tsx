@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useAxios } from "../../../Component/Providers/useAxios";
+import { useAuth } from "../../../Component/Providers/AuthProvider";
 import GlassSwal from "../../../utils/glassSwal";
 import {
   convertLocalDateToISO,
@@ -33,6 +34,7 @@ const OfficiantAgreement: React.FC = () => {
   const agreementId = searchParams.get("agreementId");
   const navigate = useNavigate();
   const axios = useAxios();
+  const { user } = useAuth();
   const [agreement, setAgreement] = useState<AgreementData | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -54,11 +56,52 @@ const OfficiantAgreement: React.FC = () => {
     useState<File | null>(null);
   const [signaturePreview, setSignaturePreview] = useState<string>("");
 
+  // Prefill officiant name from logged-in user when available
+  useEffect(() => {
+    if (user?.name) {
+      setFormData((prev) => ({
+        ...prev,
+        officiantName: prev.officiantName || user.name || "",
+      }));
+    }
+  }, [user]);
+
   useEffect(() => {
     if (agreementId || userId) {
       fetchAgreement();
     }
+    if (userId) {
+      fetchClientProfile();
+    }
   }, [agreementId, userId]);
+
+  const fetchClientProfile = async () => {
+    if (!userId) return;
+
+    try {
+      const response = await axios.get(`/users/by-id/${userId}`);
+      const client = response?.data?.user;
+
+      if (client) {
+        setFormData((prev) => ({
+          ...prev,
+          partner1Name:
+            prev.partner1Name ||
+            client.partner_1 ||
+            client.contact?.partner_1 ||
+            "",
+          partner2Name:
+            prev.partner2Name ||
+            client.partner_2 ||
+            client.contact?.partner_2 ||
+            "",
+          location: prev.location || client.location || "",
+        }));
+      }
+    } catch (error: any) {
+      console.error("Error fetching client profile:", error);
+    }
+  };
 
   const fetchAgreement = async () => {
     if (!agreementId && !userId) return;

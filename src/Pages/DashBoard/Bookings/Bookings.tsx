@@ -523,6 +523,12 @@ const Bookings = () => {
                       </div>
                       <div className="flex items-center gap-2">
                         <button
+                          onClick={() => showNoteDetails(m)}
+                          className="bg-white text-primary border border-primary text-sm px-5 py-2 rounded-lg font-medium hover:bg-primary/10 transition-colors"
+                        >
+                          View Details
+                        </button>
+                        <button
                           onClick={() =>
                             navigate(
                               `/dashboard/officiant-agreement?userId=${m.fromUserId}`,
@@ -578,6 +584,12 @@ const Bookings = () => {
                         </div>
                       </div>
                       <div className="flex items-center gap-2">
+                        <button
+                          onClick={() => showNoteDetails(m)}
+                          className="bg-white text-primary border border-primary text-sm px-5 py-2 rounded-lg font-medium hover:bg-primary/10 transition-colors"
+                        >
+                          View Details
+                        </button>
                         <button
                           onClick={() =>
                             navigate(
