@@ -123,7 +123,7 @@ const UserManagement: React.FC = () => {
         })
       );
 
-      console.log("officiantsHashMap:", OfficiantsDataWithEvents);
+      // console.log("officiantsHashMap:", OfficiantsDataWithEvents);
 
       setStats(calculatedStats);
 

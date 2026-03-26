@@ -157,9 +157,7 @@ const EventManagement = () => {
     else{
       await GlassSwal.info("Cancelled", "Event deletion has been cancelled.");
       return;
-    }
-
-    
+    }   
   };
 
   const filteredEvents = events

@@ -27,6 +27,7 @@ const UsersTable: React.FC<UsersTableProps> = ({
   pagination,
   onPageChange,
 }) => {
+  console.log("UsersTable received users:", users);
   const axios = useAxios();
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
@@ -460,7 +461,7 @@ export const PreferedOfficiant = ({ uid }: { uid: string }) => {
   const [officiants, setOfficiants] = useState<any[]>([]);
   const findOfficiant = async () => {
     const response = await axios.get(`/schedule/get/${uid}`);
-    console.log("preferred officiant", response);
+    // console.log("preferred officiant", response);
     setOfficiants(response.data);
   };
 

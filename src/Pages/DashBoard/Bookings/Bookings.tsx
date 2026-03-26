@@ -13,6 +13,7 @@ interface Booking {
   fromUserName: string;
   fromUserImage: string;
   scheduleDate: string;
+  scheduleDateTime?: string;
   officiantName: string;
   eventId?: string;
   price?: number;
@@ -29,6 +30,22 @@ interface Ceremony {
   userId: string;
 }
 
+interface ClientDetails {
+  _id: string;
+  name?: string;
+  email?: string;
+  profilePicture?: string;
+  partner_1?: string;
+  partner_2?: string;
+  contact?: {
+    partner_1?: string;
+    partner_2?: string;
+  };
+  weddingDate?: string;
+  rehearsalDate?: string;
+  location?: string;
+}
+
 const Bookings = () => {
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [showFullList, setShowFullList] = useState(false);
@@ -38,6 +55,9 @@ const Bookings = () => {
   );
   const [seeFullCeremonies, setSeeFullCeremonies] = useState(false);
   const [seeOngoingCeremonies, setSeeOngoingCeremonies] = useState(false);
+  const [clientDetails, setClientDetails] = useState<
+    Record<string, ClientDetails>
+  >({});
   const { user } = useAuth();
   const navigate = useNavigate();
 
@@ -67,20 +87,50 @@ const Bookings = () => {
   };
   const [loading, setLoading] = useState(false);
   const axios = useAxios();
+
+  const fetchClientDetails = async (bookingList: Booking[]) => {
+    try {
+      const userIds = [
+        ...new Set(bookingList.map((b) => b.fromUserId).filter(Boolean)),
+      ];
+      if (userIds.length === 0) return;
+
+      const responses = await Promise.all(
+        userIds.map((id) => axios.get(`/users/by-id/${id}`)),
+      );
+      console.log("Client details responses:", responses);
+      const detailsMap: Record<string, ClientDetails> = {};
+      responses.forEach((response) => {
+        const details = response?.data?.user;
+        if (details?._id) {
+          detailsMap[details._id] = details;
+        }
+      });
+
+      setClientDetails((prev) => ({ ...prev, ...detailsMap }));
+    } catch (error) {
+      console.error("Error fetching client details:", error);
+    }
+  };
+
   const fetchBookings = async () => {
     setLoading(true);
     try {
       const response = await axios.get(`/schedule/get-officiant/${user?._id}`);
+      console.log("Raw bookings response:", response.data);
+      const allBookings = response.data || [];
+
       setBookings(
-        response.data.filter(
+        allBookings.filter(
           (booking: Booking) => booking.approvedStatus === "pending",
         ),
       );
       setOngoingCeremonies(
-        response.data.filter(
+        allBookings.filter(
           (booking: Booking) => booking.approvedStatus === "approved",
         ),
       );
+      await fetchClientDetails(allBookings);
       // console.log("Bookings:", response.data);
       //console.log(response.data);
     } catch (error) {
@@ -141,14 +191,37 @@ const Bookings = () => {
     }
   };
 
+  const handleDeleteClientBooking = async (
+    scheduleId: string,
+    clientName: string,
+  ) => {
+    try {
+      const result = await GlassSwal.confirm(
+        "Delete Client Booking",
+        `Are you sure you want to delete ${clientName}'s booking from your client list?`,
+      );
+
+      if (!result.isConfirmed) return;
+
+      setLoading(true);
+      await axios.delete(`/schedule/delete/${scheduleId}`);
+      await GlassSwal.success("Deleted", "Client booking deleted successfully");
+      await fetchBookings();
+    } catch (error: any) {
+      console.error("Error deleting client booking:", error);
+      await GlassSwal.error(
+        "Delete Failed",
+        error?.response?.data?.error || "Failed to delete client booking",
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     fetchBookings();
     getCeremonies();
   }, []);
-
-  const showNote = (note: string) => {
-    GlassSwal.info("Note from user", note);
-  };
   const getProfileImageUrl = (profilePicture: string) => {
     if (!profilePicture) return "";
     // Check if it's already a complete URL
@@ -164,6 +237,109 @@ const Bookings = () => {
       (event: any) => event.fromUserId === id,
     );
     return event ? event.fromUserImage : "";
+  };
+
+  const getClientName = (booking: Booking) => {
+    const details = clientDetails[booking.fromUserId];
+    return details?.name || booking.fromUserName;
+  };
+
+  const getClientEmail = (booking: Booking) => {
+    const details = clientDetails[booking.fromUserId];
+    return details?.email || "";
+  };
+
+  const getClientImage = (booking: Booking) => {
+    const details = clientDetails[booking.fromUserId];
+    return details?.profilePicture || booking.fromUserImage;
+  };
+
+  const showNoteDetails = (booking: Booking) => {
+    const name = getClientName(booking);
+    const email = getClientEmail(booking);
+    const note = booking.message || "No note provided";
+    const details = clientDetails[booking.fromUserId];
+    const scheduledDate = new Date(booking.scheduleDate).toLocaleDateString(
+      "en-US",
+      {
+        timeZone: "America/New_York",
+        weekday: "long",
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      },
+    );
+
+    const formatDate = (dateString?: string) => {
+      if (!dateString) return "Not set";
+      const d = new Date(dateString);
+      return d.toLocaleDateString("en-US", {
+        timeZone: "America/New_York",
+        weekday: "long",
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      });
+    };
+
+    const weddingDate = formatDate(details?.weddingDate);
+    const rehearsalDate = formatDate(details?.rehearsalDate);
+    const partner1 = details?.partner_1 || "N/A";
+    const partner2 = details?.partner_2 || "N/A";
+    const contactP1 = details?.contact?.partner_1 || "N/A";
+    const contactP2 = details?.contact?.partner_2 || "N/A";
+    const location = details?.location || "N/A";
+
+    GlassSwal.fire({
+      title: "Booking Details",
+      html: `
+        <div class="space-y-3 text-left">
+          <div class="flex items-center gap-3">
+            <div class="w-12 h-12 rounded-full overflow-hidden border">
+              <img src="${getProfileImageUrl(getClientImage(booking)) || "https://via.placeholder.com/48"}" alt="${name}" class="w-full h-full object-cover" />
+            </div>
+            <div>
+              <p class="text-sm font-semibold text-gray-800">${name}</p>
+              ${email ? `<p class="text-xs text-gray-500">${email}</p>` : ""}
+            </div>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm text-gray-700">
+            <div class="p-3 bg-gray-50 rounded-lg border">
+              <p class="font-semibold text-gray-800">Wedding Date</p>
+              <p>${weddingDate}</p>
+            </div>
+            <div class="p-3 bg-gray-50 rounded-lg border">
+              <p class="font-semibold text-gray-800">Rehearsal Date</p>
+              <p>${rehearsalDate}</p>
+            </div>
+            <div class="p-3 bg-gray-50 rounded-lg border">
+              <p class="font-semibold text-gray-800">Partner 1</p>
+              <p>${partner1}</p>
+              <p class="text-xs text-gray-500">Phone: ${contactP1}</p>
+            </div>
+            <div class="p-3 bg-gray-50 rounded-lg border">
+              <p class="font-semibold text-gray-800">Partner 2</p>
+              <p>${partner2}</p>
+              <p class="text-xs text-gray-500">Phone: ${contactP2}</p>
+            </div>
+            <div class="p-3 bg-gray-50 rounded-lg border md:col-span-2">
+              <p class="font-semibold text-gray-800">Location</p>
+              <p>${location}</p>
+            </div>
+          </div>
+          <div class="text-sm text-gray-700">
+            <p><span class="font-semibold">Scheduled:</span> ${scheduledDate}</p>
+            ${booking.scheduleDateTime ? `<p><span class="font-semibold">Time:</span> ${booking.scheduleDateTime}</p>` : ""}
+          </div>
+          <div class="p-3 bg-gray-50 rounded-lg border text-sm text-gray-800 leading-relaxed">
+            <p class="font-semibold mb-1">Client Note</p>
+            <p>${note}</p>
+          </div>
+        </div>
+      `,
+      showConfirmButton: true,
+      confirmButtonText: "Close",
+    });
   };
 
   //console.log('Ongoing Bookings State:', ongoingCeremonies);
@@ -271,12 +447,10 @@ const Bookings = () => {
                         Approve
                       </button>
                       <button
-                        onClick={() =>
-                          showNote(m.message || "No note provided")
-                        }
+                        onClick={() => showNoteDetails(m)}
                         className="bg-[#AF4B4B4D] text-[#3b1919] text-sm px-5 py-2 rounded-lg font-medium hover:bg-primary/90 transition-colors"
                       >
-                        View Note
+                        View Details
                       </button>
                       <button
                         onClick={() => handleBookingUpdate(m._id, "rejected")}
@@ -322,12 +496,17 @@ const Bookings = () => {
                       <div>
                         <div className="font-medium text-gray-900">
                           <Avatar
-                            src={m.fromUserImage}
-                            name={m.fromUserName}
+                            src={getProfileImageUrl(getClientImage(m))}
+                            name={getClientName(m)}
                             size="md"
                           />
-                          {m.fromUserName}
+                          {getClientName(m)}
                         </div>
+                        {getClientEmail(m) && (
+                          <p className="text-xs text-gray-500 mt-1">
+                            {getClientEmail(m)}
+                          </p>
+                        )}
                         <div className="text-sm text-gray-500">
                           {new Date(m.scheduleDate).toLocaleDateString(
                             "en-US",
@@ -353,6 +532,14 @@ const Bookings = () => {
                         >
                           Manage Agreement
                         </button>
+                        <button
+                          onClick={() =>
+                            handleDeleteClientBooking(m._id, getClientName(m))
+                          }
+                          className="bg-red-50 text-red-600 border border-red-200 text-sm px-4 py-2 rounded-lg font-medium hover:bg-red-100 transition-colors"
+                        >
+                          Delete
+                        </button>
                       </div>
                     </div>
                   ))
@@ -365,12 +552,17 @@ const Bookings = () => {
                       <div>
                         <div className="font-medium flex gap-3 text-lg items-center text-gray-900">
                           <Avatar
-                            src={m.fromUserImage}
-                            name={m.fromUserName}
+                            src={getProfileImageUrl(getClientImage(m))}
+                            name={getClientName(m)}
                             size="xl"
                           />
-                          {m.fromUserName}
+                          {getClientName(m)}
                         </div>
+                        {getClientEmail(m) && (
+                          <p className="text-xs text-gray-500 mt-1">
+                            {getClientEmail(m)}
+                          </p>
+                        )}
                         <div className="text-sm text-gray-500">
                           {new Date(m.scheduleDate).toLocaleDateString(
                             "en-US",
@@ -395,6 +587,14 @@ const Bookings = () => {
                           className="bg-gradient-to-r from-orange-400 to-yellow-400 text-white text-sm px-5 py-2 rounded-lg font-medium hover:from-orange-500 hover:to-yellow-500 transition-all"
                         >
                           Manage Agreement
+                        </button>
+                        <button
+                          onClick={() =>
+                            handleDeleteClientBooking(m._id, getClientName(m))
+                          }
+                          className="bg-red-50 text-red-600 border border-red-200 text-sm px-4 py-2 rounded-lg font-medium hover:bg-red-100 transition-colors"
+                        >
+                          Delete
                         </button>
                       </div>
                     </div>
